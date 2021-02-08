@@ -1,2 +1,5 @@
 # YATA2
-Yet Another Trading Algorithm
+## Work in progress!!
+
+Un sistema de quants para inversion en criptomonedas
+
