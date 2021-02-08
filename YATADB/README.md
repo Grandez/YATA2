@@ -1,6 +1,6 @@
-# YATA2
+# YATA2 (Yet Another Trading Algorrithm)
 <center> <h2>Yet Another Trading Algorrithm</h2> </center>
-## Work in progress!!
+## YATADB
 
-Un sistema de quants para inversion en criptomonedas
+This is the package encapsulating the persistence layer
 
