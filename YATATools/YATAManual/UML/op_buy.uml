@@ -1,0 +1,31 @@
+@startuml
+Pending : Grabar Operacion
+Pending : status = active
+Pending : status2 = pending
+Pending : Actualizar disponible
+
+Accepted : Actualizar Operacion
+Accepted : status2 = accepted
+Accepted : Grabar flujos (opeeracion, comision)
+Accepted : Actualizar balance
+
+Refused  : Actualizar Operacion
+Refused  : status = inactive
+Refused  : status2 = rejected
+Refused  : deshacer disponible
+
+Executed : Actualizar operacion
+Executed : status = inactive
+Executed : status2 = executed
+Executed : Grabar flujos
+Executed : Monedas
+Executed : Gas
+Executed : Actualizar posicion de counter
+
+[*] --> Pending : Buy
+Pending --> Accepted : Accepted
+Pending --> Refused  : Refused
+Accepted --> Executed : Executed
+Refused --> [*]
+Executed --> [*]
+@enduml

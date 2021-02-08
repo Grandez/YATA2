@@ -1,0 +1,33 @@
+@startuml
+node "Web App" {
+  rectangle {
+  rectangle fact[
+     <b>YATAFactory</b>
+     Provide Objects
+  ]
+
+  rectangle env [
+     <b>YATAWeb</b>
+     Keep global state
+  ]
+
+  rectangle dict [
+     <b>YATACodes</b>
+     Dictionary
+  ]
+
+  }
+
+
+  frame "Web System" {
+     rectangle "Global"  as gbl
+     rectangle "UI"  as ui
+     rectangle "Server"  as srv
+  }
+}
+ui -down-> gbl
+srv -down-> gbl
+gbl -down-> fact
+gbl -down-> env
+gbl -down-> dict
+@enduml

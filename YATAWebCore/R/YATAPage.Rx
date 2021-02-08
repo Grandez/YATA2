@@ -1,0 +1,185 @@
+# Copiado de navbar
+YATAPage <- function(title = NULL,id = NULL,
+                       ...,
+                       selected = NULL,
+                       header = NULL,
+                       footer = NULL,
+                       leftSide = c("menu-right", "menu-left"),
+                       rightSide = c("menu-left", "menu-right"),
+                       fluid = TRUE,
+                       theme = NULL,
+    collapsible = FALSE,
+    responsive = NULL,
+                       windowTitle = title,
+    position = c("static-top", "fixed-top", "fixed-bottom")
+                     #,tabs = NULL
+                     ) {
+
+  # pageTitle = ifelse(is.null(title), "YATA!", title)
+  # id = ifelse(is.null(id), "mainMenu", id)
+  # navbarPage2(pageTitle, id=id, ...)
+  # if (!missing(collapsable)) {
+  #   shinyDeprecated("`collapsable` is deprecated; use `collapsible` instead.")
+  #   collapsible <- collapsable
+  # }
+
+  # alias title so we can avoid conflicts w/ title in withTags
+  pageTitle <- title
+  pageTitle <- "YATA - Sin conexion"
+
+  # navbar class based on options
+  navbarClass <- "navbar yata-navbar" # navbar-default
+  position <- match.arg(position)
+  if (!is.null(position))
+    navbarClass <- paste(navbarClass, " navbar-", position, sep = "")
+  # if (inverse)
+  #   navbarClass <- paste(navbarClass, "navbar-inverse")
+
+  if (!is.null(id))
+    selected <- restoreInput(id = id, default = selected)
+
+  # build the tabset
+  tabs <- list(...)
+  tabset <- shiny:::buildTabset(tabs, "nav navbar-nav", NULL, id, selected)
+
+  # function to return plain or fluid class name
+  className <- function(name) {
+    if (fluid)
+      paste(name, "-fluid", sep="")
+    else
+      name
+  }
+
+  # built the container div dynamically to support optional collapsibility
+  if (collapsible) {
+    navId <- paste("navbar-collapse-", p_randomInt(1000, 10000), sep="")
+    containerDiv <- div(class=className("container"),
+      div(class="navbar-header",
+        tags$button(type="button", class="navbar-toggle collapsed",
+          `data-toggle`="collapse", `data-target`=paste0("#", navId),
+          span(class="sr-only", "Toggle navigation"),
+          span(class="icon-bar"),
+          span(class="icon-bar"),
+          span(class="icon-bar")
+        ),
+        #span(class="navbar-brand", pageTitle)
+        span(class="navbar-brand", textOutput("appTitle"))
+      ),
+      div(class="navbar-collapse collapse yata-brand", id=navId, tabset$navList)
+    )
+  } else {
+    containerDiv <- div(class=className("container"),
+      div(class="navbar-header",
+        span(class="navbar-brand", textOutput("appTitle"))
+      ),
+      tabset$navList
+    )
+  }
+
+  # build the main tab content div
+  contentDiv <- div(class=className("container"))
+  if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class="row", header))
+  contentDiv <- tagAppendChild(contentDiv, tabset$content)
+#  if (!is.null(footer))
+#    contentDiv <- tagAppendChild(contentDiv)
+
+  ##########################
+  # ESTA ES LA IDEA
+  #########################
+  # title <- title %OR% extractTitle(header)
+  #
+  # content <- div(class = "wrapper",
+  #   header,
+  #   sidebar,
+  #   body
+  # )
+  #
+  # # if the sidebar has the attribute `data-collapsed = "true"`, it means that
+  # # the user set the `collapsed` argument of `dashboardSidebar` to TRUE
+  # collapsed <- findAttribute(sidebar, "data-collapsed", "true")
+  #
+  # addDeps(
+  #   tags$body(
+  #     # the "sidebar-collapse" class on the body means that the sidebar should
+  #     # the collapsed (AdminLTE code)
+  #     class = paste0("skin-", skin, if (collapsed) " sidebar-collapse"),
+  #     style = "min-height: 611px;",
+  #     shiny::bootstrapPage(content, title = title)
+  #   )
+  # )
+
+
+   #Dashboard plus
+  # content <- div(class = "wrapper",
+  #   header,
+  #   sidebar,
+  #   body
+  # )
+
+  # addDeps(
+  #   shiny::tags$body(
+  #     # preloader, if any
+  #     if (!is.null(preloader)) {
+  #       shiny::tagList(
+  #         waiter::use_waiter(), # dependencies
+  #         do.call(waiter::waiter_show_on_load, preloader$waiter)
+  #       )
+  #     },
+  #     onload = if (!is.null(preloader)) {
+  #       sprintf(
+  #         "setTimeout(function(){
+  #           window.loading_screen.finish();
+  #         }, %s);", preloader$duration * 1000
+  #       )
+  #     },
+  #     class = bodyCl,
+  #     `data-skin` = skin,
+  #     style = "min-height: 611px;",
+  #     shiny::bootstrapPage(content, title = title)
+  #   ),
+  #   md = md,
+  #   options = options
+  # )
+
+  # bootstrapPage(..., title = NULL, responsive = NULL, theme = NULL)
+  # ... es el contenido de body
+  # lang es el iso 639-1 es decir es,us, etc
+#  shinyalert::useShinyalert(force=TRUE)
+
+  options = list(sidebarExpandOnHover = TRUE)
+
+  shinydashboardPlus:::addDeps(
+    shiny::tags$body(
+      # preloader, if any
+      # if (!is.null(preloader)) {
+      #   shiny::tagList(
+      #     waiter::use_waiter(), # dependencies
+      #     do.call(waiter::waiter_show_on_load, preloader$waiter)
+      #   )
+      # },
+      # onload = if (!is.null(preloader)) {
+      #   sprintf(
+      #     "setTimeout(function(){
+      #       window.loading_screen.finish();
+      #     }, %s);", preloader$duration * 1000
+      #   )
+      # },
+      # class = bodyCl,
+      # `data-skin` = skin,
+      # style = "min-height: 611px;",
+      shiny::bootstrapPage(
+         useShinyjs()
+        ,tags$head(
+             tags$link  (rel="stylesheet", type="text/css", href="yata/yata2.css")
+            ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataoverride.css")
+            ,tags$script(src="yata/yata.js")
+        )
+        ,shiny::tags$div(id="yataHeader",tags$nav(class=navbarClass, role="navigation", containerDiv)
+          )
+        ,shiny::tags$div(id="yataContent", tags$div(class = "wrapper",contentDiv))
+        ,shiny::tags$div(id="yataFooter", tags$span("YATA - Grandez"))
+      )
+    ),
+    md = FALSE
+  )
+}

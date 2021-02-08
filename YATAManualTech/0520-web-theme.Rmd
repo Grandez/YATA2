@@ -1,0 +1,21 @@
+# Tema
+
+El estilo lo podemos hacer a traves de CSS pero el problema es que determinados paquetes cargan sus estilos despues de que la pagina ha sido cargada.
+
+Por ejemplo, datatable no he conseguido que coja mis estilos ni poniendo la dependencia al final.
+
+Para solucionar esto nos basamos en dos cosas
+
+- datatable dice que si encuentra un tema **bslib** lo usara
+- bslib permite sobre escribir el tema de una manera mas o menos simple y basado en Sass.
+Requiere un tema y luego se le pueden añadir cosas en modo sass
+
+Proceso:
+
+- creamos un thema basado por ejemplo en bottswatch
+- definimos nuestras reglas. ESto se puede hacer en modo Sass o directamente
+
+**HAY QUE  REVISAR BIEN EL PAQUETE **
+
+rule = "table.dataTable { background-color: blue; }"
+tt = bslib::bs_theme(bootswatch = "darkly")  %>%  bs_add_rules(rule)

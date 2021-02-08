@@ -1,0 +1,15 @@
+# TO DO
+
+En esta seccion estan las cosas que se deberian implementar, mejorar, etc.
+Cuando alguna de ellas se realice, normalment pasara al apartado de decisiones
+
+## Tablas de Datos
+
+La clase base deberia incoprorar metodos para inserta y actualizar datos
+Para el Update por ejemplo
+update(list(campos), list(where))
+
+## Tablas HTML
+
+Se deberia hacer un widget para el control de las tablas HTML del tipo
+etiqueta, widget

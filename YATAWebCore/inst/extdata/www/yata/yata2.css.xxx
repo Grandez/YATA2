@@ -1,0 +1,66 @@
+yata_center {
+    margin: auto;
+}
+
+#yataMenu {
+  list-style: inline;
+}
+#yataHeader {
+  background-image: linear-gradient(black, gray, black);
+  color: white;
+}
+#yataMainPage {
+   position: relative;
+   width: 100%;
+	 height: 100%;
+}
+#yataContent {
+  display: flex;
+  flex-direction: row;
+}
+#yataFooter {
+background-color: black;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  color: white;
+
+}
+
+#yataLeftSide {
+  width: 200px;
+  height: 100%;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.yataCollapsed {
+  display: none;
+  transition: 0.5s;
+}
+
+.yataExpanded {
+  transition: 0.5s;
+}
+
+#yataModal {
+   position: absolute;
+   left: 0;
+   top:  0;
+   width: 100%;
+	 height: 100%;
+	 background-color: gray;
+	 opacity: 0.75;
+   z-index: 100;
+   display: none;
+}
+#yataModalContent {
+	 background-color: white;
+	 margin: auto;
+}
+
+.yataCentered {
+  margin: 0 auto;
+}

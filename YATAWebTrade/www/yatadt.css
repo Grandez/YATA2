@@ -1,0 +1,61 @@
+/*********************************/
+/* Monitor                       */
+/*********************************/
+
+.yataTblMonitor {
+    border: 1px solid blue;
+    border-spacing: 0;
+    line-height: 10px;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+.yataCellIcon {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.yataCellLabel {
+    text-align: left;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+}
+.yataCellData {
+    text-align: right;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    vertical-align: middle;
+    min-width: 5em;
+}
+.yataCellCTC {
+    text-align: center;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    font-weight: bold;
+}
+
+.yataCellGroup {
+    padding-top: 6px;
+    vertical-align: middle;
+}
+
+.yataIconDelta {
+    display: flex;
+}
+
+/*
+.yataTblMonitor tr {
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitor tr td {
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitorCTC {
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+}
+*/

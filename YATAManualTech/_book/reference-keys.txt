@@ -1,0 +1,12 @@
+prerequisites
+notas-e-ideas
+blog
+web
+tablas-de-datos
+tablas-html
+to-do
+tablas-de-datos-1
+tablas-html-1
+arquitectura
+nomenclatura
+creacion-de-componentes

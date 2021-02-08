@@ -1,0 +1,26 @@
+import(tidyr)
+import(rlist)
+
+# Shiny
+import(shiny)
+import(shinyjs)
+import(shinyBS)          # Botones yataBtn
+import(shinydashboard)
+import(shinydashboardPlus)
+import(htmltools)
+import(shinyWidgets)
+import(shinyalert)
+import(bslib)
+
+# import(DT)
+
+# YATA
+import(YATATools)
+import(YATACore)
+import(YATADT)
+
+# exportPattern("^[[:alpha:]]+")
+exportPattern("YATA.*")
+exportPattern("yata.*")
+exportPattern("upd.*")
+exportPattern("plot*")

@@ -1,0 +1,22 @@
+TBLFiats = R6::R6Class("TBL.FIATS"
+    ,inherit=YATATable
+    ,portable = FALSE
+    ,cloneable = FALSE
+    ,lock_class = FALSE
+    ,public = list(
+          initialize = function(db=NULL) {
+             super$initialize( name="FIAT", fields=private$fields, db=db)
+             table(list(active=1))
+         }
+     )
+     ,private = list (
+          key    = c("id")
+         ,fields = list(
+              id       = "SYMBOL"
+             ,name     = "NAME"
+             ,decimals = "DECIMALS"
+             ,active   = "ACTIVE"
+          )
+
+     )
+)

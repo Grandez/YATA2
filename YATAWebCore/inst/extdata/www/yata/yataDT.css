@@ -1,0 +1,16 @@
+/*********************************/
+/* override datatables                     */
+/*********************************/
+
+
+table.display.juan tbody tr.odd {
+    background-color: green;
+}
+
+table.juan tbody tr.odd {
+    background-color: res;
+}
+
+.table.dataTAble td {
+    padding: 0;
+}

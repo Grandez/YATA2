@@ -1,0 +1,103 @@
+@startuml
+' hide the spot
+' hide circle
+
+
+' avoid problems with angled crows feet
+' skinparam linetype ortho
+
+entity "PROVIDERS" as PRO {
+  *provider : text
+  --
+  name : text
+  description : text
+}
+
+entity "SESSION_PROVIDER" as CTL {
+  *provider : text
+  --
+  data : timestamp
+}
+
+abstract "SESSION_BASE" as BASE {
+  **Prototipo**
+  ..
+  *provider : text
+  *tms      : timestamp
+  *base     : text
+  *counter  : text
+  --
+  OPEN        
+  CLOSE       
+  HIGH        
+  LOW         
+  BASEVOLUME  
+  QUOTEVOLUME 
+  AVERAGE     
+
+}
+
+entity "SESSION_H1" as SH1 {
+  **1 Hora**
+  ..
+}
+
+entity "SESSION_H2" as SH2 {
+  **2 Horas**
+  ..
+}
+entity "SESSION_H4" as SH4 {
+  **4 Horas**
+  ..
+}
+entity "SESSION_H8" as SH8 {
+  **8 Horas**
+  ..
+}
+
+entity "SESSION_D1" as SD1 {
+  **Diario**
+  ..
+}
+
+entity "SESSION_W1" as SW1 {
+  **Semanal**
+  ..
+}
+
+entity "SESSION_W2" as SW2 {
+  **Quincenal**
+  ..
+}
+entity "SESSION_M1" as SM1 {
+  **Mensual**
+  ..
+}
+
+class partition << (P,#FF7700) >> {
+   ~provider
+}
+
+PRO ||-right-|| CTL
+
+PRO ||..o{ SH1 
+PRO ||..o{ SH2
+PRO ||..o{ SH4
+PRO ||..o{ SH8
+PRO ||..o{ SD1
+PRO ||..o{ SW1
+PRO ||..o{ SW2
+PRO ||..o{ SM1
+
+BASE <|-- partition
+
+SH1 <-- BASE
+SH2 <-- BASE
+SH4 <-- BASE
+SH8 <-- BASE
+SD1 <-- BASE
+SW1 <-- BASE
+SW2 <-- BASE
+SM1 <-- BASE
+
+@enduml
