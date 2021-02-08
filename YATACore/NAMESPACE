@@ -1,0 +1,13 @@
+import(rlist)
+import(configr)
+
+import(YATATools)
+import(YATADB)
+import(YATAProviders)
+
+#export(YATAFACTORY)
+#export(YATAENV)
+#exportPattern("^[[:alpha:]]+")
+exportPattern("YATA.*")
+exportPattern("OBJ.*")
+

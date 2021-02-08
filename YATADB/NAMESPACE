@@ -1,0 +1,15 @@
+
+import(configr)
+import(rlist)
+
+import(RMariaDB)
+
+import (YATATools)
+
+export(DBDict)
+export(DBParms)
+export(YATADBFactory)
+
+# exportPattern("^TBL.+")  # Tablas
+
+#export(MARIADB)
