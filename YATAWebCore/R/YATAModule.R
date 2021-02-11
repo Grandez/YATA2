@@ -1,6 +1,7 @@
-YATAModule = function(name, id, title="", ...) {
+YATAModule = function(id, title="", ...) {
     ns = NS(id)
-    data = eval(parse(text=paste0("mod", name, "Input('", id, "','", title, "')")))
+    modName =  paste0(YATATools::titleCase(strsplit(id, "-")[[1]]), collapse="")
+    data = eval(parse(text=paste0("mod", modName, "Input('", id, "')"))) #, title, "')")))
 
     idForm = paste0(id, "-div-form")
     idErr  = paste0(id, "-div-err")

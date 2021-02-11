@@ -1,10 +1,10 @@
-modPositionInput = function(id, title) {
+modPosInput = function(id, title) {
     ns = NS(id)
     left = tagList(
-         yataTextDate(ns("dtLast"),"Last Update: ", inline=FALSE)
-        ,yataNumericInput(ns("numInterval"), label="Intervalo")
-        ,yataCombo(ns("cboPlotLeft"),  "Left Plot" , choices="")
-        ,yataCombo(ns("cboPlotRight"), "Right Plot", choices="")
+         yuiLabelDate(ns("dtLast"),"Last Update: ", inline=FALSE)
+        ,yuiNumericInput(ns("numInterval"), label="Intervalo")
+        ,yuiCombo(ns("cboPlotLeft"),  "Left Plot" , choices="")
+        ,yuiCombo(ns("cboPlotRight"), "Right Plot", choices="")
        
     )
     main = tagList(
@@ -13,11 +13,11 @@ modPositionInput = function(id, title) {
       #   ,tags$span(id="sessionLastUpdate", textOutput(ns("lastUpdate")))
       # )
       fluidRow(id=ns("monitor"), class="yataMonitors")
-#      ,fluidRow(yataBox(ns("tblPosGraph"), "Informacion"
+#      ,fluidRow(yuiBox(ns("tblPosGraph"), "Informacion"
          ,fluidRow(column(6,plotlyOutput(ns("plotLeft"))), column(6,plotlyOutput(ns("plotRight"))))
 #       ))
       ,fluidRow(id="divPosGlobal"
-               ,yataBox(ns("tblPosGlobal"), "Posicion Global", DT::dataTableOutput(ns("tblPosGlobal")))
+               ,yuiBox(ns("tblPosGlobal"), "Posicion Global", DT::dataTableOutput(ns("tblPosGlobal")))
       )
       ,fluidRow(id="divPosLast")
     )

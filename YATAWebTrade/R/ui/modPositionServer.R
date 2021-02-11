@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modPositionServer <- function(id, full) {
+modPosServer <- function(id, full) {
    ns = NS(id)
    PNLPos = R6::R6Class("PNL.OPER"
       ,inherit = YATAPanel
@@ -32,13 +32,13 @@ modPositionServer <- function(id, full) {
              self$vars$plotRightChanged = TRUE
          }
          ,getDF         = function(type) {
-             browser()
              if (type == "plotTickerVar") return (data$dfSession)
          } 
          ,getDFSession  = function() { self$data$dfSession      } 
          ,getSessionDay = function() { return (private$sessDay) }
          ,loadDataDay   = function() {
             now = Sys.time()    
+            if (is.null(self$dates$tms)) return()
             self$dates$tms = self$dates$tms - as.difftime(7, unit="days")
             idx = 1
             while (idx <= nrow(self$dates)) {
@@ -71,11 +71,11 @@ modPositionServer <- function(id, full) {
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(id, session))
        loadPanel = function() {
           pnl$vars$interval = pnl$parms$getOnlineInterval()
-          updateNumericInput(session, "numInterval", value = pnl$vars$interval)
+          updNumericInput("numInterval", pnl$vars$interval)
           loadPosition()
           pnl$loadDataDay()
-          initMonitor()
-          output$dtLast = updateTextDate({Sys.time()})
+          if (!is.null(pnl$lastMonitors)) initMonitor()
+          output$dtLast = updLabelDate({Sys.time()})
           updCombo("cboPlotLeft",  choices=pnl$plots, selected=pnl$plots[2])
           updCombo("cboPlotRight", choices=pnl$plots, selected=pnl$plots[2])
           pnl$loaded = TRUE
@@ -97,7 +97,7 @@ modPositionServer <- function(id, full) {
            lapply(act, function(x) {
                 if (!(x %in% pnl$lastMonitors)) 
                     insertUI(selector = idDiv, where = "beforeEnd", immediate=TRUE,
-                             ui=tagList(yataMonitorUI(ns(paste0("monitor-",x)))))
+                             ui=tagList(yuiYataMonitor(ns(paste0("monitor-",x)))))
            })
            pnl$lastMonitors = act
        }
@@ -105,13 +105,13 @@ modPositionServer <- function(id, full) {
           suffix = titleCase(camera)
           camera = pnl$cameras$getCameraName(camera)
           nstable = paste0("tblPos", suffix)
-          tags$div(id=paste0("divPos", suffix), yataBox(ns(nstable), paste("Posicion", camera)
+          tags$div(id=paste0("divPos", suffix), yuiBox(ns(nstable), paste("Posicion", camera)
                                                                    , DT::dataTableOutput(ns(nstable))))
        }
        initMonitor = function() {
           # Aqui ponemos los valores medio, dia, semana y session
           data = pnl$providers$getMonitors("EUR", pnl$lastMonitors)
-          df = pnl$data$global
+          df = pnl$data$dfPosGlobal
           pnl$makeDFSession(data, TRUE)
           for (ctc in pnl$monitors$keys()) {
                monitor = pnl$monitors$get(ctc)
@@ -119,15 +119,15 @@ modPositionServer <- function(id, full) {
                monitor$session = data[[ctc]]$last
                monitor$day     = data[[ctc]]$day
                monitor$week    = data[[ctc]]$week
-               monitor$price   = df[df$currency == ctc, "price"]
-               yataCtcServer2(ns(paste0("monitor-",ctc)), monitor)
+               monitor$price   = 0
+               if (nrow(df) > 0) monitor$price = df[df$currency == ctc, "price"]
                pnl$monitors$put(ctc, monitor)
+               updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
           }
        }
        loadPosition = function() {
-          pnl$data$global  = pnl$position$getGlobalPosition()
-          pnl$dates = pnl$operations$getDateBegin()
-          output$tblPosGlobal = yataTablePosition(id=ns("posGlobal"), pnl$data$global)
+          pnl$data$dfPosGlobal = pnl$position$getGlobalPosition()
+          output$tblPosGlobal  = updTablePosition(id=ns("posGlobal"), pnl$data$dfPosGlobal)
            
           cameras = pnl$position$getCameras()
           divs = lapply(cameras, function(camera) loadCameraUI(camera))
@@ -149,23 +149,23 @@ modPositionServer <- function(id, full) {
            plotRight()
        }
        plotLeft = function() {
-           if (input$cboPlotLeft != "") {
-           browser()
-          plot = eval(parse(text=paste0(input$cboPlotLeft, "(pnl$getDF(input$cboPlotLeft))")))
-          output$plotLeft = renderPlotly({plot})
-               
-           }
+          #  if (input$cboPlotLeft != "") {
+          # plot = eval(parse(text=paste0(input$cboPlotLeft, "(pnl$getDF(input$cboPlotLeft))")))
+          # output$plotLeft = renderPlotly({plot})
+          #      
+          #  }
        }
        plotRight = function() {
-           if (!is.null(pnl$df) && input$cboPlotLeft != "") {
-               browser()
-          plot = eval(parse(text=paste0(input$cboPlotRight, , "(pnl$getDF(input$cboPlotRight))")))
-          output$plotRight = renderPlotly({plot})
-               
-           }
+           # if (!is.null(pnl$df) && input$cboPlotLeft != "") {
+           #     plot = eval(parse(text=paste0(input$cboPlotRight, "(pnl$getDF(input$cboPlotRight))")))
+           #     output$plotRight = renderPlotly({plot})
+           # }
        }
       autoInvalidate = reactiveTimer(60000)
 
+      # Antes del observer paraque encuentre datos
+      if (!pnl$loaded)  loadPanel()
+      
       observe({
 #         autoInvalidate()
           invalidateLater(pnl$vars$interval * 60000)
@@ -173,8 +173,8 @@ modPositionServer <- function(id, full) {
          data = pnl$providers$getLatests("EUR", pnl$lastMonitors)
          pnl$makeDFSession(data)
 
-         df = pnl$data$global
-         lapply(names(data), function(x) yataCtcServer2(ns(paste0("monitor-",x)), pnl$monitors$get(x), data[[x]]$last))
+         df = pnl$data$dfPosGlobal
+         lapply(names(data), function(x) updYataMonitor(ns(paste0("monitor-",x)), pnl$monitors$get(x), data[[x]]$last))
          bars = lapply(names(data), function(x) {
                              row = df[df$currency == x, ]
                              list( prc = ((data[[x]]$last / row[1, "price"])-1) * 100
@@ -184,7 +184,7 @@ modPositionServer <- function(id, full) {
          df = cbind(symbol=names(data),df)
          pnl$df = df
 #         output$plotDelta = renderPlotly({plotBars(df, x="symbol",y="prc")})
-         output$dtLast = updateTextDate({Sys.time()})
+         output$dtLast = updLabelDate({Sys.time()})
          plots()
      })
      
@@ -195,7 +195,7 @@ modPositionServer <- function(id, full) {
       observeEvent(input$numInterval,  { pnl$vars$interval = input$numInterval })
       observeEvent(input$cboPlotLeft,  {plotLeft()} , ignoreInit=TRUE)
       observeEvent(input$cboPlotRight, {plotRight()}, ignoreInit=TRUE)
-      if (!pnl$loaded)  loadPanel()
+
       plots()
   })
 }    

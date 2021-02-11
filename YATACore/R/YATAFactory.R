@@ -46,7 +46,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
          connInfo        = private$parms$setLastOpen(name)
          setDB(connInfo)
       }
-      ,getTable    = function(name, force = FALSE) { DBFactory$getTable(name, force) }
+      ,getTable    = function(name, force = FALSE) { DBFactory$get(name, force) }
       ,getProvider = function(code, object, force = FALSE) {
           setProvFactory() # Necesita tener Base creado
           ProvFactory$get(code, object, force)

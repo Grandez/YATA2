@@ -1,0 +1,51 @@
+---
+title: "Bollinger Bands (BB)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Bollinger Bands (BB)
+
+Bollinger Bands consist of three lines. The middle band is a simple moving average (generally 20 periods) of the typical price (TP). The upper and lower bands are F standard deviations (generally 2) above and below the middle band. The bands widen and narrow when the volatility of the price is higher or lower, respectively.
+
+Bollinger Bands do not, in themselves, generate buy or sell signals; they are an indicator of overbought or oversold conditions. When the price is near the upper or lower band it indicates that a reversal may be imminent. The middle band becomes a support or resistance level. The upper and lower bands can also be interpreted as price targets. When the price bounces off of the lower band and crosses the middle band, then the upper band becomes the price target.
+
+## Formula
+
+
+$$
+\begin{aligned}
+ TP=\frac{high + low + close}{3} \\
+ MidBand=SMA(TP) \\
+ UpperBand = MidBand + \sigma(TP)Factor \\
+ LowerBand = MidBand - \sigma(TP)Factor
+\end{aligned}
+$$
+
+## Bollinger Band Width
+
+The Bollinger Band Width indicator is the distance between the upper and lower Bollinger Bands. It is a measure of volatility. The Band Width value is higher when volatility is high, and lower when volatility is low. High Band Width values indicate that the current trend may be about to end. Low Band Width values indicate that a new trend may be about to start.
+
+
+$$
+\begin{aligned}
+ TP=\frac{high + low + close}{3} \\
+ BandWidth = 2 * F * \sigma(TP)
+\end{aligned}
+$$
+
+
+## Parametros
+
+__n__
+
+The Window Size is nothing but the look back period and this forms the basis of your ALMA settings.
+
+
+__Factor__
+
+The number of standard deviations to use
+

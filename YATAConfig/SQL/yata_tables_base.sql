@@ -36,10 +36,13 @@ CREATE TABLE PROVIDERS  (
     PROVIDER     VARCHAR(10)  NOT NULL -- To Currency 
    ,NAME         VARCHAR(32)  NOT NULL -- From currency
    ,ACTIVE       TINYINT    DEFAULT 1
+   ,PRTY         TINYINT    DEFAULT 99
 -- Datos de acceso   
    ,TOKEN      VARCHAR(256)
    ,USER       VARCHAR(32) 
    ,PWD        VARCHAR(32) 
+   ,ICON       VARCHAR(255)    
+   ,OBJECT     VARCHAR(255)   
    ,PRIMARY KEY ( PROVIDER )
 );
 

@@ -1,0 +1,8 @@
+Calcula la regresion lineal de los datos mediante la recta
+
+$$ 
+   \begin{aligned}
+   \hat{y} &= \alpha + \beta{x} + \epsilon \\
+   \epsilon &= argmin (\sum \epsilon_i)
+   \end{aligned}
+$$

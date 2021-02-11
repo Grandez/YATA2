@@ -12,12 +12,9 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
            private$tblProviders = YATAFactory$getTable(YATACodes$tables$Providers)
            private$id           = parms$getOnlineProvider()
            private$name         = tblProviders$getNames(private$id)
-           df  = tblProviders$table(active = YATACodes$flag$active)
 
-           if (nrow(df) > 0 ) private$dfProviders = df[order(df$order),]
-#           if (!missing(provider)) private$name = provider
-#            private$provider = YATAFactory$getProvider(private$name)
-           # private$provider$setInterval(base$getOnlineInterval())
+           df  = tblProviders$table(active = YATACodes$flag$active)
+           if (nrow(df) > 0 ) private$dfProviders = df[order(df$prty),]
        }
       ,getSessionDays = function(base, counter, from, to) {
           if (is.null(private$provider)) .setProvider(1)

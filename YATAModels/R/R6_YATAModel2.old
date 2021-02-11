@@ -1,0 +1,121 @@
+#' Abstract Class acting as Interface for each Qunatitative model in YATA
+#'
+# El Modelo es un conjunto de indicadores
+#
+
+YATAModel2 <- R6::R6Class("YATAModel2",
+    public = list(
+         id         = 0
+        ,name       = "Abstract Base Model"
+        ,symbolBase = "NONE"
+        ,symbol     = "NONE"
+        ,parent     = 0
+        ,scope      = 24
+        ,doc        = NULL
+        ,initialize = function(parms=NULL,thres=NULL) {
+            ind1 = YATAIndicator$new( "Linear regression","Trend",  type=IND_LINE)
+            ind2 = YATAIndicator$new( "Spline",           "Spline", type=IND_LINE,  blocks=3)
+            ind3 = YATAIndicator$new( "Max and Min",      "MaxMin", type=IND_POINT, plot="plotMaxMin"
+                                     ,parms=list(PointsDepth=3))
+
+            private$indicators = list(ind1) # , ind2, ind3)
+            names(private$indicators) = lapply(private$indicators,function(x) {x$name})
+            if (!is.null(parms)) private$parameters = c(private$parameters, parms)
+            if (!is.null(thres)) private$thresholds = c(private$thresholds, thres)
+        }
+
+        ###############################################################
+        # Abstract functions
+        ###############################################################
+
+        ,calculateAction    = function(portfolio, case, reg)       { stop("This method is virtual") }
+        ,calculateOperation = function(cartera, caso, reg, action) { stop("This method is virtual") }
+
+         ###############################################################
+         # Generic functions
+         ###############################################################
+        ,addParameter      = function(name, value)  {
+            tmp=c(value)
+            names(tmp) = name
+            private$parameters = c(private$parameters, tmp)
+        }
+        ,getParameters     = function()   { private$parameters }
+        ,getThresholds     = function()   { private$thresholds }
+        ,getIndicators     = function()   { private$indicators }
+        ,getIndicatorsName = function()   { nm = unlist(names(private$indicators))
+                                           tt = unlist(sapply(private$indicators, function(x) {x$title}))
+                                           names(nm) = tt
+                                           as.list(nm)
+                                          }
+        ,print          = function()      { cat(self$name)  }
+        ,setParameters  = function(parms) { private$parameters = parms }
+        ,setThresholds  = function(thres) { private$thresholds = thres }
+        ,setParametersA = function(parms, pat) {
+            private$parameters = private$updateList(private$parameters, parms, pat) }
+        ,setThresholdsA = function(thres, pat) {
+            private$thresholds = private$updateList(private$thresholds, thres, pat) }
+
+        ,calculate                 = function(data, ind) {
+            if (ind$name == "Trend")  return (TREND (data))
+            if (ind$name == "MaxMin") return (MAXMIN(data))
+            if (ind$name == "Spline") return (SPLINE(data))
+         }
+        ,calculateIndicatorsGlobal = function(data) { private$calcIndicators(data, 1) }
+        ,calculateIndicators       = function(data) { private$calcIndicators(data, 2) }
+        ,plotIndicators            = function(plots, data, names) {
+            for (name in names) {
+                ind = private$indicators[[name]]
+                plotFunc = ind$plot
+                if (is.numeric(plotFunc)) plotFunc = PLOT_FUNC[plotFunc]
+                plots = do.call(plotFunc, list(data, ind, plots))
+            }
+            plots
+        }
+    )
+
+   ,private = list(
+
+        ###############################################################
+        # Private Abstract Properties
+        ###############################################################
+
+         indicators=NULL
+        ,parameters = list("PointsDepth"=3)
+        ,thresholds = list(buy=0.0, sell=0.0)
+        ,calculated = 0  # En shiny es posible que se llame varias veces
+
+        ###############################################################
+        # Private Generic Methods
+        ###############################################################
+        ,addIndicators = function(...) {
+            input = list(...)
+            names(input) = lapply(input,function(x) {x$name})
+            private$indicators = c(private$indicators, input)
+        }
+        ,getXTS = function(data,price=T) {
+            pos = which(colnames(data$df)  == data$DATE)[1]
+            xts::xts(data$df[,-pos], order.by = data$df[,pos])
+        }
+        ,setDF = function(res, columns) {
+            df = as.data.frame(res)
+            colnames(df) = columns
+            df
+        }
+        ,calcIndicators = function(data, scope) {
+            if (bitwAnd(scope, private$calculated) == 0) {
+                for (ind in private$indicators) {
+                    if (ind$scope == scope) ind$result = self$calculate(data, ind)
+                }
+            }
+            private$calculated = bitwOr(private$calculated, scope)
+        }
+        ,updateList = function(l, values, pat) {
+            names = gsub(pat, "", names(values))
+            for (i in 1:length(values)) {
+                l[[names[i]]] = values[[i]]
+            }
+            l
+        }
+   )
+)
+

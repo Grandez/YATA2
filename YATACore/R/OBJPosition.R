@@ -7,32 +7,31 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
         print           = function() { message("Positions Object")}
        ,initialize      = function() {
            super$initialize()
-           private$tblPosition = YATAFactory$getTable(YATACodes$tables$Position)
+           private$prtPosition = YATAFactory$getTable(YATACodes$tables$Position)
        }
        ,getCameras = function() {
-          df = tblPosition$getCameras()
+          df = prtPosition$getCameras()
           as.list(df[,1])
        }
        ,getGlobalPosition = function() {
-          df = tblPosition$getGlobalPosition()
+          df = prtPosition$getGlobalPosition()
           df$value = df$balance * df$price
-          yataClasses(df)
+          yataSetClasses(df)
        }
        ,getPosition     = function(camera, currency) {
-           df = tblPosition$getPosition(camera, currency)
-           browser()
+           df = prtPosition$getPosition(camera, currency)
            df
        }
        ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
-           df = tblPosition$getCameraPosition(camera, balance, available)
+           df = prtPosition$getCameraPosition(camera, balance, available)
            df$value = df$balance * df$price
-           yataClasses(df, dat=c(6))
+           yataSetClasses(df, dat=c(6))
        }
       ##################################################
       ### Caches
       ##################################################
     )
     ,private = list(
-        tblPosition  = NULL
+        prtPosition  = NULL
     )
 )

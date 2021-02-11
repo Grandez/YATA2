@@ -1,0 +1,60 @@
+# Coste, Valor y  Neto
+
+Introducimos los siguientes conceptos:
+
+- **Coste** Coste medio de compra de las acciones
+- **Valor** Valor de la cartera al momento actual
+- **Neto**  Precio que marca el punto de ruptura
+
+Usamos el termino precio neto frente al mas correcto Precio Medio para indicar cual es el precio de **venta** que me ofrece un beneficio global de 0. Dicho de otro modo, el precio minimo al que puedo deshacer la posicion sin perder dinero.
+
+Supongamos que hago una primera operacion de compra:
+
+Operaciones                                          Posicion
++----------+--------+-------+           +----------+--------+-------+------+        
+| Unidades | Precio | Valor |           | Balance  | Precio | Valor | Neto | 
++----------+--------+-------+           +----------+--------+-------+------+
+|       10 |    100 |  1000 |           |       10 |    100 |  1000 |  100 |
++----------+--------+-------+           +----------+--------+-------+------+
+
+La operacion es basica, logicamente si he comprado __n__ unidades a un precio __p__, si las vendo por debajo de ese precio pierdo dinero, si lo vendo por encima de ese precio, gano dinero
+
+Ahora supongamos que vendo 5 de mis unidades a 120
+
+Opreraciones                                          Posicion
++----------+--------+-------+           +----------+--------+-------+------+        
+| Unidades | Precio | Valor |           | Balance  | Precio | Valor | Neto | 
++----------+--------+-------+           +----------+--------+-------+------+
+|       -5 |    120 |  -600 |           |       5  |    100 |  1000 |  100 |
++----------+--------+-------+           +----------+--------+-------+------+
+
+
+Al cabo del tiempo, existiran un conjunto de operaciones de compra/venta las cuales son tomadas en cuenta para el calculo de estas variables, pero algunas, o muchas de ellas ya las habremos descontado; es decir, las hemos cargado a "perdidas y ganancias" con lo que nos tergiversan los valores.
+
+Ejemplo:
+
+
+Operaciones                          
++------+----------+--------+--------+ 
+| Tipo | Unidades | Precio |  Valor | 
++------+----------+--------+--------+
+|   C  |       20 |    100 |   2000 |
+|   V  |      -10 |    200 |  -2000 | 
++------+----------+--------+--------+
+
+Con estas dos operaciones he obtenido un beneficio del 100% y he recuperado la inversion, con lo que el valor neto seria 0. Podria regalar la inversion sin perder dinero.
+
+Para evitar esto, introducimos el concepto de **regularizacion**
+
+ESte es un registro que me marca el punto a partir del cual considerar las operaciones posteriores. Tipicamente, y desde el punto de vista contable, se genera un registro de regularizacion cada 1/1
+
+Operaciones                          
++------+----------+--------+--------+ 
+| Tipo | Unidades | Precio |  Valor | 
++------+----------+--------+--------+
+|   C  |       20 |    100 |   2000 |
+|   V  |      -10 |    200 |  -2000 | 
+|   R  |       10 |    100 |   2000 |  Usamos el precio medio de compra 
++------+----------+--------+--------+
+
+

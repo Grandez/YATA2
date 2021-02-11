@@ -14,10 +14,30 @@ CREATE TABLE POSITION  (
    ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
    ,BALANCE     DOUBLE      DEFAULT 0.0 -- Saldo real 
    ,AVAILABLE   DOUBLE      DEFAULT 0.0 -- Saldo disponible
-   ,PRICE       DOUBLE      DEFAULT 1   -- Precio medio
-   ,TMS         TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
+   ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
+   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido   
+   ,PRICE       DOUBLE      DEFAULT 1   -- Precio neto de venta
+   ,SINCE       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
+   ,LAST        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
    ,CC          VARCHAR(512)        -- Codigo de cuenta
+   ,PRIMARY KEY ( CAMERA, CURRENCY )
+);
+
+-- Contiene el registro de regularizacion
+-- Para el calculo de los precios de coste y netos
+DROP TABLE  IF EXISTS REGULARIZATION CASCADE;
+CREATE TABLE REGULARIZATION  (
+    CAMERA      VARCHAR(10) NOT NULL -- Codigo de camara
+   ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
+   ,BALANCE     DOUBLE      DEFAULT 0.0 -- Saldo real 
+   ,AVAILABLE   DOUBLE      DEFAULT 0.0 -- Saldo disponible
+   ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
+   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido      
+   ,PRICE       DOUBLE      DEFAULT 1   -- Precio neto de venta
+   ,SINCE       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP    
+   ,LAST        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
+                            ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
    ,PRIMARY KEY ( CAMERA, CURRENCY )
 );
 
@@ -32,7 +52,10 @@ CREATE TABLE HIST_POSITION  (
    ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
    ,BALANCE     DOUBLE      NOT NULL -- Saldo real 
    ,AVAILABLE   DOUBLE      NOT NULL -- Saldo disponible
-   ,PRICE       DOUBLE      NOT NULL -- Precio medio
+   ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
+   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido      
+   ,COST        DOUBLE      DEFAULT 1   -- Precio medio de compra
+   ,NET         DOUBLE      DEFAULT 1   -- Precio neto de venta
    ,TMS         TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
    ,PRIMARY KEY ( DATE_POS DESC, CAMERA, CURRENCY )

@@ -20,7 +20,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           }
           if (!is.null(connRead)) disconnect(connRead)
        }
-      ,print = function() {
+      ,print      = function() {
           db = ifelse(is.null(self$connRead), "No Connection", paste0(dbInfo$name, " (", dbInfo$dbname, ")"))
           message(db, ": MariaDB Database")
        }
@@ -38,29 +38,29 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
       ,disconnect = function(conn) {
           tryCatch({ RMariaDB::dbDisconnect(self$conn) }, error = function(cond) {})
       }
-      ,begin = function() {
+      ,begin      = function() {
           if (!private$trx) RMariaDB::dbBegin   (connTran)
           private$trx = TRUE
           invisible(connTran)
       }
-      ,commit = function() {
+      ,commit     = function() {
           if (private$trx) RMariaDB::dbCommit   (connTran)
           private$trx = FALSE
           invisible(connTran)
       }
-      ,rollback = function() {
+      ,rollback   = function() {
           if (private$trx) RMariaDB::dbRollback   (connTran)
           private$trx = FALSE
           invisible(connTran)
       }
-      ,query = function(qry, params=NULL) {
+      ,query      = function(qry, params=NULL) {
           if (!is.null(params)) names(params) = NULL
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, param=params) }
                     ,error = function (cond) {
                         browser()
                         yataError("Error SQL", cond, "SQL", "Query", cause=qry) })
       }
-      ,execute = function(qry, params=NULL, isolated=FALSE) {
+      ,execute    = function(qry, params=NULL, isolated=FALSE) {
           # isolated crea una transaccion para esa query
           # Si son varias acciones se activa con begin - commit
 
@@ -75,7 +75,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                         yataError("Error SQL", cond, "SQL", "Execute", cause=qry)
                     })
       }
-      ,write = function(table, data, isolated=FALSE) {
+      ,write      = function(table, data, isolated=FALSE) {
          tryCatch({ res = RMariaDB::dbWriteTable(getConn(isolated), table, data, append=TRUE)
                     if (isolated) commit()
                   },warning = function(cond) {
@@ -86,7 +86,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                        yataError("Error SQL", cond, "SQL", "Writetable", cause=table)
                  })
       }
-      ,add = function(table, values, isolated=FALSE) {
+      ,add        = function(table, values, isolated=FALSE) {
          # inserta en un registro en la tabla
          # values: lista de valores con nombres
          # Los datos a NULL se ignoran

@@ -1,8 +1,8 @@
 yataPageTitle = function(title) {
-  tags$div(class="yataTitle", title)
+  tags$div(class="yata-title", tags$p(title))
 }
 yataTitle = function(txt) {
-  div(class="yataTitle", txt)
+  div(class="yata-title", txt)
 }
 # Componente que muestra una lista de opciones en modo tabla
 # Pone un columna de error
@@ -20,18 +20,6 @@ yataFormTable = function(...) {
 
 yataRowButtons = function(...) { div(class="yata-row-buttons", ...) }
 
-yataBtn          = function(id, label, style) { shinyBS::bsButton(id, label, style=style       ) }
-yataBtnOK        = function(id, label)        { shinyBS::bsButton(id, label, style="success"   ) }
-yataBtnKO        = function(id, label)        { shinyBS::bsButton(id, label, style="danger"    ) }
-yataBtnMain      = function(id, label)        { shinyBS::bsButton(id, label, style="primary"   ) }
-yataBtnSecondary = function(id, label)        { shinyBS::bsButton(id, label, style="secondary" ) }
-yataBtnDanger    = function(id, label)        { shinyBS::bsButton(id, label, style="danger"    ) }
-yataBtnWarning   = function(id, label)        { shinyBS::bsButton(id, label, style="warning"   ) }
-yataBtnInfo      = function(id, label)        { shinyBS::bsButton(id, label, style="info"      ) }
-yataBtnLight     = function(id, label)        { shinyBS::bsButton(id, label, style="light"     ) }
-yataBtnDark      = function(id, label)        { shinyBS::bsButton(id, label, style="dark"      ) }
-yataBtnLink      = function(id, label)        { shinyBS::bsButton(id, label, style="link"      ) }
-yataBtnEdit      = function(id, label)        { shinyBS::bsButton(id, label, style="navy"      ) }
 
 
 yataTblButton = function(id, table, label, btn) {
@@ -44,20 +32,6 @@ yataTblButton = function(id, table, label, btn) {
 }
 
 
-.btnIcon = function(color, ico, title) {
-   yataActionBtn(title=title, style = "simple", color = color, icon = icon(ico, class="yataBtnIcon"))
-}
-yataBtnIconAlert    = function(title) {.btnIcon("yellow"    , "bell"             ,ifelse(missing(title), "Alert" ,title)) }
-yataBtnIconCancel   = function(title) {.btnIcon("red"       , "times"            ,ifelse(missing(title), "Cancel",title)) }
-yataBtnIconOK       = function(title) {.btnIcon("green"     , "check"            ,ifelse(missing(title), "Accept",title)) }
-yataBtnIconDel      = function(title) {.btnIcon("orange"    , "trash"            ,ifelse(missing(title), "Delete",title)) }
-yataBtnIconRefuse   = function(title) {.btnIcon("navy"      , "thumbs-down"      ,ifelse(missing(title), "Refuse",title)) }
-yataBtnIconCloud    = function(title) {.btnIcon("aqua"      , "cloud-upload-alt" ,ifelse(missing(title), "Cloud" ,title)) }
-yataBtnIconEdit     = function(title) {.btnIcon("darkgreen" , "pen"              ,ifelse(missing(title), "Edit"  ,title)) }
-yataBtnIconCash     = function(title) {.btnIcon("purple"    , "cash-register"    ,ifelse(missing(title), "Close" ,title)) }
-yataBtnIconView     = function(title) {.btnIcon("mediumblue", "search-dollar"    ,ifelse(missing(title), "View"  ,title)) }
-yataBtnIconActive   = function(title) {.btnIcon("limegreen" , "plus-circle"      ,ifelse(missing(title), "Activar"  ,title)) }
-yataBtnIconInactive = function(title) {.btnIcon("maroon", "minus-circle"     ,ifelse(missing(title), "Desactivar"  ,title)) }
 
 .yataNumberFormat = function(value, text,bold,color) {
   cls = "yata_num"

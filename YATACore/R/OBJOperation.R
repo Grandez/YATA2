@@ -185,7 +185,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             if (!missing(idOper)) select(idOper, full=TRUE)
             tblFlows$dfCurrent
         }
-        ,getDateBegin      = function(currency) { tblOper$getDateBegin(currency) }
+#        ,getDateBegin      = function(currency) { tblOper$getDateBegin(currency) }
         ,setAlert = function(fecha=NULL) {
             if (is.null(fecha)) {
                 tblOper$setField("alert", DBDict$flag$inactive)

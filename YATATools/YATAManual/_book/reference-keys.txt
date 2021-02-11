@@ -1,9 +1,0 @@
-fig:nice-fig
-tab:nice-tab
-prerequisites
-intro
-literature
-operation
-ciclo-de-vida
-logica
-compra

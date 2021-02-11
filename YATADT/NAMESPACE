@@ -50,4 +50,4 @@ importFrom(magrittr,"%>%")
 
 # export(yataRenderDT)
 export(yataDataTable)
-export(yataDataTableFormat)
+

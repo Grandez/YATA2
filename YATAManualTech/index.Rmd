@@ -12,7 +12,10 @@ link-citations: yes
 site: bookdown::bookdown_site
 biblio-style: apalike
 config:
-    sharing: null
+  sharing: null
+output: 
+  html_document: 
+    toc: yes
 ---
 
 # Prerequisites

@@ -5,8 +5,6 @@ function(input, output, session) {
       paste("YATA", name, sep = "-")
    })
    observeEvent(input$mainMenu,{
-        if (input$mainMenu == pnl$pos)    modPositionServer(input$mainMenu, "")
-        if (input$mainMenu == pnl$oper)   modOperServer    (input$mainMenu, "")
-        if (input$mainMenu == pnl$config) modConfigServer  (input$mainMenu, "")
+        eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '')")))
     })
 }

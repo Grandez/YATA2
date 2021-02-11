@@ -1,7 +1,10 @@
 # Diccionario de datos de la BBDD
 # Contiene los codigos que se usan en la BBDD
 DBDict = list(
-    tables = list(
+    parts  = list(
+      Position     = "POSITION"
+    )
+    ,tables = list(
          Position     = "POSITION"
         ,PositionHist = "HIST_POSITION"
         ,Flows        = "FLOWS"

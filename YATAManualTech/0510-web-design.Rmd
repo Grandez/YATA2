@@ -12,7 +12,7 @@ Para ello la pagina tiene 3 divs:
 ## Barra de navegacion
 
 Le ponemos el logo por que queda bien 
-`r colorize("red", "Podriamos usarlo para cambiar de base de datos")
+`r colorize("red", "Podriamos usarlo para cambiar de base de datos")`
 
 Esta barra de navegacion debe tener un icono a la izquierda para abrir un menu lateral y otro icono a la derecha para abrir otro menu en el otro lado. 
 Cada uno de estos botones deberian indicar si estan abiertos o cerrados; es decir, cambiar el icono segun estado, y ademas hay que tener en cuenta que no todas las paginas necesitan esos menus, por lo que hay que ocultarlos o no si procede.

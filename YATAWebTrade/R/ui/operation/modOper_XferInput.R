@@ -5,15 +5,15 @@ modOperXferInput = function(id, title) {
    ,fluidRow(column(1)
       ,column(2
          ,yataFormTable(
-             list("De",       yataCombo(ns("cboFrom"), choices=list("")))
-            ,list("A",        yataCombo(ns("cboTo"),   choices=list("")))
-            ,list("Moneda",   yataCombo(ns("cboCurrency"),choices=list("")))
-            ,list("Cantidad", numericInput(ns("impAmount"), NULL, value = 0))
+             list("De",       yuiCombo(ns("cboFrom"), choices=list("")))
+            ,list("A",        yuiCombo(ns("cboTo"),   choices=list("")))
+            ,list("Moneda",   yuiCombo(ns("cboCurrency"),choices=list("")))
+            ,list("Cantidad", yuiNumericInput(ns("impAmount"), NULL, value = 0))
          )
        )
     )
    ,fluidRow(column(1), tags$div(id=ns("msg")))
    ,fluidRow(column(1)
-       ,column(4, yataBtnOK(ns("btnOK"), "Transferir"), yataBtnKO(ns("btnKO"), "Cancelar"))
+       ,column(4, yuiBtnOK(ns("btnOK"), "Transferir"), yuiBtnKO(ns("btnKO"), "Cancelar"))
     )
 )}

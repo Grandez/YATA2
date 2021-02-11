@@ -1,0 +1,58 @@
+# Persistencia
+
+
+## Bases de datos
+
+
+## Tablas y Particiones Logicas
+
+Por diseño, por optimizacion o por algun otro motivo, pueden existir "tablas" que se __extiendan__ sobre varias, por ejemplo, podemos tener algun elemento que logicamente contenga un numero "excesivo" de campos y que estos no son usados siempre de manera conjunta o se establecen relaciones 1..n
+
+Son abstracciones del modelo que incluyen varias tablas, se identifican por PRT__Nombre__
+
+### Particion de tipo I
+
+La informacion es muy extensa y no toda es necesaria en una primera instancia.
+Se me ocurre las OBB de BS que tenian mas de 400 campos o como se pagina en una BBDD
+
+En este caso partimos la tabla en una relacion 1--1--1 donde cada tabla contiene una parte de la informacion, y se estructura de acuerdo a algun criterio:
+
+Por ejemplo:
+ - Basica: Me da la informacion de la tabla 1
+ - Normal: Union de talba 1 y 2
+ - Extendida: Union de las tablas 1,2 y 3
+ - Detail: Union de todas las tablas
+ 
+Si hicieramos el producto cartesiano TABLA1 X TABLA2 obtendriamos un unico registro
+
+
+### Particion de tipo II
+
+Existe alguna relacion 1..n
+El caso tipico sería los datos de un usuario:
+
+Un usuario se puede modelar como:
+
+**1 - ID** (ejemplo DNI, Pasaporte, etc), esto nos lleva a dos campos tipoID e ID
+**1 - Nombre** Evidentemente solo tiene un nombre
+**1 - Apellido 1**
+**1 - Apellido 2**
+**n - telefonos** Puede tener un telefono fijo y n telefonos moviles, se pueden crear una tupla que tenga movil01, movil02, movil3, etc. Pero es mas optimo establecer la relacion base-moviles y no limitarlo, creando en la tupla base solo un campo: "telefono base" que es el que hay que utilizar por defecto. Normalmente no sera necesario acceder a los otros
+
+Si hicieramos el producto cartesiano TABLA1 X TABLA2 obtendriamos un conjunto de registros en los que si la clave fuera todos los campos, esta seria unica
+
+### Particion de tipo III
+
+La informacion de la tabla "padre" esta condicionada por la informacion de la tabla "hija"
+
+Ejemplo:
+
+La tabla de operaciones contiene todas las operaciones realizadas.
+Pero para la operativa normal solo se utilizan las operaciones a partir de una determinada fecha, por ejemplo, inicio de año.
+
+En estos casos, cuando se hace un SELECT * FROM OPERACIONES  se tiene que traducir a:
+
+1. Obtener la ultima fecha de inicio de las operaciones: START
+2. Obtener las operaciones a partir de esa fecha:  SELECT * FROM OPERACIONES WHERE DATE > START
+
+No tiene sentido el producto cartesiano

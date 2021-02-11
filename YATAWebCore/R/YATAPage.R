@@ -108,6 +108,19 @@ YATAPage <- function(title = NULL,id = NULL,
         , contentDiv
 #        ,shiny::tags$div(id="yataFooter", tags$span("YATA - Grandez"))
         ,shiny::tags$footer("YATA - Grandez")
+        ,tags$script('
+                                var dimension = [0, 0];
+                                $(document).on("shiny:connected", function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                                $(window).resize(function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                            ')
       ,theme = theme, lang="es") # end boostrappage
     ),
     md = FALSE

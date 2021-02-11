@@ -13,7 +13,6 @@
 
 /* en algun sitio se pone height: auto; */
 html {
-  height: 100% !important;
   min-height: 100%;
   position: relative;
 }
@@ -28,6 +27,25 @@ footer {
   width: 100%;
   height: 40px;
   color: white;
+}
+
+/*********************************/
+/* Basico                        */
+/*********************************/
+.yata-title {
+   text-align: center;
+   font-family: 'Source Sans Pro',sans-serif;
+   font-size: 30px;
+   margin-top: 20px;
+   margin-bottom: 10px;
+   font-weight: 500;
+   line-height: 1.1;
+   color: inherit;
+}
+
+
+.yataTextRight {
+    text-align-last: right;
 }
 
 /*********************************/
@@ -138,16 +156,6 @@ footer {
    height: 128px;
 }
 
-.yataTitle {
-   text-align: center;
-   font-family: 'Source Sans Pro',sans-serif;
-   font-size: 30px;
-   margin-top: 20px;
-   margin-bottom: 10px;
-   font-weight: 500;
-   line-height: 1.1;
-   color: inherit;
-}
 /*********************************/
 /* Paneles                       */
 /*********************************/

@@ -1,5 +1,5 @@
-modOperOpenInput = function(id, title) { tplOperBuyInput(id, title) }
-#   ns = NS(id)
+modOperOpenInput = function(id, title="") { tplOperBuyInput(id, title) }
+#   ns = NS(id)s
 #   tagList(
 #      if (nchar(title) > 0) yataPageTitle(title)
 #     ,fluidRow(column(4)

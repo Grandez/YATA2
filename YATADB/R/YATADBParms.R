@@ -16,9 +16,11 @@ DBParms = list(
         ,closeTime   = "003 001 004"  # Hora de cierre de las sesiones
     )
     ,group = list(
-       general   = 1
-      ,databases = 2
-      ,providers = 3
+       general   =  1
+
+      ,providers =  3
+      ,databases =  5
+      ,prefs     = 10
     )
     ,general   =  list(
         subgroup = list(
@@ -51,4 +53,7 @@ DBParms = list(
     ,providers = list(
 
     )
+   ,prefs = list(
+
+  )
 )

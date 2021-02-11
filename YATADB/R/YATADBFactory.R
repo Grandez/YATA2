@@ -24,20 +24,32 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
       ,setDB     = function(info) {
           if (missing(info)) stop("Se ha llamado a setDB sin datos")
           if (!is.null(dbAct)) dbAct$disconnect()
-          private$dbAct = connect(info)
-          private$tables    = HashMap$new()
+          private$dbAct   = connect(info)
+          private$objects = HashMap$new()
           private$dbAct
       }
+      ,get       = function(name, force = FALSE) {
+         prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")
+         full = paste0(prfx, name)
+         if (force) return (createObject(prfx, name))
+
+         if (is.null(private$objects$get(full))) {
+            obj = createObject(prfx, name)
+            private$objects$put(full, obj)
+         }
+         private$objects$get(full)
+      }
       ,getTable = function(name, force=FALSE) {
-         if (force) return (createTable(name))
-         if (is.null(private$tables$get(name))) private$tables$put(name, createTable(name))
-         private$tables$get(name)
+         if (force) return (createObject("TBL", name))
+         full = paste0("TBL", name)
+         if (is.null(private$objects$get(full))) private$objects$put(full, createObject("TBL", name))
+         private$objects$get(full)
       }
    )
    ,private = list(
        dbBase  = NULL
       ,dbAct   = NULL
-      ,tables  = HashMap$new()
+      ,objects = HashMap$new()
       ,connect = function(info) {
           if (info$engine == "MariaDB") {
               MARIADB$new(info)
@@ -47,10 +59,10 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
              stop("Datos de conexion invalidos")
           }
       }
-      ,createTable = function(name) {
+      ,createObject = function(type, name) {
          db = dbAct
          if (!is.null(DBDict$baseTables[[name]])) db = dbBase
-         eval(parse(text=paste0("TBL", name, "$new(name, db)")))
+         eval(parse(text=paste0(type, name, "$new(name, db)")))
       }
    )
 )

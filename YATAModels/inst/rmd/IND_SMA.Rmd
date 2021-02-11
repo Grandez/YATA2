@@ -1,0 +1,11 @@
+Los promedios móviles se utilizan para suavizar los datos en una matriz para ayudar a eliminar el ruido e identificar tendencias. La media móvil simple es, literalmente, la forma más simple de una media móvil. Cada valor de salida es el promedio de los n valores anteriores. En una media móvil simple, cada valor en el período de tiempo tiene el mismo peso, y los valores fuera del período de tiempo no se incluyen en el promedio. Esto hace que sea menos sensible a los cambios recientes en los datos, lo que puede ser útil para filtrar esos cambios.
+
+$$ 
+   \begin{aligned}
+   SMA = \frac{\sum_1^n target}{window}
+   \end{aligned}
+$$
+
+* __threshold__ : Porcentaje que se debe superar en el cruce del oscilador para que se considere |
+* __n__  : The Window Size is nothing but the look back period and this forms the basis of your ALMA settings.  |
+

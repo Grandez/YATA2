@@ -1,4 +1,4 @@
-modOperBuyInput = function(id, title) { tplOperBuyInput(id, title) }
+modOperBuyInput = function(id, title="") { tplOperBuyInput(id, title) }
 # modOperBuyInput = function(id) {
 #     ns = NS(id)
 #     tagList(

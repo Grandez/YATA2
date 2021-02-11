@@ -19,6 +19,26 @@ if (typeof jQuery === "undefined") {
   throw new Error("YATA requires jQuery");
 }
 
+/* Detectar la dimension de la pantalla
+
+var dimension = [0, 0];
+                                $(document).on("shiny:connected", function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                                $(window).resize(function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+
+en el server
+
+paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension[1])
+   })
+
+*/
 /* YATA
 *
   * @type Object

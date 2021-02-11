@@ -106,7 +106,7 @@ options( warn = -1
 )
 
 
-#plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
+plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
 # files.widgets = list.files("widgets", pattern="*\\.R$", full.names=TRUE, ignore.case=F)
 # sapply(files.widgets,source)
@@ -146,16 +146,6 @@ options( warn = -1
 
 #JGG addResourcePath("man", "d:/R/YATA/YATAManualUser")
 
-
-######################################
-### Paneles
-######################################
-
-pnl = list(
-   pos    = "pos"
-  ,oper   = "oper"  
-  ,config = "config"
-)
 
 ######################################
 ### Factores globales

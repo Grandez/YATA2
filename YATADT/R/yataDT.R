@@ -1,31 +1,63 @@
 yataDataTable = function(data, ...) {
-    renderDataTable(data, ...)
-}
-
-yataDataTableFormat = function(data, ...) {
     # las clases propias son las ultimas
-    # sapply si puede hace matriz, sino lista
     mt = lapply(1:ncol(data), function(x) class(data[,x]))
-#    if (is.list(mt)) {
-        mt = unlist(lapply(mt, function(x) x[[length(x)]]))
-    # }
-    # else {
-    #     mt = mt[nrow(mt),]
-    # }
-    dt = datatable(data)
+    mt = unlist(lapply(mt, function(x) x[[length(x)]]))
 
-    cols = which(mt == "yataNumber")
-    if (length(cols) > 0) dt = dt %>% yataFormatNumber(cols)
-    cols = which(mt == "yataDate")
-    if (length(cols) > 0) dt = dt %>% yataFormatDate(cols)
-
+    align = .yataGetAlignment(mt)
+    lstOpts = list()
+    lstAlign = list()
+    if (length(align$right) > 0) lstAlign = list(list(className="dt-right", targets = align$right))
+    if (length(lstAlign) > 0) lstOpts = list(columnDefs=lstAlign)
+    dt = datatable(data, rownames = FALSE, options = lstOpts, ...)
+    dt = .yataFormat(dt, mt)
     renderDataTable(dt, ...)
 }
 
-yataFormatNumber = function(dt, cols) {
-    formatCurrency(dt, columns=cols, currency="", mark=".", dec.mark=",")
+.yataFormat = function(dt, mt) {
+    for (cls in yataGetClasses()) {
+        clsname = paste0("yata", cls)
+        cols = which(mt == clsname)
+        if (length(cols) > 0) dt = eval(parse(text=paste0("yataFormat", cls,"(dt, cols)")))
+    }
+    dt
 }
+yataFormatText    = function(dt, cols) { dt }
+yataFormatLabel   = function(dt, cols) { dt }
+yataFormatNumber  = function(dt, cols) { formatCurrency(dt, columns=cols, currency="", mark=".", dec.mark=",") }
+yataFormatInteger = function(dt, cols) { formatRound  (dt, columns=cols, digits=0,    mark=".") }
+yataFormatPercentage = function(dt, cols) { formatPercentage  (dt, columns=cols, digits=2,    mark=".", dec.mark=",") }
+yataFormatAmount  = function(dt, cols) { yataFormatNumber(dt, cols) }
 yataFormatDate = function(dt,cols) {
     formatDate(dt, columns=cols, method = 'toLocaleDateString',
                    params = list('es-ES',  list(year = 'numeric', month = 'numeric', day = 'numeric')))
+}
+yataFormatTime = function(dt,cols) {
+    formatDate(dt, columns=cols, method = 'toLocaleDateString',
+                   params = list('es-ES',  list(year = 'numeric', month = 'numeric', day = 'numeric')))
+}
+yataFormatTms = function(dt,cols) {
+    formatDate(dt, columns=cols, method = 'toLocaleDateString',
+                   params = list('es-ES',  list(year = 'numeric', month = 'numeric', day = 'numeric')))
+}
+
+.yataGetAlignment = function (mt) {
+    # Simplemente, en funcion de la clase, define la alineacion
+    # En DT las columnas empiezan por cero
+    la = c()
+    ra = c()
+    ca = c()
+    for (cls in yataGetClasses()) {
+        clsname = paste0("yata", cls)
+        cols = which(mt == clsname)
+        if (length(cols) > 0) {
+            cols = cols - 1 # 0 indexed
+            if (cls %in% c("Text", "Label")) {
+                la = c(la,cols)
+            }
+            else {
+                ra = c(ra, cols)
+            }
+        }
+    }
+    list(left=la, center=ca, right=ra)
 }

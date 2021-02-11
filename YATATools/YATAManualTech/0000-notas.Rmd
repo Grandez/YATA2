@@ -1,8 +1,0 @@
-# Notas e ideas
-
-## Blog
-
-El blog es la herramienta para almacenar las notas y las ideas
-y donde recurrir para analizar las cosas
-
-El blog se puede hacer facilmente en Hugo
