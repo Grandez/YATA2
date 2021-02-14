@@ -173,7 +173,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        ,.adjustDFSession = function(prov, base, counter, df) {
            df$tms = as.POSIXct(df$tms, origin="1970-01-01")
            df$quoteVolume = NULL
-           names(data)[names(data) == "weightedAverage"] = "average"
+           names(df)[names(df) == "weightedAverage"] = "average"
 
            prov    = rep(prov, nrow(df))
            base    = rep(base, nrow(df))

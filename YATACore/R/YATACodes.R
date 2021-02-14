@@ -13,6 +13,7 @@ YATACODES = R6::R6Class("YATA.CODES"
     )
     ,tables = list(
          Position     = "Position"
+        ,Regularization = "Regularization"
         ,PositionHist = "PositionHist"
         ,Clearings    = "Clearings"
         ,Cameras      = "Cameras"
@@ -31,7 +32,7 @@ YATACODES = R6::R6Class("YATA.CODES"
 
     )
     ,flag = list(inactive=0, active=1)
-    ,oper = list( oper=1, buy=2, sell=3, xfer=4, split=5, net=6)
+    ,oper = list( oper=1, buy=2, sell=3, xfer=4, split=5, net=6, reg=10)
     ,flow = list( pending = 0
                  ,input   = 20, regInput  = 21
                  ,output  = 30, regOutput = 32

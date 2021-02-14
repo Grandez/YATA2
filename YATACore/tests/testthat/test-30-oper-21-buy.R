@@ -29,7 +29,7 @@ test_that("Open 10 BTC", {
                        ,price   = 100
    )
    expect_true(idOper > 0, label = "Buying BTC")
-   expect_equal(nrow(oper$getOperations()), 1, label="Unica operacion activa")
+   expect_equal(nrow(oper$getActive()), 1, label="Unica operacion activa")
 
    lstOper = oper$getOperation(idOper)
    expect_equal(lstOper$status, YATACodes$status$pending, label="Estado es pendiente")
@@ -80,3 +80,5 @@ test_that("Execute Operation default", {
    flows = YATAFactory$getTable(YATACodes$tables$Flows, force=TRUE)
    expect_equal(flows$rows(),    5)
 })
+
+

@@ -7,19 +7,16 @@ TBLRegularization = R6::R6Class("TBLREGULARIZATION"
          initialize = function(name, db=NULL) {
              super$initialize(name, fields=private$fields,key=key, db=db)
          }
-        ,getGlobalPosition = function() {
-            stmt = "SELECT CURRENCY, SUM(BALANCE) AS BALANCE, SUM(AVAILABLE) AS AVAILABLE, AVG(PRICE) AS PRICE"
-            group = c("CURRENCY")
-            sql(stmt, group=group)
+        ,getRegularizationDate = function(camera, currency) {
+            stmt = paste("SELECT MAX(LAST) AS LAST")
+            df = sql(stmt, where=list(camera=camera, currency=currency))
+            if (nrow(df) == 0)
+                from = as.POSIXct(1, origin="1970-01-01")
+            else {
+                from = df[1,"last"]
+            }
+            from
         }
-        ,getCameraPosition = function(camera, balance=FALSE, available=FALSE) {
-            df = table(camera=camera)
-            if (balance)   df = df[df$balance   > 0,]
-            if (available) df = df[df$available > 0,]
-            df
-        }
-        ,getPosition = function(camera, currency) { table(camera= camera, currency=currency) }
-        ,getCameras  = function() { uniques(c("camera")) }
      )
      ,private = list (
            key    = c("camera", "currency")
@@ -32,7 +29,7 @@ TBLRegularization = R6::R6Class("TBLREGULARIZATION"
              ,sell      = "SELL"
              ,price     = "PRICE"
              ,since     = "SINCE"
-             ,tms       = "TMS"
+             ,last      = "LAST"
           )
      )
 )

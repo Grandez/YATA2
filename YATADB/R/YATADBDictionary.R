@@ -5,7 +5,9 @@ DBDict = list(
       Position     = "POSITION"
     )
     ,tables = list(
-         Position     = "POSITION"
+         Cameras      = "CAMERAS"
+        ,Position     = "POSITION"
+        ,Regularization = "REGULARIZATION"
         ,PositionHist = "HIST_POSITION"
         ,Flows        = "FLOWS"
         ,Operations   = "OPERATIONS"
@@ -17,7 +19,6 @@ DBDict = list(
     )
     ,baseTables = list(
          Currencies   = "CURRENCIES"
-        ,Cameras      = "CAMERAS"
         ,Exchanges    = "EXCHANGES"
         ,Parameters   = "PARMS"
         ,Providers    = "PROVIDERS"

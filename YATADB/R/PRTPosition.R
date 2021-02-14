@@ -1,41 +1,22 @@
 PRTPosition = R6::R6Class("PART.POSITION"
-    ,inherit    = YATATable
+    ,inherit    = TBLPosition
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
          initialize = function(name, db=NULL) {
-             super$initialize(name, fields=private$fields,key=key, db=db)
-             private$tblPosition       = TBLPosition$new("Position", db)
+             super$initialize(name, db=db)
              private$tblRegularization = TBLRegularization$new("Regularization", db)
-
          }
-        ,getGlobalPosition = function() {
-            tblPosition$getGlobalPosition()
+        ,select = function(camera, currency, create=FALSE) {
+            super$select(camera=camera, currency=currency, create=create)
+            tblRegularization$select(camera=camera, currency=currency, create=create)
         }
-        # ,getCameraPosition = function(camera, balance=FALSE, available=FALSE) {
-        #     df = table(camera=camera)
-        #     if (balance)   df = df[df$balance   > 0,]
-        #     if (available) df = df[df$available > 0,]
-        #     df
-        # }
-        # ,getPosition = function(camera, currency) { table(camera= camera, currency=currency) }
-        ,getCameras  = function() { tblPosition$uniques(c("camera")) }
-
+        ,getPrice    = function() {
+            from = tblRegularization$getRegularizationDate(camera, currency)
+        }
      )
      ,private = list (
-           key    = c("camera", "currency")
-          ,tblPosition = NULL
-          ,tblRegularization = NULL
-          ,fields = list(
-              camera    = "CAMERA"
-             ,currency  = "CURRENCY"
-             ,balance   = "BALANCE"
-             ,available = "AVAILABLE"
-             ,buy       = "COST"
-             ,net       = "NET"
-             ,tms       = "TMS"
-             ,cc        = "CC"
-          )
+         tblRegularization = NULL
      )
 )

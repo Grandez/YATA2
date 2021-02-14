@@ -14,9 +14,11 @@ CREATE TABLE POSITION  (
    ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
    ,BALANCE     DOUBLE      DEFAULT 0.0 -- Saldo real 
    ,AVAILABLE   DOUBLE      DEFAULT 0.0 -- Saldo disponible
+   ,PRICE       DOUBLE      DEFAULT 1.0   -- Precio neto de venta   
    ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
    ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido   
-   ,PRICE       DOUBLE      DEFAULT 1   -- Precio neto de venta
+   ,PRICEBUY    DOUBLE      DEFAULT 1.0 -- Comprado
+   ,PRICESELL   DOUBLE      DEFAULT 1.0 -- Vendido   
    ,SINCE       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
    ,LAST        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
@@ -32,13 +34,15 @@ CREATE TABLE REGULARIZATION  (
    ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
    ,BALANCE     DOUBLE      DEFAULT 0.0 -- Saldo real 
    ,AVAILABLE   DOUBLE      DEFAULT 0.0 -- Saldo disponible
+   ,PRICE       DOUBLE      DEFAULT 1.0   -- Precio neto de venta   
    ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
-   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido      
-   ,PRICE       DOUBLE      DEFAULT 1   -- Precio neto de venta
+   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido   
+   ,PRICEBUY    DOUBLE      DEFAULT 1.0 -- Comprado
+   ,PRICESELL   DOUBLE      DEFAULT 1.0 -- Vendido   
    ,SINCE       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP    
    ,LAST        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
-   ,PRIMARY KEY ( CAMERA, CURRENCY )
+   ,PRIMARY KEY ( CAMERA, CURRENCY, LAST DESC )
 );
 
 -- Tabla de Cuentas/Camara historica

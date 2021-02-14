@@ -2,6 +2,9 @@
 /* Principal                     */
 /*********************************/
 
+td .selectize-control {
+    margin-bottom: 0;
+}
 .yata-primary   { background-color: #007bff; }
 .yata-secondary { background-color: #6c757d; }
 .yata-success   { background-color: #28a745; }
@@ -162,6 +165,7 @@ footer {
 .yata-panel-content {
    display: flex;
    flex-flow: row nowrap;
+   padding-top: 12px;
 /*   background-color: DodgerBlue; */
 }
 

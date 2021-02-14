@@ -19,7 +19,7 @@ expect_true(idOper > 0, label = "Buying BTC")
 test_that("Sell 10 BTC", {
    idOper <<- oper$sell(camera="TEST",base="EUR",counter="BTC",amount=10,price=100)
    expect_true(idOper > 0, label = "Buying BTC")
-   expect_equal(nrow(oper$getOperations()), 1, label="Unica operacion activa")
+   expect_equal(nrow(oper$getActive()), 1, label="Unica operacion activa")
    oper$select(idOper)
 
    expect_equal(oper$current$amount, -10, label="Amount must be -10")

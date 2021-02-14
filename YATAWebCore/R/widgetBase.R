@@ -10,11 +10,28 @@ yuiLabelText = function(id, label=NULL, value="") {
 # yuiLabelText = function(id, label=NULL, inline=TRUE) {
 #   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 # }
-yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
+yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+}
+updLabelNumeric   = function(value, dec=-1, bold=TRUE, color=FALSE) {
+  text = format(value, big.mark = ".", decimal.mark=",")
+  if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
+  .updLabelNumber(value, text, bold, color)
 }
 yuiLabelInteger = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+}
+updLabelInteger   = function(value, bold=TRUE, color=FALSE) {
+  text = format(round(value), big.mark = ".", decimal.mark=",")
+  .updLabelNumber(value, text, bold, color)
+}
+yuiLabelPercentage = function(id, label=NULL, inline=TRUE) {
+  htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+}
+
+updLabelPercentage   = function(value, bold=TRUE, color=FALSE) {
+  text = format(value, big.mark = ".", decimal.mark=",", nsmall=2)
+  .updLabelNumber(value, text, bold, color)
 }
 
 yuiLabelDate = function(id, label=NULL, inline=TRUE) {
@@ -68,8 +85,8 @@ yuiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
     if (!is.null(choices)) choice = choices
     selectInput(id, lbl, choice, selected)
 }
-updCombo = function(id, lbl=NULL, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
-    updateSelectInput(session=session, inputId=id,label=lbl,choices = choices, selected = selected)
+updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
+    updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
 }
 
 yuiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = NULL) {
@@ -116,4 +133,15 @@ yuiArea = function (inputId, label=NULL, value = "", width = NULL, height = NULL
         tags$label(label, `for` = inputId), tags$textarea(id = inputId,
         class = "form-control", placeholder = placeholder, style = style,
         rows = rows, cols = cols, value))
+}
+
+.updLabelNumber = function(value, text,bold,color) {
+  cls = "yata_num"
+  if (bold) cls = paste(cls, "yata_num_bold")
+  if (color) {
+     col = if(value > 0) cls = paste(cls, "yata_num_pos")
+     col = if(value < 0) cls = paste(cls, "yata_num_neg")
+  }
+  lbl = paste0("<span class='", cls, "'>",text,"</span>")
+  renderUI({HTML(lbl)})
 }

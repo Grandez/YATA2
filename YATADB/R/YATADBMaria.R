@@ -15,7 +15,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
        }
       ,finalize = function() {
           if (!is.null(connTran)) {
-              rollback()
+              commit()
               disconnect(connTran)
           }
           if (!is.null(connRead)) disconnect(connRead)
@@ -94,7 +94,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
          cols  = paste(names(data), collapse = ",")
          marks = paste(rep("?", length(data)), collapse=",")
          sql = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
-         execute(sql, values, isolated)
+         execute(sql, data, isolated)
       }
       ,count = function(table, filter) {
            sql = paste("SELECT COUNT(*) FROM ", table)

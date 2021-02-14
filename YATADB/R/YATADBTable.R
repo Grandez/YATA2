@@ -106,8 +106,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
          df = db$query(sql, filter$values)
          if (nrow(df) == 0) {
             if (create) {
-               self$add(list(...))
-               return (select(...))
+                self$add(list(...))
+                df = db$query(sql, filter$values)
             }
             else {
                return (FALSE)

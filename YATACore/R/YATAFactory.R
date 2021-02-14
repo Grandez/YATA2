@@ -24,12 +24,12 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           # Aqui hay que crear los parametros y conectar si es necesario
           message("Factory inicializada")
        }
-      ,finalize = function() {
+      ,finalize  = function() {
          if (!is.null(DBFactory))   DBFactory$finalize()
          if (!is.null(ProvFactory)) ProvFactory$finalize()
          private$parms = NULL
       }
-      ,getDBName   = function() {
+      ,getDBName = function() {
          db = getDB()
          if (!is.null(db)) {
             db$name
@@ -38,10 +38,13 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
             NULL
          }
       }
-      ,getParms    = function()                    { private$parms             }
-      ,getDB       = function()                    { DBFactory$getDB()         }
-      ,setDB       = function(connData)            { DBFactory$setDB(connData) }
-      ,changeDB    = function(name) {
+      ,getParms  = function()                    {
+          if (is.null(private$parms)) private$parms = OBJParms$new(private$DBFactory)
+              private$parms
+       }
+      ,getDB     = function()                    { DBFactory$getDB()         }
+      ,setDB     = function(connData)            { DBFactory$setDB(connData) }
+      ,changeDB  = function(name) {
          private$objects = HashMap$new()
          connInfo        = private$parms$setLastOpen(name)
          setDB(connInfo)

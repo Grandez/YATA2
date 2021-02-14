@@ -8,28 +8,29 @@ tplOperBuyServer = function(id, full, pnl) {
          FALSE
       }
       resetValues = function() {
-          updateNumericInput(session, "impAmount", value=0)
-          updateNumericInput(session, "impPrice" , value=0)
+          updNumericInput("impAmount", value=0)
+          ypdNumericInput("impPrice" , value=0)
       }
       df = pnl$getCounters()
-      updateSelectInput(session, "cboCounter",    choices=pnl$makeCombo(df))
+      updCombo("cboCounter",    choices=pnl$makeCombo(df))
 
       observeEvent(input$cboCounter, {
-          updateSelectInput(session, "cboCamera",    choices=pnl$cboCamerasCounter(input$cboCounter))
+          updCombo("cboCamera", choices=pnl$cboCamerasCounter(input$cboCounter))
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
+          browser()
           dfPos = pnl$position$getCameraPosition(input$cboCamera, available = TRUE) 
-          updateSelectInput(session, "cboBase",     choices=pnl$cboCurrency(input$cboCamera, TRUE))
+          updCombo("cboBase", choices=pnl$cboCurrency(input$cboCamera, TRUE))
           pnl$cameras$select(input$cboCamera)
           fee = pnl$cameras$current$taker
-          output$lblFee = renderUI({HTML(yataTextPercent(fee))})
+          output$lblFee = updLabelPercentage(fee)
       },ignoreInit = TRUE)   
       observeEvent(input$cboBase, {
          pnl$vars$available = 0
          df = pnl$position$getPosition(input$cboCamera, input$cboBase) 
          if (nrow(df) != 0) pnl$vars$available = df[1,"available"]
-         output$lblAvailable = renderUI({HTML(yataTextNumeric(pnl$vars$available))})
-         output$lblNew       = renderUI({HTML(yataTextNumeric(pnl$vars$available))})
+         output$lblAvailable = updLabelNumeric(pnl$vars$available)
+         output$lblNew       = updLabelNumeric(pnl$vars$available)
       })
       observeEvent(input$impAmount | input$impPrice, {
           if (!is.na(input$impAmount) && !is.na(input$impPrice)) {
@@ -37,10 +38,10 @@ tplOperBuyServer = function(id, full, pnl) {
                  imp  = input$impAmount * input$impPrice
                  iFee = imp * fee / 100
                  iTotal = imp + iFee
-                 output$lblImp     = renderUI({HTML(yataTextNumeric(imp))})
-                 output$lblFeeImp  = renderUI({HTML(yataTextNumeric(iFee))})
-                 output$lblTotBase = renderUI({HTML(yataTextNumeric(iTotal))})
-                 output$lblNew     = renderUI({HTML(yataTextNumeric(pnl$vars$available - iTotal))})
+                 output$lblImp     = updLabelNumeric(imp)
+                 output$lblFeeImp  = updLabelNumeric(iFee)
+                 output$lblTotBase = updLabelNumeric(iTotal)
+                 output$lblNew     = updLabelNumeric(pnl$vars$available - iTotal)
              } 
           }
       },ignoreInit = TRUE, ignoreNULL = TRUE)

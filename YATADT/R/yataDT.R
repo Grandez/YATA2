@@ -10,7 +10,7 @@ yataDataTable = function(data, ...) {
     if (length(lstAlign) > 0) lstOpts = list(columnDefs=lstAlign)
     dt = datatable(data, rownames = FALSE, options = lstOpts, ...)
     dt = .yataFormat(dt, mt)
-    renderDataTable(dt, ...)
+    renderDataTable(dt, style='auto', ...)
 }
 
 .yataFormat = function(dt, mt) {

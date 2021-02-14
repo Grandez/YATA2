@@ -18,6 +18,7 @@ modTableServer <- function(id, full) {
    }
    moduleServer(id, function(input, output, session) {
       df = makeDF()
+      browser()
       output$tblPos01 = updTablePosition(id=ns("posGlobal"), df)
   })
 }    

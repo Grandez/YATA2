@@ -19,7 +19,7 @@ modOperPosServer = function(id, full, pnl) {
          df = pnl$loadOperations(YATACodes$status$pending)
          if (nrow(df) == 0) {
              shinyjs::hide(ns2("opPending"))
-             output$tblPending = yataRenderTable(df)
+#             output$tblPending = yataRenderTable(df)
          } else {
              browser()
              shinyjs::show(ns("opPending"))
@@ -29,30 +29,29 @@ modOperPosServer = function(id, full, pnl) {
                        ,yataTblButton(full, table, "Rejected", yataBtnIconRefuse())
                        ,yataTblButton(full, table, "Cancel",   yataBtnIconDel())
              )
-             output$tblPending = yataRenderTable(df, buttons=btns)
+             browser()
+             output$tblPending = updTableOperations(df, buttons=btns)
          }
          df = pnl$loadOperations(YATACodes$status$accepted)
          if (nrow(df) == 0) {
              shinyjs::hide(ns2("opAccepted"))
-             output$tblAccepted = yataRenderTable(df)
          } else {
              table = "accepted"
              df = prepareTable(df)
              btns = c(yataTblButton(full, table, "Executed", yataBtnIconCloud("Executed")))
-             output$tblAccepted = yataRenderTable(df, buttons=btns)
+             output$tblAccepted = updTableOperations(df, buttons=btns)
          }
 
          df = pnl$loadOperations(YATACodes$status$executed)
          if (nrow(df) == 0) {
              shinyjs::hide(ns2("opExecuted"))
-             output$tblOpen = yataRenderTable(df)
          } else {
              table = "executed"
              df = prepareTable(df)
              btns = c( yataTblButton(full, table, "Close", yataBtnIconCash())
                       ,yataTblButton(full, table, "View", yataBtnIconView())
              )
-             output$tblOpen = yataRenderTable(df, buttons=btns)
+             output$tblOpen = updTableOperations(df, buttons=btns)
          }
          pnl$valid = TRUE
       }

@@ -1,8 +1,8 @@
 localTest <<- TRUE
 
 unloadNamespace("YATACore")
-unloadNamespace("YATADB")
 unloadNamespace("YATAProviders")
+unloadNamespace("YATADB")
 unloadNamespace("YATATools")
 
 library(YATACore)
@@ -12,10 +12,11 @@ YATAFactory <<- YATACore::YATAFACTORY$new()
 
 initDB = function() {
     parms = YATAFactory$getParms()
-    dbConn = parms$getList(2,2) # TEST DataBase
+    dbConn = parms$getList(5,2) # TEST DataBase
     db     = YATAFactory$setDB(dbConn)
     db$begin()
     db$execute(paste("DELETE FROM ", YATACodes$tables$Position))
+    db$execute(paste("DELETE FROM ", YATACodes$tables$Regularization))
     db$execute(paste("DELETE FROM ", YATACodes$tables$Flows))
     db$execute(paste("DELETE FROM ", YATACodes$tables$Operations))
     db$execute(paste("DELETE FROM ", YATACodes$tables$Cameras))

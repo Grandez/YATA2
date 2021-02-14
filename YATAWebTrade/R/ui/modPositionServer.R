@@ -120,7 +120,9 @@ modPosServer <- function(id, full) {
                monitor$day     = data[[ctc]]$day
                monitor$week    = data[[ctc]]$week
                monitor$price   = 0
-               if (nrow(df) > 0) monitor$price = df[df$currency == ctc, "price"]
+               if (nrow(df) > 0 && nrow(df[df$currency == ctc,]) > 0) {
+                  monitor$price = df[df$currency == ctc, "price"] 
+               }  
                pnl$monitors$put(ctc, monitor)
                updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
           }
@@ -138,7 +140,7 @@ modPosServer <- function(id, full) {
                                  df  = pnl$position$getCameraPosition(camera)
                                  tbl = paste0("tblPos", sfx) 
                                  eval(parse(text=paste0( "output$tblPos", sfx
-                                                        ," = yataTablePosition(id=ns('"
+                                                        ," = updTablePosition(id=ns('"
                                                         ,paste0("pos", sfx), "'),   df)")))
                       })
           insertMonitors(unique(pnl$data$global$currency))

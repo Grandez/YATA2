@@ -6,7 +6,12 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
     ,public = list(
         initialize = function(idOper) {
             super$initialize()
-            createTables()
+            private$tblOper        = YATAFactory$getTable(YATACodes$tables$Operations)
+            private$tblFlows       = YATAFactory$getTable(YATACodes$tables$Flows)
+            private$tblOperControl = YATAFactory$getTable(YATACodes$tables$OperControl)
+            private$tblOperLog     = YATAFactory$getTable(YATACodes$tables$OperLog)
+            private$objPos         = YATAFactory$getObject(YATACodes$object$position)
+
             if (!missing(idOper)) getOperation(idOper)
         }
         ##############################
@@ -28,7 +33,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             self$current$type   = type
             self$current$id     = YATATools::getID()
             self$current$idOper = self$current$id
-            if (type == YATACodes$oper$sell) self$current$amount = self$current$amount * -1
+            if (type == YATACodes$oper$sell) self$current$amount = current$amount * -1
             tryCatch({
                 db$begin()
                 if (type == YATACodes$oper$xfer) operXfer()
@@ -180,7 +185,10 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             res = tblOper$table(id = id)
             if (nrow(res) != 1) return (NULL)
             as.list(res)
-         }
+        }
+        ,getOperations     = function(...) {
+            tblOper$table(...)
+        }
         ,getFlows          = function(idOper)    {
             if (!missing(idOper)) select(idOper, full=TRUE)
             tblFlows$dfCurrent
@@ -203,7 +211,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         tblOper        = NULL
        ,tblOperControl = NULL
        ,tblOperLog     = NULL
-       ,tblPos         = NULL
+       ,objPos         = NULL
        ,tblFlows       = NULL
        ,addRecord      = function(table) {
              cols = names(table$getColNames())
@@ -227,24 +235,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                addRecord(tblOperLog)
             }
         }
-       ,updatePosition    = function(currency, amount, balance=TRUE, available=TRUE, price = 0.0) {
-           # Actualiza la cuenta currency (base o counter)
-           tblPos$select(camera=current$camera,currency=currency, create=TRUE)
-           oldAv    = tblPos$getField("available")
-           oldBa    = tblPos$getField("balance")
-           oldPrice = tblPos$getField("price")
-
-           if (price == 0) price = oldPrice
-           if (available)  tblPos$setField("available",  oldAv + amount)
-           if (balance  )  tblPos$setField("balance",    oldBa + amount)
-
-           if ((oldBa + amount) != 0) {
-               medio = (oldBa * oldPrice) + (amount * price)
-               medio = medio / (oldBa + amount)
-               tblPos$setField("price", medio)
-           }
-           tblPos$apply()
-       }
        ,updateOperControl = function(fee=0,gas=0) {
            tblOperControl$select(id=self$current$id, create=TRUE)
            tblOperControl$addField(DBDict$fields$fee, fee)
@@ -266,23 +256,22 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
           self$current$base    = self$current$currency
           self$current$counter = self$current$currency
 
-          # Si el dinero es de fuera, no se genera
+          # Descontar de la fuente si no es externa
           if (self$current$from != "EXT") {
-              # Descontar de la fuente
               amount = self$current$amount * -1
               self$current$camera = self$current$from
               addFlow (YATACodes$flow$xferOut, self$current$base, amount, 1)
-              updatePosition(self$current$currency, amount, TRUE, TRUE, 1)
           }
-          # Incrementar destino
+
+          # regularizar el destino si no es externo
           if (self$current$to != "EXT") {
               self$current$camera = self$current$to
               addFlow (YATACodes$flow$xferIn,  self$current$counter, self$current$amount, 1)
-              updatePosition(self$current$currency, self$current$amount, TRUE, TRUE, 1)
           }
+          objPos$transfer(self$current$from, self$current$to, self$current$currency, self$current$amount)
        }
        ,operOper     = function() {
-
+           # Abre una operacion de compra o venta
            self$current$active = YATACodes$flag$active
            self$current$status = YATACodes$status$pending
 
@@ -294,12 +283,18 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            addRecord(private$tblOper)
            addRecord(private$tblOperControl)
 
-           amount = (self$current$amount * self$current$price) * -1
-           # Si es una venta no se actualiza disponible
-           if (current$type != YATACodes$oper$sell)
-               updatePosition(current$base, amount, FALSE, TRUE)
+           amount   = (self$current$amount * self$current$price) * -1
+           currency = current$base
+           # Si es venta descontamos counter, si no base
+           if (current$type == YATACodes$oper$sell) {
+               currency = current$counter
+               amount   = self$current$amount
+           }
+           objPos$updateAvailable(current$camera, currency, amount)
        }
        ,acceptBuy    = function(price, amount, fee) {
+           # Acepta una compra, puede haber cambiado el precio y la cantidad
+           # Se aplican las tasas
             oldPrice  = current$price
             oldAmount = current$amount
             newPrice  = ifelse(price  == 0, oldPrice,  price)
@@ -319,9 +314,11 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                if (impFee != 0) {
                    addFlow(YATACodes$flow$fee, self$current$base, impFee,    newPrice)
                    updateOperControl(fee = (impFee * -1))
+                   objPos$updateBalance(current$camera, current$base, impFee * -1)
                }
-               updatePosition(self$current$base, (imp + impFee) * -1, TRUE, FALSE)
-               if (diffAmount != 0) updatePosition(currency, diffAmount, FALSE, TRUE)
+               if (diffAmount != 0) objPos$updateAvailable(current$camera, current$base, diffAmount)
+               objPos$update(current$camera, current$base, newAmount * newPrice * -1, newPrice, FALSE)
+
                db$commit()
                FALSE
             },error = function(cond) {
@@ -331,6 +328,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             })
        }
        ,acceptSell   = function(price, amount, fee) {
+           # Acepta una compra, puede haber cambiado el precio y la cantidad
             oldPrice  = current$price
             oldAmount = current$amount
             newPrice  = ifelse(price  == 0, oldPrice,  price)
@@ -350,10 +348,11 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                addFlow(YATACodes$flow$pending, current$base, newAmount * -1, newPrice)
                if (impFee != 0) {
                    addFlow(YATACodes$flow$fee, self$current$counter, impFee,    newPrice)
-                   updateOperControl(fee = (impFee * -1))
+                   objPos$updateBalance(current$camera, current$base, impFee * -1)
                }
-               updatePosition(current$counter, newAmount + (impFee * -1), TRUE, TRUE)
-               if (diffAmount != 0) updatePosition(current$counter, diffAmount, FALSE, TRUE)
+               if (diffAmount != 0) objPos$updateAvailable(current$camera, current$counter, diffAmount)
+               objPos$update(current$camera, current$counter, newAmount, newPrice, FALSE)
+
                db$commit()
                FALSE
             },error = function(cond) {
@@ -364,19 +363,21 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
        }
        ,executeBuy   = function(gas = 0) {
-               flowType = ifelse(current$type == YATACodes$oper$sell
-                                ,YATACodes$flow$output
-                                ,YATACodes$flow$input)
-               addFlow(YATACodes$flow$input, self$current$counter, current$amount, 1) # current$price)
-               if (gas != 0)  {
-                   gas = (gas * current$amount) / 100
-                   addFlow(YATACodes$flow$gas, current$counter, gas * -1, 1) #current$price)
-               }
-               nAmount = current$amount - gas
-               updatePosition(current$counter, nAmount, TRUE, TRUE, price=current$price)
-               updateOperControl(gas=gas)
+           # Ejecuta una compra
+           flowType = ifelse(current$type == YATACodes$oper$sell
+                            ,YATACodes$flow$output
+                            ,YATACodes$flow$input)
+           addFlow(YATACodes$flow$input, self$current$counter, current$amount, 1) # current$price)
+           if (gas != 0)  {
+               gas = (gas * current$amount) / -100
+               addFlow(YATACodes$flow$gas, current$counter, gas, 1) #current$price)
+               objPos$updateBalance(current$camera, current$counter, gas, available=TRUE)
+           }
+           updateOperControl(gas=gas)
+           objPos$update(current$camera, current$counter, current$amount, current$price)
         }
        ,executeSell  = function(gas = 0) {
+           # Ejecuta una venta
            tblFlows$select(idOper = current$idOper, type = YATACodes$flow$pending)
            tblFlows$set(type = YATACodes$flow$input)
            tblFlows$apply()
@@ -384,14 +385,15 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            if (gas != 0)  {
                gas = (gas * current$amount) / -100
                addFlow(YATACodes$flow$gas, current$counter, gas, 1) #current$price)
-               updatePosition(current$counter, gas, TRUE, TRUE, 1)
-            }
-            updatePosition(current$base, current$amount * current$price * -1, TRUE, TRUE)
-            updateOperControl(gas=gas)
+               objPos$updateBalance(current$camera, current$counter, gas, available=TRUE)
+           }
+           updateOperControl(gas=gas)
+           objPos$update(current$camera, current$base, current$amount * current$price * -1, current$price)
+
         }
        ,createTables = function() {
             private$tblOper        = YATAFactory$getTable(YATACodes$tables$Operations)
-            private$tblPos         = YATAFactory$getTable(YATACodes$tables$Position)
+#            private$prtPos         = YATAFactory$getTable(YATACodes$tables$Position)
             private$tblFlows       = YATAFactory$getTable(YATACodes$tables$Flows)
             private$tblOperControl = YATAFactory$getTable(YATACodes$tables$OperControl)
             private$tblOperLog     = YATAFactory$getTable(YATACodes$tables$OperLog)

@@ -14,14 +14,14 @@ TBLPosition = R6::R6Class("TBLPOSITION"
             group = c("CURRENCY")
             sql(stmt, group=group)
         }
-        # ,getCameraPosition = function(camera, balance=FALSE, available=FALSE) {
-        #     df = table(camera=camera)
-        #     if (balance)   df = df[df$balance   > 0,]
-        #     if (available) df = df[df$available > 0,]
-        #     df
-        # }
-        # ,getPosition = function(camera, currency) { table(camera= camera, currency=currency) }
-        # ,getCameras  = function() { uniques(c("camera")) }
+        ,getCameraPosition = function(camera, balance=FALSE, available=FALSE) {
+            df = table(camera=camera)
+            if (balance)   df = df[df$balance   > 0,]
+            if (available) df = df[df$available > 0,]
+            df
+        }
+        ,getPosition = function(camera, currency) { table(camera= camera, currency=currency) }
+        ,getCameras  = function() { uniques(c("camera")) }
      )
      ,private = list (
            key    = c("camera", "currency")
@@ -30,9 +30,11 @@ TBLPosition = R6::R6Class("TBLPOSITION"
              ,currency  = "CURRENCY"
              ,balance   = "BALANCE"
              ,available = "AVAILABLE"
+             ,price     = "PRICE"
              ,buy       = "BUY"
              ,sell      = "SELL"
-             ,price     = "PRICE"
+             ,priceBuy  = "PRICEBUY"
+             ,priceSell = "PRICESELL"
              ,since     = "SINCE"
              ,last      = "LAST"
              ,cc        = "CC"

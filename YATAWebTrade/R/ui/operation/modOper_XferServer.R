@@ -7,19 +7,19 @@ modOperXferServer = function(id, full, pnl) {
           res 
        }
        reset = function() {
-          updateSelectInput(session, "cboTo", selected="GRAL")
-          updateNumericInput(session, "impAmount", value = 0)
+          updCombo("cboTo", selected="GRAL")
+          updNumericInput("impAmount", value = 0)
        }
-       updateSelectInput(session, "cboFrom",    choices=c("Externo"="EXT", pnl$cboCameras(full=TRUE)))
+       updCombo("cboFrom",    choices=c("Externo"="EXT", pnl$cboCameras(full=TRUE)))
        observeEvent(input$cboFrom, {
 #          yataMsgReset(ns2("msg")) 
           if (input$cboFrom == "EXT") {
-              updateSelectInput(session, "cboTo",       choices=pnl$cboCameras())
-              updateSelectInput(session, "cboCurrency", choices=c("EUR - Euro" = "EUR"))
+              updCombo("cboTo",       choices=pnl$cboCameras())
+              updCombo("cboCurrency", choices=c("EUR - Euro" = "EUR"))
           }
          else {
-              updateSelectInput(session, "cboTo",       choices=c("Externo"="EXT", pnl$cboCameras(exclude=input$cboFrom)))
-              updateSelectInput(session, "cboCurrency", choices=pnl$cboCurrency(input$cboFrom, available=TRUE))
+              updCombo("cboTo",       choices=c("Externo"="EXT", pnl$cboCameras(exclude=input$cboFrom)))
+              updCombo("cboCurrency", choices=pnl$cboCurrency(input$cboFrom, available=TRUE))
          }
        }, ignoreInit = TRUE)
        observeEvent(input$btnKO, { output$msg = renderText({""}); reset() })

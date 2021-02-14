@@ -4,19 +4,6 @@ yataPageTitle = function(title) {
 yataTitle = function(txt) {
   div(class="yata-title", txt)
 }
-# Componente que muestra una lista de opciones en modo tabla
-# Pone un columna de error
-yataFormTable = function(...) {
-  d = tags$div(class="yataCentered")
-  tbl = tags$table(class="yataForm")
-  rows = lapply(list(...), function(item) {
-                row = tags$tr()
-                items = lapply(item, function(col) tags$td(col))
-                #cellMsg = tags$td()
-                tagAppendChildren(row, items) #list.append(items, cellMsg))
-               })
-  tagAppendChild(d,tagAppendChildren(tbl, rows))
-}
 
 yataRowButtons = function(...) { div(class="yata-row-buttons", ...) }
 
@@ -31,27 +18,6 @@ yataTblButton = function(id, table, label, btn) {
    paste(base, clk, substr(data, res[1], 10000L))
 }
 
-
-
-.yataNumberFormat = function(value, text,bold,color) {
-  cls = "yata_num"
-  if (bold) cls = paste(cls, "yata_num_bold")
-  if (color) {
-     col = if(value > 0) cls = paste(cls, "yata_num_pos")
-     col = if(value < 0) cls = paste(cls, "yata_num_neg")
-  }
-  paste0("<span class='", cls, "'>",text,"</span>")
-}
-
-yataTextNumeric   = function(value, dec=-1, bold=TRUE, color=FALSE) {
-  text = format(value, big.mark = ".", decimal.mark=",")
-  if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
-  .yataNumberFormat(value, text,bold, color)
-}
-yataTextPercent   = function(value, bold=TRUE, color=FALSE) {
-  text = format(value, big.mark = ".", decimal.mark=",", nsmall=2)
-  .yataNumberFormat(value, text,bold, color)
-}
 
 yataLabel = function(text) { tags$span(text) }
 yataLabelNumeric = function(value, dec=-1) { tags$span(style="text-align: right", yataTextNumeric(value,dec)) }

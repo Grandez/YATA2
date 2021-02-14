@@ -19,6 +19,5 @@ INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE) VALUES               ( 
 INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE) VALUES               ( "BISQ"     ,"Bisq"                ,0,     0, 0);
 INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE) VALUES               ( "BBIT"     ,"ByBit"               ,0,     0, 0);
 INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE) VALUES               ( "FTX"      ,"FTX"                 ,0,     0, 0);
--- source ctc_dat_ctc.sql
                                                          
 COMMIT;

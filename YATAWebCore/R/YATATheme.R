@@ -1,10 +1,15 @@
 YATATheme = function(base = "cerulean") {
     bslib::bs_theme(bootswatch = base) %>%
+                   .addBase() %>%
                    .addDeclarations() %>%
                    .addRules() %>%
-                   .addRulesPosition
+                   .addRulesTables()
 }
 
+.addBase = function(theme) {
+    theme = bs_add_rules(theme, "body { line-height: 1; }")
+    theme
+}
 .addDeclarations = function(theme) {
     # dt <- system.file("extdata/www/yata", "yatadt.scss", package = "YATAWebCore")
     # bs_add_rules(theme, sass::sass_file(dt))
@@ -26,8 +31,25 @@ YATATheme = function(base = "cerulean") {
 
 }
 
-.addRulesPosition = function(theme) {
-    theme = bs_add_rules(theme, "table.dataTable.display.position{ background-color: white; }")
+.addRulesTables = function (theme) {
+    theme =  theme %>%
+            .addRulesTableGeneral()   %>%
+            .addRulesTablePosition()  %>%
+            .addRulesTableOperation() %>%
+    theme
+}
+.addRulesTableGeneral = function(theme) {
+    theme = bs_add_rules(theme, " table.dataTable.display { background-color: white; }")
     theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
+    theme
+}
+.addRulesTablePosition = function(theme) {
+    # theme = bs_add_rules(theme, "table.dataTable.display.position{ background-color: white; }")
+    # theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
+    theme
+}
+.addRulesTableOperation = function(theme) {
+    # theme = bs_add_rules(theme, "table.dataTable.display.position{ background-color: white; }")
+    # theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
     theme
 }

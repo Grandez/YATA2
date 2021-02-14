@@ -1,6 +1,6 @@
 modOperXferInput = function(id, title) {
    ns = NS(id)
-   tagList(  
+   main = tagList(  
    yataRow(align="center", h2("Transferir entre cuentas"))
    ,fluidRow(column(1)
       ,column(2
@@ -12,8 +12,8 @@ modOperXferInput = function(id, title) {
          )
        )
     )
-   ,fluidRow(column(1), tags$div(id=ns("msg")))
-   ,fluidRow(column(1)
-       ,column(4, yuiBtnOK(ns("btnOK"), "Transferir"), yuiBtnKO(ns("btnKO"), "Cancelar"))
-    )
-)}
+    ,fluidRow(column(1), tags$div(id=ns("msg")))
+    ,fluidRow(column(1), column(6, yuiYesNo("Transferir", "Cancelar", ns("tpl"))))
+  )
+  list(left=NULL, main=main, right=NULL)
+}
