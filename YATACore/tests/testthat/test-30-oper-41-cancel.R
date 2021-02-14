@@ -1,4 +1,4 @@
-context("Open Position Simple with comments")
+context("Cancel Operation")
 
 # Ciclo de vida de una operacion simple
 # Abrir / Aceptar / Ejecutar / Vender / Aceptar / Ejecutar
@@ -23,39 +23,47 @@ test_that("Environment correct", {
    expect_equal(cam1[1,"balance"],    2000)
 
 })
-test_that("Open 10 BTC", {
+
+test_that("Open and Delete operation", {
    idOper <<- oper$open(camera  = "TEST"
                        ,base    = "EUR"
                        ,counter = "BTC"
                        ,amount  = 10
                        ,price   = 100
-                       ,comment = "Abrimos posicion en pruebas"
    )
    expect_true(idOper > 0, label = "Buying BTC")
-   expect_equal(nrow(oper$getOperations()), 1, label="Unica operacion activa")
 
-   lstOper = oper$getOperation(idOper)
-   expect_equal(lstOper$status, YATACodes$status$pending, label="Estado es pendiente")
-   expect_equal(lstOper$active, YATACodes$flag$active,    label="Operacion activa")
+   oper$cancel(idOper, delete=TRUE)
 
-   expect_equal(nrow(cameras$getCameras()),  1)
-   expect_equal(length(position$getCameras()), 2)
-   cam1 = position$getCameraPosition("CASH")
-   expect_equal(cam1[1,"available"],  0)
-   expect_equal(cam1[1,"balance"],    0)
+   df = oper$getOperationsExt()
+   expect_equal(nrow(df),  2, label="La operacion no ha sido borrada")
+
    cam1 = position$getCameraPosition("TEST")
-   expect_equal(cam1[1,"available"],  1000)
+   expect_equal(cam1[1,"available"],  2000)
    expect_equal(cam1[1,"balance"],    2000)
 
-   flows = YATAFactory$getTable(YATACodes$tables$Flows, force=TRUE)
-   expect_equal(flows$rows(),    3)
-   expect_equal(nrow(oper$getComments(idOper)), 1)
 })
 
-test_that("Cancel with comment", {
-   oper$select(idOper)
-   oper$cancel("Prueba de cancelacion")
+test_that("Open and Cancel operation", {
+   idOper <<- oper$open(camera  = "TEST"
+                       ,base    = "EUR"
+                       ,counter = "BTC"
+                       ,amount  = 10
+                       ,price   = 100
+   )
+   expect_true(idOper > 0, label = "Buying BTC")
 
-   expect_equal(nrow(oper$getComments(idOper)),  2)
+   oper$cancel(id=idOper)
+
+   df = oper$getOperationsExt()
+   expect_equal(nrow(df),  3, label="La operacion ha sido borrada")
+
+   df = oper$getActive()
+   expect_equal(nrow(df),  0, label="Operaciones activas")
+
+   cam1 = position$getCameraPosition("TEST")
+   expect_equal(cam1[1,"available"],  2000)
+   expect_equal(cam1[1,"balance"],    2000)
+
 })
 

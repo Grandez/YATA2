@@ -89,9 +89,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             # marca la operacion como cancelada
             res = tryCatch({
                 db$begin()
-                if (current$type %in% c(YATACodes$oper$oper, YATACodes$oper$buy)) {
-                    updatePosition(self$current$base, current$amount * current$price, FALSE, TRUE)
+                currency = current$base
+                imp      = current$amount * current$price
+                if (current$type == YATACodes$oper$sell) {
+                    currency = current$counter
+                    imp      = current$amount * -1
                 }
+                objPos$updateAvailable(current$camera, currency, imp)
                 tblOper$set(status = YATACodes$status$cancelled, active = YATACodes$flag$inactive)
                 tblOper$apply()
                 generateLog()

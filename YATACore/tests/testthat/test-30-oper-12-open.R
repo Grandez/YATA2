@@ -1,4 +1,4 @@
-context("Open Position Simple")
+context("Open Position Simple with comments")
 
 # Ciclo de vida de una operacion simple
 # Abrir / Aceptar / Ejecutar / Vender / Aceptar / Ejecutar
@@ -23,16 +23,16 @@ test_that("Environment correct", {
    expect_equal(cam1[1,"balance"],    2000)
 
 })
-
 test_that("Open 10 BTC", {
    idOper <<- oper$open(camera  = "TEST"
                        ,base    = "EUR"
                        ,counter = "BTC"
                        ,amount  = 10
                        ,price   = 100
+                       ,comment = "Abrimos posicion en pruebas"
    )
    expect_true(idOper > 0, label = "Buying BTC")
-   expect_equal(nrow(oper$getOperations()), 1, label="Unica operacion activa")
+   expect_equal(nrow(oper$getActive()), 1, label="Unica operacion activa")
 
    lstOper = oper$getOperation(idOper)
    expect_equal(lstOper$status, YATACodes$status$pending, label="Estado es pendiente")
@@ -49,37 +49,13 @@ test_that("Open 10 BTC", {
 
    flows = YATAFactory$getTable(YATACodes$tables$Flows, force=TRUE)
    expect_equal(flows$rows(),    3)
-
+   expect_equal(nrow(oper$getComments(idOper)), 1)
 })
 
-test_that("Accept Operation default", {
+test_that("Cancel with comment", {
    oper$select(idOper)
-   oper$accept()
+   oper$cancel("Prueba de cancelacion")
 
-   lstOper = oper$getOperation(idOper)
-   expect_equal(lstOper$status, YATACodes$status$accepted, label="Estado es aceptada")
-   expect_equal(lstOper$active, YATACodes$flag$active,     label="Operacion activa")
-
-   cam1 = position$getCameraPosition("TEST")
-   expect_equal(cam1[1,"available"],  1000)
-   expect_equal(cam1[1,"balance"],    1000)
-
-   flows = YATAFactory$getTable(YATACodes$tables$Flows, force=TRUE)
-   expect_equal(flows$rows(),    4)
+   expect_equal(nrow(oper$getComments(idOper)),  2)
 })
 
-test_that("Execute Operation default", {
-   oper$select(idOper)
-   oper$execute()
-
-   lstOper = oper$getOperation(idOper)
-   expect_equal(lstOper$status, YATACodes$status$executed, label="Estado es aceptada")
-   expect_equal(lstOper$active, YATACodes$flag$active,     label="Operacion activa")
-
-   cam1 = position$getCameraPosition("TEST")
-   expect_equal(cam1[cam1$currency == "EUR","balance"], 1000)
-   expect_equal(cam1[cam1$currency == "BTC","balance"],   10)
-
-   flows = YATAFactory$getTable(YATACodes$tables$Flows, force=TRUE)
-   expect_equal(flows$rows(),    5)
-})
