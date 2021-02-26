@@ -14,7 +14,8 @@ yuiBtnEdit      = function(id, label)        { shinyBS::bsButton(id, label, styl
 
 
 .btnIcon = function(color, ico, title) {
-   yuiActionBtn(title=title, style = "simple", color = color, icon = icon(ico, class="yuiBtnIcon"))
+    sty = paste("simple; background-color:", color, ";")
+   yuiActionBtn(title=title, style = "simple", color=color, icon = icon(ico, class="yata-btn-icon"))
 }
 yuiBtnIconAlert    = function(title) {.btnIcon("yellow"    , "bell"             ,ifelse(missing(title), "Alert" ,title)) }
 yuiBtnIconCancel   = function(title) {.btnIcon("red"       , "times"            ,ifelse(missing(title), "Cancel",title)) }
@@ -27,6 +28,15 @@ yuiBtnIconCash     = function(title) {.btnIcon("purple"    , "cash-register"    
 yuiBtnIconView     = function(title) {.btnIcon("mediumblue", "search-dollar"    ,ifelse(missing(title), "View"  ,title)) }
 yuiBtnIconActive   = function(title) {.btnIcon("limegreen" , "plus-circle"      ,ifelse(missing(title), "Activar"  ,title)) }
 yuiBtnIconInactive = function(title) {.btnIcon("maroon"    , "minus-circle"     ,ifelse(missing(title), "Desactivar"  ,title)) }
+
+yuiTblButton = function(id, table, label, btn) {
+   clk = paste0("onclick='Shiny.setInputValue(\"", id, "-btnTable", titleCase(table), "\","
+                                              ,"\"", label, "-__\")'")
+   data = as.character(btn)
+   res = regexpr(">", data, fixed=TRUE)
+   base = substr(data, 1, res[1] - 1)
+   paste(base, clk, substr(data, res[1], 10000L))
+}
 
 # Source: shinyWidgets
 # Function: actionBttn

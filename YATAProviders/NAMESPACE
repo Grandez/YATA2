@@ -1,7 +1,10 @@
 import(dplyr)
 import(rlist)
+importFrom(data.table,transpose)
 import(lubridate)
 
+import(xml2)
+import(rvest)
 import(httr)
 import(jsonlite)
 

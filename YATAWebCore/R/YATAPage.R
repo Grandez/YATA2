@@ -1,5 +1,5 @@
 # Copiado de navbar
-YATAPage <- function(title = NULL,id = NULL,
+YATAPage =  function(title = NULL,id = NULL,
                        ...,
                        selected = NULL,
                        header = NULL,
@@ -15,13 +15,6 @@ YATAPage <- function(title = NULL,id = NULL,
                      #,tabs = NULL
                      ) {
 
-  # pageTitle = ifelse(is.null(title), "YATA!", title)
-  # id = ifelse(is.null(id), "mainMenu", id)
-  # navbarPage2(pageTitle, id=id, ...)
-  # if (!missing(collapsable)) {
-  #   shinyDeprecated("`collapsable` is deprecated; use `collapsible` instead.")
-  #   collapsible <- collapsable
-  # }
 
   # alias title so we can avoid conflicts w/ title in withTags
   pageTitle <- title
@@ -32,14 +25,11 @@ YATAPage <- function(title = NULL,id = NULL,
   position <- match.arg(position)
   if (!is.null(position))
     navbarClass <- paste(navbarClass, " navbar-", position, sep = "")
-  # if (inverse)
-  #   navbarClass <- paste(navbarClass, "navbar-inverse")
 
   if (!is.null(id))
     selected <- restoreInput(id = id, default = selected)
 
-  # build the tabset
-  # Devuelve una lista con: navlist y content
+  # build the tabset Devuelve una lista con: navlist y content
   tabs <- list(...)
 
   tabset <- shiny:::buildTabset(tabs, "nav navbar-nav yata-menu", NULL, id, selected)
@@ -78,6 +68,18 @@ YATAPage <- function(title = NULL,id = NULL,
     )
 #  }
 
+  # # build the main tab content div
+  # contentDiv = shiny::tags$div(id="yataContent")
+  # # leftDiv    = shiny::tags$div(id="yataContentLeft")
+  # # rightDiv   = shiny::tags$div(id="yataContentRight")
+  # mainDiv    = shiny::tags$div(id="yataContentMain")
+  #
+  # mainDiv    = tagAppendChild(mainDiv, tabset$content)
+  # contentDiv = tagAppendChildren(contentDiv, mainDiv)
+  #
+  # options = list(sidebarExpandOnHover = TRUE)
+
+
   # build the main tab content div
   contentDiv = shiny::tags$div(id="yataContent")
   # leftDiv    = shiny::tags$div(id="yataContentLeft")
@@ -89,25 +91,32 @@ YATAPage <- function(title = NULL,id = NULL,
 
   options = list(sidebarExpandOnHover = TRUE)
 
-  shinydashboardPlus:::addDeps(
-    shiny::tags$body(
-      shiny::bootstrapPage(
+  divFooter = "YATA - Grandez"
+  divHeader = .yataPageHeader(tabnav=tabset$navList) #,tags$nav(class=navbarClass, role="navigation", containerDiv)
+  divMain   =  contentDiv
+  page = tags$div( class="yata-page", divHeader
+#           ,tags$div(class="yata-header", divHeader)
+           ,tags$div(class="yata-main",   divMain)
+           ,tags$div(class="yata-footer", divFooter)
+  )
+
+  mainFormErr = tags$div( id="yata-main-err", class="yata-panel-form"
+                         ,tags$div( id    ="yata-main-err-container"
+                                   ,class ="yata-form-center container"
+                                   ,uiOutput("form")))
+  container   = tags$div(id="yata-container", class="yata-container", page, shinyjs::hidden(mainFormErr))
+
+   bspage =   shiny::bootstrapPage(
          useShinyjs()
         ,tags$head(
              tags$link  (rel="stylesheet", type="text/css", href="yata/yataoverride.css")
             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata2.css")
-            ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataDT.css")
-            ,tags$link  (rel="stylesheet", type="text/css", href="yatadt.css")
+            ,tags$link  (rel="stylesheet", type="text/css", href="yataDT.css")
             ,tags$script(src="yata/yata.js")
             ,tags$script(src="yata/yataapp.js")
             ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
         )
-        ,shiny::tags$div(id="yataHeader",
-                  .yataPageHeader(tabnav=tabset$navList) #,tags$nav(class=navbarClass, role="navigation", containerDiv)
-          )
-        , contentDiv
-#        ,shiny::tags$div(id="yataFooter", tags$span("YATA - Grandez"))
-        ,shiny::tags$footer("YATA - Grandez")
+        ,container
         ,tags$script('
                                 var dimension = [0, 0];
                                 $(document).on("shiny:connected", function(e) {
@@ -121,8 +130,16 @@ YATAPage <- function(title = NULL,id = NULL,
                                     Shiny.onInputChange("dimension", dimension);
                                 });
                             ')
-      ,theme = theme, lang="es") # end boostrappage
-    ),
-    md = FALSE
+      ,theme = theme, lang="es" # ) # end boostrappage
+
+   )
+
+res =  shinydashboardPlus:::addDeps(
+    shiny::tags$body(
+        bspage
+    ),md = FALSE
   )
+
+res
 }
+

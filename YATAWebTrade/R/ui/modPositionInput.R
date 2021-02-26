@@ -8,18 +8,14 @@ modPosInput = function(id, title) {
        
     )
     main = tagList(
-      # fluidRow(
-      #   h2("Cotizaciones de las posiciones abiertas")
-      #   ,tags$span(id="sessionLastUpdate", textOutput(ns("lastUpdate")))
-      # )
-      fluidRow(id=ns("monitor"), class="yataMonitors")
-#      ,fluidRow(yuiBox(ns("tblPosGraph"), "Informacion"
-         ,fluidRow(column(6,plotlyOutput(ns("plotLeft"))), column(6,plotlyOutput(ns("plotRight"))))
-#       ))
+       fluidRow(column(8, tags$div(id=ns("monitor"), class="yata-monitors")), column(3, blkRank(ns("rank"), n=5)))
+      ,fluidRow(column(6,yuiPlot(ns("plotLeft"))), column(6,yuiPlot(ns("plotRight"))))
+      ,fluidRow(column(8
       ,fluidRow(id="divPosGlobal"
-               ,yuiBox(ns("tblPosGlobal"), "Posicion Global", DT::dataTableOutput(ns("tblPosGlobal")))
-      )
-      ,fluidRow(id="divPosLast")
-    )
+                   ,yuiBox(ns("tblPosGlobal"), "Posicion Global", DT::dataTableOutput(ns("tblPosGlobal")))
+         )
+          ,fluidRow(id="divPosLast")
+         )
+      ))
     list(left=left, main=main, right=NULL)
 }

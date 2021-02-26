@@ -1,3 +1,78 @@
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+.yata-data-1 {
+    color: red;
+}
+.yata-data-2 {
+    color: green;
+}
+
+.yata-data-3 {
+    color: black;
+}
+.yata-data-4 {
+    color: blue;
+}
+
+.yata-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.yata-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.yata-header {
+/*
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+*/
+   height: 48px;
+   background-color: black;
+   color: white;
+}
+
+.yata-main {
+  flex: 1;
+  overflow: auto;
+}
+.yata-footer {
+  background-color: black;
+/*
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+*/
+  height: 40px;
+  color: white;
+}
+
+
+/*
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.header, .footer {
+  background: silver;
+}
+.content {
+  flex: 1;
+  overflow: auto;
+  background: pink;
+}
+
+*/
 /*********************************/
 /* Principal                     */
 /*********************************/
@@ -15,6 +90,7 @@ td .selectize-control {
 .yata-dark      { background-color: #343a40; }
 
 /* en algun sitio se pone height: auto; */
+/*
 html {
   min-height: 100%;
   position: relative;
@@ -23,15 +99,7 @@ body {
   margin: 0;
   margin-bottom: 40px;
 }
-footer {
-  background-color: black;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 40px;
-  color: white;
-}
-
+*/
 /*********************************/
 /* Basico                        */
 /*********************************/
@@ -72,7 +140,7 @@ footer {
    color: white;
 }
 
-#yataContent {
+#jggyataContent {
    position: absolute;
    top: 48px;
    left: 0;
@@ -124,9 +192,16 @@ footer {
 /*********************************/
 .yata-brand {
     float: left;
+    min-width: 10em;
+}
+.yata-brand:hover {
+    cursor: pointer;
 }
 .yata-nav-left {
     float:   left;
+}
+.yata-nav-right {
+    float:   right;
 }
 
 .yata-logo {
@@ -165,7 +240,7 @@ footer {
 .yata-panel-content {
    display: flex;
    flex-flow: row nowrap;
-   padding-top: 12px;
+/*   padding-top: 12px; */
 /*   background-color: DodgerBlue; */
 }
 
@@ -174,7 +249,7 @@ footer {
     margin: 0;
     padding: 0;
 }
-.yataPanelForm {
+.yata-panel-form {
     position: absolute;
     top:       0;
     left:      0;
@@ -183,7 +258,7 @@ footer {
     z-index: 100;
     background-color: RGBA(169, 169, 169, 0.8);
 }
-.yataPanelErr {
+.yata-panel-err {
     z-index: 900;
     background-color: darkgrey;
     opacity: 0.75;
@@ -268,6 +343,7 @@ footer {
 }
 */
 
+/* Estan en yatadt */
 /*********************************/
 /* Monitor                       */
 /*********************************/
@@ -381,20 +457,15 @@ footer {
     font-size: 0.8em;
 }
 
-.yataMonitors {
-    padding-bottom: 1em;
-    font-size: 1.25em;
-}
-
-.yataMsg {
+.yata-msg {
     font-weight: bold;
 }
-.yataMsgerror   { color: red;         }
-.yataMsginfo    { color: black;       }
-.yataMsgwarning { color: yellow;      }
-.yataMsgsuccess { color: ForestGreen; }
+.yata-msg-error   { font-weight: bold; color: red;         }
+.yata-msg-info    { font-weight: bold; color: black;       }
+.yata-msg-warning { font-weight: bold; color: yellow;      }
+.yata-msg-success { font-weight: bold; color: ForestGreen; }
 
-.yataBtnIcon {
+.yata-btn-icon {
     color: white;
 }
 
@@ -427,6 +498,9 @@ footer {
     color: crimson;
 }
 
+.yata-number {
+    text-align: right;
+}
 /*********************************/
 /* Cajas                         */
 /*********************************/
@@ -435,4 +509,11 @@ footer {
     padding: 5px;
     color: white;
     font-size: 14px;
+}
+
+
+.yata-rank-title {
+    text-align: center;
+    color: black;
+    font-weight: bold;
 }

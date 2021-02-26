@@ -29,15 +29,14 @@ modOperXferServer = function(id, full, pnl) {
                                                         , amount=input$impAmount
                                                         , currency=input$cboCurrency)
           if (res) {
-#              yataMsgErr(ns2("msg"), "Error al realizar la operacion")
-              alert = paste(strsplit(mod, "-")[[1]][1], "alert", sep="-")
-              yataAlertPanelServer(alert, session)
+               output$msg = updMessageKO(id, YATAWEB$MSG$get("XFER.KO"))
           }
           else {
-#              yataMsgSuccess(ns2("msg"), "Operacion realizada")
+              output$msg = updMessageOK(id, YATAWEB$MSG$get("XFER.OK"))
               reset()
           }
       })
+       updMessageOK(full, "Mensaje a mostrar")
 #       observe({
 #           shinyjs::toggleState("btnOK", nchar(input$cboFrom) == 0 && 
 #                                         nchar(input$cboTo)   == 0 &&

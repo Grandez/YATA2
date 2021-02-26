@@ -31,22 +31,40 @@
   }
 
     custom_css <- NULL
-    shiny::tags$header(
-      class = "main-header",
-      custom_css,
-      style = if (disable) "display: none;",
-      shiny::tags$span(class="navbar-brand yata-brand", textOutput("appTitle")),
+#    shiny::tags$header(
+           tags$div(class="yata-header",
+#    tags$div(s
+#      class = "main-header",
+      # custom_css,
+      # style = if (disable) "display: none;",
+             tags$div(style="float: left;",
+
+
+      shiny::tags$span(class="navbar-brand yata-brand", textOutput("appTitle", inline=TRUE)),
+            # Embed hidden icon so that we get the font-awesome dependency
+      shiny::tags$span(shiny::icon("bars"), style = "display:none;"),
+      # Sidebar toggle button
       shiny::tags$a(
-         href = "#",
+        href = "#",
         class = "sidebar-toggle",
+        # esto es para detectarlo en javascript
         `data-toggle` = "yataoffcanvas",
         role = "button",
-        shiny::tags$span(class = "sr-only", "Toggle navigation")
-      ),
+#        shiny::tags$span(class = "sr-only"), "Toggle navigation")
+        shiny::tags$span(shiny::icon("bars", style="maring-top: 18px;")) #, "Toggle navigation")
+      )),
+
+      # shiny::tags$a(
+      #    href = "#",
+      #   class = "sidebar-toggle",
+      #   `data-toggle` = "yataoffcanvas",
+      #   role = "button",
+      #   shiny::tags$span(class = "sr-only", "Toggle navigation")
+      # ),
       shiny::div(class="navbar yata-nav-left", tabnav),
       # right menu
       shiny::tags$div(id="yata-right-menu-btn",
-        class = "navbar-custom-menu",
+        class = "navbar-custom-menu yata-nav-right",
         shiny::tags$ul(class = "nav navbar-nav", items,
                        shiny::tags$li(shiny::tags$a(href = "#",`data-toggle` = "control-sidebar",controlbarIcon))
         )

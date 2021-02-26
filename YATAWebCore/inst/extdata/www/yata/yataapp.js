@@ -352,13 +352,13 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
             */
               $.YATA.pushMenu = {
                 activate: function (toggleBtn) {
-//                                  alert("En Javascript activate");
+                                  alert("En Javascript activate");
                   //Get the screen sizes
                   var screenSizes = $.YATA.options.screenSizes;
 
                   //Enable sidebar toggle
                   $(document).on('click', toggleBtn, function (e) {
-//                                    alert("Pushmenu onclick");
+                                    alert("Pushmenu onclick");
                     e.preventDefault();
 
                     var page = $.YATA.page;
@@ -429,7 +429,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                   $("body").removeClass('sidebar-collapse').addClass('sidebar-expanded-on-hover');
                 },
                 collapse: function () {
-//                                  alert("En Javascript collapse");
+                                  alert("En Javascript collapse");
                   if ($('body').hasClass('sidebar-expanded-on-hover')) {
                     $('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
                   }
@@ -438,17 +438,17 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               $.YATA.yataTraceMenu = {
                 activate: function (datatoggle) {
-//                                  alert("JGG En Javascript activate");
+                                  alert("JGG En Javascript activate");
 
                   //Enable sidebar toggle
                   $(document).on('click', datatoggle, function (e) {
-//                                    alert("JGG Menu clickeado");
+                                    alert("JGG Menu clickeado");
                   e.preventDefault();
                     //alert(e.target.dataset.value);
 
                   $.YATA.page = e.target.dataset.value;
                     // Obtener la info del panel
-                  pnl = $.YATA.panels.get(e.target.dataset.value);
+                  var pnl = $.YATA.panels.get(e.target.dataset.value);
 //                  alert(pnl);
                     // Hacer lo que haya que hacer
 
@@ -499,7 +499,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               // JGG. Carga el panel en el mapa y mueve los menus si existen
               $.YATA.yataSetPanel = function(data) {
-//                  alert("Entra en yataSetPanel");
+                  alert("Entra en yataSetPanel");
                   $.YATA.page = data.id;
 
                   data.left      = false;

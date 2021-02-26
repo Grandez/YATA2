@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+ <head>
+ <style>
+ html, body {
+  height: 100%;
+  margin: 0;
+}
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.header, .footer {
+  background: silver;
+}
+.content {
+  flex: 1;
+  overflow: auto;
+  background: pink;
+}
+</style>
+   
+ </head>
+
+<body>
+<div class="wrapper">
+  <div class="header">Header</div>
+  <div class="content">
+    <div style="height:100%;">Content</div>
+  </div>
+  <div class="footer">Footer</div>
+</div>
+</body>
+
+</html>

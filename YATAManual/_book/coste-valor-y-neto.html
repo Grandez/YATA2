@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Coste, Valor y Neto | A Minimal Book Example</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Coste, Valor y Neto | A Minimal Book Example" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Coste, Valor y Neto | A Minimal Book Example" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+<meta name="author" content="Yihui Xie" />
+
+
+<meta name="date" content="2021-02-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="operation.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
+<li class="chapter" data-level="3" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>3</b> Literature</a></li>
+<li class="chapter" data-level="4" data-path="conceptos-generales.html"><a href="conceptos-generales.html"><i class="fa fa-check"></i><b>4</b> Conceptos generales</a><ul>
+<li class="chapter" data-level="4.1" data-path="conceptos-generales.html"><a href="conceptos-generales.html#pares-de-monedas"><i class="fa fa-check"></i><b>4.1</b> Pares de monedas</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="conceptos-generales.html"><a href="conceptos-generales.html#operaciones"><i class="fa fa-check"></i><b>4.1.1</b> Operaciones</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="conceptos-generales.html"><a href="conceptos-generales.html#logica"><i class="fa fa-check"></i><b>4.2</b> Logica</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="conceptos-generales.html"><a href="conceptos-generales.html#compra"><i class="fa fa-check"></i><b>4.2.1</b> Compra</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="operation.html"><a href="operation.html"><i class="fa fa-check"></i><b>5</b> Operation</a><ul>
+<li class="chapter" data-level="5.1" data-path="operation.html"><a href="operation.html#ciclo-de-vida"><i class="fa fa-check"></i><b>5.1</b> Ciclo de vida</a></li>
+<li class="chapter" data-level="5.2" data-path="operation.html"><a href="operation.html#logica-1"><i class="fa fa-check"></i><b>5.2</b> Logica</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="operation.html"><a href="operation.html#compra-1"><i class="fa fa-check"></i><b>5.2.1</b> Compra</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="coste-valor-y-neto.html"><a href="coste-valor-y-neto.html"><i class="fa fa-check"></i><b>6</b> Coste, Valor y Neto</a><ul>
+<li class="chapter" data-level="6.1" data-path="coste-valor-y-neto.html"><a href="coste-valor-y-neto.html#regularizacion"><i class="fa fa-check"></i><b>6.1</b> Regularizacion</a></li>
+<li class="chapter" data-level="6.2" data-path="coste-valor-y-neto.html"><a href="coste-valor-y-neto.html#ejemplo"><i class="fa fa-check"></i><b>6.2</b> Ejemplo</a></li>
+<li class="chapter" data-level="6.3" data-path="coste-valor-y-neto.html"><a href="coste-valor-y-neto.html#otra-version"><i class="fa fa-check"></i><b>6.3</b> Otra version</a></li>
+<li class="chapter" data-level="6.4" data-path="coste-valor-y-neto.html"><a href="coste-valor-y-neto.html#two-columns"><i class="fa fa-check"></i><b>6.4</b> Two columns</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Minimal Book Example</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="coste-valor-y-neto" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Coste, Valor y Neto</h1>
+<p>De acuerdo como vayamos realizando operaciones de compra/venta, cada una a un precio diferente, necesitaremos un método de valorar correctamente nuestra posicion.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="coste-valor-y-neto.html#cb3-1"></a><span class="kw">cat</span>(<span class="st">&#39;&lt;div class = &quot;row&quot;&gt;&#39;</span>)</span></code></pre></div>
+<div class="row">
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="coste-valor-y-neto.html#cb4-1"></a><span class="kw">cat</span>(<span class="st">&#39;&lt;div class = &quot;col-md-4&quot;&gt;&#39;</span>)</span></code></pre></div>
+<div class="col-md-4">
+<p><br><br>Since R Markdown use the <a href="https://getbootstrap.com/docs/4.0/layout/grid/">bootstrap framework</a> under the hood. It is possible to benefit its powerful grid system. Basically, you can consider that your row is divided in 12 subunits of same width. You can then choose to use only a few of this subunits.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="coste-valor-y-neto.html#cb5-1"></a><span class="kw">cat</span>(<span class="st">&#39;&lt;/div&gt;&#39;</span>)</span></code></pre></div>
+</div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="coste-valor-y-neto.html#cb6-1"></a><span class="kw">cat</span>(<span class="st">&#39;&lt;div class = &quot;col-md-4&quot;&gt;&#39;</span>)</span></code></pre></div>
+<div class="col-md-4">
+<p><br><br>Here, I use 3 subunits of size 4 (4x3=12). The last column is used for a plot. You can read more about the grid system <a href="bootstrap%20grid%20system">here</a>. I got this result showing the following code in my R Markdown document.</p>
+</div>
+<div class="col-md-4">
+<p>``{r, message=FALSE, echo=FALSE}
+ggplot( mtcars, aes(x=mpg)) + geom_histogram(fill=“skyblue”, alpha=0.5) + theme_minimal()</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="coste-valor-y-neto.html#cb7-1"></a><span class="kw">cat</span>(<span class="st">&#39;&lt;/div&gt;&#39;</span>)</span></code></pre></div>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="coste-valor-y-neto.html#cb8-1"></a><span class="kw">cat</span>(<span class="st">&#39;&lt;/div&gt;&#39;</span>)</span></code></pre></div>
+</div>
+<p>Introducimos los siguientes conceptos:</p>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="84%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Coste</strong>
+<strong>Venta</strong>
+<strong>Neto</strong></td>
+<td>El importe que nos ha costado adquirir los activos
+El precio medio al que hemos vendido los activos
+Dada una posicion activa, el precio al cual simplemente obtendriamos un retorno nulo</td>
+</tr>
+</tbody>
+</table>
+<p>$$
+\begin{aligned}
+Coste &amp;= _i \
+Venta &amp;= _i \
+Neto &amp;= 
+{_i{unidades_compradas}-_i{unidades_vendidas_i}}</p>
+<p>\end{aligned}
+$$</p>
+<div id="regularizacion" class="section level2">
+<h2><span class="header-section-number">6.1</span> Regularizacion</h2>
+<p>Notese que estos valores consideran todas operaciones realiziadas, pero al cabo del tiempo, existiran un conjunto de operaciones de estas operaciones que ya habrán sido descontadas;; es decir, las habremos cargado a “perdidas y ganancias” con lo que ya no deben ser tenidas en cuenta.</p>
+<p>Para contemplar esta situación, tipícamente al menos una vez al año, introducimos el concepto de regularización de la posición. Esto no es nada mas que guardar informacion aparte del punto en el tiempo antes del cual no se deben considerar las operaciones, y los saldos en ese momento</p>
+</div>
+<div id="ejemplo" class="section level2">
+<h2><span class="header-section-number">6.2</span> Ejemplo</h2>
+<p>Para clarificar estos conceptos, veamos el siguiente ejemplo:</p>
+
+</div>
+<div id="otra-version" class="section level2">
+<h2><span class="header-section-number">6.3</span> Otra version</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p>contents…</p>
+</div><div class="column" style="width:60%;">
+<p>contents…</p>
+</div>
+</div>
+</div>
+<div id="two-columns" class="section level2">
+<h2><span class="header-section-number">6.4</span> Two columns</h2>
+<p>Below is a Div containing three child Divs side by side. The Div
+in the middle is empty, just to add more space between the left
+and right Divs.</p>
+<div class="cols">
+<div class="col">
+<p><img src="YATAManual_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
+</div>
+<div class="col">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div>
+<div class="col">
+<p>The figure on the left-hand side shows the <code>cars</code> data.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+nulla pariatur.</p>
+</div>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">orden</th>
+<th align="right">precio</th>
+<th align="right">unidades</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">100</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Coste</strong> Coste medio de compra de las acciones</li>
+<li><strong>Valor</strong> Valor de la cartera al momento actual</li>
+<li><strong>Neto</strong> Precio que marca el punto de ruptura</li>
+</ul>
+<p>Usamos el termino precio neto frente al mas correcto Precio Medio para indicar cual es el precio de <strong>venta</strong> que me ofrece un beneficio global de 0. Dicho de otro modo, el precio minimo al que puedo deshacer la posicion sin perder dinero.</p>
+<p>Supongamos que hago una primera operacion de compra:</p>
+<p>Operaciones Posicion
++———-+——–+——-+ +———-+——–+——-+——+<br />
+| Unidades | Precio | Valor | | Balance | Precio | Valor | Neto |
++———-+——–+——-+ +———-+——–+——-+——+
+| 10 | 100 | 1000 | | 10 | 100 | 1000 | 100 |
++———-+——–+——-+ +———-+——–+——-+——+</p>
+<p>La operacion es basica, logicamente si he comprado <strong>n</strong> unidades a un precio <strong>p</strong>, si las vendo por debajo de ese precio pierdo dinero, si lo vendo por encima de ese precio, gano dinero</p>
+<p>Ahora supongamos que vendo 5 de mis unidades a 120</p>
+<p>Opreraciones Posicion
++———-+——–+——-+ +———-+——–+——-+——+<br />
+| Unidades | Precio | Valor | | Balance | Precio | Valor | Neto |
++———-+——–+——-+ +———-+——–+——-+——+
+| -5 | 120 | -600 | | 5 | 100 | 1000 | 100 |
++———-+——–+——-+ +———-+——–+——-+——+</p>
+<p>Ejemplo:</p>
+<p>Operaciones<br />
++——+———-+——–+——–+
+| Tipo | Unidades | Precio | Valor |
++——+———-+——–+——–+
+| C | 20 | 100 | 2000 |
+| V | -10 | 200 | -2000 |
++——+———-+——–+——–+</p>
+<p>Con estas dos operaciones he obtenido un beneficio del 100% y he recuperado la inversion, con lo que el valor neto seria 0. Podria regalar la inversion sin perder dinero.</p>
+<p>Para evitar esto, introducimos el concepto de <strong>regularizacion</strong></p>
+<p>ESte es un registro que me marca el punto a partir del cual considerar las operaciones posteriores. Tipicamente, y desde el punto de vista contable, se genera un registro de regularizacion cada 1/1</p>
+<p>Operaciones<br />
++——+———-+——–+——–+
+| Tipo | Unidades | Precio | Valor |
++——+———-+——–+——–+
+| C | 20 | 100 | 2000 |
+| V | -10 | 200 | -2000 |
+| R | 10 | 100 | 2000 | Usamos el precio medio de compra
++——+———-+——–+——–+</p>
+
+
+<div id="refs" class="references">
+<div>
+<p>Xie, Yihui. 2015. <em>Dynamic Documents with R and Knitr</em>. 2nd ed. Boca Raton, Florida: Chapman; Hall/CRC. <a href="http://yihui.name/knitr/">http://yihui.name/knitr/</a>.</p>
+</div>
+<div>
+<p>———. 2020. <em>Bookdown: Authoring Books and Technical Documents with R Markdown</em>. <a href="https://github.com/rstudio/bookdown">https://github.com/rstudio/bookdown</a>.</p>
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="operation.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["YATAManual.pdf", "YATAManual.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

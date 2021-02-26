@@ -40,28 +40,27 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,pluginsDirectory  = function() tblParms$getString(DBParms$ids$plugins)
         ,autoConnect       = function() tblParms$getBoolean(DBParms$ids$autoConnect)
         ,getDefaultDbId    = function() tblParms$getInteger(DBParms$ids$DBDefault)
-        ,lastOpen          = function() {
-            id = tblParms$getInteger(DBParms$ids$lastOpen)
-            getList(DBParms$group$databases, id)
+        ,getDBInfo         = function(id) {
+            data = getList(DBParms$group$databases, id)
+            data$id = id
+            data
         }
+        ,lastOpen          = function() { getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen)) }
         ,defaultDB         = function() {
             id = getDefaultDbId()
             getList(DBParms$group$databases, id)
         }
-        ,setLastOpen = function(name) {
-            df = tblParms$table( group = DBParms$group$databases
-                                ,id    = DBParms$databases$db$name
-                                ,value = name)
+        ,setLastOpen       = function(iddb) {
             keys = splitKeys(DBParms$ids$lastOpen)
-            tblParms$select(group = keys[1], subgroup = keys[2], id = keys[3])
-            tblParms$set(value=df[1,"subgroup"])
-            tblParms$apply(isolated=TRUE)
-            lastOpen()
+            tblParms$update( list(value=as.character(iddb))
+                            ,group = keys[1], subgroup = keys[2], id = keys[3]
+                            ,isolated=TRUE)
+            invisible(self)
         }
-        ,currencies = function(codes) {
+        ,currencies        = function(codes) {
              tblCurrencies$codeNames(codes)
          }
-        ,getCurrencyNames = function(codes, full) {
+        ,getCurrencyNames  = function(codes, full) {
              private$tblCurrencies$getNames(codes, full)
          }
          ##############################################
@@ -75,12 +74,18 @@ OBJParms = R6::R6Class("OBJ.PARMS"
          ##############################################
          ### Databases
          ##############################################
-        ,getDBNames = function() {
-            df = tblParms$table(group=DBParms$group$databases, id=DBParms$databases$db$name)
-            #####   df[df$active != '0',]
-            df = df[,c("subgroup", "value")]
-            names(df) = c("id", "name")
-            df
+        ,getDBNames = function(active=TRUE) {
+            df1 = tblParms$table(group=DBParms$group$databases, id=DBParms$databases$db$name)
+            df1 = df1[,c("group", "subgroup","value")]
+            colnames(df1) = c("group", "id","name")
+            df2 = tblParms$table(group=DBParms$group$databases, id=DBParms$databases$db$active)
+            df2 = df2[,c("group", "subgroup","value")]
+            colnames(df2) = c("group", "id","active")
+
+            df = inner_join(df1, df2, by=c("group", "id"))
+            df = df[df$active != 0,]
+
+            df[,c("id", "name")]
         }
         ################################################
         ### Metodos de acceso a parametros

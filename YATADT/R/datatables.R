@@ -141,7 +141,7 @@ datatable = function(
   editable = FALSE
 ) {
 
-    class = paste(class, type)
+    class = paste(class, "yata-table", type)
   # yes, we all hate it
   oop = base::options(stringsAsFactors = FALSE); on.exit(base::options(oop), add = TRUE)
 
@@ -228,6 +228,7 @@ datatable = function(
     options = appendColumnDefs(options, list(orderable = FALSE, targets = 0))
 
   style = normalizeStyle(style)
+
   if (grepl('^bootstrap', style)) class = DT2BSClass(class)
   if (style != 'default') params$style = style
 

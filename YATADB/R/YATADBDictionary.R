@@ -3,14 +3,14 @@
 DBDict = list(
     parts  = list(
       Position     = "POSITION"
+     ,Operations   = "OPERATIONS"
     )
     ,tables = list(
-         Cameras      = "CAMERAS"
-        ,Position     = "POSITION"
+         Position     = "POSITION"
         ,Regularization = "REGULARIZATION"
         ,PositionHist = "HIST_POSITION"
-        ,Flows        = "FLOWS"
         ,Operations   = "OPERATIONS"
+        ,Flows        = "FLOWS"
         ,OperControl  = "OPERATIONS_CONTROL"
         ,OperLog      = "OPERATIONS_LOG"
         ,Control      = "SESSION_CONTROL"
@@ -18,11 +18,13 @@ DBDict = list(
         ,sesExchanges = "SESSION_EXCHANGES"
     )
     ,baseTables = list(
-         Currencies   = "CURRENCIES"
+         Cameras      = "CAMERAS"
+        ,Currencies   = "CURRENCIES"
         ,Exchanges    = "EXCHANGES"
         ,Parameters   = "PARMS"
         ,Providers    = "PROVIDERS"
         ,Path         = "PATH"
+        ,Messages     = "MESSAGES"
     )
     ,fields = list(
          active    = "ACTIVE"

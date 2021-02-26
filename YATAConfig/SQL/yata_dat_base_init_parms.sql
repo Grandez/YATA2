@@ -60,10 +60,34 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (3, 2, 1,  10,
 -- ----------------------------------------------------
 
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 1,   10, ''    ,  0);
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 2,   10, ''    ,  1);
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 3,   10, ''    ,  7);
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   10, ''    , 30);
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 1,   10, ''    , ' 0');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 2,   10, ''    , ' 1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 3,   10, ''    , ' 7');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   10, ''    , '30');
+
+-- ----------------------------------------------------
+-- Grupo 15 - Motivos
+--   Sub 0 - Comunes a todas
+--   Sub 1 - Para compras
+--   Sub 2 - Para ventas
+--   Sub 3 - Para tomar posicion
+--   Sub 4 - Para cerrar posicion
+-- El id es el codigo de la razon, por eso deben ser distintos
+-- El texto esta en la tabla de mensajes con prefijo REASON
+-- ----------------------------------------------------
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 0,  0,    1, ''    , 'NONE'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 0, 98,    1, ''    , 'FAIL'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 0, 99,    1, ''    , 'OTHER'      );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 1, 11,    1, ''    ,  'UP'        );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 2, 21,    1, ''    ,  'DOWN'      );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 4, 41,    1, ''    , 'TARGET'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 4, 42,    1, ''    , 'LIMIT'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 4, 43,    1, ''    , 'CHANGE'     );
+
 
 -- ----------------------------------------------------
 -- Grupo 5: Bases de datos

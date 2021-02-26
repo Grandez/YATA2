@@ -1,11 +1,13 @@
 modOperPosInput = function(id, title) {
     ns = NS(id)
-    tagList(
-       yuiBox(ns("opPending"),  "Pendiente", yataTable(ns("tblPending")))
-      ,yuiBox(ns("opAccepted"), "Aceptadas", yataTable(ns("tblAccepted")))
-      ,yuiBox(ns("opOpen"),     "Abiertas",  yataTable(ns("tblOpen")))
-      # ,fluidRow(column(1)
-      #     ,column(4, yataBtnOK(ns("btnPEPE"), "Guardar"), yataBtnKO(ns("btnKO"), "Cancelar"))
-      #)
-
-)}
+    main = tagList(
+       tags$div(id=ns("data")
+          ,tags$div(column(7, yuiBox(ns("opOpen"),     "Abiertas",  yuiDataTable(ns("tblOpen")))))           
+          ,tags$div( column(6,yuiBox(ns("opPending"),  "Pendiente", yuiDataTable(ns("tblPending"))))
+                    ,column(6,yuiBox(ns("opAccepted"), "Aceptadas", yuiDataTable(ns("tblAccepted")))))
+          
+        )
+       ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))
+    )
+    list(left=NULL, main=main, right=NULL)
+}

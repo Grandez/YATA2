@@ -1,18 +1,61 @@
 ############################
 #### Shiny
 ###########################
+yuiMessage = function(id) {
+  htmlOutput(outputId=id, inline=TRUE)
+}
+# .updLabelNumber = function(value, text,bold,color) {
+#   cls = "yata_num"
+#   if (bold) cls = paste(cls, "yata_num_bold")
+#   if (color) {
+#      col = if(value > 0) cls = paste(cls, "yata_num_pos")
+#      col = if(value < 0) cls = paste(cls, "yata_num_neg")
+#   }
+#   lbl = paste0("<span class='", cls, "'>",text,"</span>")
+#   renderUI({HTML(lbl)})
+# }
+
+updMessageReset = function(txt) {
+
+}
+
+updMessage = function(txt) {
+  lbl = paste0("<span class='", cls, "'>",text,"</span>")
+  renderUI({HTML(lbl)})
+
+}
+updMessageOK = function(id, txt) {
+  idm = paste0(id, "-msg-dat")
+  shiny::removeUI(paste0("#", idm), immediate=TRUE)
+  dat = tags$span(id=idm, class = "yata-msg-success", txt)
+  shiny::insertUI(paste0("#", id, "-msg"),where="afterBegin",immediate=TRUE,ui=dat)
+}
+updMessageKO = function(txt) {
+
+}
+updMessageWarning = function(txt) {
+
+}
 yuiTextInput = function(id, label=NULL, value="") {
   textInput(inputId=id, label=label, value = value, width = NULL, placeholder = NULL)
 }
 yuiLabelText = function(id, label=NULL, value="") {
   textOutput(outputId=id, inline=TRUE)
 }
+updLabelText = function(txt) {
+  renderText({ txt })
+}
 # yuiLabelText = function(id, label=NULL, inline=TRUE) {
 #   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 # }
+yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
+  htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+}
+
 yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 }
+
 updLabelNumeric   = function(value, dec=-1, bold=TRUE, color=FALSE) {
   text = format(value, big.mark = ".", decimal.mark=",")
   if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
@@ -62,7 +105,9 @@ yuiNumericInput = function(id, label=NULL, value=0, step, min, max) {
   st = NA ; if (!missing(step)) st=step
   mn = NA ; if (!missing(min))  mn=min
   ma = NA ; if (!missing(max))  ma=max
-  numericInput(id, label = label, value = value, mn, ma,st)
+  widget = numericInput(id, label = label, value = value, mn, ma,st)
+  widget[[3]][[2]]$attribs$class = "form-control yata-number"
+  widget
 }
 updNumericInput = function(id, value, session=getDefaultReactiveDomain()) {
   updateNumericInput(session, id, value = value)
@@ -72,7 +117,9 @@ yuiIntegerInput = function(id, label=NULL, value=0, step, min, max) {
   st = NA ; if (!missing(step)) st=step
   mn = NA ; if (!missing(min))  mn=min
   ma = NA ; if (!missing(max))  ma=max
-  numericInput(id, label = label, value = value, mn, ma,st)
+  widget = numericInput(id, label = label, value = value, mn, ma,st)
+  widget[[3]][[2]]$attribs$class = "form-control yata-number"
+  widget
 }
 updIntegerInput = function(id, value, session=getDefaultReactiveDomain()) {
   updateNumericInput(session, id, value = value)
@@ -83,7 +130,7 @@ yuiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
     choice = c("")
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
-    selectInput(id, lbl, choice, selected)
+    selectInput(id, lbl, choice, selected,selectize=FALSE)
 }
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
@@ -99,12 +146,14 @@ yuiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
                                   ,onInitialize = I('function() { this.setValue(""); }')
                             ))
 }
-yuiSwitch = function(id, value=FALSE) {
+yuiSwitch = function(id, value=FALSE, onLbl="Yes", offLbl="No") {
     switchInput( inputId = id
-                ,onLabel = "Yes" ,offLabel = "No"
+                ,onLabel = onLbl ,offLabel = offLbl
                 ,onStatus = "success" ,offStatus = "danger"
                 , value = value)
 }
+
+
 yuiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
 #                                values
 #  selectInput('in3', 'Options', state.name, multiple=TRUE, selectize=FALSE, size=10)
@@ -115,8 +164,13 @@ yuiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
     selectInput(id,lbl,choice, size, selectize=FALSE,...)
 }
 
+updListBox = function(id, choices, selected=NULL, session=getDefaultReactiveDomain()) {
+    updateSelectInput(session, id, choices = c("base 1"=1, "base 2"=2, "base 3"=3), selected = selected)
+  #updateSelectInput(session, id, choices = as.list(choices), selected = selected)
+}
+
 # Copiadode TextArea
-yuiArea = function (inputId, label=NULL, value = "", width = NULL, height = NULL,
+yuiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = NULL,
     cols = NULL, rows = NULL, placeholder = NULL, resize = NULL) {
     value <- restoreInput(id = inputId, default = value)
     if (!is.null(resize)) {
@@ -134,7 +188,9 @@ yuiArea = function (inputId, label=NULL, value = "", width = NULL, height = NULL
         class = "form-control", placeholder = placeholder, style = style,
         rows = rows, cols = cols, value))
 }
-
+updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain()) {
+  updateTextAreaInput(session, id, label=label, value=text)
+}
 .updLabelNumber = function(value, text,bold,color) {
   cls = "yata_num"
   if (bold) cls = paste(cls, "yata_num_bold")

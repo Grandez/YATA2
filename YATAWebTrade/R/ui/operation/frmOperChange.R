@@ -3,16 +3,17 @@ frmOperChangeInput = function(base, data) {
    amount = ifelse(is.null(data$amount), 0, data$amount)
    price  = ifelse(is.null(data$price),  0, data$price)
     tagList(
-        h2(yataTextLabel(ns("LblOper")))
+        fluidRow(column(2), column(6, h2(yuiLabelText(ns("LblOper")))))
        ,fluidRow(column(1)
-           ,column(3,
+           ,column(4,
                h2("Base")
-              ,yataFormTable(
-                 list("Camara",   yataTextLabel(ns("LblCamera")))
-                ,list("Base",     yataTextLabel(ns("LblBase")))
-                ,list("Counter",  yataTextLabel(ns("LblCounter")))
-                ,list("Cantidad", yataNumericInput(ns("ImpAmount"), NULL, value = amount))
-                ,list("Precio",   yataNumericInput(ns("ImpPrice"),  NULL, value = price))
+              ,yuiFormTable(
+                 yuiFormRow("Camara2",   yuiLabelText(ns("LblCamera")))
+                ,yuiFormRow("Base",     yuiLabelText(ns("LblBase")))
+                ,yuiFormRow("Counter",  yuiLabelText(ns("LblCounter")))
+                ,yuiFormRow("Cantidad", yuiNumericInput(ns("ImpAmount"), NULL, value = amount))
+                ,yuiFormRow("Precio",   yuiNumericInput(ns("ImpPrice"),  NULL, value = price))
+                ,yuiFormRow("Motivo",   yuiCombo(ns("cboReason"), choices=data$reasons), selected="0")                
             )
         )
       # ,column(3,
@@ -25,21 +26,19 @@ frmOperChangeInput = function(base, data) {
       #          ,list("Revisar",  numericInput(ns("alert"),  NULL, value = 0))
       #      )
       #   )
-      ,column(3,
+      ,column(4,
              h2("Resumen")
-            ,yataFormTable(
-                 list("Disponible",    uiOutput(ns("LblAvailable")), uiOutput(ns("lblNew")))
-                ,list("Importe",       ""                          , uiOutput(ns("lblImp")))
-                ,list("Comision",      yataNumericInput(ns("LblFee"))    , uiOutput(ns("lblFeeImp")))
-                ,list("Gas",           textOutput(ns("LblGas"))    , uiOutput(ns("lblGasImp")))
-                ,list("Total Base",    ""                          , uiOutput(ns("lblTotBase")))
-                ,list("Total Counter", ""                          , uiOutput(ns("lblTotCounter")))   
+            ,yuiFormTable(
+                 yuiFormRow("Disponible",    uiOutput(ns("LblAvailable")), uiOutput(ns("lblNew")))
+                ,yuiFormRow("Importe",       ""                          , uiOutput(ns("lblImp")))
+                ,yuiFormRow("Comision",      yuiNumericInput(ns("LblFee"))    , uiOutput(ns("lblFeeImp")))
+                ,yuiFormRow("Gas",           textOutput(ns("LblGas"))    , uiOutput(ns("lblGasImp")))
+                ,yuiFormRow("Total Base",    ""                          , uiOutput(ns("lblTotBase")))
+                ,yuiFormRow("Total Counter", ""                          , uiOutput(ns("lblTotCounter")))   
            )
         )
        )
-   ,fluidRow(column(1)
-       ,column(4, yataBtnOK(ns("BtnOK"), "Transferir"), yataBtnKO(ns("BtnKO"), "Cancelar"))
-    )
+      ,yuiYesNo(ns("tag"))
 
 )}
 

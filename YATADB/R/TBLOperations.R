@@ -36,11 +36,9 @@ TBLOperations   = R6::R6Class("TBL.OPERATIONS"
              ,price    = "PRICE"
              ,active   = "ACTIVE"
              ,status   = "STATUS"
-             ,alert    = "ALERT"
              ,parent   = "PARENT"
              ,tms      = "TMS"
              ,tmsLast  = "TMS_LAST"
-             ,dtAlert  = "TMS_ALERT"
             )
      )
 )

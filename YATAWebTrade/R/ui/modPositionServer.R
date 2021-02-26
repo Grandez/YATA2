@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modPosServer <- function(id, full) {
+modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
    ns = NS(id)
    PNLPos = R6::R6Class("PNL.OPER"
       ,inherit = YATAPanel
@@ -12,109 +12,156 @@ modPosServer <- function(id, full) {
          ,operations   = NULL
          ,cameras      = NULL
          ,providers    = NULL
-         ,dates        = NULL # Fechas de inicio
-         ,lastMonitors = NULL
-         ,df = NULL
-         ,monitors = NULL            
+         ,interval     = 5
          ,fiats = c("EUR", "USD", "USDC", "USDT")
-         ,plots = c( "Session day"    = "plotDay"
-                    ,"Session Online" = "plotTickerVar"
-                    ,"Barras"         ="plotBar")
-         ,initialize    = function(id, session) {
-             super$initialize(id, session)
+         ,plots = c( "Session day"          = "plotDay"
+                    ,"Session day (var)"    = "plotDayVar"
+                    ,"Session Online"       = "plotTicker"
+                    ,"Session Online (Var)" = "plotTickerVar"
+                    #,"Barras"         ="plotBar")
+         )
+         ,initialize    = function(id, pnlParent, session) {
+             super$initialize(id, pnlParent, session)
              self$position   = YATAFactory$getObject(YATACodes$object$position)
              self$cameras    = YATAFactory$getObject(YATACodes$object$cameras)
              self$providers  = YATAFactory$getObject(YATACodes$object$providers)
              self$operations = YATAFactory$getObject(YATACodes$object$operation)
-             self$monitors   = HashMap$new()
-             self$vars$interval = 100
+             private$monitors   = HashMap$new()
              self$vars$plotLeftChanged = TRUE
              self$vars$plotRightChanged = TRUE
          }
          ,getDF         = function(type) {
-             if (type == "plotTickerVar") return (data$dfSession)
-         } 
-         ,getDFSession  = function() { self$data$dfSession      } 
-         ,getSessionDay = function() { return (private$sessDay) }
-         ,loadDataDay   = function() {
-            now = Sys.time()    
-            if (is.null(self$dates$tms)) return()
-            self$dates$tms = self$dates$tms - as.difftime(7, unit="days")
-            idx = 1
-            while (idx <= nrow(self$dates)) {
-                data = self$providers$getSessionDays("EUR", self$dates[idx, "counter"]
-                                                          , self$dates[idx, "tms"]
-                                                          , now)
-                private$sessDay$put(self$dates[1,"counter"], data)
-                idx = idx + 1
-            }
-         }
-         ,makeDFSession = function(data, init=FALSE) {
-             df0 = data.frame(tms=Sys.time())
-             df1 = as.data.frame(lapply(data, function(x) x$last))
-             df  = cbind(df0, df1)
-             if (init) {
-                 self$data$dfSession = df
-             } else {     
-                 self$data$dfSession = rbind(self$data$dfSession, df)
+             root = self$getRoot()
+             if (type == "plotTickerVar") return (root$getDFSession())
+             if (type == "plotTicker")    return (root$getDFSession())
+             if (type == "plotDay" || type == "plotDayVar")       {
+                 counters = self$data$mapSessionDay$keys()
+                 if (length(counters) == 0) return (NULL)
+                 df = self$data$mapSessionDay$get(counters[1])
+                 df = df[, c("tms", "close")]
+                 colnames(df) = c("tms", counters[1])
+                 idx = 2
+                 while (idx <= length(counters)) {
+                     df2 = self$data$mapSessionDay$get(counters[idx])
+                     df2 = df2[, c("tms", "close")]
+                     colnames(df2) = c("tms", counters[idx])
+                     df = full_join(df, df2, by="tms")
+                     idx = idx + 1
+                 }
+                 return (df)
              }
+           #  stop("TIPO DE PLOT NO IMPLEMENTADO")
+         }
+         ,getGlobalPosition = function() { self$getRoot()$getGlobalPosition() }
+         ,getCurrencies     = function() { self$getRoot()$getCurrencies()     }
+         ,getLatestSession  = function() { self$getRoot()$getLatestSession()  }
+        
+         ,getDFSession   = function() { self$data$dfSession      } 
+         ,loadSessionDay = function() {
+             self$data$mapSessionDay = HashMap$new()
+             df = self$getGlobalPosition()
+             df = df[df$currency != "EUR",]
+             df$since = df$since - as.difftime(7, unit="days")
+             to = as.numeric(Sys.time())
+             idx = 1
+             while (idx <= nrow(df)) {
+                 counter = df[idx, "currency"]
+                 from    = as.numeric(df[idx, "since"])
+                 data    = self$providers$getSessionDays("EUR", counter, from, to) 
+                 self$data$mapSessionDay$put(counter, data)
+                 idx = idx + 1
+             }
+         }
+        ,setInterval = function() {
+            self$interval = self$parms$getOnlineInterval()
+            self$getRoot()$setInterval(self$interval)
+        }
+         # ,makeDFSession  = function(data, init=FALSE) {
+         #     df0 = data.frame(tms=Sys.time())
+         #     df1 = as.data.frame(lapply(data, function(x) x$last))
+         #     df  = cbind(df0, df1)
+         #     df$tms = as.ITime(df$tms)
+         #     if (init) {
+         #         self$data$dfSession = df
+         #     } else {     
+         #         self$data$dfSession = rbind(self$data$dfSession, df)
+         #     }
+         # }
+         ,getMonitor  = function(name) {
+             if (missing(name)) return (private$monitors)
+             monitorDef = list(
+                 name    = ""
+                ,last    = 0
+                ,session = 0
+                ,day     = 0
+                ,week    = 0
+                ,price   = 0
+             )
+             if (is.null(private$monitors$get(name))) {
+                 monitorDef$name = name
+                 private$monitors$put(name, monitorDef)
+             }
+             private$monitors$get(name)                 
+         }
+         ,setMonitor = function(name, monitor) {
+             private$monitors$put(name, monitor)                 
          }
       )
      ,private = list(
-           opIdx     = list()
-           ,selected = NULL
-           ,sessDay = HashMap$new()
+          opIdx        = list()
+         ,selected     = NULL
+         ,lastMonitors = NULL
+         ,monitors = NULL 
        )
     )
     moduleServer(id, function(input, output, session) {
-       pnl = YATAWEB$panel(id)
-       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(id, session))
+       pnl = YATAWEB$getPanel(id)
+       if (is.null(pnl) || invalidate) pnl = YATAWEB$addPanel(PNLPos$new(id, pnlParent, session))
        loadPanel = function() {
-          pnl$vars$interval = pnl$parms$getOnlineInterval()
+          pnl$setInterval()
           updNumericInput("numInterval", pnl$vars$interval)
           loadPosition()
-          pnl$loadDataDay()
-          if (!is.null(pnl$lastMonitors)) initMonitor()
+          initMonitors()
+          pnl$loadSessionDay()
+#          if (!is.null(pnl$lastMonitors)) initMonitor()
           output$dtLast = updLabelDate({Sys.time()})
-          updCombo("cboPlotLeft",  choices=pnl$plots, selected=pnl$plots[2])
-          updCombo("cboPlotRight", choices=pnl$plots, selected=pnl$plots[2])
+          updCombo("cboPlotLeft",  choices=pnl$plots, selected=pnl$plots[1])
+          updCombo("cboPlotRight", choices=pnl$plots, selected=pnl$plots[3])
           pnl$loaded = TRUE
        }
-       insertMonitors       = function(act) {
-           toDel = !pnl$lastMonitors %in% act
-           # Quitar los viejos
-           if (length(toDel) > 0) {
-               toDel = pnl$lastMonitors[toDel]
-               for (old in toDel) pnl$monitors$remove(old)
-           }
-           act = act[!act %in% pnl$fiats]
-           # Poner los nuevos
-           if (length(act) < 6 && ! ("BTC" %in% act)) act = c("BTC", act)
-#           if (length(act) < 6 && ! ("ETH" %in% act)) act = c("ETH", act)
-           lapply(act, function(item) if (is.null(pnl$monitors$get(item))) pnl$monitors$put(item, list()))
-           idDiv = paste0("#", ns("monitor"))
-
-           lapply(act, function(x) {
-                if (!(x %in% pnl$lastMonitors)) 
-                    insertUI(selector = idDiv, where = "beforeEnd", immediate=TRUE,
-                             ui=tagList(yuiYataMonitor(ns(paste0("monitor-",x)))))
-           })
-           pnl$lastMonitors = act
+       
+       loadPosition = function() {
+          output$tblPosGlobal  = updTablePosition(pnl$getGlobalPosition())
+          cameras = pnl$position$getCameras()
+          divs = lapply(cameras, function(camera) loadCameraUI(camera))
+          insertUI(selector = "#divPosLast", where = "beforeBegin", ui=tagList(divs), immediate=TRUE)
+          dfs = lapply(cameras, function(camera) {
+                                 sfx = titleCase(camera)
+                                 df  = preparePosition(pnl$position$getCameraPosition(camera))
+                                 tbl = paste0("tblPos", sfx) 
+                                 eval(parse(text=paste0( "output$tblPos", sfx
+                                                        ," = updTablePosition(id=ns('"
+                                                        ,paste0("pos", sfx), "'),   df)")))
+                      })
+#          insertMonitors(pnl$getMonitors())
+          # pnl$valid = TRUE
        }
-       loadCameraUI = function(camera) {
-          suffix = titleCase(camera)
-          camera = pnl$cameras$getCameraName(camera)
-          nstable = paste0("tblPos", suffix)
-          tags$div(id=paste0("divPos", suffix), yuiBox(ns(nstable), paste("Posicion", camera)
-                                                                   , DT::dataTableOutput(ns(nstable))))
-       }
-       initMonitor = function() {
-          # Aqui ponemos los valores medio, dia, semana y session
-          data = pnl$providers$getMonitors("EUR", pnl$lastMonitors)
-          df = pnl$data$dfPosGlobal
-          pnl$makeDFSession(data, TRUE)
-          for (ctc in pnl$monitors$keys()) {
-               monitor = pnl$monitors$get(ctc)
+       initMonitors = function() {
+          ctc = pnl$getCurrencies()
+          lapply(ctc, function(item) pnl$getMonitor(item))
+         
+          idDiv = paste0("#", ns("monitor"))
+          lapply(ctc, function(x) insertUI( selector = idDiv, immediate=TRUE
+                                           ,where = "beforeEnd"
+                                           ,ui=tagList(yuiYataMonitor(ns(paste0("monitor-",x))))))
+          monitors = pnl$getMonitor()
+          data     = pnl$getLatestSession()
+          df       = pnl$getGlobalPosition()
+          
+          # pnl$makeDFSession(data, TRUE)
+          # 
+          for (ctc in monitors$keys()) {
+               monitor         = monitors$get(ctc)
                monitor$last    = data[[ctc]]$last
                monitor$session = data[[ctc]]$last
                monitor$day     = data[[ctc]]$day
@@ -123,81 +170,77 @@ modPosServer <- function(id, full) {
                if (nrow(df) > 0 && nrow(df[df$currency == ctc,]) > 0) {
                   monitor$price = df[df$currency == ctc, "price"] 
                }  
-               pnl$monitors$put(ctc, monitor)
+               pnl$setMonitor(ctc, monitor)
                updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
           }
+       } 
+       loadCameraUI = function(camera) {
+          suffix = titleCase(camera)
+          camera = pnl$cameras$getCameraName(camera)
+          nstable = paste0("tblPos", suffix)
+          tags$div(id=paste0("divPos", suffix), yuiBox(ns(nstable), paste("Posicion", camera)
+                                                                   , yuiDataTable(ns(nstable))))
        }
-       loadPosition = function() {
-          pnl$data$dfPosGlobal = pnl$position$getGlobalPosition()
-          output$tblPosGlobal  = updTablePosition(id=ns("posGlobal"), pnl$data$dfPosGlobal)
-           
-          cameras = pnl$position$getCameras()
-          divs = lapply(cameras, function(camera) loadCameraUI(camera))
-           
-          insertUI(selector = "#divPosLast", where = "beforeBegin", ui=tagList(divs), immediate=TRUE)
-          dfs = lapply(cameras, function(camera) {
-                                 sfx = titleCase(camera)
-                                 df  = pnl$position$getCameraPosition(camera)
-                                 tbl = paste0("tblPos", sfx) 
-                                 eval(parse(text=paste0( "output$tblPos", sfx
-                                                        ," = updTablePosition(id=ns('"
-                                                        ,paste0("pos", sfx), "'),   df)")))
-                      })
-          insertMonitors(unique(pnl$data$global$currency))
-          pnl$valid = TRUE
-      }
+       # initMonitors2 = function() {
+       #     browser()
+       #    # Aqui ponemos los valores medio, dia, semana y session
+       #    data = pnl$providers$getMonitors("EUR", pnl$lastMonitors)
+       #    df = pnl$data$dfPosGlobal
+       #    pnl$makeDFSession(data, TRUE)
+       #    for (ctc in pnl$monitors$keys()) {
+       #         monitor = pnl$monitors$get(ctc)
+       #         monitor$last    = data[[ctc]]$last
+       #         monitor$session = data[[ctc]]$last
+       #         monitor$day     = data[[ctc]]$day
+       #         monitor$week    = data[[ctc]]$week
+       #         monitor$price   = 0
+       #         if (nrow(df) > 0 && nrow(df[df$currency == ctc,]) > 0) {
+       #            monitor$price = df[df$currency == ctc, "price"] 
+       #         }  
+       #         pnl$monitors$put(ctc, monitor)
+       #         updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
+       #    }
+       # }
        plots = function() {
-           plotLeft()
-           plotRight()
+          if (input$cboPlotLeft != "") 
+              output$plotLeft = updPlot({makePlot(input$cboPlotLeft)})
+          if (input$cboPlotRight != "") 
+              output$plotRight = updPlot({makePlot(input$cboPlotRight)})
        }
-       plotLeft = function() {
-          #  if (input$cboPlotLeft != "") {
-          # plot = eval(parse(text=paste0(input$cboPlotLeft, "(pnl$getDF(input$cboPlotLeft))")))
-          # output$plotLeft = renderPlotly({plot})
-          #      
-          #  }
+       makePlot = function(idPlot) {
+           title = names(which(pnl$plots == idPlot))
+           df = pnl$getDF(idPlot)
+           if (is.null(df)) return (NULL)
+           plot = eval(parse(text=paste0(idPlot, "(df, title)")))
        }
-       plotRight = function() {
-           # if (!is.null(pnl$df) && input$cboPlotLeft != "") {
-           #     plot = eval(parse(text=paste0(input$cboPlotRight, "(pnl$getDF(input$cboPlotRight))")))
-           #     output$plotRight = renderPlotly({plot})
-           # }
-       }
-      autoInvalidate = reactiveTimer(60000)
+      autoInvalidate = reactiveTimer(pnl$interval * 60000)
 
-      # Antes del observer paraque encuentre datos
-      if (!pnl$loaded)  loadPanel()
-      
+      # Antes del observer para que encuentre datos
+      if (!pnl$loaded) loadPanel()
       observe({
-#         autoInvalidate()
-          invalidateLater(pnl$vars$interval * 60000)
-#         output$lastUpdate = renderText({paste("Last update: ", format.POSIXct(Sys.time(), format="%H:%M:%S"))})
-         data = pnl$providers$getLatests("EUR", pnl$lastMonitors)
-         pnl$makeDFSession(data)
+         autoInvalidate()
+         output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
 
-         df = pnl$data$dfPosGlobal
-         lapply(names(data), function(x) updYataMonitor(ns(paste0("monitor-",x)), pnl$monitors$get(x), data[[x]]$last))
-         bars = lapply(names(data), function(x) {
-                             row = df[df$currency == x, ]
-                             list( prc = ((data[[x]]$last / row[1, "price"])-1) * 100
-                                  ,delta=(row[1,"balance"] * data[[x]]$last) - (row[1,"balance"] * row[1,"price"]))
-                })
-         df = as.data.frame(bars)
-         df = cbind(symbol=names(data),df)
-         pnl$df = df
-#         output$plotDelta = renderPlotly({plotBars(df, x="symbol",y="prc")})
-         output$dtLast = updLabelDate({Sys.time()})
+         data = pnl$getLatestSession()
+         lapply(names(data), function(x) updYataMonitor(ns(paste0("monitor-",x)), pnl$getMonitor(x), data[[x]]$last))
          plots()
+         
+         info = list(id="rank", n=5)
+         updRank(info, input,output,session)
      })
      
      #################################################
      ### Panel derecho
      #################################################
      
-      observeEvent(input$numInterval,  { pnl$vars$interval = input$numInterval })
-      observeEvent(input$cboPlotLeft,  {plotLeft()} , ignoreInit=TRUE)
-      observeEvent(input$cboPlotRight, {plotRight()}, ignoreInit=TRUE)
+      observeEvent(input$numInterval,  { pnl$interval = input$numInterval }, ignoreInit = TRUE)
+      observeEvent(input$cboPlotLeft,  { plots()} , ignoreInit=TRUE)
+      observeEvent(input$cboPlotRight, { plots()}, ignoreInit=TRUE)
 
+     #################################################
+     ### Ejecutar siempre
+     #################################################
+      message("Ejecuta Posicion")
       plots()
   })
 }    

@@ -8,17 +8,6 @@ yataTitle = function(txt) {
 yataRowButtons = function(...) { div(class="yata-row-buttons", ...) }
 
 
-
-yataTblButton = function(id, table, label, btn) {
-   clk = paste0("onclick='Shiny.setInputValue(\"", id, "-btnTable", titleCase(table), "\","
-                                              ,"\"", label, "-__\")'")
-   data = as.character(btn)
-   res = regexpr(">", data, fixed=TRUE)
-   base = substr(data, 1, res[1] - 1)
-   paste(base, clk, substr(data, res[1], 10000L))
-}
-
-
 yataLabel = function(text) { tags$span(text) }
 yataLabelNumeric = function(value, dec=-1) { tags$span(style="text-align: right", yataTextNumeric(value,dec)) }
 # yataIcon = function(code) {

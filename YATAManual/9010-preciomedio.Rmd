@@ -1,6 +1,133 @@
+---
+classoption:
+- twocolumn
+---
+
+
+
+
 # Coste, Valor y  Neto
 
+De acuerdo como vayamos realizando operaciones de compra/venta, cada una a un precio diferente, necesitaremos un método de valorar correctamente nuestra posicion.
+
+```{r, results='asis'}
+cat('<div class = "row">')
+  
+cat('<div class = "col-md-4">')
+```
+
+<br><br>Since R Markdown use the [bootstrap framework](https://getbootstrap.com/docs/4.0/layout/grid/) under the hood. It is possible to benefit its powerful grid system. Basically, you can consider that your row is divided in 12 subunits of same width. You can then choose to use only a few of this subunits.
+
+```{r, results='asis'}
+cat('</div>')
+  
+cat('<div class = "col-md-4">')
+```
+
+<br><br>Here, I use 3 subunits of size 4 (4x3=12). The last column is used for a plot. You can read more about the grid system [here](bootstrap grid system). I got this result showing the following code in my R Markdown document.
+</div>
+  
+<div class = "col-md-4">
+``{r, message=FALSE, echo=FALSE}
+ggplot( mtcars, aes(x=mpg)) + geom_histogram(fill="skyblue", alpha=0.5) + theme_minimal()
+
+```{r, results='asis'}
+
+cat('</div>')
+cat('</div>')
+
+```
+
 Introducimos los siguientes conceptos:
+
++-----------+-----------------------------------------------------------------+
+| **Coste** | El importe que nos ha costado adquirir los activos  |
+| **Venta** | El precio medio al que hemos vendido los activos  |
+| **Neto**  | Dada una posicion activa, el precio al cual simplemente obtendriamos un retorno nulo |
++-----------+-----------------------------------------------------------------+
+
+$$
+\begin{aligned}
+Coste &= \sum_i\frac{precio\_compra_i * unidades_i}{unidades_i} \\
+Venta &= \sum_i\frac{precio\_venta_i * unidades_i}{unidades_i}  \\
+Neto  &= \frac{\sum_i{(precio\_compra_i * unidades_i)} - 
+               \sum_i{(precio\_venta_i * unidades_i})}
+               {\sum_i{unidades\_compradas}-\sum_i{unidades\_vendidas_i}}
+
+\end{aligned}
+$$
+
+## Regularizacion
+
+Notese que estos valores consideran todas operaciones realiziadas, pero al cabo del tiempo, existiran un conjunto de operaciones de estas operaciones que ya habrán sido descontadas;; es decir, las habremos cargado a "perdidas y ganancias" con lo que ya no deben ser tenidas en cuenta.
+
+Para contemplar esta situación, tipícamente al menos una vez al año, introducimos el concepto de regularización de la posición.  Esto no es nada mas que guardar informacion aparte del punto en el tiempo antes del cual no se deben considerar las operaciones, y los saldos en ese momento
+
+
+## Ejemplo
+
+Para clarificar estos conceptos, veamos el siguiente ejemplo:
+
+```{r, echo=FALSE, results='asis'}
+library(knitr)
+df = data.frame(orden=1,precio=10,unidades=100)
+cat("\\twocolumn")
+```
+
+
+
+## Otra version 
+
+:::::::::::::: {.columns}
+::: {.column width="40%"}
+
+contents...
+
+:::
+::: {.column width="60%"}
+
+contents...
+
+:::
+::::::::::::::
+
+## Two columns
+
+Below is a Div containing three child Divs side by side. The Div
+in the middle is empty, just to add more space between the left
+and right Divs.
+
+:::::: {.cols data-latex=""}
+
+::: {.col data-latex="{0.55\textwidth}"}
+```{r, echo=FALSE, fig.width=5, fig.height=4}
+par(mar = c(4, 4, .2, .1))
+plot(cars, pch = 19)
+```
+:::
+
+::: {.col data-latex="{0.05\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+
+::: {.col data-latex="{0.4\textwidth}"}
+The figure on the left-hand side shows the `cars` data.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+nulla pariatur.
+:::
+::::::
+
+
+```{r, echo=FALSE}
+kable(df)
+```
 
 - **Coste** Coste medio de compra de las acciones
 - **Valor** Valor de la cartera al momento actual
@@ -29,7 +156,6 @@ Opreraciones                                          Posicion
 +----------+--------+-------+           +----------+--------+-------+------+
 
 
-Al cabo del tiempo, existiran un conjunto de operaciones de compra/venta las cuales son tomadas en cuenta para el calculo de estas variables, pero algunas, o muchas de ellas ya las habremos descontado; es decir, las hemos cargado a "perdidas y ganancias" con lo que nos tergiversan los valores.
 
 Ejemplo:
 

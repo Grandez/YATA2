@@ -12,8 +12,5 @@ tagList(
         )
     )
   )
-    ,fluidRow(column(1)
-       ,column(4, yuiBtnOK(ns("btkOK"), "Transferir"), yuiBtnKO(ns("btkKO"), "Cancelar"))
-    )
-
+  ,yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar", cols=9, left=1)
 )}

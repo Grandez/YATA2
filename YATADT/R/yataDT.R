@@ -1,4 +1,4 @@
-yataDataTable = function(data, ...) {
+yataDT = function(data, ...) {
     # las clases propias son las ultimas
     mt = lapply(1:ncol(data), function(x) class(data[,x]))
     mt = unlist(lapply(mt, function(x) x[[length(x)]]))
@@ -8,9 +8,27 @@ yataDataTable = function(data, ...) {
     lstAlign = list()
     if (length(align$right) > 0) lstAlign = list(list(className="dt-right", targets = align$right))
     if (length(lstAlign) > 0) lstOpts = list(columnDefs=lstAlign)
-    dt = datatable(data, rownames = FALSE, options = lstOpts, ...)
-    dt = .yataFormat(dt, mt)
-    renderDataTable(dt, style='auto', ...)
+    dt = datatable(data, escape=FALSE, rownames = FALSE, options = lstOpts, ...)
+    .yataFormat(dt, mt)
+}
+yataDTRender = function(dt, ...) {
+    renderDataTable(dt, escape=FALSE, style='auto', ...)
+}
+yataDataTable = function(data, ...) {
+    dt = yataDT(data, ...)
+    # las clases propias son las ultimas
+    # mt = lapply(1:ncol(data), function(x) class(data[,x]))
+    # mt = unlist(lapply(mt, function(x) x[[length(x)]]))
+    #
+    # align = .yataGetAlignment(mt)
+    # lstOpts = list()
+    # lstAlign = list()
+    # if (length(align$right) > 0) lstAlign = list(list(className="dt-right", targets = align$right))
+    # if (length(lstAlign) > 0) lstOpts = list(columnDefs=lstAlign)
+    # dt = datatable(data, escape=FALSE, rownames = FALSE, options = lstOpts, ...)
+    # dt = .yataFormat(dt, mt)
+    # renderDataTable(dt, escape=FALSE, style='auto', ...)
+    yataDTRender(dt, ...)
 }
 
 .yataFormat = function(dt, mt) {

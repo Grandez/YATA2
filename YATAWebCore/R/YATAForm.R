@@ -1,4 +1,7 @@
-YATAFormUI = function(id, uiName, title=NULL, ...) {
+yataForm = function() {
+
+}
+yuiFormUI = function(id, uiName, title=NULL, ...) {
     # Quitar el que exista
     #volver  a crear
     shinyjs::show("form-panel")

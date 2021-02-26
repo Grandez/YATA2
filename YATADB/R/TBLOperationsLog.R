@@ -14,6 +14,7 @@ TBLOperLog   = R6::R6Class("TBL.OPER.LOG"
               idOper = "ID_OPER"
              ,idLog  = "ID_LOG"
              ,type   = "TYPE"
+             ,reason = "REASON"
              ,tms    = "TMS"
              ,comment   = "COMMENT"
             )

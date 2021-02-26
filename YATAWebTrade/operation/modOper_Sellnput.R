@@ -1,0 +1,43 @@
+modOperSell2Input = function(id, title="") {
+  ns = NS(id)
+
+  main = tagList(
+     fluidRow( column(2)
+              ,column(4, yuiFormTable( yuiFormRow(h4("Operacion")
+                                      ,yuiComboSelect(ns("cboOper"),choices=c("Abrir posicion"=1, "Comprar"=2, "Vender"=3)
+                                                                   ,selected=1)
+                                      ))
+              )  
+              ,column(4, yuiFormTable( yuiFormRow(h4("Moneda")
+                                      ,yuiComboSelect(ns("cboCounter"),text="Counter")))
+              )
+     )
+    ,fluidRow(column(1),column(3, h2("Base")), column(3, h2("Control")), column(3, h2("Resumen")))
+    ,fluidRow(column(1), column(3, yuiFormTable(
+                 yuiFormRow("Camara",   yuiCombo(ns("cboCamera"), choices=list(" ")))
+                ,yuiFormRow("Base",     yuiCombo(ns("cboBase"),   choices=list(" ")))
+                ,yuiFormRow("Cantidad", yuiNumericInput(ns("impAmount"), NULL, value = 0))
+                ,yuiFormRow("Precio",   yuiNumericInput(ns("impPrice"),  NULL, value = 0))
+            ))
+            ,column(3, yuiFormTable( 
+                yuiFormRow("Objetivo", yuiNumericInput(ns("target"),   NULL, value = 0))
+               ,yuiFormRow("Plazo",    yuiIntegerInput(ns("deadline"), NULL, value = 0))
+               ,yuiFormRow("Stop",     yuiNumericInput(ns("stop"),     NULL, value = 0))
+               ,yuiFormRow("Limit",    yuiNumericInput(ns("limit"),    NULL, value = 0))
+               ,yuiFormRow("Revisar",  yuiIntegerInput(ns("alert"),    NULL, value = 0))
+           ))
+            ,column(3, yuiFormTable(
+                 yuiFormRow("Disponible",    yuiLabelNumeric(ns("lblAvailable")), yuiLabelNumeric(ns("lblNew")))
+                ,yuiFormRow("Importe",       ""                                , yuiLabelNumeric(ns("lblImp")))
+                ,yuiFormRow("Comision",      yuiLabelNumeric(ns("lblFee"))      , yuiLabelNumeric(ns("lblFeeImp")))
+                ,yuiFormRow("Gas",           yuiLabelNumeric(ns("lblGas"))      , yuiLabelNumeric(ns("lblGasImp")))
+                ,yuiFormRow("Total Base",    ""                                , yuiLabelNumeric(ns("lblTotBase")))
+                ,yuiFormRow("Total Counter", ""                                , yuiLabelNumeric(ns("lblTotCounter")))
+           ))
+     )
+    ,fluidRow(column(1), column(4, h2("Notas")))
+    ,fluidRow(column(1), column(9, yuiArea(ns("comment"), label=NULL, cols="200", rows="10")))
+    ,yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar", cols=9, left=1)
+  )
+  list(left=NULL, main=main, right=NULL)
+}

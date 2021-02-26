@@ -1,7 +1,8 @@
 
 -- Proveedores de datos
 DELETE FROM PROVIDERS;       
-INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)   VALUES ('POL',   'Poloniex'   , 1  ,"poloniex.png"  ,"Poloniex");
+INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)   VALUES ('MKTCAP',   'CoinMarketCap'   , 1  ,"coinmarketcap.png"  ,"MarketCap" );
+INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)   VALUES ('POL'   ,   'Poloniex'        , 2  ,"poloniex.png"       ,"Poloniex"  );
 
 -- Intercambios
 DELETE FROM EXCHANGES;

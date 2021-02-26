@@ -19,8 +19,19 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             tblCurrencies$select(...)
             self$current = tblCurrencies$current
         }
-        ,getCurrencyNames      = function(full = TRUE) {
+        ,getCurrencyName       = function(code, full = TRUE) {
+            # if (code == "EUR") {
+            #     if (full) return ("EUR - Euro")
+            #     return ("EUR")
+            # }
+            data = select(id = code)
+            ifelse (full, paste0(data$id, " - ", data$name), data$id)
+        }
+        ,getCurrencyNames      = function(subset, full = TRUE) {
             df = tblCurrencies$getTable()
+            if (!missing(subset)) {
+                df = df[df$currency %in% subset,]
+            }
             if (full) df$name = paste(df$id, df$name, sep=" - ")
             df
         }

@@ -11,19 +11,22 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCameras = function() {
           df = prtPosition$getCameras()
-          as.list(df[,1])
+          as.list(df[df$camera != "CASH",1])
        }
        ,getGlobalPosition = function() {
           df = prtPosition$getGlobalPosition()
-          df$value = df$balance * df$price
-          yataSetClasses(df)
+          df = add_column(df, value = df$balance * df$price, .after="price")
+          yataSetClasses(df, dat=c("since", "last"))
        }
        ,getPosition       = function(camera, currency) { prtPosition$getPosition(camera, currency) }
        ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
            df = prtPosition$getCameraPosition(camera, balance, available)
-           df$value = df$balance * df$price
-           yataSetClasses(df, dat=c(6))
-       }
+           # df = df[,2:ncol(df)]
+           # browser()
+           # df = add_column(df, value = df$balance * df$price, .after="price")
+           #
+           # yataSetClasses(df, dat=c("since", "last"))
+      }
       ,transfer = function(from, to, currency, amount) {
          if (from != "EXT") {
              res = prtPosition$select(camera=from, currency=currency, create=TRUE)

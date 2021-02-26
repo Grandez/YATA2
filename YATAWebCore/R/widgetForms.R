@@ -1,13 +1,40 @@
 # Componente que muestra una lista de opciones en modo tabla
 # Pone un columna de error
+# ... un conjunto de filas yuiFormRow
+# yuiFormTable = function(width=6,  ...) {
+#    divTbl  = tags$div(class="yataCentered")
+#    tbl  = tags$table(class="yataForm")
+#    #rows = lapply(list(...), function(row) .makeRow(row))
+#    divTbl = tagAppendChild(divTbl,tagAppendChildren(tbl, ...))
+#    if (width < 12) {
+#        left = floor((12-width)/2)
+#        if (left > 0) return (fluidRow(column(left), column(width, divTbl)))
+#    }
+#    fluidRow(column(width, divTbl))
+# }
+
 yuiFormTable = function(...) {
-  div = tags$div(class="yataCentered")
-  tbl = tags$table(class="yataForm")
-  rows = lapply(list(...), function(item) {
-                row = tags$tr()
-                items = lapply(item, function(col) tags$td(col))
-                #cellMsg = tags$td()
-                tagAppendChildren(row, items) #list.append(items, cellMsg))
-               })
-  tagAppendChild(div,tagAppendChildren(tbl, rows))
+   divTbl  = tags$div(class="yataCentered")
+   tbl  = tags$table(class="yataForm")
+   #rows = lapply(list(...), function(row) .makeRow(row))
+   divTbl = tagAppendChild(divTbl,tagAppendChildren(tbl, ...))
+   # if (width < 12) {
+   #     left = floor((12-width)/2)
+   #     if (left > 0) return (fluidRow(column(left), column(width, divTbl)))
+   # }
+   # fluidRow(column(width, divTbl))
+   divTbl
 }
+
+yuiFormRow = function (...) {
+    row = tags$tr()
+    items = lapply(list(...), function(col) tags$td(col))
+    tagAppendChildren(row, items) #list.append(items, cellMsg))
+}
+
+# .makeRow = function(item) {
+#     browser()
+#     row = tags$tr()
+#     items = lapply(item, function(col) tags$td(col))
+#     tagAppendChildren(row, items) #list.append(items, cellMsg))
+# }

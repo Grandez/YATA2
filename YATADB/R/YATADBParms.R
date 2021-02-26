@@ -21,6 +21,7 @@ DBParms = list(
       ,providers =  3
       ,databases =  5
       ,prefs     = 10
+      ,reasons   = 15
     )
     ,general   =  list(
         subgroup = list(
@@ -55,5 +56,12 @@ DBParms = list(
     )
    ,prefs = list(
 
+  )
+  ,reasons = list(
+     gral  = 0
+    ,buy   = 1
+    ,sell  = 2
+    ,open  = 3
+    ,close = 4
   )
 )

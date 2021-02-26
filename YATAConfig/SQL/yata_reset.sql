@@ -13,21 +13,17 @@
 
    use YATATest;
    source yata_tables.sql;
-   source yata_dat_init.sql;
    commit;
    
    use YATASimm;
    source yata_tables.sql;
-   source yata_dat_init.sql;
    commit;
    
    use YATA;
    source yata_tables.sql;
-   source yata_dat_init.sql;
    commit;
    
    use YATATpl;
    source yata_tables.sql;
-   source yata_dat_init.sql;
    commit;
    

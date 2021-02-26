@@ -1,5 +1,6 @@
 import(tidyr)
 import(rlist)
+import(zoo)
 
 # Shiny
 import(shiny)
@@ -23,5 +24,7 @@ import(YATADT)
 exportPattern("YATA.*")
 exportPattern("yata.*")
 exportPattern("yui.*")
+exportPattern("blk.*")
 exportPattern("upd.*")
 exportPattern("plt*")
+exportPattern("prepare*")

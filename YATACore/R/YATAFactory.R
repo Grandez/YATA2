@@ -15,11 +15,12 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           private$classes     = HashMap$new()
           private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
           private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
-          private$parms       = OBJParms$new(private$DBFactory)
+          private$parms       = OBJParms$new   (private$DBFactory)
+          private$msgs        = OBJMessages$new(private$DBFactory)
           if (parms$autoConnect()) {
-             setDB(parms$lastOpen())
+              setDB(parms$lastOpen())
           } else {
-             setDB(parms$defaultDB())
+              setDB(parms$defaultDB())
           }
           # Aqui hay que crear los parametros y conectar si es necesario
           message("Factory inicializada")
@@ -38,15 +39,21 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
             NULL
          }
       }
+      ,getDBID   = function() { DBFactory$getID() }
+      ,getMSG    = function() {
+         if (is.null(private$msgs)) private$msgs = OBJMessages$new(private$DBFactory)
+              private$msgs
+      }
       ,getParms  = function()                    {
           if (is.null(private$parms)) private$parms = OBJParms$new(private$DBFactory)
               private$parms
        }
       ,getDB     = function()                    { DBFactory$getDB()         }
       ,setDB     = function(connData)            { DBFactory$setDB(connData) }
-      ,changeDB  = function(name) {
+      ,changeDB  = function(id) {
+          connInfo = parms$getDBInfo(id)
          private$objects = HashMap$new()
-         connInfo        = private$parms$setLastOpen(name)
+         parms$setLastOpen(id)
          setDB(connInfo)
       }
       ,getTable    = function(name, force = FALSE) { DBFactory$get(name, force) }
@@ -80,6 +87,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,classes     = NULL
       ,cfg         = NULL
       ,parms       = NULL
+      ,msgs        = NULL
       ,setProvFactory = function() {
          # Le pasamos los datos de parametros a la factoria
          ProvFactory$setOnlineInterval (parms$getOnlineInterval())

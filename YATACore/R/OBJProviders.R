@@ -5,7 +5,7 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        print           = function() { message("Clearings Object")}
+        print           = function() { message("Proivders Object")}
        ,initialize      = function(provider) {
            super$initialize()
            private$providers    = HashMap$new()
@@ -13,8 +13,9 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
            private$id           = parms$getOnlineProvider()
            private$name         = tblProviders$getNames(private$id)
 
-           df  = tblProviders$table(active = YATACodes$flag$active)
-           if (nrow(df) > 0 ) private$dfProviders = df[order(df$prty),]
+           private$dfProviders  = tblProviders$table(active = YATACodes$flag$active)
+           if (nrow(private$dfProviders) == 0) stop("No hay proveedores activos")
+           private$mktcap = YATAFactory$getProvider("MKTCAP", "MarketCap")
        }
       ,getSessionDays = function(base, counter, from, to) {
           if (is.null(private$provider)) .setProvider(1)
@@ -52,12 +53,27 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
           }
           provider$getLatests(base, counter)
       }
+     ,getBest = function(interval=1,top=5) {
+         # interval = numero en dias: 1 o 7
+         col = 4
+         df = private$mktcap$getLatest()
+
+         if (interval == 1) {
+             col = 4
+             df = df[order(df$var1, decreasing=TRUE),]
+         } else {
+             col = 5
+             df = df[order(df$var7, decreasing = TRUE),]
+         }
+         df[1:top, c(2,3,col)]
+     }
     )
     ,private = list(
         selected     = FALSE
        ,id           = NULL
        ,name         = NULL
        ,provider     = NULL
+       ,mktcap       = NULL  # Objeto MarketCap
        ,tblProviders = NULL
        ,providers    = NULL
        ,dfProviders  = NULL

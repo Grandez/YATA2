@@ -1,0 +1,12 @@
+modOperDetailInput = function(id, title) {
+    ns = NS(id)
+    main = tagList(
+       tags$div(id=ns("data")
+          ,yuiBox(ns("opPending"),  "Pendiente", yuiDataTable(ns("tblPending")))
+          ,yuiBox(ns("opAccepted"), "Aceptadas", yuiDataTable(ns("tblAccepted")))
+          ,yuiBox(ns("opOpen"),     "Abiertas",  yuiDataTable(ns("tblOpen")))
+        )
+       ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))
+    )
+    list(left=NULL, main=main, right=NULL)
+}

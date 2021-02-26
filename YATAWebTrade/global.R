@@ -14,6 +14,7 @@ library(tibble)
 library(rlist)
 library(plyr)
 library(tidyr)
+library(dplyr)
 
 # YATA
 library(YATATools)
@@ -30,7 +31,7 @@ library(shinyWidgets)
 library(bslib)
 
 # General
-#library(DT)
+library(data.table)
 
 # Plots
 library(ggplot2)

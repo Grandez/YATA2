@@ -172,7 +172,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
       }
       ,add     = function(data, isolated=FALSE) {
           if (missing(data)) data = self$current
-          values = rlist::list.clean(data)
+          fields = rlist::list.clean(private$fields[names(data)])
+          values = rlist::list.clean(data[names(fields)])
           names(values) = private$fields[names(values)]
           db$add(tblName, values, isolated)
       }
@@ -187,19 +188,19 @@ YATATable <- R6::R6Class("YATA.TABLE"
           df = db$query(sql, params=filter$values)
           as.numeric(df[1,1])
        }
-      ,update  = function(values, ..., isolated=FALSE) {
-          sql = paste("UPDATE ", self$tblName, "SET")
-          cols = fields[names(values)]
+      ,update  = function(lstValues, ..., isolated=FALSE) {
+          sql = paste("UPDATE ", tblName, "SET")
+          cols = fields[names(lstValues)]
           cols = paste(paste(cols, "= ?"), collapse=",")
           cols = sub(",$", "", cols)
 
           filter = mountWhere(...)
 
           sql = paste(sql, cols, filter$sql)
-          db$execute(sql, params=list.merge(values, filter$values), isolated=isolated)
+          db$execute(sql, params=list.merge(lstValues, filter$values), isolated=isolated)
       }
       ,updateSelected  = function(values, isolated=FALSE) {
-          sql = paste("UPDATE ", self$tblName, "SET")
+          sql = paste("UPDATE ", tblName, "SET")
           cols = fields[names(values)]
           cols = paste(paste(cols, "= ?"), collapse=",")
           cols = sub(",$", "", cols)

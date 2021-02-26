@@ -49,3 +49,17 @@ table.dataTable tbody td {
   padding: 0 !important;
 }
 */
+
+
+.shiny-input-container:not(.shiny-input-container-inline) {
+    width: 100% !important;
+}
+
+
+/*******************************/
+/*** AdminLTE                ***/
+/*******************************/
+
+.box-body {
+  padding: 2px;
+}

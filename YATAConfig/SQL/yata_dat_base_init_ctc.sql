@@ -311,5 +311,5 @@ INSERT INTO CURRENCIES (PRTY, ACTIVE, DECIMALS, SYMBOL, NAME) VALUES ( 805,  0, 
 INSERT INTO CURRENCIES (PRTY, ACTIVE, DECIMALS, SYMBOL, NAME) VALUES ( 999,  1,  2, "USD"        , "US Dollar"                            );
 INSERT INTO CURRENCIES (PRTY, ACTIVE, DECIMALS, SYMBOL, NAME) VALUES ( 998,  1,  2, "EUR"        , "Euro"                                 );
 INSERT INTO CURRENCIES (PRTY, ACTIVE, DECIMALS, SYMBOL, NAME) VALUES ( 100,  1,  2, "ALPHA"      , "Alpha Finance Lab"                    );
-
+INSERT INTO CURRENCIES (PRTY, ACTIVE, DECIMALS, SYMBOL, NAME) VALUES (   3,  1,  2, "BNB"        , "Binance Coin"                         );
 commit;

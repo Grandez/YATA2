@@ -1,4 +1,4 @@
-modOperServer <- function(id, full) {
+modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
    ns = NS(id)
    PNLOper = R6::R6Class("PNL.OPER"
         ,inherit    = YATAPanel
@@ -18,23 +18,31 @@ modOperServer <- function(id, full) {
            ,action       = NULL 
            ,data         = NULL
            ,defCtc       = NULL
-           ,initialize     = function(id) {
-               super$initialize(id)
+           ,detail       = NULL    
+           ,initialize     = function(id, pnlParent, session) {
+               super$initialize(id, pnlParent, session)
                self$cameras    = YATAFactory$getObject("Cameras")
                self$operations = YATAFactory$getObject("Operation")
                self$currencies = YATAFactory$getObject("Currencies")
                self$position   = YATAFactory$getObject("Position")
                self$parms      = YATAFactory$getParms()
                self$defCtc     = self$parms$getDefCurrency()
-               self$cameras$loadCameras()
+               self$cameras$loadCameras()               
            }
            ,getCounters = function() {self$currencies$getCurrencyNames()  }
-           ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
+           ,cboCamerasCounter = function(counter) { 
+               self$currencies$getCameras(counter) }
            ,cboCameras   = function(exclude, full=FALSE) {
               data = self$cameras$getCameras(full)
               if (!missing(exclude)) data = data[!data$id %in% exclude,]
               self$makeCombo(data)
-          }
+           }
+           ,getCurrenciesSell = function() {
+                df = self$position$getGlobalPosition()
+                df = df[df$currency != "EUR" & df$available > 0,]
+                if (nrow(df) > 0) df = currencies$getCurrencyNames(df$currency, TRUE)
+                df
+           }    
            ,cboCurrency  = function(camera, available) {
                if (missing(camera)) {
                    private$asCombo(YATAWEB$getCurrencyNames())
@@ -53,12 +61,14 @@ modOperServer <- function(id, full) {
                   }
                }
            }
-           ,cboCameraCurrencies  =function (camera) {
-               private$asCombo(self$getCamerasCurrency(camera))
-           }
+           # ,cboCameraCurrencies  =function (camera) {
+           #     private$asCombo(self$getCamerasCurrency(camera))
+           # }
+           ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }
            ,selectCamera = function(camera) { self$cameras$select(camera) }
-           ,operation    = function(type, ...) {
-               tryCatch({self$operations$add(type, ...)
+           ,operation    = function(data) {
+               if (missing(data)) data = self$data
+               tryCatch({self$operations$add(data$type, data)
                          FALSE
                }
                ,error = function(cond) {
@@ -68,17 +78,11 @@ modOperServer <- function(id, full) {
                )
            } 
            ,loadOperations = function(status) {
-               ignore = c("id", "type", "active", "tms", "status", "parent", "alert", "dtAlert")               
-               df = self$operations$getOperationsExt(active = YATACodes$flag$active, status = status)
-               if (nrow(df) > 0) {
-                   df$id = as.numeric(df$id)
-                   df = add_column(df, value = df$price * df$amount, .after = "price")
-                   stname = YATACodes$xlateStatus(status)
-                   private$opIdx[stname] = df$id
-                   df = df[,!is.na(colnames(df))]
-                   df = df [, ! names(df) %in% ignore, drop = FALSE]
-               }
-               df
+               df = self$operations$getOperations(active = YATACodes$flag$active, status = status)
+               # Guardar los id               
+               stname = YATACodes$xlateStatus(status)
+               private$opIdx[[stname]] = df$id
+               prepareOperation(df)
            }
            ,selectOperation = function(status, row) {
                name = YATACodes$xlateStatus(status)
@@ -86,11 +90,17 @@ modOperServer <- function(id, full) {
                self$operations$select(private$selected)
                self$cameras$select(self$operations$current$camera)
                self$data = self$cameras$current
+               self$data$cameraName = self$cameras$current$name
                self$data = list.merge(self$data, self$operations$current)
+               self$data$baseName    = self$currencies$getCurrencyName(self$data$base,    TRUE)
+               self$data$counterName = self$currencies$getCurrencyName(self$data$counter, TRUE)
            }
+          ,getOperation = function() {
+              self$operations$current
+          }
         )
        ,private = list(
-           opIdx     = list()
+           opIdx     = list() # Contiene los id de las operaciones
            ,selected = NULL
        )
     )
@@ -113,8 +123,8 @@ modOperServer <- function(id, full) {
     #   removeUI("#operModal", immediate=TRUE)
     # }
     moduleServer(id, function(input, output, session) {
-        pnl = YATAWEB$panel(id)
-        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id))
+        pnl = YATAWEB$getPanel(id)
+        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         
         # observeEvent(input$cboCamera,{
         #     pnl$cameras$select(input$cboCamera)

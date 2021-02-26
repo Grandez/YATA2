@@ -1,5 +1,6 @@
-yuiYataMonitor = function(id, size=3) {
-    column(size, .yuiMonitorTable(id))
+yuiYataMonitor = function(id, size=2) {
+#    column(size, .yuiMonitorTable(id))
+   tags$div(column(size,.yuiMonitorTable(id)))
 }
 
 ###########################################
@@ -11,35 +12,37 @@ yuiYataMonitor = function(id, size=3) {
   ns = strsplit(id, "-")[[1]]
   code = ns[length(ns)]
   base = paste(ns[1:length(ns)-1], sep = "-")
-      tags$table(class="yataTblMonitor"
+#  tags$div(
+      tags$table(class="yata-tbl-monitor"
         ,tags$tr(
            tags$td(rowspan="3", class="yataCellIcon", img(src=paste0("icons/", code, ".png"),width="48px", height="48px"))
-          ,tags$td(class="yataCellLabel", "Precio")
-          ,tags$td(class="yataCellData",  id=paste0(id,"-price"))
-          ,tags$td(class="yataCellData",  id=paste0(id,"-price-delta"))
-        )
-        ,tags$tr(
-           tags$td(class="yataCellLabel", "Sesion")
-          ,tags$td(class="yataCellData",  id=paste0(id,"-session"))
-          ,tags$td(class="yataCellData",  id=paste0(id,"-session-delta"))
-        )
-        ,tags$tr(
-           tags$td(class="yataCellLabel", "Dia")
-          ,tags$td(class="yataCellData",  id=paste0(id,"-day"))
-          ,tags$td(class="yataCellData",  id=paste0(id,"-day-delta"))
+          ,tags$td(class="yata-cell-label", "Coste")
+          ,tags$td(class="yata-cell-data",  id=paste0(id,"-price"))
+          ,tags$td(class="yata-cell-data",  id=paste0(id,"-price-delta"))
         )
         ,tags$tr(
            tags$td(rowspan="2", tags$span(class="yataCellCTC", code))
-          ,tags$td(class="yataCellLabel yataCellGroup", "Semana")
-          ,tags$td(class="yataCellData  yataCellGroup",  id=paste0(id,"-week"))
-          ,tags$td(class="yataCellData"               ,  id=paste0(id,"-week-delta"))
+          ,tags$td(class="yata-cell-label yataCellGroup", "Semana")
+          ,tags$td(class="yata-cell-data  yataCellGroup",  id=paste0(id,"-week"))
+          ,tags$td(class="yata-cell-data"               ,  id=paste0(id,"-week-delta"))
         )
         ,tags$tr(
-            tags$td(class="yataCellLabel", "Ultimo")
-           ,tags$td(class="yataCellData yataCellGroup", id=paste0(id,"-last"))
-           ,tags$td(class="yataCellData yataCellGroup", id=paste0(id,"-last-delta"))
+           tags$td(class="yata-cell-label", "Dia")
+          ,tags$td(class="yata-cell-data",  id=paste0(id,"-day"))
+          ,tags$td(class="yata-cell-data",  id=paste0(id,"-day-delta"))
+        )
+        ,tags$tr(
+           tags$td(class="yata-cell-label", "Sesion")
+          ,tags$td(class="yata-cell-data",  id=paste0(id,"-session"))
+          ,tags$td(class="yata-cell-data",  id=paste0(id,"-session-delta"))
+        )
+        ,tags$tr(
+            tags$td(class="yata-cell-label", "Ultimo")
+           ,tags$td(class="yata-cell-data yataCellGroup", id=paste0(id,"-last"))
+           ,tags$td(class="yata-cell-data yataCellGroup", id=paste0(id,"-last-delta"))
         )
       )
+#  )
 }
 
 updYataMonitor = function(id, monitor, last) {
@@ -91,34 +94,25 @@ updYataMonitor = function(id, monitor, last) {
        id1   =  paste0(id0, "-value")
        repDiv(id0, id1, tags$span(class=cls, id=id1, number2percentage(value, 2)))
    }
-  #  delta = (monitor$current / monitor$price) - 1
-  #  ic = tags$span(yataIconDown())
-  #  if (delta > 0) ic = tags$span(yataIconUp())
-  #  if (delta < 0) ic = tags$span(yataIconDown())
-  #
-  #  repDiv(id2, id1, ic, tags$span(tags$p(id=paste0(id2, id1), class=getClass(delta), number2percentage(delta))))
-  #
-   # Session
-   # id0 =  paste0(id, "-session")
-   # # if (init) repDiv(id0, id1, ic, tags$p(id=paste0(id0, id1), number2string(monitor$session, 2)))
-   # id0 =  paste0(id, "-session")
-   # id1 =  paste(id0, "-value")
-   # repDiv(id0, id1, tags$span(class=cls, id=id1, number2string(monitor$last, 2)))
-
-  #  delta =  (monitor$current / monitor$session) - 1
-  #  repDiv(id0, id1, ic, tags$span(tags$p(id=paste0(id0, id3), class=getClass(delta), number2percentage(delta))))
-  #
-
-   # Dia
-
-   # Semana
-
 
    # Last
    id0 =  paste0(id, "-last")
    id1 =  paste0(id0, "-value")
    repDiv(id0, id1, tags$span(class=cls, id=id1, number2string(monitor$last, 2)))
+}
+yuiRank = function(id1, id2, n=5) {
+   parent = tags$div(class="yata-ranks")
+   if (!missing(id1)) parent = tagAppendChild(parent, yuiTableRank(id1, n))
+   if (!missing(id2)) parent = tagAppendChild(parent, yuiTableRank(id2, n))
+   parent
+}
 
-  #  delta = monitor$last - monitor$current
-  #  repDiv(id0, id1, ic, tags$span(tags$p(id=paste0(id0, id1), class=getClass(delta), number2string(monitor$current))))
+yuiTableRank = function(id, n) {
+  tbl = tags$table( class="yata-tbl-monitor")
+  for (idx in 1:n) {
+      id1 = paste0(id, "lbl", idx)
+      id2 = paste0(id, "val", idx)
+      tbl = tagAppendChild(tbl, tags$tr( tags$td(yuiLabelText(id=id1)),tags$td(yuiLabelPercentage(id=id2))))
+  }
+  tbl
 }

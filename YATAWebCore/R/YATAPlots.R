@@ -68,13 +68,17 @@ zone = function(x0, x1) {
     )
 }
 
-pltLines  = function(df, markers=TRUE) {
-  browser()
+pltLines  = function(df, title=NULL, markers=TRUE) {
   p = .pltBase()
   mode = "lines"
+  names = colnames(df)
   if (markers) mode = paste0(mode, "+markers")
-  p = p %>% add_trace(data=df, x=df[,1], y=df[,2], type = 'scatter', mode = mode)
-  browser()
+  for (icol in 2:ncol(df)) {
+       p = p %>% add_trace(data=df, x=df[,1], y=df[,icol], type = 'scatter', mode = mode, name=names[icol])
+  }
+  p = p %>% layout(legend = list(orientation = 'h'))
+  if (!is.null(title)) p = p %>% layout(title = title)
+
   p
 }
 

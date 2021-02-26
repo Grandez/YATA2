@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modConfigServer <- function(id, full) {
+modConfigServer <- function(id, full, pnlParent, invalidate=FALSE) {
    ns = NS(id)
    PNLCfg = R6::R6Class("PNL.CONFIG"
         ,inherit = YATAPanel
@@ -10,8 +10,8 @@ modConfigServer <- function(id, full) {
         ,public = list(
             data         = NULL
            ,currentDB = NULL
-           ,initialize     = function(id) {
-               super$initialize(id)
+           ,initialize     = function(id, pnlParent, session) {
+               super$initialize(id, pnlParent, session)
                private$parms = YATAFactory$getParms() 
                private$databases = private$parms$getDBNames()
                self$updateDB()
@@ -36,8 +36,8 @@ modConfigServer <- function(id, full) {
        )
     )
     moduleServer(id, function(input, output, session) {
-        pnl = YATAWEB$panel(id)
-        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLCfg$new(id))
+        pnl = YATAWEB$getPanel(id)
+        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLCfg$new(id, pnlParent, session))
         loadPage = function() {
            updateSelectInput(session, "cboDB",     choices=pnl$cboDB())   
             output$txtDB = renderText({pnl$currentDB})

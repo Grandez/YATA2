@@ -19,15 +19,18 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
          if (!is.null(dbBase)) { dbBase$finalize(); private$dbBase = NULL }
          if (!is.null(dbAct))  { dbAct$finalize();  private$dbAct  = NULL }
       }
-      ,getDBBase = function()     { private$dbBase }
-      ,getDB     = function()     { private$dbAct  }
-      ,setDB     = function(info) {
+      ,getDBBase  = function()     { private$dbBase }
+      ,getDB      = function()     { private$dbAct  }
+      ,setDB      = function(info) {
           if (missing(info)) stop("Se ha llamado a setDB sin datos")
           if (!is.null(dbAct)) dbAct$disconnect()
           private$dbAct   = connect(info)
           private$objects = HashMap$new()
           private$dbAct
+          private$dbID = info$id
+          invisible(self)
       }
+      ,getID      = function()     { private$dbID   }
       ,get       = function(name, force = FALSE) {
          prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")
          full = paste0(prfx, name)
@@ -49,6 +52,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
    ,private = list(
        dbBase  = NULL
       ,dbAct   = NULL
+      ,dbID    = NULL
       ,objects = HashMap$new()
       ,connect = function(info) {
           if (info$engine == "MariaDB") {

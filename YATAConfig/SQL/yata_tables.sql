@@ -91,7 +91,7 @@ CREATE TABLE HIST_POSITION  (
 -- Pero se podria splitear, es decir, compro 1000 y primero vendo 300, luego otras 300, etc
 DROP TABLE  IF EXISTS OPERATIONS;
 CREATE TABLE OPERATIONS  (
-    ID_OPER      BIGINT      NOT NULL -- Identificador de la operacion
+    ID_OPER      INT UNSIGNED      NOT NULL -- Identificador de la operacion
    ,TYPE         TINYINT     NOT NULL -- Compra o Venta    
    ,CAMERA       VARCHAR(10) NOT NULL -- Clearing House
    ,BASE         VARCHAR(10) NOT NULL -- From currency
@@ -99,11 +99,9 @@ CREATE TABLE OPERATIONS  (
    ,AMOUNT       DOUBLE      NOT NULL -- Cantidad propuesta
    ,PRICE        DOUBLE      NOT NULL -- Precio de la operacion
    ,ACTIVE       TINYINT     DEFAULT 1 -- Flag activa/inactiva
-   ,STATUS       TINYINT     DEFAULT 0 -- Motivo estado
-   ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
-   ,PARENT       BIGINT      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado      
+   ,STATUS       TINYINT     DEFAULT 0 -- Estado de la operacion
+   ,PARENT       INT UNSIGNED      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado     
    ,TMS          TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
-   ,TMS_ALERT    DATE                -- Para chequear la operacion   
    ,TMS_LAST     TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
    ,PRIMARY KEY ( ID_OPER )
@@ -113,13 +111,17 @@ CREATE TABLE OPERATIONS  (
 -- Los mantenemos aparte para la paginacion
 DROP TABLE  IF EXISTS OPERATIONS_CONTROL;
 CREATE TABLE OPERATIONS_CONTROL  (
-    ID_OPER      BIGINT     NOT NULL -- Identificador de la operacion
+    ID_OPER      INT UNSIGNED     NOT NULL -- Identificador de la operacion
    ,FEE          DOUBLE     DEFAULT 0.0  -- Comision
    ,GAS          DOUBLE     DEFAULT 0.0  -- Comision blockchain
    ,TARGET       DOUBLE                  -- Objetivo
    ,STOP         DOUBLE                  -- Stop
    ,LIMITE       DOUBLE                  -- Limit
    ,DEADLINE     INTEGER   DEFAULT 0     -- Plazo en dias
+   ,AMOUNT       DOUBLE      NOT NULL -- Cantidad propuesta
+   ,PRICE        DOUBLE      NOT NULL -- Precio de la operacion   
+   ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
+   ,TMS_ALERT    DATE                -- Para chequear la operacion         
    ,PRIMARY KEY ( ID_OPER )
 );
 
@@ -127,10 +129,11 @@ CREATE TABLE OPERATIONS_CONTROL  (
 -- Los mantenemos aparte para la paginacion
 DROP TABLE  IF EXISTS OPERATIONS_LOG;
 CREATE TABLE OPERATIONS_LOG  (
-    ID_OPER      BIGINT     NOT NULL -- Identificador de la operacion
-   ,ID_LOG       BIGINT     NOT NULL -- Identificador de la operacion
-   ,TYPE         TINYINT    DEFAULT 0 -- Flag de alerta pendiente
-   ,TMS          TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada       
+    ID_OPER      INT UNSIGNED     NOT NULL -- Identificador de la operacion
+   ,ID_LOG       INT UNSIGNED     NOT NULL -- Identificador de la operacion
+   ,TYPE         TINYINT      DEFAULT 0 -- Tipo de entrada
+   ,REASON       INTEGER      DEFAULT 0 -- Razon de la operacion
+   ,TMS          TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada       
    ,COMMENT         TEXT 
    ,PRIMARY KEY ( ID_OPER, ID_LOG )
 );
@@ -147,8 +150,8 @@ CREATE TABLE OPERATIONS_LOG  (
 --   ... 
 DROP TABLE  IF EXISTS FLOWS;
 CREATE TABLE FLOWS  (
-    ID_OPER    BIGINT      NOT NULL -- Identificador de la operacion
-   ,ID_FLOW    BIGINT      NOT NULL -- Identificador del flujo
+    ID_OPER    INT UNSIGNED      NOT NULL -- Identificador de la operacion
+   ,ID_FLOW    INT UNSIGNED      NOT NULL -- Identificador del flujo
    ,TYPE       TINYINT     NOT NULL -- Tipo de flujo segun codigo
    ,CURRENCY   VARCHAR(10) NOT NULL -- Moneda
    ,AMOUNT     DOUBLE      NOT NULL -- Unidades  
@@ -161,7 +164,7 @@ CREATE TABLE FLOWS  (
 
 -- DROP TABLE  IF EXISTS REASONS;
 -- CREATE TABLE REASONS  (
---     ID_REASON      BIGINT     NOT NULL -- Identificador de la razon
+--     ID_REASON      INT UNSIGNED     NOT NULL -- Identificador de la razon
 --    ,DATA           TEXT       
 --    ,TMS           TIMESTAMP DEFAULT CURRENT_TIMESTAMP           -- Fecha de entrada   
 --    ,PRIMARY KEY ( ID_REASON )
