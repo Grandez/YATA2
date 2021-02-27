@@ -352,13 +352,13 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
             */
               $.YATA.pushMenu = {
                 activate: function (toggleBtn) {
-                                  alert("En Javascript activate");
+//JGG                                  alert("En Javascript activate");
                   //Get the screen sizes
                   var screenSizes = $.YATA.options.screenSizes;
 
                   //Enable sidebar toggle
                   $(document).on('click', toggleBtn, function (e) {
-                                    alert("Pushmenu onclick");
+//JGG                                    alert("Pushmenu onclick");
                     e.preventDefault();
 
                     var page = $.YATA.page;
@@ -429,7 +429,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                   $("body").removeClass('sidebar-collapse').addClass('sidebar-expanded-on-hover');
                 },
                 collapse: function () {
-                                  alert("En Javascript collapse");
+//JGG                                  alert("En Javascript collapse");
                   if ($('body').hasClass('sidebar-expanded-on-hover')) {
                     $('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
                   }
@@ -438,11 +438,11 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               $.YATA.yataTraceMenu = {
                 activate: function (datatoggle) {
-                                  alert("JGG En Javascript activate");
+//JGG                                  alert("JGG En Javascript activate");
 
                   //Enable sidebar toggle
                   $(document).on('click', datatoggle, function (e) {
-                                    alert("JGG Menu clickeado");
+//JGG                                    alert("JGG Menu clickeado");
                   e.preventDefault();
                     //alert(e.target.dataset.value);
 

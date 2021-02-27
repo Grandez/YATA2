@@ -7,6 +7,9 @@ TBLPosition = R6::R6Class("TBLPOSITION"
          initialize = function(name, db=NULL) {
              super$initialize(name, fields=private$fields,key=key, db=db)
          }
+        ,updateOper = function(camera, currency, amount, price, taxes) {
+            browser()
+        }
         ,getGlobalPosition = function() {
             stmt = paste("SELECT  CURRENCY, SUM(BALANCE) AS BALANCE, SUM(AVAILABLE) AS AVAILABLE"
                                ,",AVG(BUY) AS BUY, AVG(SELL) AS SELL, AVG(PRICE) AS PRICE"

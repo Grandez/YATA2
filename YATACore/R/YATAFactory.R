@@ -26,9 +26,16 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           message("Factory inicializada")
        }
       ,finalize  = function() {
+         message("Limpiando DB")
          if (!is.null(DBFactory))   DBFactory$finalize()
+         message("Limpiando Providers")
          if (!is.null(ProvFactory)) ProvFactory$finalize()
+         message("Limpiando objetos")
          private$parms = NULL
+         private$objects = NULL
+         message("Limpiando memoria")
+         gc()
+         message("Fin limpieza")
       }
       ,getDBName = function() {
          db = getDB()

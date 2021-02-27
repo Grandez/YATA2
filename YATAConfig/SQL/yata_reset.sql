@@ -10,10 +10,6 @@
 -- -------------------------------------------------------------------
 -- Crea y carga las bases de datos a su estado inicial
 -- -------------------------------------------------------------------
-
-   use YATATest;
-   source yata_tables.sql;
-   commit;
    
    use YATASimm;
    source yata_tables.sql;
@@ -25,5 +21,10 @@
    
    use YATATpl;
    source yata_tables.sql;
+   commit;
+
+   use YATATest;
+   source yata_tables.sql;
+   
    commit;
    

@@ -18,7 +18,6 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,updateData  = function (init = FALSE) {
           self$data$dfPosGlobal = self$position$getGlobalPosition()
           ctc = self$getCurrencies()
-          
           if (init) self$data$lstLast = self$providers$getMonitors("EUR", ctc)
           else      self$data$lstLast = self$providers$getLatests ("EUR", ctc)
           
@@ -104,4 +103,8 @@ function(input, output, session) {
    #     # browser()
    #     # closePanel()})
    # })
+   onStop(function() {
+      cat("Session stopped\n")
+      YATAFactory$finalize()
+      })
 }

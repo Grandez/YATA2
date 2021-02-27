@@ -31,7 +31,7 @@ YATACODES = R6::R6Class("YATA.CODES"
         # ,sesExchanges = "SESSION_EXCHANGES"
 
     )
-    ,flag = list(inactive=0, active=1)
+    ,flag = list(inactive=0, active=1, parent=2)
     ,oper = list( oper=1, buy=2, sell=3, xfer=4, split=5, net=6, reg=10, close=16)
     ,flow = list( pending = 0
                  ,input   = 20, regInput  = 21
@@ -51,6 +51,9 @@ YATACODES = R6::R6Class("YATA.CODES"
     ,default = list(
       interval = 15
     )
+    #JGG A revisar
+    ,log    = list(log=0,open=1,buy=2,sell=3,accept=10,executed=11, cancel=99,reject=98)
+    ,reason = list(accept=90,executed=91, cancel=92,reject=93)
     ,xlateStatus = function(status) { private$xlate(self$status, status) }
    )
   ,private = list(

@@ -16,6 +16,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           txt = getMessage(code)
           sprintf(txt, ...)
       }
+      ,title = function(code) { getMessage(paste0("TITLE.", code)) }
     )
     ,private = list(
         tblMsg = NULL

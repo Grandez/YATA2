@@ -17,4 +17,16 @@ INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.CHANGE"        
 INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.FAIL"           ,"XX", "XX"     , "Operacion fallida"                         );
 INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.UP"             ,"XX", "XX"     , "Tendencia al alza"                         );
 INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.DOWN"           ,"XX", "XX"     , "Tendencia a la baja"                       );
+
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.ACCEPT"         ,"XX", "XX"     , "Operacion aceptada"                        );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.CANCEL"         ,"XX", "XX"     , "Operacion cancelada"                       );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "REASON.REJECT"         ,"XX", "XX"     , "Operacion rechazada"                       );
+
+
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.XFER"           ,"XX", "XX"     , "Transferir entre cuentas"                    );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.ACCEPT"    ,"XX", "XX"     , "Aceptar Operación"                           );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.EXECUTE"   ,"XX", "XX"     , "Ejecutar Operación"                          );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.CANCEL"    ,"XX", "XX"     , "Cancelar Operación"                          );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.REJECT"    ,"XX", "XX"     , "Operacion rechazada"                         );
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.CLOSE"     ,"XX", "XX"     , "Deshacer posición"                           );
 COMMIT;

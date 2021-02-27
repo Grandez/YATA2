@@ -38,6 +38,6 @@ blkOperation = function(id) {
      )
     ,fluidRow(column(1), column(4, h2("Notas")))
     ,fluidRow(column(1), column(9, yuiTextArea(ns("comment"), label=NULL, cols="200", rows="10")))
-    ,yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar", cols=9, left=1)
+    ,yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar", cols=6, left=1)
   )
 }

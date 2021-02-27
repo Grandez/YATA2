@@ -61,12 +61,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
 
           changes = self$current[names(private$changed)[items]]
           hasKeys = which(private$key %in% names(changes))
-          if (length(hasKeys) > 0) {
-              browser()
-              # Aqui hay que quitar las claves
-              #changes[[private$key]] = NULL
-          }
-
+          if (length(hasKeys) > 0) changes[private$key] = NULL
 
           cols   = fields[names(changes)]
           cols   = paste(paste(cols, "= ?"), collapse=",")
@@ -80,8 +75,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
           private$changed = list()
       }
       ,set      = function(...) {
-          args = list(...)
-          if (length(args) == 1 && is.list(args[[1]])) args = args[[1]]
+          args = args2list(...)
           self$current = rlist::list.merge(self$current, args)
           lapply(names(args), function (field) private$changed[field] = TRUE)
           invisible(self)

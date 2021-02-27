@@ -9,6 +9,9 @@ TBLMessages = R6::R6Class("TBL.MESSAGES"
         }
         ,get = function(code, lang, region) {
             data = table(code=code,lang=lang,region=region)
+            if (nrow(data) == 0) {
+                return (paste("Missing message ", code))
+            }
             data$msg
         }
      )

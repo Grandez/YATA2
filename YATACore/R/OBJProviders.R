@@ -5,26 +5,28 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        print           = function() { message("Proivders Object")}
-       ,initialize      = function(provider) {
+        print       = function() { message("Proivders Object")}
+       ,initialize  = function(provider) {
            super$initialize()
            private$providers    = HashMap$new()
            private$tblProviders = YATAFactory$getTable(YATACodes$tables$Providers)
-           private$id           = parms$getOnlineProvider()
-           private$name         = tblProviders$getNames(private$id)
+           self$id              = parms$getOnlineProvider()
 
            private$dfProviders  = tblProviders$table(active = YATACodes$flag$active)
            if (nrow(private$dfProviders) == 0) stop("No hay proveedores activos")
+           prov = dfProviders[dfProviders$id == self$id,]
+
+           self$name = prov[1,"name"]
+           private$provider = YATAFactory$getProvider(self$id, prov[1,"object"])
+           private$providers$put(self$id, private$provider)
+
+           #JGG Especial
            private$mktcap = YATAFactory$getProvider("MKTCAP", "MarketCap")
+           private$providers$put("MKTCAP", mktcap)
        }
-      ,getSessionDays = function(base, counter, from, to) {
-          if (is.null(private$provider)) .setProvider(1)
-          provider$getSessionDays(base, counter, from, to)
-      }
-      ,getMonitors = function(base, counter) {
+       ,getMonitors = function(base, counter) {
           data = getLatests(base, counter)
           now = Sys.time()
-
           from = now - as.difftime(1, unit="days")
           data2 = lapply(counter, function(x) getSessionDays(base, x, asUnix(from), asUnix(now)))
           names(data2) = counter
@@ -38,52 +40,30 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
           names(lst2) = counter
           list.merge(data,lst2)
       }
-      ,getLatests = function(base, counter) {
-          # va buscando la info por cada provider en orden
-          done = FALSE
-          row = 0
-          while (!done) {
-              if (nrow(dfProviders) > 0) {
-                  row = row + 1
-                  .setProvider(row)
-              }
-              done = TRUE
-              # res = provider$getLatests(base, counter)
-              # browser()
-          }
-          provider$getLatests(base, counter)
-      }
-     ,getBest = function(interval=1,top=5) {
-         # interval = numero en dias: 1 o 7
-         col = 4
-         df = private$mktcap$getLatest()
+       ,getLatests  = function(base, counter) { provider$getLatests(base, counter) }
+       ,getBest     = function(interval=1,top=5) {
+           # interval = numero en dias: 1 o 7
+           col = 4
+           df = private$mktcap$getLatest()
 
-         if (interval == 1) {
-             col = 4
-             df = df[order(df$var1, decreasing=TRUE),]
-         } else {
-             col = 5
-             df = df[order(df$var7, decreasing = TRUE),]
-         }
-         df[1:top, c(2,3,col)]
-     }
+           if (interval == 1) {
+               col = 4
+               df = df[order(df$var1, decreasing=TRUE),]
+            } else {
+               col = 5
+               df = df[order(df$var7, decreasing = TRUE),]
+            }
+            df[1:top, c(2,3,col)]
+       }
+       ,getSessionDays = function(base, counter, from, to) {
+          provider$getSessionDays(base, counter, from, to)
+      }
     )
     ,private = list(
-        selected     = FALSE
-       ,id           = NULL
-       ,name         = NULL
-       ,provider     = NULL
+        provider     = NULL  # Porvider por defecto
        ,mktcap       = NULL  # Objeto MarketCap
        ,tblProviders = NULL
        ,providers    = NULL
        ,dfProviders  = NULL
-       ,.setProvider = function(row) {
-            rr = as.list(dfProviders[row,])
-            private$provider = providers$get(rr$object)
-            if (is.null(private$provider))  {
-                private$provider = YATAFactory$getProvider(rr$id, rr$object)
-                private$providers$put(rr$object, private$provider)
-            }
-        }
     )
 )

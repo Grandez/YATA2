@@ -101,6 +101,7 @@ CREATE TABLE OPERATIONS  (
    ,ACTIVE       TINYINT     DEFAULT 1 -- Flag activa/inactiva
    ,STATUS       TINYINT     DEFAULT 0 -- Estado de la operacion
    ,PARENT       INT UNSIGNED      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado     
+   ,RANK         INT               DEFAULT 0
    ,TMS          TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,TMS_LAST     TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
@@ -130,12 +131,12 @@ CREATE TABLE OPERATIONS_CONTROL  (
 DROP TABLE  IF EXISTS OPERATIONS_LOG;
 CREATE TABLE OPERATIONS_LOG  (
     ID_OPER      INT UNSIGNED     NOT NULL -- Identificador de la operacion
-   ,ID_LOG       INT UNSIGNED     NOT NULL -- Identificador de la operacion
+   ,TMS          TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP -- Fecha de entrada       
    ,TYPE         TINYINT      DEFAULT 0 -- Tipo de entrada
    ,REASON       INTEGER      DEFAULT 0 -- Razon de la operacion
-   ,TMS          TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada       
+
    ,COMMENT         TEXT 
-   ,PRIMARY KEY ( ID_OPER, ID_LOG )
+   ,PRIMARY KEY ( ID_OPER, TMS )
 );
 
 -- Flujos

@@ -18,6 +18,21 @@ PRTOperations = R6::R6Class("PART.OPERATION"
                 #JGG Falta el tipo de log
             }
         }
+        ,update = function(lstData) {
+            data = lstData
+            operInfo = lstData[names(data) %in% names(fields)]
+            #quitamos el id
+            super$set(operInfo)
+            super$apply()
+            # quitamos precio y amount
+            data$price = NULL
+            data$amount = NULL
+            ctrlInfo = data[names(data) %in% names(tblOperControl$getColNames())]
+            tblOperControl$set(ctrlInfo)
+            tblOperControl$apply()
+            logInfo = list(idOper=current$id,logType=lstData$logType,reason=lstData$reason)
+            tblOperLog$add(logInfo)
+        }
         ,getOperations = function(...) {
             df = super$table(...)
             if (nrow(df) > 0) {
@@ -26,9 +41,9 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             }
             df
         }
-        ,select = function(idOper) {
-            super$select(id=idOper)
-            tblOperControl$select(id=idOper)
+        ,select = function(idOper, create=FALSE) {
+            super$select(id=idOper, create)
+            tblOperControl$select(id=idOper, create)
         }
      )
      ,private = list (

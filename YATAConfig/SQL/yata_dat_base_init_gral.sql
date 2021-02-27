@@ -1,8 +1,23 @@
 
 -- Proveedores de datos
 DELETE FROM PROVIDERS;       
-INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)   VALUES ('MKTCAP',   'CoinMarketCap'   , 1  ,"coinmarketcap.png"  ,"MarketCap" );
-INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)   VALUES ('POL'   ,   'Poloniex'        , 2  ,"poloniex.png"       ,"Poloniex"  );
+INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)  VALUES ('MKTCAP',   'CoinMarketCap'   , 1  ,"coinmarketcap.png"  ,"MarketCap" );
+INSERT INTO PROVIDERS  (PROVIDER, NAME, PRTY, ICON, OBJECT)  VALUES ('POL'   ,   'Poloniex'        , 2  ,"poloniex.png"       ,"Poloniex"  );
+
+
+DELETE FROM CAMERAS;                                                                                                            
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "CASH"     ,"Cuenta de control"   ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "POL"      ,"Poloniex"            ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "BINANCE"  ,"Binance"             ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "ETORO"    ,"eToro"               ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "MKTSX"    ,"MarketSX"            ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "KRAKEN"   ,"KRAKEN"              ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "CBASE"    ,"Coin Base"           ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "CBASEPRO" ,"Coin Base Pro"       ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "BISQ"     ,"Bisq"                ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "BBIT"     ,"ByBit"               ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "FTX"      ,"FTX"                 ,0,  0,  0);
+INSERT INTO CAMERAS (CAMERA, NAME, MAKER, TAKER, ACTIVE)     VALUES ( "YATA"     ,"YATA"                ,0,  0,  1);
 
 -- Intercambios
 DELETE FROM EXCHANGES;

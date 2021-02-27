@@ -67,26 +67,32 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   
 
 -- ----------------------------------------------------
 -- Grupo 15 - Motivos
---   Sub 0 - Comunes a todas
---   Sub 1 - Para compras
---   Sub 2 - Para ventas
---   Sub 3 - Para tomar posicion
---   Sub 4 - Para cerrar posicion
+--   Sub  0 - Comunes a todas
+--   Sub  1 - Para compras
+--   Sub  2 - Para ventas
+--   Sub  3 - Para tomar posicion
+--   Sub  4 - Para cerrar posicion
+--   Sub 99 - Fijos en programa (YATACodes/reasons)
 -- El id es el codigo de la razon, por eso deben ser distintos
 -- El texto esta en la tabla de mensajes con prefijo REASON
 -- ----------------------------------------------------
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 0,  0,    1, ''    , 'NONE'       );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 0, 98,    1, ''    , 'FAIL'       );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 0, 99,    1, ''    , 'OTHER'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0,  0,    1, ''    , 'NONE'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 98,    1, ''    , 'FAIL'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 99,    1, ''    , 'OTHER'      );
+                                                                         
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 11,    1, ''    ,  'UP'        );
+                                                                         
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  2, 21,    1, ''    ,  'DOWN'      );
+                                                                         
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 41,    1, ''    , 'TARGET'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 42,    1, ''    , 'LIMIT'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 43,    1, ''    , 'CHANGE'     );
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 1, 11,    1, ''    ,  'UP'        );
-
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 2, 21,    1, ''    ,  'DOWN'      );
-
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 4, 41,    1, ''    , 'TARGET'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 4, 42,    1, ''    , 'LIMIT'      );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 4, 43,    1, ''    , 'CHANGE'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 90,    1, ''    , 'ACCEPT'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 91,    1, ''    , 'EXECUTED'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 92,    1, ''    , 'CANCEL'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 93,    1, ''    , 'REJECT'     );
 
 
 -- ----------------------------------------------------

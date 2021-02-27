@@ -24,14 +24,10 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ,split = function()   { error("Split no implementado todavia")}
         ,net   = function()   { error("Net no implementado todavia")}
         ,add   = function(type, ...) {
-            browser()
             # Genera una operacion, devuelve el id
             # Si hay error devuelve TRUE
-            args = list(...)
-            if (length(args) == 1 && is.list(args)) args = args[[1]]
 
-            self$current        = args
-#            self$current$parent = ifelse (is.null(args$id), 0, args$id)
+            self$current        = args2list(...)
             self$current$type   = type
             self$current$id     = YATATools::getID()
             self$current$idOper = self$current$id
@@ -44,8 +40,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 if (type == YATACodes$oper$oper)  operOper()
                 if (type == YATACodes$oper$buy)   operOper()
                 if (type == YATACodes$oper$sell)  operOper()
-                if (type == YATACodes$oper$close) operClose()
-                if (type == YATACodes$oper$split) {}
+#                if (type == YATACodes$oper$close) operClose()
+#                if (type == YATACodes$oper$split) {}
                 if (type == YATACodes$oper$net)  {}
 #                generateLog()
                 db$commit()
@@ -61,25 +57,35 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ##############################
         ,accept  = function(price=0, amount=0, fee = 0, id=NULL) {
             if (!is.null(id)) select(id)
-            if (current$type == YATACodes$oper$sell) res = acceptSell(price, amount, fee)
-            if (current$type != YATACodes$oper$sell) res = acceptBuy (price, amount, fee)
-            res
+            tryCatch({
+               db$begin()
+               if (!is.na(current$idParent)) {
+                   prtOper$setField("active", YATACodes$flag$inactive)
+                   prtOper$apply()
+               }
+               if (current$type == YATACodes$oper$sell) acceptSell(price, amount, fee)
+               if (current$type != YATACodes$oper$sell) acceptBuy (price, amount, fee)
+               db$commit()
+               FALSE
+            },error = function(cond) {
+                message(cond)
+                db$rollback()
+                TRUE
+            })
         }
         ,execute = function(gas = 0, id=NULL) {
+            browser()
             # La operacion se ha realizado, esta en el wallet
             if (!is.null(id)) select(id)
             tryCatch({
                db$begin()
-               prtOper$set(status=YATACodes$status$executed)
-               if (current$type != YATACodes$oper$oper) prtOper$set(active=YATACodes$flag$inactive)
-               prtOper$apply()
-               if (current$type == YATACodes$oper$sell) executeSell(gas)
-               if (current$type != YATACodes$oper$sell) executeBuy(gas)
+               if (current$type == YATACodes$oper$sell) res = executeSell(gas)
+               if (current$type != YATACodes$oper$sell) res = executeBuy (gas)
                db$commit()
                FALSE
             },error = function(cond) {
                message(cond)
-               YATADB$rollback()
+               db$rollback()
                TRUE
             })
         }
@@ -147,6 +153,48 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 TRUE
             })
         }
+        ,close   = function(...) {
+            browser()
+            split = FALSE
+            data = args2list(...)
+            select(data$id)
+            tryCatch({
+                db$begin()
+
+                # Es un split
+                if(data$amount != current$amount) split = TRUE
+                stat = ifelse(split, YATACodes$oper$split, YATACodes$oper$close)
+                prtOper$update( list(active  = YATACodes$flag$parent
+                               ,status  = stat
+                               ,reason  = data$reason
+                               ,comment = data$comment))
+
+                # Creamos el split
+                if (split) {
+                    diff = current$amount - data$amount
+                    select(current$id, create=TRUE)
+                    current$idParent = data$id
+                    self$current = list.merge(self$current, data)
+                    current$amount = diff
+                    current$status = YATACodes$oper$oper
+                    current$active = YATACodes$flag$active
+                    prtOper$update(current)
+                }
+
+                #Creamos la venta
+                self$current$type   = YATACodes$oper$sell
+                self$current$amount = data$amount
+                self$current$price  = data$price
+                self$current$parent = data$id
+                self$current$reason = data$reason
+                operOper()
+                FALSE
+            },error = function(cond) {
+                message(cond)
+                db$rollback()
+                TRUE
+            })
+       }
         ,comment = function(comment=NULL, id=NULL) {
             if (is.null(comment)) return (FALSE)
             if (!is.null(id)) select(id)
@@ -168,8 +216,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ##############################
         # General
         ##############################
-        ,select            = function(idOper, full=FALSE) {
-            prtOper$select(id = idOper)
+        ,select            = function(idOper, create=FALSE) {
+            prtOper$select(id = idOper, create=create)
             self$current = prtOper$current
             self$current$idOper = prtOper$current$id
             if (full) tblFlows$select(idOper = idOper)
@@ -188,7 +236,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             as.list(res)
         }
         ,getFlows          = function(idOper)    {
-            if (!missing(idOper)) select(idOper, full=TRUE)
+            if (!missing(idOper)) select(idOper)
             tblFlows$dfCurrent
         }
 #        ,getDateBegin      = function(currency) { prtOper$getDateBegin(currency) }
@@ -264,25 +312,27 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # 1 - Grabar la operacion
            # 2 - Grabar los flujos
            # 3 - Actualizar posiciones
-          addRecord(private$prtOper)
-          self$current$base    = self$current$currency
-          self$current$counter = self$current$currency
+           prtOper$add(current)
 
-          # Descontar de la fuente si no es externa
-          if (self$current$from != "EXT") {
-              amount = self$current$amount * -1
-              self$current$camera = self$current$from
-              addFlow (YATACodes$flow$xferOut, self$current$base, amount, 1)
-          }
+           self$current$base    = self$current$currency
+           self$current$counter = self$current$currency
 
-          # regularizar el destino si no es externo
-          if (self$current$to != "EXT") {
-              self$current$camera = self$current$to
-              addFlow (YATACodes$flow$xferIn,  self$current$counter, self$current$amount, 1)
-          }
-          objPos$transfer(self$current$from, self$current$to, self$current$currency, self$current$amount)
-       }
+           # Descontar de la fuente si no es externa
+           if (current$from != "EXT") {
+               amount = current$amount * -1
+               self$current$camera = current$from
+               addFlow (YATACodes$flow$xferOut, current$base, amount, 1)
+           }
+
+           # regularizar el destino si no es externo
+           if (current$to != "EXT") {
+               self$current$camera = current$to
+               addFlow (YATACodes$flow$xferIn,  current$counter, current$amount, 1)
+           }
+           objPos$transfer(current$from, current$to, current$currency, current$amount)
+        }
        ,operOper     = function() {
+           browser()
            # Abre una operacion de compra o venta
            self$current$active = YATACodes$flag$active
            self$current$status = YATACodes$status$pending
@@ -305,49 +355,34 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # }
            # objPos$updateAvailable(current$camera, currency, amount)
        }
-       ,operClose    = function() {
-           browser()
-           self$current$type = YATACodes$oper$sell
-           operOper()
-           select(current$parent)
-           prtOper$set(parent=current$id, reason=current$reason)
-           prtOper$apply()
-
-       }
+       # ,operClose    = function() {
+       #     nCurrent = self$current
+       #     select(current$id)
+       #     browser()
+       #     self$current$type = YATACodes$oper$sell
+       #     self$current$amount = nCurrent$amount
+       #     self$current$price = nCurrent$price
+       #     operOper()
+       #     select(current$parent)
+       #     prtOper$set(parent=current$id, reason=current$reason)
+       #     prtOper$apply()
+       #
+       # }
        ,acceptBuy    = function(price, amount, fee) {
            # Acepta una compra, puede haber cambiado el precio y la cantidad
            # Se aplican las tasas
-            oldPrice  = current$price
-            oldAmount = current$amount
-            newPrice  = ifelse(price  == 0, oldPrice,  price)
-            newAmount = ifelse(amount == 0, oldAmount, amount)
-            diffAmount = newAmount - oldAmount
-            diffPrice  = newPrice  - oldPrice
-            impFee     = (newAmount * fee) / -100
-            imp        = newAmount * newPrice
-            regularize = ifelse(diffAmount != 0 || diffPrice != 0, TRUE, FALSE)
-
-            tryCatch({
-               db$begin()
-               prtOper$set(status=YATACodes$status$accepted, amount=newAmount, price=newPrice)
-               prtOper$apply()
-               addFlow(YATACodes$flow$output, self$current$base, oldAmount * -1, oldPrice)
-               if (regularize) addFlow(YATACodes$flow$regOutput, self$current$base, diffAmount, diffPrice)
-               if (impFee != 0) {
-                   addFlow(YATACodes$flow$fee, self$current$base, impFee,    newPrice)
-                   updateOperControl(fee = (impFee * -1))
-                   objPos$updateBalance(current$camera, current$base, impFee * -1)
-               }
-               if (diffAmount != 0) objPos$updateAvailable(current$camera, current$base, diffAmount)
-               objPos$update(current$camera, current$base, newAmount * newPrice * -1, newPrice, FALSE)
-
-               db$commit()
-               FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                TRUE
-            })
+           data = list( status=YATACodes$status$accepted
+                       ,amount=amount
+                       ,price=price
+                       ,fee=fee
+                       ,reason=YATACodes$reason$accept
+                       ,logType=YATACodes$log$accept
+           )
+           imp  = amount * price * -1
+           prtOper$update(data)
+           addFlow(YATACodes$flow$output, current$base, imp, 1)
+           if (fee != 0) addFlow(YATACodes$flow$fee, imp * fee / 100, 1)
+           objPos$updateOper(current$camera, current$base, imp, 1, fee)
        }
        ,acceptSell   = function(price, amount, fee) {
            # Acepta una compra, puede haber cambiado el precio y la cantidad
@@ -390,18 +425,17 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
        }
        ,executeBuy   = function(gas = 0) {
-           # Ejecuta una compra
-           flowType = ifelse(current$type == YATACodes$oper$sell
-                            ,YATACodes$flow$output
-                            ,YATACodes$flow$input)
-           addFlow(YATACodes$flow$input, self$current$counter, current$amount, 1) # current$price)
-           if (gas != 0)  {
-               gas = (gas * current$amount) / -100
-               addFlow(YATACodes$flow$gas, current$counter, gas, 1) #current$price)
-               objPos$updateBalance(current$camera, current$counter, gas, available=TRUE)
-           }
-           updateOperControl(gas=gas)
-           objPos$update(current$camera, current$counter, current$amount, current$price)
+           # Acepta una compra, puede haber cambiado el precio y la cantidad
+           # Se aplican las tasas
+           data = list( status=YATACodes$status$executed
+                       ,gas=gas
+                       ,reason=YATACodes$reason$executed
+                       ,logType=YATACodes$log$executed
+           )
+           prtOper$update(data)
+           addFlow(YATACodes$flow$input, current$counter, current$amount, current$price)
+           if (gas != 0) addFlow(YATACodes$flow$gas, current$counter, gas * amount * -1 / 100, 1) #current$price)
+           objPos$updateOper(current$camera, current$counter, current$amount, current$price, gas)
         }
        ,executeSell  = function(gas = 0) {
            # Ejecuta una venta

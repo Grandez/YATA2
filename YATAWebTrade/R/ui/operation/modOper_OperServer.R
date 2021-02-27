@@ -44,6 +44,7 @@ modOperOperServer = function(id, full, pnl) {
       }, ignoreInit = TRUE)
 
       observeEvent(input$cboCounter, {
+          data = pnl$cboCamerasCounter(input$cboCounter)
           updCombo("cboCamera", choices=pnl$cboCamerasCounter(input$cboCounter))
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
@@ -84,7 +85,7 @@ modOperOperServer = function(id, full, pnl) {
          data$price    = input$impPrice
          data$reason   = input$cboReasons
          data$alert    = input$alert
-         
+         browser()
          if (input$target   > 0) {
              data$target   = input$target
              if (input$swTarget) data$target = data$price * (1 + (data$target / 100)) 

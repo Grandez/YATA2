@@ -9,8 +9,9 @@ PRTPosition = R6::R6Class("PART.POSITION"
              private$tblRegularization = TBLRegularization$new("Regularization", db)
          }
         ,select = function(camera, currency, create=FALSE) {
-            super$select(camera=camera, currency=currency, create=create)
+            res = super$select(camera=camera, currency=currency, create=create)
             tblRegularization$select(camera=camera, currency=currency, create=create)
+            res
         }
         ,getPrice    = function() {
             from = tblRegularization$getRegularizationDate(camera, currency)

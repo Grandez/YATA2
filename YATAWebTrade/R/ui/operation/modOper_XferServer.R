@@ -28,22 +28,12 @@ modOperXferServer = function(id, full, pnl) {
           res = pnl$operation(type = YATACodes$oper$xfer, from=input$cboFrom, to=input$cboTo
                                                         , amount=input$impAmount
                                                         , currency=input$cboCurrency)
-          if (res) {
-               output$msg = updMessageKO(id, YATAWEB$MSG$get("XFER.KO"))
-          }
-          else {
-              output$msg = updMessageOK(id, YATAWEB$MSG$get("XFER.OK"))
+          if (res) output$msg = updMessageKO(full, pnl$MSG$get("XFER.KO"))
+          if (!res) {
+              output$msg = updMessageOK(full, pnl$MSG$get("XFER.OK"))
               reset()
           }
       })
-       updMessageOK(full, "Mensaje a mostrar")
-#       observe({
-#           shinyjs::toggleState("btnOK", nchar(input$cboFrom) == 0 && 
-#                                         nchar(input$cboTo)   == 0 &&
-#                                         nchar(input$cboCurrency) == 0 &&
-#                                         input$amount <= 0)
-#              
-# })
-    })
+  })
 }
 

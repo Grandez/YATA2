@@ -40,8 +40,8 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
         ,getAllCurrencies      = function() { updIcons(tblCurrencies$table())                               }
         ,getCameras   = function(counter) {
             df = tblExchanges$getCameras(counter)
-            if (nrow(df) > 0) df = tblCameras$getCameraNames(df$camera)
-            df
+            if (nrow(df) == 0) return (NULL)
+            tblCameras$getCameraNames(df$camera)
         }
         ,getCameraCurrencies   = function(camera) {
             dfAll = getAllCurrencies()

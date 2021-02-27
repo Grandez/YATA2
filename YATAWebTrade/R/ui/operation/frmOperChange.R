@@ -13,7 +13,7 @@ frmOperChangeInput = function(base, data) {
                 ,yuiFormRow("Counter",  yuiLabelText(ns("LblCounter")))
                 ,yuiFormRow("Cantidad", yuiNumericInput(ns("ImpAmount"), NULL, value = amount))
                 ,yuiFormRow("Precio",   yuiNumericInput(ns("ImpPrice"),  NULL, value = price))
-                ,yuiFormRow("Motivo",   yuiCombo(ns("cboReason"), choices=data$reasons), selected="0")                
+#                ,yuiFormRow("Motivo",   yuiCombo(ns("cboReason"), choices=data$reasons), selected="0")                
             )
         )
       # ,column(3,
@@ -42,19 +42,19 @@ frmOperChangeInput = function(base, data) {
 
 )}
 
-frmOperChangeServer = function(id, input, output, session, base, pnl) {
-  browser()
-    moduleServer(id, function(input, output, session) {
-  initForm = function() {
-      browser()
-     title = "XXX"
-      if (pnl$vars$nextAction == YATACodes$status$accepted) title = "Aceptar Operacion"
-      if (pnl$vars$nextAction == YATACodes$status$executed) title  = "Ejecutar Operacion"
-      if (pnl$vars$nextAction == YATACodes$status$rejected) title  = "Rechazar Operacion"
-      if (pnl$vars$nextAction == YATACodes$status$closed)   title   = "Cerrar Operacion"
-      output$changeLblOper = renderText({ title })
-  }
-  initForm()
-  browser()
-    })
-}
+# frmOperChangeServer = function(id, input, output, session, base, pnl) {
+#   browser()
+#     moduleServer(id, function(input, output, session) {
+#   initForm = function() {
+#       browser()
+#      title = "XXX"
+#       if (pnl$vars$nextAction == YATACodes$status$accepted) title = "Aceptar Operacion"
+#       if (pnl$vars$nextAction == YATACodes$status$executed) title  = "Ejecutar Operacion"
+#       if (pnl$vars$nextAction == YATACodes$status$rejected) title  = "Rechazar Operacion"
+#       if (pnl$vars$nextAction == YATACodes$status$closed)   title   = "Cerrar Operacion"
+#       output$changeLblOper = renderText({ title })
+#   }
+#   initForm()
+#   browser()
+#     })
+# }

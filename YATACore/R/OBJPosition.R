@@ -41,12 +41,47 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
              prtPosition$apply()
          }
       }
+      ,updateOper = function(camera, currency, amount, price, prcTaxes) {
+          if (amount == 0) return()
+          prtPosition$select(camera=camera, currency=currency, create=TRUE)
+          curr  = prtPosition$current
+
+          pSell = curr$priceSell
+          nSell = curr$sell
+          # Si amount es positivo es compra, si no venta
+          if (amount < 0) {
+              pSell = (pSell * nSell) - (amount * price)
+              pSell = ifelse((nSell - amount) == 0, 0, pSell / (nSell - amount))
+              nSell = nSell - amount
+              prtPosition$set(priceSell = pSell, sell=nSell)
+          }
+
+          pBuy = curr$priceBuy
+          nBuy = curr$buy
+          if (amount > 0) {
+              pBuy = (pBuy * nBuy) + (amount * price)
+              pBuy = ifelse((nBuy + amount) == 0, 0, pBuy / (nBuy + amount))
+              nBuy = nBuy + amount
+              prtPosition$set(priceBuy = pBuy, buy=nBuy)
+          }
+          pPrice = 0
+          if ((nBuy - nSell) != 0) pPrice = ((pBuy * nBuy) - (pSell * nSell)) / (nBuy - nSell)
+
+          prtPosition$setField("price", pPrice)
+          nBalance = curr$balance + (amount * price)
+          if (prcTaxes != 0) {
+              if (amount < 0) amount = amount * -1
+              nBalance = nBalance - (amount * prcTaxes / 100)
+          }
+          prtPosition$setField("balance", nBalance)
+          prtPosition$apply()
+      }
       ,update = function(camera, currency, amount, price, available=TRUE) {
           # Actualiza balance y calcula precios
           prtPosition$select(camera=camera, currency=currency, create=TRUE)
           curr  = prtPosition$current
           if (available) { # Solo descontar available
-              prtPosition$set(available = curr$available + amount)
+              prtPosition$set("available", curr$available + amount)
           }
           if (currency != "EUR") curr = getPrices(prtPosition$current, amount, price)
           prtPosition$set( balance   = prtPosition$current$balance + amount

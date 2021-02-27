@@ -1,13 +1,13 @@
 modOperXferInput = function(id, title) {
    ns = NS(id)
    main = tagList(  
-   yataRow(align="center", h2("Transferir entre cuentas"))
+   yataRow(align="center", h2(YATAWEB$MSG$get("TITLE.XFER")))
    ,fluidRow(column(3)
       ,column(3
          ,yataFormTable(
-             list("De",       yuiCombo(ns("cboFrom"), choices=list("")))
-            ,list("A",        yuiCombo(ns("cboTo"),   choices=list("")))
-            ,list("Moneda",   yuiCombo(ns("cboCurrency"),choices=list("")))
+             list("De",       yuiCombo(ns("cboFrom"))) #, choices=list("")))
+            ,list("A",        yuiCombo(ns("cboTo"))) #,   choices=list("")))
+            ,list("Moneda",   yuiCombo(ns("cboCurrency"))) #,choices=list("")))
             ,list("Cantidad", yuiNumericInput(ns("impAmount"), NULL, value = 0))
          )
        )

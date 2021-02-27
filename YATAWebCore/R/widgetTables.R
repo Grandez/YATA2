@@ -1,57 +1,43 @@
-yuiDataTable = function(id) { DT::dataTableOutput(id) }
-
-updTablePosition = function(df, ...) {
-    colnames(df) = titleCase(colnames(df))
-    yataDataTable({df}, type="position")
+yuiTablePosition = function(id, dfbase, dfAux, ...) {
+    df = dfbase
+    df$value = dfbase$price * dfbase$balance
+    yataDataTableFormat({df}, style='auto', type="position")
 }
 
-updTableOperations = function(df, buttons=NULL, ...) {
-   if (!is.null(buttons)) df = .updTableButtons(df, buttons)
-   colnames(df) = titleCase(colnames(df))
 
-   dt =  yataDT({df}, type="operation")
-   # dt = dt %>%  YATADT::formatStyle("Value", color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
-   #                         , values=c("red","black","green","green")))
+yuiRenderTable = function(df, type, buttons=NULL, ...) {
+    data = .yuiRenderTableBase(df, buttons)
+    if (is.null(data)) return (NULL)
 
-   if ("Balance" %in% colnames(df)) {
-        dt = dt %>%  YATADT::formatStyle("Balance",
-                             color = DT::styleInterval( cuts=c(-Inf,0,+Inf)
-                                                       ,values=c("red","red","green","green")))
-   }
-
-   yataDTRender(dt)
+    opts = .getOptions(data, ...)
+    #DT::renderDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', options=opts)
+    yataDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', type="gral", options=opts)
 }
+yuiRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
+    data = .yataRenderTableBase(df, buttons)
+    if (is.null(data)) return (NULL)
+    opts = .getOptions(data, ...)
+    opts$paging = TRUE
+    opts$pageLength = page
+#    renderDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', options=opts)
+#    .yatarenderDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', type="juan", options=opts)
+    yataDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', type="gral", options=opts)
+}
+.yuiRenderTableBase = function(df, buttons=NULL) {
+    if (is.null(df)) return (NULL)
+    data = df
 
-# yataRenderTable = function(df, type, buttons=NULL, ...) {
-#     data = .yataRenderTableBase(df, buttons)
-#     if (is.null(data)) return (NULL)
-#
-#     opts = .getOptions(data, ...)
-#     #DT::renderDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', options=opts)
-#     yataDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', type="gral", options=opts)
-# }
-# yataRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
-#     data = .yataRenderTableBase(df, buttons)
-#     if (is.null(data)) return (NULL)
-#     opts = .getOptions(data, ...)
-#     opts$paging = TRUE
-#     opts$pageLength = page
-# #    renderDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', options=opts)
-# #    .yatarenderDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', type="juan", options=opts)
-#     yataDataTable({data}, rownames=FALSE, escape=FALSE, style='auto', type="gral", options=opts)
-# }
-.updTableButtons = function(df, buttons) {
-     data = df
-     cols = ncol(df)
-     code = lapply(strsplit(buttons, "__"), function(x) paste0(x[[1]], seq(1,nrow(df)), x[[2]]))
-     dfb = as.data.frame(code)
-     colnames(dfb) = paste0("col", seq(1,ncol(dfb)))
-     dfb = tidyr::unite(dfb, "btn", colnames(dfb), sep=" ", remove=TRUE)
-     data = cbind(df, dfb)
-     cols = colnames(data)
-     cols[length(cols)] = ""
-     colnames(data) = titleCase(cols)
-     data
+    if (!is.null(buttons) && nrow(df) > 0) {
+        cols = ncol(df)
+        code = lapply(strsplit(buttons, "__"), function(x) paste0(x[[1]], seq(1,nrow(df)), x[[2]]))
+        dfb = as.data.frame(code)
+        colnames(dfb) = paste0("col", seq(1,ncol(dfb)))
+        dfb = tidyr::unite(dfb, "btn", colnames(dfb), sep=" ", remove=TRUE)
+        colnames(dfb) = ""
+        data = cbind(df, dfb)
+    }
+    colnames(data) = titleCase(colnames(data))
+    data
 }
 .getOptions = function(df, ...) {
     args = list(...)

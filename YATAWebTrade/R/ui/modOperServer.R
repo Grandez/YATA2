@@ -30,8 +30,7 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                self$cameras$loadCameras()               
            }
            ,getCounters = function() {self$currencies$getCurrencyNames()  }
-           ,cboCamerasCounter = function(counter) { 
-               self$currencies$getCameras(counter) }
+           ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,cboCameras   = function(exclude, full=FALSE) {
               data = self$cameras$getCameras(full)
               if (!missing(exclude)) data = data[!data$id %in% exclude,]
@@ -66,8 +65,9 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
            # }
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }
            ,selectCamera = function(camera) { self$cameras$select(camera) }
-           ,operation    = function(data) {
-               if (missing(data)) data = self$data
+           ,operation    = function(...) {
+               data = args2list(...)
+               if (is.null(data)) data = self$data
                tryCatch({self$operations$add(data$type, data)
                          FALSE
                }

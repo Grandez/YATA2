@@ -9,13 +9,12 @@ TBLOperLog   = R6::R6Class("TBL.OPER.LOG"
          }
      )
      ,private = list (
-           key = c("idOper", "idLog")
+           key = c("idOper", "tms")
           ,fields = list(
               idOper = "ID_OPER"
-             ,idLog  = "ID_LOG"
-             ,type   = "TYPE"
-             ,reason = "REASON"
              ,tms    = "TMS"
+             ,logType   = "TYPE"
+             ,reason = "REASON"
              ,comment   = "COMMENT"
             )
      )
