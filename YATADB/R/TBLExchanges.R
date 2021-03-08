@@ -8,8 +8,18 @@ TBLExchanges = R6::R6Class("TBL.EXCHANGES"
         initialize     = function(name, db=NULL) {
            super$initialize(name, fields=private$fields, key=private$key, db=db)
         }
+        ,updateBulk    = function(data, ...) {
+            delete(...)
+            bulkAdd(data)
+        }
         ,getCameras    = function(symbol) { table(symbol=symbol, active = DBDict$flag$on) }
         ,getCurrencies = function(camera) { table(camera=camera, active = DBDict$flag$on) }
+        ,getExchanges  = function() {
+            sql = paste("SELECT DISTINCT(", fields$symbol, ")")
+            sql = paste(sql, "FROM", tblName)
+            sql = paste(sql, "WHERE ", fields$camera, "<> 'MKTCAP'")
+            sqlraw(sql,NULL)
+        }
         ,table = function(..., full=FALSE) {
               if (full) {
                   super$table(...)
@@ -25,6 +35,7 @@ TBLExchanges = R6::R6Class("TBL.EXCHANGES"
               camera  = "CAMERA"
              ,symbol  = "SYMBOL"
              ,active  = "ACTIVE"
+             ,id      = "ID"
           )
      )
 )

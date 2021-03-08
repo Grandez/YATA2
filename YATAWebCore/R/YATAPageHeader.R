@@ -51,7 +51,7 @@
         `data-toggle` = "yataoffcanvas",
         role = "button",
 #        shiny::tags$span(class = "sr-only"), "Toggle navigation")
-        shiny::tags$span(shiny::icon("bars", style="maring-top: 18px;")) #, "Toggle navigation")
+        shiny::tags$span(shiny::icon("bars", style="padding-top: 18px;")) #, "Toggle navigation")
       )),
 
       # shiny::tags$a(

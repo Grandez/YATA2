@@ -8,14 +8,26 @@ OBJBase = R6::R6Class("OBJ.BASE"
        ,name    = NULL
        ,id      = NULL
        ,print      = function() { message("Clearings Object")}
-       ,initialize = function() {
-           private$parms = YATAFactory$getParms()
-           private$db    = YATAFactory$getDB()
+       ,initialize = function(factory) {
+           if (missing(factory) && !exists("YATAFactory")) {
+               stop("Falta la factoria")
+           }
+           if (!missing(factory)) {
+               private$factory = factory
+           }
+           else {
+               private$factory = YATAFactory
+           }
+           private$parms = factory$getParms()
+           private$db    = factory$getDB()
+           private$codes = factory$getCodes()
         }
     )
     ,private = list(
         selected = FALSE
        ,parms    = NULL
        ,db       = NULL
+       ,factory = NULL
+       ,codes   = NULL
     )
 )

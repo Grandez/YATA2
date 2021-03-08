@@ -12,6 +12,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
                 private$tblParms = dbf$getTable(YATACodes$tables$Parameters)
                 private$db       = dbf$getDBBase()
              }, error = function(cond) {
+                 browser()
                      self$err   = cond
                      self$valid = FALSE
                      stop(errorCondition("Error de inicializacion de YATABase",
@@ -86,6 +87,17 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             df = df[df$active != 0,]
 
             df[,c("id", "name")]
+        }
+         ##############################################
+         ### REST
+         ##############################################
+        ,getRESTHost = function() {
+            keys = splitKeys(DBParms$ids$rest)
+            tblParms$getString (keys[1], keys[2], 1, default="127.0.0.1")
+        }
+        ,getRESTPort = function() {
+            keys = splitKeys(DBParms$ids$rest)
+            tblParms$getInteger (keys[1], keys[2], 2, default=9090)
         }
         ################################################
         ### Metodos de acceso a parametros

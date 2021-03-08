@@ -9,4 +9,4 @@ Description: Procesos Batch
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-import: YATACore
+import: dplyr, stringr, YATACore

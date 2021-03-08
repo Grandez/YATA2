@@ -5,8 +5,8 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
     ,lock_class = TRUE
     ,public = list(
         print           = function() { message("Positions Object")}
-       ,initialize      = function() {
-           super$initialize()
+       ,initialize      = function(factory) {
+           super$initialize(factory)
            private$prtPosition = YATAFactory$getTable(YATACodes$tables$Position)
        }
        ,getCameras = function() {
@@ -54,6 +54,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
               pSell = ifelse((nSell - amount) == 0, 0, pSell / (nSell - amount))
               nSell = nSell - amount
               prtPosition$set(priceSell = pSell, sell=nSell)
+              nBalance = amount * price
           }
 
           pBuy = curr$priceBuy
@@ -63,17 +64,19 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
               pBuy = ifelse((nBuy + amount) == 0, 0, pBuy / (nBuy + amount))
               nBuy = nBuy + amount
               prtPosition$set(priceBuy = pBuy, buy=nBuy)
+              nBalance = amount
           }
           pPrice = 0
           if ((nBuy - nSell) != 0) pPrice = ((pBuy * nBuy) - (pSell * nSell)) / (nBuy - nSell)
 
           prtPosition$setField("price", pPrice)
-          nBalance = curr$balance + (amount * price)
+
+          tax = 0
           if (prcTaxes != 0) {
-              if (amount < 0) amount = amount * -1
-              nBalance = nBalance - (amount * prcTaxes / 100)
+              tax = nBalance * prcTaxes / 100
+              if (tax > 0) tax = tax * -1
           }
-          prtPosition$setField("balance", nBalance)
+          prtPosition$setField("balance", curr$balance + nBalance + tax)
           prtPosition$apply()
       }
       ,update = function(camera, currency, amount, price, available=TRUE) {

@@ -28,6 +28,8 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                self$parms      = YATAFactory$getParms()
                self$defCtc     = self$parms$getDefCurrency()
                self$cameras$loadCameras()               
+               self$vars$inForm  = FALSE
+               self$vars$inEvent = FALSE
            }
            ,getCounters = function() {self$currencies$getCurrencyNames()  }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
@@ -89,15 +91,20 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                private$selected = private$opIdx[[name]][[row]]
                self$operations$select(private$selected)
                self$cameras$select(self$operations$current$camera)
-               self$data = self$cameras$current
-               self$data$cameraName = self$cameras$current$name
-               self$data = list.merge(self$data, self$operations$current)
-               self$data$baseName    = self$currencies$getCurrencyName(self$data$base,    TRUE)
-               self$data$counterName = self$currencies$getCurrencyName(self$data$counter, TRUE)
+               
+               self$data        = self$operations$current
+               self$data$camera = self$cameras$current
+               self$data$names = list()
+               self$data$names$camera  = self$cameras$current$name
+               self$data$names$base    = self$currencies$getCurrencyName(self$data$base,    TRUE)
+               self$data$names$counter = self$currencies$getCurrencyName(self$data$counter, TRUE)
+               # self$data = list.merge(self$data, self$operations$current)
+               # self$data$baseName    = self$currencies$getCurrencyName(self$data$base,    TRUE)
+               # self$data$counterName = self$currencies$getCurrencyName(self$data$counter, TRUE)
            }
-          ,getOperation = function() {
-              self$operations$current
-          }
+          # ,getOperation = function() {
+          #     self$operations$current
+          # }
         )
        ,private = list(
            opIdx     = list() # Contiene los id de las operaciones

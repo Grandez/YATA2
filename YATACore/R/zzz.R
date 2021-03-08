@@ -2,19 +2,16 @@
 # YATAEnv = YATAENV$new()
 #YATAFactory$env = YATAEnv
 
+library(YATATools)
+library(YATADB)
+library(YATAProviders)
 
-
-.onLoad <- function(libname, pkgname){
+YATACodes = YATACore:::YATACODES$new()
+.onAttach <- function(libname, pkgname){
   message("Loading YATACore")
-  # YATAFactory <<- YATAFACTORY$new()
-  # YATAEnv     <<- YATAENV$new()
-
-  # if (!("RMariaDB" %in% .packages())) {
-  #     library("RMariaDB", character.only = T)
-  # }
-  # if ("YATADB" %in% .packages()) detach("package:YATADB", unload=TRUE)
-  #
-  # library("YATADB", character.only = T)
-
-#  if (exists("YATAFactory")) YATAFactory = NULL
+  if (!exists("YATACodes")) {
+      message("Creando YATACodes")
+      YATACodes   <<- YATACore::YATACODES$new()
+  }
+  # if (!exists(YATAFactory)) YATAFactory <<- YATACore::YATAFACTORY$new()
 }

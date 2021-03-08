@@ -8,7 +8,12 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
    ,lock_class = TRUE
    ,public = list(
        initialize = function(env) {
-          message("Creando Factory")
+          # Ponemos init y clean para manejar fuera de initialize y finaliza
+          init(FALSE)
+       }
+      ,finalize  = function() { clear() }
+      ,init      = function(clean=TRUE){
+          if (clean) clear()
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
           private$objects     = HashMap$new()
@@ -17,25 +22,19 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
           private$parms       = OBJParms$new   (private$DBFactory)
           private$msgs        = OBJMessages$new(private$DBFactory)
+          private$codes       = YATACore::YATACODES$new()
           if (parms$autoConnect()) {
               setDB(parms$lastOpen())
           } else {
               setDB(parms$defaultDB())
           }
-          # Aqui hay que crear los parametros y conectar si es necesario
-          message("Factory inicializada")
-       }
-      ,finalize  = function() {
-         message("Limpiando DB")
+      }
+      ,clear     = function(){
          if (!is.null(DBFactory))   DBFactory$finalize()
-         message("Limpiando Providers")
          if (!is.null(ProvFactory)) ProvFactory$finalize()
-         message("Limpiando objetos")
          private$parms = NULL
          private$objects = NULL
-         message("Limpiando memoria")
          gc()
-         message("Fin limpieza")
       }
       ,getDBName = function() {
          db = getDB()
@@ -54,9 +53,14 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,getParms  = function()                    {
           if (is.null(private$parms)) private$parms = OBJParms$new(private$DBFactory)
               private$parms
+      }
+      ,getCodes  = function()  { private$codes }
+      ,getDB     = function()                    { DBFactory$getDB()       }
+      ,getDBBase = function()                    { DBFactory$getDBBase()   }
+      ,setDB     = function(connData)            {
+         DBFactory$setDB(connData)
+         invisible(self)
        }
-      ,getDB     = function()                    { DBFactory$getDB()         }
-      ,setDB     = function(connData)            { DBFactory$setDB(connData) }
       ,changeDB  = function(id) {
           connInfo = parms$getDBInfo(id)
          private$objects = HashMap$new()
@@ -69,9 +73,9 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           ProvFactory$get(code, object, force)
       }
       ,getObject   = function(name, force = FALSE) {
-         if (force) return ( eval(parse(text=paste0("OBJ", name, "$new()"))))
+         if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
          if (is.null(objects$get(name))) private$objects$put(name,
-                                         eval(parse(text=paste0("OBJ", name, "$new()"))))
+                                         eval(parse(text=paste0("OBJ", name, "$new(self)"))))
          objects$get(name)
       }
       ,getClass   = function(name, force = FALSE) {
@@ -95,6 +99,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,cfg         = NULL
       ,parms       = NULL
       ,msgs        = NULL
+      ,codes       = NULL
       ,setProvFactory = function() {
          # Le pasamos los datos de parametros a la factoria
          ProvFactory$setOnlineInterval (parms$getOnlineInterval())

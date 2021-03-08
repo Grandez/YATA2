@@ -10,28 +10,21 @@ PRTOperations = R6::R6Class("PART.OPERATION"
              private$tblOperLog     = TBLOperLog$new("OperLog", db)
          }
         ,add = function(lstData) {
-            super$add(lstData)
-            tblOperControl$add(lstData)
-            if (!is.null(lstData$comment)) {
-                lstData$id = lstData$idLog
-                tblOperLog$add(lstData)
-                #JGG Falta el tipo de log
-            }
+            info = splitFields(lstData)
+            super$add(info$oper)
+            tblOperControl$add(info$ctrl)
+            tblOperLog$add(info$log)
         }
         ,update = function(lstData) {
-            data = lstData
-            operInfo = lstData[names(data) %in% names(fields)]
-            #quitamos el id
-            super$set(operInfo)
+            info = splitFields(lstData)
+            super$set(info$oper)
             super$apply()
-            # quitamos precio y amount
-            data$price = NULL
-            data$amount = NULL
-            ctrlInfo = data[names(data) %in% names(tblOperControl$getColNames())]
-            tblOperControl$set(ctrlInfo)
+            info$ctrl$price  = NULL   # quitamos precio y amount
+            info$ctrl$amount = NULL   # Solo se informan en add
+            tblOperControl$set(info$ctrl)
             tblOperControl$apply()
-            logInfo = list(idOper=current$id,logType=lstData$logType,reason=lstData$reason)
-            tblOperLog$add(logInfo)
+            info$log$id = current$id
+            tblOperLog$add(info$log)
         }
         ,getOperations = function(...) {
             df = super$table(...)
@@ -42,12 +35,18 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             df
         }
         ,select = function(idOper, create=FALSE) {
-            super$select(id=idOper, create)
-            tblOperControl$select(id=idOper, create)
+            super$select(id=idOper, create=create)
+            tblOperControl$select(id=idOper, create=create)
         }
      )
      ,private = list (
          tblOperControl = NULL
         ,tblOperLog     = NULL
+        ,splitFields    = function(data) {
+            operInfo = data[names(data) %in% names(fields)]
+            ctrlInfo = data[names(data) %in% names(tblOperControl$getColNames())]
+            logInfo  = data[names(data) %in% names(tblOperLog$getColNames())]
+            list(oper=operInfo, ctrl=ctrlInfo,log=logInfo)
+        }
      )
 )

@@ -1,3 +1,4 @@
+# Este es el tema general
 YATATheme = function(base = "cerulean") {
     bslib::bs_theme(bootswatch = base) %>%
                    .addDeclarations() %>%
@@ -6,8 +7,10 @@ YATATheme = function(base = "cerulean") {
 }
 
 .addDeclarations = function(theme) {
-    # dt <- system.file("extdata/www/yata", "yatadt.scss", package = "YATAWebCore")
-    # bs_add_rules(theme, sass::sass_file(dt))
+    base <- system.file("extdata/www/yata", "yataBase.scss", package = "YATAWebCore")
+    bs_add_rules(theme, sass::sass_file(base))
+    dt <- system.file("extdata/www/yata", "yatadt.scss", package = "YATAWebCore")
+    bs_add_rules(theme, sass::sass_file(dt))
     theme
 }
 
@@ -17,11 +20,11 @@ YATATheme = function(base = "cerulean") {
     # bs_add_rules(theme, "navbar{ padding: 0; }")
     # bs_add_rules(theme, "navbar-static-top { padding: 8px; }")
     # Para ver si lo coge
-    theme = bs_add_rules(theme, "table.dataTable { background-color: blue; }")
-    theme = bs_add_rules(theme, "table.dataTable.display.gral{ background-color: white; }")
-    theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
-    theme = bs_add_rules(theme, ".table th,  { padding: 0; }")
-    theme = bs_add_rules(theme, ".table td { padding: 0; }")
+     # theme = bs_add_rules(theme, "table.dataTable { background-color: red; }")
+     # theme = bs_add_rules(theme, "table.dataTable.display.gral{ background-color: white; }")
+     # theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
+     # theme = bs_add_rules(theme, ".table th,  { padding: 0; }")
+     # theme = bs_add_rules(theme, ".table td { padding: 0; }")
     theme
 
 }

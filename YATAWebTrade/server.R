@@ -20,10 +20,9 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           ctc = self$getCurrencies()
           if (init) self$data$lstLast = self$providers$getMonitors("EUR", ctc)
           else      self$data$lstLast = self$providers$getLatests ("EUR", ctc)
-          
-          #self$data$lstLast = self$providers$getMonitors("EUR", ctc)
+
           data              = self$data$lstLast
-         
+
           df0 = data.frame(tms=Sys.time())
           df1 = as.data.frame(lapply(data, function(x) x$last))
           df  = cbind(df0, df1)
@@ -31,11 +30,9 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
 
           if (init) {
               self$data$dfSession = df
-          } else {     
+          } else {
               self$data$dfSession = rbind(self$data$dfSession, df)
           }
-          message("Timer en server: ", nrow(self$data$dfSession))
-#          self$data$lstLast = self$providers$getMonitors("EUR", getCurrencies())
           invisible(self)
       }
       ,getGlobalPosition = function() { self$data$dfPosGlobal }
@@ -62,12 +59,6 @@ function(input, output, session) {
       output$form = renderUI({data})
       output$lblDBCurrent    = updLabelText(YATAFactory$getDBName())
       shinyjs::show("yata-main-err")
-# parms = YATAFactory$getParms()
-# df = parms$getDBNames()
-# data = c(df$id)
-# names(data) = df$name
-# browser()
-#      updListBox("lstDB", choices=as.list(data))
    }
    closePanel = function() { shinyjs::hide("yata-main-err") }
    output$appTitle <- renderText({ 
@@ -95,14 +86,9 @@ function(input, output, session) {
          #invalidateLater(pnl$interval * 60000)
         invalidateLater(60000)
 #         message("Timer lanzado en server")
-         pnl$updateData()
+        pnl$updateData()
     })
    onclick("appTitle"     , changeDB()  )
-   # onclick("yata-main-err", {
-   #     message("como click")
-   #     # browser()
-   #     # closePanel()})
-   # })
    onStop(function() {
       cat("Session stopped\n")
       YATAFactory$finalize()

@@ -22,6 +22,16 @@ PROVPoloniex = R6::R6Class("PROV.POLONIEX"
            private$lastGet = as.POSIXct(1, origin="1970-01-01")
            loadTickers()
         }
+       ,getCurrencies = function() {
+           url = "%sreturnCurrencies"
+           data = get(sprintf(url, urlbase))
+           sym = names(data)
+           nam = names(data)
+           ids = lapply(data, function(x) x$id)
+           df = data.frame(symbol=sym, name=nam,id=unlist(ids))
+           row.names(df) = NULL
+           df
+      }
        ,currencies = function() {
           url = "%sreturnTicker"
           data = get(sprintf(url, urlbase))
@@ -57,7 +67,6 @@ PROVPoloniex = R6::R6Class("PROV.POLONIEX"
           getSession(base, counter, from, to, 86400)
        }
        ,getCloseSession = function(base, counter, day) {
-          browser()
           if (is.character(day)) day = as.Date(day)
           # Cogemos los datos del dia y del dia anterior para que haya dos
           strTo   = sprintf("%s %d:00:00", day, config$closeTime)

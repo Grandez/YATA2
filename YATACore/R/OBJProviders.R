@@ -5,11 +5,11 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        print       = function() { message("Proivders Object")}
-       ,initialize  = function(provider) {
-           super$initialize()
+        print       = function() { message("Providers Object")}
+       ,initialize  = function(factory) {
+           super$initialize(factory)
            private$providers    = HashMap$new()
-           private$tblProviders = YATAFactory$getTable(YATACodes$tables$Providers)
+           private$tblProviders = factory$getTable(YATACodes$tables$Providers)
            self$id              = parms$getOnlineProvider()
 
            private$dfProviders  = tblProviders$table(active = YATACodes$flag$active)
@@ -17,13 +17,14 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
            prov = dfProviders[dfProviders$id == self$id,]
 
            self$name = prov[1,"name"]
-           private$provider = YATAFactory$getProvider(self$id, prov[1,"object"])
+           private$provider = factory$getProvider(self$id, prov[1,"object"])
            private$providers$put(self$id, private$provider)
 
            #JGG Especial
-           private$mktcap = YATAFactory$getProvider("MKTCAP", "MarketCap")
+           private$mktcap = factory$getProvider("MKTCAP", "MarketCap")
            private$providers$put("MKTCAP", mktcap)
        }
+       ,getProviders = function() { private$dfProviders }
        ,getMonitors = function(base, counter) {
           data = getLatests(base, counter)
           now = Sys.time()
@@ -41,20 +42,6 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
           list.merge(data,lst2)
       }
        ,getLatests  = function(base, counter) { provider$getLatests(base, counter) }
-       ,getBest     = function(interval=1,top=5) {
-           # interval = numero en dias: 1 o 7
-           col = 4
-           df = private$mktcap$getLatest()
-
-           if (interval == 1) {
-               col = 4
-               df = df[order(df$var1, decreasing=TRUE),]
-            } else {
-               col = 5
-               df = df[order(df$var7, decreasing = TRUE),]
-            }
-            df[1:top, c(2,3,col)]
-       }
        ,getSessionDays = function(base, counter, from, to) {
           provider$getSessionDays(base, counter, from, to)
       }

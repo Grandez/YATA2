@@ -4,6 +4,7 @@ modOperOperServer = function(id, full, pnl) {
    dfCamera     = NULL
    fee          = 0
    moduleServer(id, function(input, output, session) {
+      pnl$vars$inEvent = FALSE 
       validate = function() {
           res = FALSE
           if (input$impAmount <= 0) res = pnl$setMsg("MSG.AMOUNT.ERR")
@@ -44,10 +45,12 @@ modOperOperServer = function(id, full, pnl) {
       }, ignoreInit = TRUE)
 
       observeEvent(input$cboCounter, {
+          pnl$vars$inEvent = FALSE
           data = pnl$cboCamerasCounter(input$cboCounter)
           updCombo("cboCamera", choices=pnl$cboCamerasCounter(input$cboCounter))
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
+          pnl$vars$inEvent = FALSE
           dfPos = pnl$position$getCameraPosition(input$cboCamera, available = TRUE) 
           updCombo("cboBase", choices=pnl$cboCurrency(input$cboCamera, TRUE))
           pnl$cameras$select(input$cboCamera)
@@ -55,26 +58,34 @@ modOperOperServer = function(id, full, pnl) {
           output$lblFee = updLabelPercentage(fee)
       },ignoreInit = TRUE)   
       observeEvent(input$cboBase, {
+          pnl$vars$inEvent = FALSE
          pnl$vars$available = 0
          df = pnl$position$getPosition(input$cboCamera, input$cboBase) 
          if (nrow(df) != 0) pnl$vars$available = df[1,"available"]
-         output$lblAvailable = updLabelNumeric(pnl$vars$available)
-         output$lblNew       = updLabelNumeric(pnl$vars$available)
+         output$lblAvailable = updLabelNumber(pnl$vars$available)
+         output$lblNew       = updLabelNumber(pnl$vars$available)
       })
       observeEvent(input$impAmount | input$impPrice, {
+          pnl$vars$inEvent = FALSE
           if (!is.na(input$impAmount) && !is.na(input$impPrice)) {
              if (input$impAmount != 0 && input$impPrice != 0) {
                  imp  = input$impAmount * input$impPrice
                  iFee = imp * fee / 100
                  iTotal = imp + iFee
-                 output$lblImp     = updLabelNumeric(imp)
-                 output$lblFeeImp  = updLabelNumeric(iFee)
-                 output$lblTotBase = updLabelNumeric(iTotal)
-                 output$lblNew     = updLabelNumeric(pnl$vars$available - iTotal)
+                 output$lblImp     = updLabelNumber(imp)
+                 output$lblFeeImp  = updLabelNumber(iFee)
+                 output$lblTotBase = updLabelNumber(iTotal)
+                 output$lblNew     = updLabelNumber(pnl$vars$available - iTotal)
              } 
           }
       },ignoreInit = TRUE, ignoreNULL = TRUE)
       observeEvent(input$btnOK, {
+        # A veces se generan dos triggers (debe ser por los renderUI)
+         pnl$vars$inEvent = !pnl$vars$inEvent
+         if (!pnl$vars$inEvent) {
+             pnl$vars$inEvent = !pnl$vars$inEvent
+             return()
+         }
          if (validate()) return()
          data = list()
          data$type     = input$cboOper
@@ -85,7 +96,7 @@ modOperOperServer = function(id, full, pnl) {
          data$price    = input$impPrice
          data$reason   = input$cboReasons
          data$alert    = input$alert
-         browser()
+
          if (input$target   > 0) {
              data$target   = input$target
              if (input$swTarget) data$target = data$price * (1 + (data$target / 100)) 
@@ -108,17 +119,15 @@ modOperOperServer = function(id, full, pnl) {
          res = pnl$operation(data)
           if (res) {
 #              yataMsgErr(ns2("msg"), "Error al realizar la operacion")
-              alert = paste(strsplit(mod, "-")[[1]][1], "alert", sep="-")
-              yataAlertPanelServer(alert, session)
+              # alert = paste(strsplit(mod, "-")[[1]][1], "alert", sep="-")
+              # yataAlertPanelServer(alert, session)
           }
           else {
  #             yataMsgSuccess(ns2("msg"), "Operacion realizada")
                resetValues()
           }
-         
-      })
+      }, ignoreInit = TRUE)
       observeEvent(input$btnKO, { resetValues() })
-      
     })
 }
 

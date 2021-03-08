@@ -2,6 +2,12 @@ import(tidyr)
 import(rlist)
 import(zoo)
 
+# async
+import(httr)
+import(jsonlite)
+import(future)
+#import(promises)
+
 # Shiny
 import(shiny)
 import(shinyjs)
@@ -28,3 +34,4 @@ exportPattern("blk.*")
 exportPattern("upd.*")
 exportPattern("plt*")
 exportPattern("prepare*")
+exportPattern("rest.*")

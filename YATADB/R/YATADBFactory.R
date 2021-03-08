@@ -31,6 +31,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           invisible(self)
       }
       ,getID      = function()     { private$dbID   }
+      ,getTable   = function(name, force = FALSE) { get(name, force) }
       ,get       = function(name, force = FALSE) {
          prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")
          full = paste0(prfx, name)
@@ -40,12 +41,6 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
             obj = createObject(prfx, name)
             private$objects$put(full, obj)
          }
-         private$objects$get(full)
-      }
-      ,getTable = function(name, force=FALSE) {
-         if (force) return (createObject("TBL", name))
-         full = paste0("TBL", name)
-         if (is.null(private$objects$get(full))) private$objects$put(full, createObject("TBL", name))
          private$objects$get(full)
       }
    )

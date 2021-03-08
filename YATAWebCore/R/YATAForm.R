@@ -18,5 +18,7 @@ YATAFormServer = function(id, modName, input, output, session, ...) {
 }
 
 YATAFormClose = function() {
+    # Devuelve FALSE para indicar que se ha finalizado la accion
     shinyjs::hide("form-panel")
+    FALSE
 }

@@ -7,8 +7,8 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
     ,lock_class = TRUE
     ,public = list(valid = TRUE
         ,print = function() { message("Currencies Object")}
-        ,initialize = function() {
-            super$initialize()
+        ,initialize = function(factory) {
+            super$initialize(factory)
             tbl = YATAFactory$getTable(YATACodes$tables$Currencies)
             private$tblCurrencies = YATAFactory$getTable(YATACodes$tables$Currencies)
             private$tblExchanges  = YATAFactory$getTable(YATACodes$tables$Exchanges)
@@ -35,6 +35,7 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             if (full) df$name = paste(df$id, df$name, sep=" - ")
             df
         }
+        ,getDF                 = function(...) { tblCurrencies$table(...) }
         ,getActiveCurrencies   = function() { updIcons(tblCurrencies$getTable()) }
         ,getInactiveCurrencies = function() { updIcons(tblCurrencies$table(active=YATACodes$flag$inactive)) }
         ,getAllCurrencies      = function() { updIcons(tblCurrencies$table())                               }
@@ -56,6 +57,7 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             if (full) df$name = paste(df$id, df$name, sep = " - ")
             df
         }
+        ,addBulk = function(data) { tblCurrencies$bulkAdd(data)}
     )
     ,private = list(
         tblCurrencies = NULL

@@ -13,6 +13,7 @@ frmOperCloseInput = function(base, data) {
                 ,yuiFormRow("Precio",   yuiNumericInput(ns("ImpPrice"),  NULL, value = price))
 #                ,yuiFormRow("Comision", yuiNumericInput(ns("LblFee")))
                 ,yuiFormRow("Motivo",   selectInput(ns("cboReasons"), label=NULL, choices=data$reasons, selected="0"))
+                ,yuiFormRow("Calif.",   yuiRank(ns("SlRank")))                  
             )
         )
        )

@@ -10,6 +10,7 @@ YATACODES = R6::R6Class("YATA.CODES"
      ,position   = "Position"
      ,currencies = "Currencies"
      ,providers  = "Providers"
+     ,session    = "Session"
     )
     ,tables = list(
          Position     = "Position"
@@ -27,8 +28,9 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,Parameters   = "Parameters"
         ,Messages     = "Messages"
         # ,Control      = "SESSION_CONTROL"
-        # ,Session      = "SESSION"
+        ,Session      = "Session"
         # ,sesExchanges = "SESSION_EXCHANGES"
+        ,cmc          = "CMC"
 
     )
     ,flag = list(inactive=0, active=1, parent=2)

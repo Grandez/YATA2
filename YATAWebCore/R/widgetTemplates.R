@@ -18,3 +18,5 @@ yuiYesNo = function(id=ns("tag"), lblOK, lblKO, cols=4, left=0) {
             )
     tagList(tags$div(class="container-fluid", divMsg), tags$div(class="container-fluid", divBtns))
 }
+
+yuiRank = function(id,lbl=NULL) { sliderInput(id, lbl, min=-2,max=2,step=1,value=0, ticks=FALSE) }

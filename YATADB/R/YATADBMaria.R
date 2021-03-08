@@ -68,22 +68,31 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
            tryCatch({res = RMariaDB::dbExecute(getConn(isolated), qry, params=params)
                      if (isolated) commit()
                     },warning = function(cond) {
-                        rollback();
-                        yataWarning("Warning SQL", cond, "SQL", "Execute", cause=qry)
+                       # browser()
+                       #  rollback();
+                       #  yataWarning("Warning SQL", cond, "SQL", "Execute", cause=qry)
+                       if (isolated) rollback()
+                       stop(paste("WARNING en EXECUTE:", cond))
                     },error = function (cond) {
-                        rollback()
+                       # browser()
+                       #  rollback()
                         yataError("Error SQL", cond, "SQL", "Execute", cause=qry)
+                       if (isolated) rollback()
+                       stop(paste("ERROR en EXECUTE:", cond))
+
                     })
       }
-      ,write      = function(table, data, isolated=FALSE) {
-         tryCatch({ res = RMariaDB::dbWriteTable(getConn(isolated), table, data, append=TRUE)
+      ,write      = function(table, data, append=TRUE, isolated=FALSE) {
+         over = ifelse(append, FALSE, TRUE)
+         tryCatch({ res = RMariaDB::dbWriteTable(getConn(isolated), table, data, append=append, overwrite=over)
                     if (isolated) commit()
                   },warning = function(cond) {
-                       rollback();
-                       yataWarning("Warning SQL", cond, "SQL", "WriteTable", cause=table)
+#                       yataWarning("Warning SQL", cond, "SQL", "WriteTable", cause=tab#le)
+                     stop(paste("Aviso en DB Write: ", cond))
                   },error   = function(cond) {
-                       rollback();
-                       yataError("Error SQL", cond, "SQL", "Writetable", cause=table)
+                      if (isolated) rollback()
+#                       yataError("Error SQL", cond, "SQL", "Writetable", cause=table)#
+                     stop(paste("ERROR en DB Write: ", cond))
                  })
       }
       ,add        = function(table, values, isolated=FALSE) {

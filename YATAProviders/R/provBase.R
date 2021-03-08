@@ -6,6 +6,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
    ,public = list(
        name = NULL
       ,code = NULL
+      ,info = NULL
       ,initialize  = function(code, name, EUR, path, config) {
           self$code       = code
           self$name = name
@@ -19,6 +20,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
 
           private$dfPath  = tblPath$table(provider=code)
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
+          getInfo()
       }
       ,print       = function() { message(name, " provider")}
       ,setLimits   = function(limits) { private$limits = limits }
@@ -32,6 +34,10 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       # Metodos
 
       ,ticker        = function() { stop("Este metodo es virtual")}
+      ,getCurrencies = function() {
+         # Devuelve el df de as monedas soportadas
+         stop("Este metodo es virtual")
+       }
       ,session       = function(base, counter, interval, from, to) { stop("Este metodo es virtual")}
       ,getDaySession = function(base, counter,           from, to) { stop("Este metodo es virtual")}
       ,currencies    = function() { stop("Este metodo es virtual")}
@@ -316,7 +322,6 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            as.vector(dfj[1,])
       }
        ,addDefaults  = function() {
-#            browser()
 #            eur = EUR$latest("EUR", "USD")
 #            # Ponemos cambios por defecto para que los encuentre
 #            # Por definicion USDT, USDC son monedas USD
@@ -353,6 +358,34 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            #                                           , high=usd      ,low=usd)
           private$dfTickers = rbind(private$dfTickers, dfe, dft,dfc)
        }
+      ,mountURL = function(page) {
+          url = info$url
+          len = nchar(url)
+          last = substr(url, len, len)
+          beg = ""
+          if (nchar(page) > 0) beg = substr(page,1,1)
+          if (last == "/") {
+              if (beg == "/") {
+                 url = paste0(url, substr(page,2,nchar(page)))
+              } else {
+                 url = paste0(url,page)
+              }
+          } else {
+              if (beg == "/") {
+                 url = paste0(url,page)
+              } else {
+                 url = paste(url, page, sep="/")
+              }
+          }
+          url
+      }
+      ,getInfo = function() {
+         dbf = YATADB::YATADBFactory$new()
+         tbl = dbf$get("Providers")
+         tbl$select(id=code)
+         self$info = tbl$current
+         dbf = NULL
+      }
    )
 
 )

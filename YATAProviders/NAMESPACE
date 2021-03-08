@@ -2,9 +2,10 @@ import(dplyr)
 import(rlist)
 importFrom(data.table,transpose)
 import(lubridate)
+import(stringr)
 
-import(xml2)
-import(rvest)
+#import(xml2)
+#import(rvest)
 import(httr)
 import(jsonlite)
 

@@ -9,14 +9,13 @@
 #############################################
 
 .pltBase = function() {
-   p = plot_ly()
-   p %>% .pltToolbar()
+   plot_ly() %>% .pltToolbar()
 }
 
 plotLineTypes = c("solid", "dot", "dash", "longdash", "dashdot", "longdashdot")
 
 .pltToolbar = function(p) {
-    p %>% config(displaylogo = FALSE, collaborate = FALSE
+    p %>% plotly::config(p, displaylogo = FALSE, collaborate = FALSE
            # ,modeBarButtonsToRemove = c(
            #      'sendDataToCloud'
            #     ,'autoScale2d'
@@ -78,7 +77,6 @@ pltLines  = function(df, title=NULL, markers=TRUE) {
   }
   p = p %>% layout(legend = list(orientation = 'h'))
   if (!is.null(title)) p = p %>% layout(title = title)
-
   p
 }
 

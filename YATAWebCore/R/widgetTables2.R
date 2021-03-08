@@ -1,26 +1,5 @@
 yuiDataTable = function(id) { DT::dataTableOutput(id) }
 
-updTablePosition = function(df, ...) {
-    colnames(df) = titleCase(colnames(df))
-    yataDataTable({df}, type="position")
-}
-
-updTableOperations = function(df, buttons=NULL, ...) {
-   if (!is.null(buttons)) df = .updTableButtons(df, buttons)
-   colnames(df) = titleCase(colnames(df))
-
-   dt =  yataDT({df}, type="operation")
-   # dt = dt %>%  YATADT::formatStyle("Value", color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
-   #                         , values=c("red","black","green","green")))
-
-   if ("Balance" %in% colnames(df)) {
-        dt = dt %>%  YATADT::formatStyle("Balance",
-                             color = DT::styleInterval( cuts=c(-Inf,0,+Inf)
-                                                       ,values=c("red","red","green","green")))
-   }
-
-   yataDTRender(dt)
-}
 
 # yataRenderTable = function(df, type, buttons=NULL, ...) {
 #     data = .yataRenderTableBase(df, buttons)

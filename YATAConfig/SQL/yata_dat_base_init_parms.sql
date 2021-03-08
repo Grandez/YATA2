@@ -16,14 +16,16 @@ DELETE FROM PARMS;
 --   Sub 1 - Configuracion
 --           1 - Moneda por defecto
 --           2 - Moneda alternativa
---           3 - Directorio de plugins                  
+--           3 - Directorio de plugins      
 --   Sub 2 - Base de datos
 --           1 - autoOpen
 --           2 - Base de datos de defecto
 --           3 - lastDB
 --  Sub  3 - Operaciones
 --           1 - alert - Dias para la proxima alerta
-
+--  Sub  4 - REST Server            
+--           1 - URL
+--           2 - Port
 -- --------------------------------------------------2- 
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'currency'    , 'EUR');
@@ -36,6 +38,8 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 3, 10, 
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 1, 10, 'alert'    , '1');
 
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 1,  1, 'URL'      , '127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 2, 10, 'PortL'    , '9090');
 -- ----------------------------------------------------
 -- Grupo 3 - Proveedores
 --   Sub 1 - Online
@@ -110,9 +114,9 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 93, 
 -- ----------------------------------------------------
 
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  1,  1, 'name'     , 'Plantilla'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  1,  1, 'name'     , 'Base'        );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  2,  1, 'engine'   , 'MariaDB'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  3,  1, 'dbname'   , 'YATATPL'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  3,  1, 'dbname'   , 'YATABase'    );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  4,  1, 'user'     , 'YATA'        );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  5,  1, 'password' , 'yata'        );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  6,  1, 'host'     , '127.0.0.1'   );

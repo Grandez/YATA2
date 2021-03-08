@@ -19,6 +19,7 @@ TBLProviders = R6::R6Class("TBL.PROVIDERS"
            ,pwd    = "PWD"
            ,icon   = "ICON"
            ,object = "OBJECT"
+           ,url    = "URL"
          )
      )
 )

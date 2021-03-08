@@ -1,6 +1,13 @@
 ############################
 #### Shiny
 ###########################
+
+yuiTitle1 = function(txt) { h1(class="yata-title-1", txt) }
+yuiTitle2 = function(txt) { h2(class="yata-title-2", txt) }
+yuiTitle3 = function(txt) { h3(class="yata-title-3", txt) }
+yuiTitle4 = function(txt) { h4(class="yata-title-4", txt) }
+yuiTitle5 = function(txt) { h5(class="yata-title-5", txt) }
+
 yuiMessage = function(id) {
   htmlOutput(outputId=id, inline=TRUE)
 }
@@ -55,8 +62,7 @@ yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
 yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 }
-
-updLabelNumeric   = function(value, dec=-1, bold=TRUE, color=FALSE) {
+updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
   text = format(value, big.mark = ".", decimal.mark=",")
   if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
   .updLabelNumber(value, text, bold, color)

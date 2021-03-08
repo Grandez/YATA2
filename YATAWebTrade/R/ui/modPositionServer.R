@@ -29,6 +29,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              private$monitors   = HashMap$new()
              self$vars$plotLeftChanged = TRUE
              self$vars$plotRightChanged = TRUE
+             self$vars$inEvent = FALSE
+             self$vars$inForm = FALSE
          }
          ,getDF         = function(type) {
              root = self$getRoot()
@@ -67,7 +69,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              while (idx <= nrow(df)) {
                  counter = df[idx, "currency"]
                  from    = as.numeric(df[idx, "since"])
-                 data    = self$providers$getSessionDays("EUR", counter, from, to) 
+                 data    = self$providers$getSessionDays("EUR", counter, from, to)
                  self$data$mapSessionDay$put(counter, data)
                  idx = idx + 1
              }
@@ -76,17 +78,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
             self$interval = self$parms$getOnlineInterval()
             self$getRoot()$setInterval(self$interval)
         }
-         # ,makeDFSession  = function(data, init=FALSE) {
-         #     df0 = data.frame(tms=Sys.time())
-         #     df1 = as.data.frame(lapply(data, function(x) x$last))
-         #     df  = cbind(df0, df1)
-         #     df$tms = as.ITime(df$tms)
-         #     if (init) {
-         #         self$data$dfSession = df
-         #     } else {     
-         #         self$data$dfSession = rbind(self$data$dfSession, df)
-         #     }
-         # }
          ,getMonitor  = function(name) {
              if (missing(name)) return (private$monitors)
              monitorDef = list(
@@ -143,13 +134,13 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                                                         ," = updTablePosition(id=ns('"
                                                         ,paste0("pos", sfx), "'),   df)")))
                       })
-#          insertMonitors(pnl$getMonitors())
+    #      insertMonitors(pnl$getMonitors())
           # pnl$valid = TRUE
        }
        initMonitors = function() {
           ctc = pnl$getCurrencies()
           lapply(ctc, function(item) pnl$getMonitor(item))
-         
+
           idDiv = paste0("#", ns("monitor"))
           lapply(ctc, function(x) insertUI( selector = idDiv, immediate=TRUE
                                            ,where = "beforeEnd"
@@ -157,9 +148,9 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           monitors = pnl$getMonitor()
           data     = pnl$getLatestSession()
           df       = pnl$getGlobalPosition()
-          
+
           # pnl$makeDFSession(data, TRUE)
-          # 
+          #
           for (ctc in monitors$keys()) {
                monitor         = monitors$get(ctc)
                monitor$last    = data[[ctc]]$last
@@ -168,8 +159,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                monitor$week    = data[[ctc]]$week
                monitor$price   = 0
                if (nrow(df) > 0 && nrow(df[df$currency == ctc,]) > 0) {
-                  monitor$price = df[df$currency == ctc, "price"] 
-               }  
+                  monitor$price = df[df$currency == ctc, "price"]
+               }
                pnl$setMonitor(ctc, monitor)
                updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
           }
@@ -181,26 +172,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           tags$div(id=paste0("divPos", suffix), yuiBox(ns(nstable), paste("Posicion", camera)
                                                                    , yuiDataTable(ns(nstable))))
        }
-       # initMonitors2 = function() {
-       #     browser()
-       #    # Aqui ponemos los valores medio, dia, semana y session
-       #    data = pnl$providers$getMonitors("EUR", pnl$lastMonitors)
-       #    df = pnl$data$dfPosGlobal
-       #    pnl$makeDFSession(data, TRUE)
-       #    for (ctc in pnl$monitors$keys()) {
-       #         monitor = pnl$monitors$get(ctc)
-       #         monitor$last    = data[[ctc]]$last
-       #         monitor$session = data[[ctc]]$last
-       #         monitor$day     = data[[ctc]]$day
-       #         monitor$week    = data[[ctc]]$week
-       #         monitor$price   = 0
-       #         if (nrow(df) > 0 && nrow(df[df$currency == ctc,]) > 0) {
-       #            monitor$price = df[df$currency == ctc, "price"] 
-       #         }  
-       #         pnl$monitors$put(ctc, monitor)
-       #         updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
-       #    }
-       # }
        plots = function() {
           if (input$cboPlotLeft != "") 
               output$plotLeft = updPlot({makePlot(input$cboPlotLeft)})
@@ -213,10 +184,23 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
            if (is.null(df)) return (NULL)
            plot = eval(parse(text=paste0(idPlot, "(df, title)")))
        }
+       
+       getBest = function(top, from) {
+          restdf("best", top=top, from=from) %>%
+             then(  function(result) { output$tblBest  = DT::renderDT({result })
+                  },function(err)    {  browser()
+                      message("ha ido mal 2") })
+       } 
+       
       autoInvalidate = reactiveTimer(pnl$interval * 60000)
 
       # Antes del observer para que encuentre datos
-      if (!pnl$loaded) loadPanel()
+      
+      if (!pnl$loaded) {
+          getBest(10,7)
+          loadPanel()
+      }
+
       observe({
          autoInvalidate()
          output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
@@ -226,21 +210,22 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          plots()
          
          info = list(id="rank", n=5)
-         updRank(info, input,output,session)
+#         updRank(info, input,output,session)
      })
      
      #################################################
-     ### Panel derecho
+     ### Panel Izquierdo
      #################################################
      
       observeEvent(input$numInterval,  { pnl$interval = input$numInterval }, ignoreInit = TRUE)
       observeEvent(input$cboPlotLeft,  { plots()} , ignoreInit=TRUE)
       observeEvent(input$cboPlotRight, { plots()}, ignoreInit=TRUE)
-
+      observeEvent(input$numBestTop,   { getBest(input$numBestTop, input$cboBestFrom )}, ignoreInit = TRUE)
+      observeEvent(input$cboBestFrom,  { getBest(input$numBestTop, input$cboBestFrom )}, ignoreInit=TRUE)
+      
      #################################################
      ### Ejecutar siempre
      #################################################
-      message("Ejecuta Posicion")
-      plots()
+#      plots()
   })
 }    

@@ -10,12 +10,12 @@ DBDict = list(
         ,Regularization = "REGULARIZATION"
         ,PositionHist = "HIST_POSITION"
         ,Operations   = "OPERATIONS"
-        ,Flows        = "FLOWS"
         ,OperControl  = "OPERATIONS_CONTROL"
         ,OperLog      = "OPERATIONS_LOG"
-        ,Control      = "SESSION_CONTROL"
+        ,Flows        = "FLOWS"
+#        ,Control      = "SESSION_CONTROL"
         ,Session      = "SESSION"
-        ,sesExchanges = "SESSION_EXCHANGES"
+#        ,sesExchanges = "SESSION_EXCHANGES"
     )
     ,baseTables = list(
          Cameras      = "CAMERAS"
@@ -25,6 +25,7 @@ DBDict = list(
         ,Providers    = "PROVIDERS"
         ,Path         = "PATH"
         ,Messages     = "MESSAGES"
+        ,CMC          = "CMC"
     )
     ,fields = list(
          active    = "ACTIVE"

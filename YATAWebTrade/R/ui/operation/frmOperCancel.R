@@ -8,19 +8,16 @@ frmOperCancelInput = function(base, data) {
            ,column(3,
                h2("Base")
               ,yataFormTable(
-                 list("Camara",   yataTextLabel(ns("LblCamera")))
-                ,list("Base",     yataTextLabel(ns("LblBase")))
-                ,list("Counter",  yataTextLabel(ns("LblCounter")))
-                ,list("Cantidad", numericInput(ns("ImpAmount"), NULL, value = amount))
-                ,list("Precio",   numericInput(ns("ImpPrice"),  NULL, value = 0))
+                 list("Camara",   yuiLabelText(ns("LblCamera")))
+                ,list("Base",     yuiLabelText(ns("LblBase")))
+                ,list("Counter",  yuiLabelText(ns("LblCounter")))
+                ,list("Cantidad", yuiLabelNumber(ns("LblAmount")))
+                ,list("Precio",   yuiLabelNumber(ns("LblPrice")))
             )
            )   
         )
        ,fluidRow( column(1)
-                 ,column(3, yataSwitch(ns("SwDelete"), value = TRUE))
+                 ,column(3, yuiSwitch(ns("SwDelete"), value = TRUE))
         ) 
-   ,fluidRow(column(1)
-       ,column(4, yataBtnOK(ns("BtnOK"), "Procesar"), yataBtnKO(ns("BtnKO"), "Cancelar"))
-    )
-
+   ,fluidRow(column(1),yuiYesNo(ns("tag"), "Anular", "Cancelar"))
 )}

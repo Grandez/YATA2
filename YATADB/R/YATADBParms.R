@@ -10,10 +10,12 @@ DBParms = list(
         ,DBDefault   = "001 002 002"  # BBDD Default
         ,lastOpen    = "001 002 003"  # Ultima BBDD abierta
         ,alert       = "001 003 001"  # Dias para alerta
+        ,rest        = "001 004"      # REST Informacion
         ,online      = "003 001 001"  # Proveedor de informacion Online
         ,interval    = "003 001 002"  # Intervalo en minutos para update
         ,base        = "003 001 003"  # Moneda base
         ,closeTime   = "003 001 004"  # Hora de cierre de las sesiones
+
     )
     ,group = list(
        general   =  1
@@ -28,6 +30,7 @@ DBParms = list(
            config     = 1
           ,databases  = 2
           ,operations = 3
+          ,rest       = 4
         )
        ,databases = list(
             autoConnect = 1
@@ -36,6 +39,10 @@ DBParms = list(
         )
         ,operations = list(
            alert = 1
+        )
+        ,rest = list(
+            url  = 1
+           ,port = 2
         )
     )
     ,databases = list(

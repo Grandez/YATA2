@@ -122,6 +122,7 @@ CREATE TABLE OPERATIONS_CONTROL  (
    ,AMOUNT       DOUBLE      NOT NULL -- Cantidad propuesta
    ,PRICE        DOUBLE      NOT NULL -- Precio de la operacion   
    ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
+   ,RANK         INTEGER     DEFAULT 0           -- Resultado operacion
    ,TMS_ALERT    DATE                -- Para chequear la operacion         
    ,PRIMARY KEY ( ID_OPER )
 );
@@ -131,12 +132,13 @@ CREATE TABLE OPERATIONS_CONTROL  (
 DROP TABLE  IF EXISTS OPERATIONS_LOG;
 CREATE TABLE OPERATIONS_LOG  (
     ID_OPER      INT UNSIGNED     NOT NULL -- Identificador de la operacion
+   ,ID_LOG       INT UNSIGNED     NOT NULL -- Identificador del registro
    ,TMS          TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP -- Fecha de entrada       
    ,TYPE         TINYINT      DEFAULT 0 -- Tipo de entrada
    ,REASON       INTEGER      DEFAULT 0 -- Razon de la operacion
 
    ,COMMENT         TEXT 
-   ,PRIMARY KEY ( ID_OPER, TMS )
+   ,PRIMARY KEY ( ID_OPER, ID_LOG )
 );
 
 -- Flujos
@@ -154,7 +156,7 @@ CREATE TABLE FLOWS  (
     ID_OPER    INT UNSIGNED      NOT NULL -- Identificador de la operacion
    ,ID_FLOW    INT UNSIGNED      NOT NULL -- Identificador del flujo
    ,TYPE       TINYINT     NOT NULL -- Tipo de flujo segun codigo
-   ,CURRENCY   VARCHAR(10) NOT NULL -- Moneda
+   ,CURRENCY   VARCHAR(18) NOT NULL -- Moneda
    ,AMOUNT     DOUBLE      NOT NULL -- Unidades  
    ,PRICE      DOUBLE      NOT NULL -- Precio Necesario para saber la diferencia
    ,TMS          TIMESTAMP DEFAULT CURRENT_TIMESTAMP           -- Fecha de entrada
@@ -172,4 +174,19 @@ CREATE TABLE FLOWS  (
 -- );
 -- 
 
-
+DROP TABLE  IF EXISTS SESSION;
+CREATE TABLE SESSION  (
+    SYMBOL    VARCHAR(18)   NOT NULL
+   ,TMS       TIMESTAMP     NOT NULL
+   ,NAME      VARCHAR(255)
+   ,ID        INTEGER       NOT NULL
+   ,PRICE     DOUBLE
+   ,CHANGE01  DOUBLE
+   ,CHANGE24  DOUBLE
+   ,CHANGE07  DOUBLE
+   ,CHANGE30  DOUBLE
+   ,CHANGE60  DOUBLE
+   ,CHANGE90  DOUBLE
+   ,VOLUME    DOUBLE
+   ,PRIMARY KEY (SYMBOL, TMS)
+);

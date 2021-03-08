@@ -118,14 +118,18 @@ YATATable <- R6::R6Class("YATA.TABLE"
          df = db$execute(sql, filter$values)
          invisible(self)
       }
-      ,bulkAdd  = function(data) {
-         db$write(tblName, data)
+      ,bulkAdd  = function(data, append=TRUE, isolated=FALSE) {
+         colnames(data) = fields[colnames(data)]
+         db$write(tblName, data, append, isolated)
       }
       # ,getById   = function(id)   { getBySimpleKey("id", id) }
       # ,getByName = function(name) { getBySimpleKey("name", name) }
       ###############################################
       # Operaciones sobre la tabla
       ##############################################
+      ,sqlraw  = function(sql,parms) {
+         db$query(sql, params=parms)
+      }
       ,sql     = function(sql,...) {
          parms = NULL
          args = list(...)

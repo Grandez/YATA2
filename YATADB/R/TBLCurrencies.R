@@ -26,6 +26,7 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
               ,prty     = "PRTY"
               ,fee      = "FEE"
               ,icon     = "ICON"
+              ,key      = "ID"
           )
          ,getData = function(codes, all) {
              parms = list(active = YATACodes$flag$active)

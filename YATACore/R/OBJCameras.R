@@ -5,8 +5,8 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Cameras Object")}
-       ,initialize     = function() {
-           super$initialize()
+       ,initialize     = function(factory) {
+           super$initialize(factory)
            private$tblCameras   = YATAFactory$getTable(YATACodes$tables$Cameras)
            private$tblExchanges = YATAFactory$getTable(YATACodes$tables$Exchanges)
            private$icons        = YATAFactory$getClass("Icons")

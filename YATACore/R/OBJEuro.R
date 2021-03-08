@@ -6,8 +6,8 @@ OBJEuro = R6::R6Class("OBJ.EURO"
     ,lock_class = TRUE
     ,public = list(
         print           = function() { message("Clearings Object")}
-       ,initialize      = function() {
-           super$initialize()
+       ,initialize      = function(factory) {
+           super$initialize(factory)
            private$tblEuro = YATAFactory$getTable(YATACodes$tables$Sessions)
        }
        ,lastExchange  = function(base, counter) {
