@@ -6,14 +6,14 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
     ,portable   = FALSE
     ,lock_class = TRUE
     ,public = list(valid = TRUE
-        ,print = function() { message("Currencies Object")}
+        ,print = function() { message("Currencies")}
         ,initialize = function(factory) {
             super$initialize(factory)
-            tbl = YATAFactory$getTable(YATACodes$tables$Currencies)
-            private$tblCurrencies = YATAFactory$getTable(YATACodes$tables$Currencies)
-            private$tblExchanges  = YATAFactory$getTable(YATACodes$tables$Exchanges)
-            private$tblCameras    = YATAFactory$getTable(YATACodes$tables$Cameras)
-            private$icons         = YATAFactory$getClass("Icons")
+            tbl = factory$getTable(codes$tables$Currencies)
+            private$tblCurrencies = factory$getTable(codes$tables$Currencies)
+            private$tblExchanges  = factory$getTable(codes$tables$Exchanges)
+            private$tblCameras    = factory$getTable(codes$tables$Cameras)
+            private$icons         = factory$getClass("Icons")
         }
         ,select = function(...) {
             tblCurrencies$select(...)
@@ -37,7 +37,7 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
         }
         ,getDF                 = function(...) { tblCurrencies$table(...) }
         ,getActiveCurrencies   = function() { updIcons(tblCurrencies$getTable()) }
-        ,getInactiveCurrencies = function() { updIcons(tblCurrencies$table(active=YATACodes$flag$inactive)) }
+        ,getInactiveCurrencies = function() { updIcons(tblCurrencies$table(active=codes$flag$inactive)) }
         ,getAllCurrencies      = function() { updIcons(tblCurrencies$table())                               }
         ,getCameras   = function(counter) {
             df = tblExchanges$getCameras(counter)

@@ -7,25 +7,25 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        name = NULL
       ,code = NULL
       ,info = NULL
-      ,initialize  = function(code, name, EUR, path, config) {
-          self$code       = code
+      ,initialize  = function(code, name, EUR, dbf) {
+          self$code = code
           self$name = name
 
           private$created = Sys.time()
           private$lastGet = as.Date.POSIXct(1)
           private$EUR     = EUR
-          private$tblPath = path
-
-          if (!missing(config)) private$config  = config
-
-          private$dfPath  = tblPath$table(provider=code)
+          private$dbf     = dbf
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
-          getInfo()
+          tbl = dbf$getTable("Path")
+          private$dfPath = tbl$table(provider = code)
+          tbl = dbf$getTable("Providers")
+          tbl$select(id=code)
+          self$info = tbl$current
       }
-      ,print       = function() { message(name, " provider")}
-      ,setLimits   = function(limits) { private$limits = limits }
+      ,print       = function()         { message(name, " provider")}
+      ,setLimits   = function(limits)   { private$limits = limits }
       ,setInterval = function(interval) { private$interval = interval }
-      ,getLatests   = function(base, counter) {
+      ,getLatests  = function(base, counter) {
           data = lapply(counter, function(x) .getLatest(base, x))
           names(data) = counter
           data
@@ -46,17 +46,18 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
    )
    ,private = list(resp = NULL
        ,limits  = c(.Machine$integer.max,.Machine$integer.max,.Machine$integer.max)   # Limites de peticiones pos segundo,minuto y hora
-       ,current      = c(0,0,0)   # Actual
-       ,lastGet      = NULL   # Marca de tiempo
-       ,interval     = 1   # Intervalo en minutos
-       ,created      = NULL
+       ,current   = c(0,0,0)   # Actual
+       ,lastGet   = NULL   # Marca de tiempo
+       ,interval  = 1   # Intervalo en minutos
+       ,created   = NULL
        ,EUR       = NULL
-       ,dfTickers    = NULL   # Tabla de valores actuales
-       ,config       = NULL   # Parametros de configuracion
-       ,fiats        = c("EUR", "USD", "USDT", "USDC")
-       ,tblPath      = NULL
-       ,dfPath       = NULL
-       ,get          = function(url) {
+       ,dbf       = NULL
+       ,dfTickers = NULL   # Tabla de valores actuales
+       ,config    = NULL   # Parametros de configuracion
+       ,fiats     = c("EUR", "USD", "USDT", "USDC")
+       ,tblPath   = NULL
+       ,dfPath    = NULL
+       ,get       = function(url) {
            # No va por la hora, si no por el intervalo de tiempo
            # Ignoramos segundos
            dt = Sys.time()
@@ -378,13 +379,6 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
               }
           }
           url
-      }
-      ,getInfo = function() {
-         dbf = YATADB::YATADBFactory$new()
-         tbl = dbf$get("Providers")
-         tbl$select(id=code)
-         self$info = tbl$current
-         dbf = NULL
       }
    )
 

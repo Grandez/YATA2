@@ -3,6 +3,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = TRUE
+# Viene a ser como un provider pero mas especifico
     ,public = list(
         initialize = function(factory) {
            super$initialize(factory)
@@ -12,13 +13,14 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            private$tblExch    = factory$getTable(codes$tables$Exchanges)
            private$tblCMC     = factory$getTable(codes$tables$cmc)
            private$provider   = factory$getObject(codes$object$providers)
+           updateLatest()
         }
         ,updateLatest = function() {
            df = mktcap$getLatest()
            last = tblSession$getLastUpdate()
-           diff = ifelse(is.na(last), 10, difftime(Sys.time(), last, units="days"))
+           diff = ifelse(is.na(last), 10, difftime(Sys.time(), last[[1]], units="days"))
 
-           tryCatch(tblSession$update(df, ifelse(diff > 1, FALSE, TRUE))
+           tryCatch(tblSession$update(df, ifelse(diff > 0.75, FALSE, TRUE))
                     ,error = function(e) stop(paste("Fallo en el update", e))
            )
         }

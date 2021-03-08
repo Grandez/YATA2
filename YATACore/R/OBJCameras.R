@@ -4,12 +4,12 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        print          = function() { message("Cameras Object")}
+        print          = function() { message("Cameras")}
        ,initialize     = function(factory) {
            super$initialize(factory)
-           private$tblCameras   = YATAFactory$getTable(YATACodes$tables$Cameras)
-           private$tblExchanges = YATAFactory$getTable(YATACodes$tables$Exchanges)
-           private$icons        = YATAFactory$getClass("Icons")
+           private$tblCameras   = factory$getTable(factory$codes$tables$Cameras)
+           private$tblExchanges = factory$getTable(factory$codes$tables$Exchanges)
+           private$icons        = factory$getClass("Icons")
        }
        ,select         = function(id) {
            # Selecciona un registro concreto de las tablas
@@ -30,12 +30,12 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
        ,getCameras         = function(full=FALSE) { tblCameras$getCameras(full) }
        ,getCameraName      = function(codes)      { tblCameras$getNames(codes, full=FALSE) }
        ,getActiveCameras   = function() { tblCameras$getTable(all=FALSE) }
-       ,getInactiveCameras = function() { tblCameras$table(active=YATACodes$flag$inactive) }
+       ,getInactiveCameras = function() { tblCameras$table(active=factory$codes$flag$inactive) }
        ,getAllCameras      = function() { tblCameras$table()                               }
        ,switchStatus       = function(id, isolated=FALSE) {
            if (!missing(id)) select(id)
-           tblCameras$set(active = ifelse(tblCameras$isActive(), YATACodes$flag$inactive
-                                                               , YATACodes$flag$active))
+           tblCameras$set(active = ifelse(tblCameras$isActive(), factory$codes$flag$inactive
+                                                               , factory$codes$flag$active))
            tblCameras$apply(isolated)
        }
        ,getPosition   = function(camera, currency) {
@@ -44,7 +44,7 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
        ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
           # Devuelve la posicion de la camara, con balance y/o con disponible
           if (!missing(camera)) select(camera)
-          if (is.null(tblPosition)) private$tblPosition = YATAFactory$getTable(YATACodes$tables$Position)
+          if (is.null(tblPosition)) private$tblPosition = factory$getTable(factory$codes$tables$Position)
            tblPosition$getCameraPosition(camera, balance, available)
        }
        ,updateExchanges = function(clearing, data) {

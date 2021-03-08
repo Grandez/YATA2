@@ -9,10 +9,10 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
        ,initialize  = function(factory) {
            super$initialize(factory)
            private$providers    = HashMap$new()
-           private$tblProviders = factory$getTable(YATACodes$tables$Providers)
+           private$tblProviders = factory$getTable(codes$tables$Providers)
            self$id              = parms$getOnlineProvider()
 
-           private$dfProviders  = tblProviders$table(active = YATACodes$flag$active)
+           private$dfProviders  = tblProviders$table(active = codes$flag$active)
            if (nrow(private$dfProviders) == 0) stop("No hay proveedores activos")
            prov = dfProviders[dfProviders$id == self$id,]
 

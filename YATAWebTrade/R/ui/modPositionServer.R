@@ -22,15 +22,16 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          )
          ,initialize    = function(id, pnlParent, session) {
              super$initialize(id, pnlParent, session)
-             self$position   = YATAFactory$getObject(YATACodes$object$position)
-             self$cameras    = YATAFactory$getObject(YATACodes$object$cameras)
-             self$providers  = YATAFactory$getObject(YATACodes$object$providers)
-             self$operations = YATAFactory$getObject(YATACodes$object$operation)
-             private$monitors   = HashMap$new()
-             self$vars$plotLeftChanged = TRUE
+             self$position    = self$factory$getObject(self$codes$object$position)
+             self$cameras     = self$factory$getObject(self$codes$object$cameras)
+             self$providers   = self$factory$getObject(self$codes$object$providers)
+             self$operations  = self$factory$getObject(self$codes$object$operation)
+             private$monitors = HashMap$new()
+             
+             self$vars$plotLeftChanged  = TRUE
              self$vars$plotRightChanged = TRUE
-             self$vars$inEvent = FALSE
-             self$vars$inForm = FALSE
+             self$vars$inEvent          = FALSE
+             self$vars$inForm           = FALSE
          }
          ,getDF         = function(type) {
              root = self$getRoot()
@@ -187,7 +188,9 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
        
        getBest = function(top, from) {
           restdf("best", top=top, from=from) %>%
-             then(  function(result) { output$tblBest  = DT::renderDT({result })
+             then(  function(df) { 
+                 df  = prepareTop(df)
+                 output$tblBest  = updTableBest({ prepareTop(df) })
                   },function(err)    {  browser()
                       message("ha ido mal 2") })
        } 
@@ -209,7 +212,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          lapply(names(data), function(x) updYataMonitor(ns(paste0("monitor-",x)), pnl$getMonitor(x), data[[x]]$last))
          plots()
          
-         info = list(id="rank", n=5)
+#         info = list(id="rank", n=5)
 #         updRank(info, input,output,session)
      })
      

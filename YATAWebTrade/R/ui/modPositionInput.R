@@ -15,7 +15,7 @@ modPosInput = function(id, title) {
        
     )
     main = tagList(
-       fluidRow(column(8, tags$div(id=ns("monitor"), class="yata-monitors")), column(3, blkRank(ns("rank"), n=5)))
+       fluidRow(column(8, tags$div(id=ns("monitor"), class="yata-monitors")))
       ,fluidRow(column(6,yuiPlot(ns("plotLeft"))), column(6,yuiPlot(ns("plotRight"))))
       ,fluidRow(column(6
           ,fluidRow(id="divPosGlobal"

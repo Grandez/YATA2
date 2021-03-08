@@ -9,7 +9,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,print = function() { message("YATA Parameters")}
         ,initialize = function(dbf) {
             tryCatch({
-                private$tblParms = dbf$getTable(YATACodes$tables$Parameters)
+                private$tblParms = dbf$getTable("Parameters")
                 private$db       = dbf$getDBBase()
              }, error = function(cond) {
                  browser()

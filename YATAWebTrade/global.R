@@ -63,8 +63,8 @@ plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeB
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
-YATACodes   = YATACore::YATACODES$new()
-YATAFactory = YATACore::YATAFACTORY$new() # Va primero
+# YATACodes   = YATACore::YATACODES$new()
+# YATAFactory = YATACore::YATAFACTORY$new() # Va primero
 
 #YATAFactory$env = YATACore::YATAENV$new()
 YATAWEB = YATAWebEnv$new()

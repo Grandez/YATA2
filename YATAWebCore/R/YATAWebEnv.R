@@ -25,11 +25,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
   ,lock_class = TRUE
   ,public = list(
       MSG = NULL
+     ,factory = NULL
      ,initialize = function() {
-        private$env = YATAFactory$getEnvironment()
-        self$MSG = YATAFactory$getMSG()
-        private$ctc = HashMap$new()
-        private$tblCurrencies = YATAFactory$getTable(YATACodes$tables$Currencies)
+        self$factory = YATACore::YATAFACTORY$new()
+#        private$env = factory$getEnvironment()
+        self$MSG = factory$msgs
+        # private$ctc = HashMap$new()
+        # private$tblCurrencies = factory$getTable(YATACodes$tables$Currencies)
+     }
+     ,finalize = function() {
+        factory$clear()
      }
      ,getPanel = function(name)  { private$panels$get(name) }
      ,addPanel = function(panel) {

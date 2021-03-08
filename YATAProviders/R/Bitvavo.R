@@ -7,8 +7,8 @@ PROVBVavo = R6::R6Class("PROV.BITVAVO"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-       initialize = function(code, eurusd, path, config) {
-          super$initialize(code, "Bitvavo", eurusd, path, config)
+       initialize = function(code, eurusd, dbf) {
+          super$initialize(code, "Bitvavo", eurusd, dbf)
           # private$lastGet = as.POSIXct(1, origin="1970-01-01")
           # getLatest()
        }

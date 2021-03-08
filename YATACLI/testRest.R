@@ -9,8 +9,8 @@ library(YATAREST)
 
 rest = YATAREST$new()
 
-# request = Request$new(path = "/best", parameters_query = list(top=15,from=7))
-request = Request$new(path = "/latest")
+request = Request$new(path = "/best", parameters_query = list(top=15,from=24))
+# request = Request$new(path = "/latest")
 response = rest$process_request(request)
 
 browser()

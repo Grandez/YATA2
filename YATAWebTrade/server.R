@@ -10,8 +10,8 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,interval     = 5
       ,initialize    = function(id, parent, session) {
           super$initialize(id, parent, session)
-          self$position   = YATAFactory$getObject(YATACodes$object$position)
-          self$providers  = YATAFactory$getObject(YATACodes$object$providers)
+          self$position   = self$factory$getObject(self$codes$object$position)
+          self$providers  = self$factory$getObject(self$codes$object$providers)
           self$updateData(TRUE)
       }
       ,setInterval = function (interval) { self$interval = interval }
@@ -53,16 +53,16 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
 function(input, output, session) {
    pnl = YATAWEB$getPanel("tradeMain")
    if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTradeMain$new("tradeMain", NULL, session))
-
+   factory = pnl$factory
    changeDB= function() {
       data = frmChangeDBInput()
       output$form = renderUI({data})
-      output$lblDBCurrent    = updLabelText(YATAFactory$getDBName())
+      output$lblDBCurrent    = updLabelText(self$factory$getDBName())
       shinyjs::show("yata-main-err")
    }
    closePanel = function() { shinyjs::hide("yata-main-err") }
    output$appTitle <- renderText({ 
-      name = YATAFactory$getDBName()
+      name = factory$getDBName()
       if (is.null(name)) name = "Sin conexion"
       paste("YATA", name, sep = "-")
    })
@@ -71,26 +71,24 @@ function(input, output, session) {
     })
    observeEvent(input$btnKO, { closePanel() })
    observeEvent(input$btnDBChanged, { 
-      oldDB = YATAFactory$getDBID()
+      oldDB = factory$getDBID()
       if (input$lstDB != oldDB) {
-          YATAFactory$changeDB(input$lstDB)
-          output$appTitle = updLabelText(YATAFactory$getDBName())
+          factory$changeDB(input$lstDB)
+          output$appTitle = updLabelText(self$factory$getDBName())
       }
-      message(YATAFactory$getDBName())
+      message(factory$getDBName())
       closePanel()
       eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE)")))
    })
    
    # En este observer, cargamos la posicion y las cotizaciones
     observe({
-         #invalidateLater(pnl$interval * 60000)
         invalidateLater(60000)
-#         message("Timer lanzado en server")
         pnl$updateData()
     })
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
       cat("Session stopped\n")
-      YATAFactory$finalize()
+      pnl$factory$finalize()
       })
 }

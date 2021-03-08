@@ -3,6 +3,7 @@ best_body = function(top, count) {
     fact = YATACore::YATAFACTORY$new()
     sess = fact$getObject(YATACodes$object$session)
     res = sess$getBest(top, count)
+    browser()
     fact$clear()
     res
 }

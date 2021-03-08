@@ -8,8 +8,8 @@ PROVEuro = R6::R6Class("PROV.EURO"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-      initialize = function(code, eurusd, path, config) {
-           super$initialize(code, "Euro", eurusd, path, config)
+      initialize = function(code, eurusd, dbf) {
+           super$initialize(code, "Euro", NULL, dbf)
        }
       ,exchanges = function(base, counter, from, to) {
           # No da datos en fin de semana o festivos

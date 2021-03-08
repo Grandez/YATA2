@@ -5,16 +5,17 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
    ,lock_class = FALSE
    ,public = list(
        initialize = function(dbf) {
-          # le pasamos la factoria
-          # de hay saca la tabla de cadenas
+          # le pasamos la factoria para que obtenga sus datos
 #           if (!missing(external)) private$provNames = c(private$provNames, external)
             if (missing(dbf)) dbf = YATADB::YATADBFactory$new()
-            private$path = dbf$getTable("Path")
+            private$dbf  = dbf
             private$EUR = get("EUR", "Euro")
-       }
-            ,finalize = function() {
-      }
-
+        }
+       ,finalize = function() {
+          private$providers = NULL
+          private$dbf = NULL
+          private$config = NULL
+        }
        ,get = function(code, provider, force=FALSE) {
            if (force) {
                createProvider(code, provider)
@@ -31,11 +32,11 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
    )
    ,private = list(
        providers = HashMap$new()
-      ,EUR    =  NULL
-      ,path   = NULL
-      ,config = list(interval=100, closeTime=22, baseCurrency="EUR")
+      ,dbf    = NULL
+      ,EUR    = NULL
+      ,config = list()
       ,createProvider = function (code, provider) {
-         eval(parse(text=paste0("PROV", provider, "$new(code, EUR, path, config)")))
+         eval(parse(text=paste0("PROV", provider, "$new(code, EUR, dbf=dbf)")))
       }
    )
 

@@ -67,10 +67,6 @@ yuiRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
 ### Tables                                        ###
 #####################################################
 
-updRest = function(df) {
-  browser()
-}
-
 updTablePosition = function(df, ...) {
     colnames(df) = titleCase(colnames(df))
     yataDataTable({df}, type="position")
@@ -91,4 +87,8 @@ updTableOperations = function(df, buttons=NULL, ...) {
    }
 
    yataDTRender(dt)
+}
+updTableBest = function(df) {
+    colnames(df) = titleCase(colnames(df))
+    yataDataTable({df}, type="best")
 }

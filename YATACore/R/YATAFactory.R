@@ -1,60 +1,28 @@
 # Factoria para Obtener diferentes objetos
 # Los dejamos en lazy para no crear referencias circulares con los
-# singletons YATABase. Env, etc
+# singletons YATABase.
 
 YATAFACTORY = R6::R6Class("YATA.FACTORY"
    ,portable  = FALSE
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
-       initialize = function(env) {
-          # Ponemos init y clean para manejar fuera de initialize y finaliza
-          init(FALSE)
-       }
-      ,finalize  = function() { clear() }
-      ,init      = function(clean=TRUE){
-          if (clean) clear()
-          sf = system.file("extdata", "yata.ini", package=packageName())
-          private$cfg         = read.config(file=sf)
-          private$objects     = HashMap$new()
-          private$classes     = HashMap$new()
-          private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
-          private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
-          private$parms       = OBJParms$new   (private$DBFactory)
-          private$msgs        = OBJMessages$new(private$DBFactory)
-          private$codes       = YATACore::YATACODES$new()
-          if (parms$autoConnect()) {
-              setDB(parms$lastOpen())
-          } else {
-              setDB(parms$defaultDB())
+       codes  = NULL
+      ,parms  = NULL
+      ,msgs   = NULL
+      # Ponemos init y clear para manejar fuera de initialize y finalize
+      ,initialize = function() { init(FALSE)}
+      ,finalize   = function() { clear() }
+      ,getDBName  = function() {
+          db = getDB()
+          if (!is.null(db)) {
+              db$name
+          }
+          else {
+            NULL
           }
       }
-      ,clear     = function(){
-         if (!is.null(DBFactory))   DBFactory$finalize()
-         if (!is.null(ProvFactory)) ProvFactory$finalize()
-         private$parms = NULL
-         private$objects = NULL
-         gc()
-      }
-      ,getDBName = function() {
-         db = getDB()
-         if (!is.null(db)) {
-            db$name
-         }
-         else {
-            NULL
-         }
-      }
       ,getDBID   = function() { DBFactory$getID() }
-      ,getMSG    = function() {
-         if (is.null(private$msgs)) private$msgs = OBJMessages$new(private$DBFactory)
-              private$msgs
-      }
-      ,getParms  = function()                    {
-          if (is.null(private$parms)) private$parms = OBJParms$new(private$DBFactory)
-              private$parms
-      }
-      ,getCodes  = function()  { private$codes }
       ,getDB     = function()                    { DBFactory$getDB()       }
       ,getDBBase = function()                    { DBFactory$getDBBase()   }
       ,setDB     = function(connData)            {
@@ -79,33 +47,59 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
          objects$get(name)
       }
       ,getClass   = function(name, force = FALSE) {
+         # Obtiene una clase general
          if (force) return ( eval(parse(text=paste0("R6", name, "$new()"))))
          if (is.null(classes$get(name))) private$classes$put(name,
                                          eval(parse(text=paste0("R6", name, "$new()"))))
          classes$get(name)
       }
-      ,getEnvironment = function() {
-           if (is.null(private$environ)) private$environ = YATAENV$new()
-           private$environ
-      }
+      # ,getEnvironment = function() {
+      #      if (is.null(private$environ)) private$environ = YATAENV$new()
+      #      private$environ
+      # }
       ,print = function()     { message("Factoria de objetos YATA") }
    )
    ,private = list(
-       environ     = NULL
-      ,DBFactory   = NULL
+       DBFactory   = NULL
       ,ProvFactory = NULL
       ,objects     = NULL
       ,classes     = NULL
       ,cfg         = NULL
-      ,parms       = NULL
-      ,msgs        = NULL
-      ,codes       = NULL
       ,setProvFactory = function() {
          # Le pasamos los datos de parametros a la factoria
          ProvFactory$setOnlineInterval (parms$getOnlineInterval())
          ProvFactory$setCloseTime      (parms$getCloseTime())
          ProvFactory$setBaseCurrency   (parms$getBaseCurrency())
       }
+      ,init      = function(clean=TRUE){
+          if (clean) clear()
+          sf = system.file("extdata", "yata.ini", package=packageName())
+          private$cfg         = read.config(file=sf)
+
+          private$objects     = HashMap$new()
+          private$classes     = HashMap$new()
+          private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
+          private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
+
+          self$parms       = OBJParms$new   (private$DBFactory)
+          self$msgs        = OBJMessages$new(private$DBFactory)
+          self$codes       = YATACore::YATACODES$new()
+
+          if (parms$autoConnect()) {
+              setDB(parms$lastOpen())
+          } else {
+              setDB(parms$defaultDB())
+          }
+      }
+      ,clear     = function(){
+         if (!is.null(DBFactory))   DBFactory$finalize()
+         if (!is.null(ProvFactory)) ProvFactory$finalize()
+         self$parms = NULL
+         self$msgs  = NULL
+         private$objects = NULL
+         gc(verbose=FALSE)
+      }
+
    )
 )
 

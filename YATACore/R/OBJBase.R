@@ -18,9 +18,9 @@ OBJBase = R6::R6Class("OBJ.BASE"
            else {
                private$factory = YATAFactory
            }
-           private$parms = factory$getParms()
+           private$parms = factory$parms
+           private$codes = factory$codes
            private$db    = factory$getDB()
-           private$codes = factory$getCodes()
         }
     )
     ,private = list(

@@ -4,10 +4,10 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        print           = function() { message("Positions Object")}
+        print           = function() { message("Position")}
        ,initialize      = function(factory) {
            super$initialize(factory)
-           private$prtPosition = YATAFactory$getTable(YATACodes$tables$Position)
+           private$prtPosition = factory$getTable(codes$tables$Position)
        }
        ,getCameras = function() {
           df = prtPosition$getCameras()

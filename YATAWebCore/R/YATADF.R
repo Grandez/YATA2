@@ -18,6 +18,10 @@ prepareOperation = function(df, type="simple") {
     df
 }
 
+prepareTop = function(df) {
+    yataSetClasses(df, prc=c(3), imp=c(2,4))
+}
+
                # ignore = c("id", "type", "active", "tms", "status", "parent", "alert", "dtAlert")
                # df = self$operations$getOperations(active = YATACodes$flag$active, status = status)
                # if (nrow(df) > 0) {

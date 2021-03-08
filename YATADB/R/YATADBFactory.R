@@ -9,7 +9,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           if (!missing(base)) {
               private$dbBase  = connect(base)
           } else {
-               sf             = system.file("extdata", "yatadb.ini", package=packageName())
+               sf     = system.file("extdata", "yatadb.ini", package=packageName())
                cfg    = read.config(file=sf)
                private$dbBase = connect(cfg$base)
           }
@@ -26,7 +26,6 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           if (!is.null(dbAct)) dbAct$disconnect()
           private$dbAct   = connect(info)
           private$objects = HashMap$new()
-          private$dbAct
           private$dbID = info$id
           invisible(self)
       }
