@@ -40,3 +40,12 @@ yataAlertPanelServer = function(id, session) {
 #     animation = TRUE
 #   )
 }
+
+yataErrGeneral = function(type, data, input, output, session) {
+    sf = system.file('extdata/img/error.png', package=packageName())
+    output$yata_main_img_err = renderImage({
+                    list(src = sf, contentType = 'image/png', width = 400, height = 300, alt = "Error image")
+                    }, deleteFile = FALSE)
+    output$yata_main_text_err = renderText({data})
+    shinyjs::show("yata_main_err")
+}

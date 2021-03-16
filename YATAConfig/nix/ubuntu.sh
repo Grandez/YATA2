@@ -6,3 +6,4 @@ apt-get install -y libxml2-dev
 apt-get install -y libcurl4
 apt-get install -y libcurl4-openssl-dev
 apt-get install -y libmariadb-deb-compat
+apt-get install -y libfontconfig1-dev

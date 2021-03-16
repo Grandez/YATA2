@@ -9,7 +9,9 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
 #           if (!missing(external)) private$provNames = c(private$provNames, external)
             if (missing(dbf)) dbf = YATADB::YATADBFactory$new()
             private$dbf  = dbf
-            private$EUR = get("EUR", "Euro")
+#            private$EUR = get("EUR", "Euro")
+            # Por ahora vamos a tirar de MarketCap
+            private$mktcap = PROVMarketCap$new("MKTCAP", NULL, dbf)
         }
        ,finalize = function() {
           private$providers = NULL
@@ -17,13 +19,14 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
           private$config = NULL
         }
        ,get = function(code, provider, force=FALSE) {
-           if (force) {
-               createProvider(code, provider)
-           } else {
-             if (is.null(private$providers$get(provider)))
-                 providers$put(provider, createProvider(code, provider))
-             private$providers$get(provider)
-           }
+          private$mktcap
+           # if (force) {
+           #     createProvider(code, provider)
+           # } else {
+           #   if (is.null(private$providers$get(provider)))
+           #       providers$put(provider, createProvider(code, provider))
+           #   private$providers$get(provider)
+           # }
        }
       ,setOnlineInterval = function(value) { private$config$interval     = value }
       ,setCloseTime      = function(value) { private$config$closeTime    = value }
@@ -34,6 +37,7 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
        providers = HashMap$new()
       ,dbf    = NULL
       ,EUR    = NULL
+      ,mktcap = NULL
       ,config = list()
       ,createProvider = function (code, provider) {
          eval(parse(text=paste0("PROV", provider, "$new(code, EUR, dbf=dbf)")))

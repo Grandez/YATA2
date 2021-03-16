@@ -6,3 +6,5 @@ import(YATACore)
 
 # exportPattern("^[[:alpha:]]+")
 exportPattern("update.*")
+exportPattern("load.*")
+exportPattern("unload.*")

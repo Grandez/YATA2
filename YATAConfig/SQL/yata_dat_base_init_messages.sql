@@ -29,4 +29,6 @@ INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.EXECUTE"   
 INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.CANCEL"    ,"XX", "XX"     , "Cancelar Operación"                          );
 INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.REJECT"    ,"XX", "XX"     , "Operacion rechazada"                         );
 INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "TITLE.OPER.CLOSE"     ,"XX", "XX"     , "Deshacer posición"                           );
+
+INSERT INTO MESSAGES  (CODE, LANG, REGION, MSG) VALUES ( "ERR.REST.DOWN"        ,"XX", "XX"     , "El servidor no esta disponible"               );
 COMMIT;

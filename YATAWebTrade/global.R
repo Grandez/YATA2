@@ -30,6 +30,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(shinyWidgets)
 library(bslib)
+library(shinycookie)
 
 # General
 library(data.table)
@@ -72,4 +73,10 @@ YATAWEB = YATAWebEnv$new()
 # Esto va en el .onLoad
 #registerInputHandler("sf_coord_point", convertToPoint)
 
-future::plan(future::multisession(workers = 4))
+if (Sys.info()[["sysname"]] == "Windows") {
+   future::plan(strategy="sequential")    
+} else {
+  future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
+                    tweak(multisession, workers = 4)))
+}
+

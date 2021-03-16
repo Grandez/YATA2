@@ -27,11 +27,7 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,Providers    = "Providers"
         ,Parameters   = "Parameters"
         ,Messages     = "Messages"
-        # ,Control      = "SESSION_CONTROL"
         ,Session      = "Session"
-        # ,sesExchanges = "SESSION_EXCHANGES"
-        ,cmc          = "CMC"
-
     )
     ,flag = list(inactive=0, active=1, parent=2)
     ,oper = list( oper=1, buy=2, sell=3, xfer=4, split=5, net=6, reg=10, close=16)

@@ -3,6 +3,17 @@ html, body {
   margin: 0 !important;
 }
 
+.yata_clearfix {
+  /* overflow: auto; */
+display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.yata_text_err {
+    font-size: 30px;
+    font-weight: bold;
+}
 .yata-data-1 {
     color: red;
 }
@@ -17,6 +28,10 @@ html, body {
     color: blue;
 }
 
+.yata_flex_row {
+    display: flex;
+    justify-content: space-around;
+}
 .yata-container {
   height: 100%;
   display: flex;
@@ -273,10 +288,27 @@ body {
     z-index: 100;
     background-color: RGBA(169, 169, 169, 0.8);
 }
-.yata-panel-err {
+.yata_panel_err {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 900;
-    background-color: darkgrey;
-    opacity: 0.75;
+    background-color: white;
+    opacity: 0.80;
+}
+
+.yata_panel_err_container {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+   left: 50%;
+   -webkit-transform: translate(-50%, -50%);
+   -ms-transform:     translate(-50%, -50%);
+   -moz-transform:    translate(-50%, -50%);
+   -o-transform:      translate(-50%, -50%);
+   transform:         translate(-50%, -50%);
 }
 
 .yata-form-center {

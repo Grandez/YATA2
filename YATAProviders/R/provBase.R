@@ -7,6 +7,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        name = NULL
       ,code = NULL
       ,info = NULL
+      ,status = NULL   # Control del error
       ,initialize  = function(code, name, EUR, dbf) {
           self$code = code
           self$name = name
@@ -15,9 +16,8 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
           private$lastGet = as.Date.POSIXct(1)
           private$EUR     = EUR
           private$dbf     = dbf
-          private$lastGet = as.POSIXct(1, origin="1970-01-01")
-          tbl = dbf$getTable("Path")
-          private$dfPath = tbl$table(provider = code)
+          # tbl = dbf$getTable("Path")
+          # private$dfPath = tbl$table(provider = code)
           tbl = dbf$getTable("Providers")
           tbl$select(id=code)
           self$info = tbl$current
@@ -25,11 +25,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,print       = function()         { message(name, " provider")}
       ,setLimits   = function(limits)   { private$limits = limits }
       ,setInterval = function(interval) { private$interval = interval }
-      ,getLatests  = function(base, counter) {
-          data = lapply(counter, function(x) .getLatest(base, x))
-          names(data) = counter
-          data
-       }
+      ,getLatests  = function(base, counter) { stop("Este metodo es temporañ")}
 
       # Metodos
 
@@ -55,8 +51,8 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        ,dfTickers = NULL   # Tabla de valores actuales
        ,config    = NULL   # Parametros de configuracion
        ,fiats     = c("EUR", "USD", "USDT", "USDC")
-       ,tblPath   = NULL
-       ,dfPath    = NULL
+       # ,tblPath   = NULL
+       # ,dfPath    = NULL
        ,get       = function(url) {
            # No va por la hora, si no por el intervalo de tiempo
            # Ignoramos segundos
@@ -100,24 +96,24 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            if (pair[3] == "INV") res = 1 / res
            value * res
        }
-        ,.getPath = function(base, counter) {
-           df = dfPath[dfPath$base == base & dfPath$counter == counter,]
-           if (nrow(df) == 0)  {
-               path = findPath(base, counter)
-           } else {
-               path = df$path
-           }
-           if (is.null(path)) stop("No hay camino")
-           strsplit(path, "/")[[1]]
-       }
-       ,findPath = function (base, counter, add=TRUE) {
-           path = searchPath(base, counter)
-           if (add) {  # Se graba el bueno y el malo
-               data = list(provider = self$code, base=base,counter=counter,path=path)
-               tblPath$add(data, isolated=TRUE)
-           }
-           path
-       }
+       #  ,.getPath = function(base, counter) {
+       #     df = dfPath[dfPath$base == base & dfPath$counter == counter,]
+       #     if (nrow(df) == 0)  {
+       #         path = findPath(base, counter)
+       #     } else {
+       #         path = df$path
+       #     }
+       #     if (is.null(path)) stop("No hay camino")
+       #     strsplit(path, "/")[[1]]
+       # }
+       # ,findPath = function (base, counter, add=TRUE) {
+       #     path = searchPath(base, counter)
+       #     if (add) {  # Se graba el bueno y el malo
+       #         data = list(provider = self$code, base=base,counter=counter,path=path)
+       #         tblPath$add(data, isolated=TRUE)
+       #     }
+       #     path
+       # }
        ,findPathOld      = function (base, counter, add=TRUE) {
            path = dfPath[dfPath$base == base & dfPath$counter == counter,]
            if (nrow(path) > 0) return (path[1,"path"])

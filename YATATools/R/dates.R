@@ -1,7 +1,16 @@
-asUnix    = function(date)  { as.numeric(date) }
+
 asPosix   = function(epoch) { anytime(epoch)   }
 asDate    = function(epoch) { anydate(epoch)   }
+asUnix    = function(date)  {
+   if (("POSIXct" %in% class(date))) return (as.numeric(date))
 
+   if (class(date) == "Date") date = as.POSIXct(paste(date, "01:00:00 CET"))
+   else                       date = anytime(date)
+
+   hora = strftime(date, format="%H:%M:%S")
+   if (hora == "00:00:00") hora = "01:00:00"
+   as.numeric(anytime(paste(strftime(date, format="%Y/%m/%d"), hora)))
+}
 # Redondea la fecha al intervalo dado en segundos
 # prev Redondea a la fecha anterior o igual
 #      Redondea a la fecha posterior o igual

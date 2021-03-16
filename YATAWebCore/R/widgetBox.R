@@ -12,22 +12,43 @@ res =        boxPlus( ..., title = title
              )
 res
 }
-yuiBox2 = function(text) {
-    boxPlus(
-  title = text,
-  closable = TRUE,
-  width = NULL,
-  status = "warning",
-  solidHeader = TRUE,
-  collapsible = TRUE,
-  enable_dropdown = TRUE,
-  dropdown_icon = "wrench",
-  dropdown_menu = dropdownItemList(
-    dropdownItem(url = "http://www.google.com", name = "Link to google"),
-    dropdownItem(url = "#", name = "item 2"),
-    dropdownDivider(),
-    dropdownItem(url = "#", name = "item 3")
-  ),
-  p("Box Content")
-)
-}
+# yuiBoxTitle = function(idBox, idTitle) {
+#   def = NULL
+#   if(!missing(title)) def = title
+#     boxPlus( title = yuiLabelText(id, title),
+#   closable = TRUE,
+#   width = NULL,
+#   status = "warning",
+#   solidHeader = TRUE,
+#   collapsible = TRUE,
+#   enable_dropdown = TRUE,
+#   dropdown_icon = "wrench",
+#   dropdown_menu = dropdownItemList(
+#     dropdownItem(url = "http://www.google.com", name = "Link to google"),
+#     dropdownItem(url = "#", name = "item 2"),
+#     dropdownDivider(),
+#     dropdownItem(url = "#", name = "item 3")
+#   ),
+#   p("Box Content")
+# )
+# }
+
+# yuiBox2 = function(text) {
+#     boxPlus( title = text,
+#   closable = TRUE,
+#   width = NULL,
+#   status = "warning",
+#   solidHeader = TRUE,
+#   collapsible = TRUE,
+#   enable_dropdown = TRUE,
+#   dropdown_icon = "wrench",
+#   dropdown_menu = dropdownItemList(
+#     dropdownItem(url = "http://www.google.com", name = "Link to google"),
+#     dropdownItem(url = "#", name = "item 2"),
+#     dropdownDivider(),
+#     dropdownItem(url = "#", name = "item 3")
+#   ),
+#   p("Box Content")
+# )
+# }
+

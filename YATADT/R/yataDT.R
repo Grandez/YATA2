@@ -2,7 +2,6 @@ yataDT = function(data, ...) {
     # las clases propias son las ultimas
     mt = lapply(1:ncol(data), function(x) class(data[,x]))
     mt = unlist(lapply(mt, function(x) x[[length(x)]]))
-
     align = .yataGetAlignment(mt)
     lstOpts = list()
     lstAlign = list()

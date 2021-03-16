@@ -100,10 +100,18 @@ YATAPage =  function(title = NULL,id = NULL,
            ,tags$div(class="yata-footer", divFooter)
   )
 
-  mainFormErr = tags$div( id="yata-main-err", class="yata-panel-form"
-                         ,tags$div( id    ="yata-main-err-container"
-                                   ,class ="yata-form-center container"
-                                   ,uiOutput("form")))
+  mainFormErr = hidden(tags$div(id="yata_main_err", class="yata_panel_err"
+                                ,tags$div(class="yata_panel_err_container"
+                                ,tags$div( class="yata_clearfix",fluidRow(
+                                           imageOutput("yata_main_img_err", inline=TRUE)
+                                          ,tags$span(class="yata_text_err", textOutput("yata_main_text_err"))))))
+  )
+
+  # mainFormErr = hidden(tags$div( id="yata-main-err", class="yata-panel-form"
+  #                        ,tags$div( id    ="yata-main-err-container"
+  #                                  ,class ="yata-form-center container"
+  #                                  ,uiOutput("form")))
+  # )
   container   = tags$div(id="yata-container", class="yata-container", page, shinyjs::hidden(mainFormErr))
 
    bspage =   shiny::bootstrapPage(
@@ -112,9 +120,11 @@ YATAPage =  function(title = NULL,id = NULL,
              tags$link  (rel="stylesheet", type="text/css", href="yata/yataoverride.css")
             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata2.css")
             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataDT.css")
+            ,tags$link  (rel="stylesheet", type="text/css", href="yata/AdminLTE2.css")
             ,tags$script(src="yata/yata.js")
             ,tags$script(src="yata/yataapp.js")
             ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
+            ,initShinyCookie("YATA")
         )
         ,container
         ,tags$script('
@@ -134,7 +144,8 @@ YATAPage =  function(title = NULL,id = NULL,
 
    )
 
-res =  shinydashboardPlus:::addDeps(
+# res =  shinydashboardPlus:::addDeps(
+ res =  yataDeps(
     shiny::tags$body(
         bspage
     ),md = FALSE

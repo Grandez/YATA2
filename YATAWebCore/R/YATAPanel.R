@@ -26,6 +26,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
 
         private$pnlDef$id = id
         if (!missing(session)) session$sendCustomMessage("setPanel", private$pnlDef)
+        private$loadCookies()
     }
     ,getParent = function(name) {
         pp = self$parent
@@ -56,6 +57,14 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,getMsg = function() {
       self$msg
     }
+    ,getCookies = function(key) {
+        self$vars$cookies[[key]]
+    }
+    ,setCookies = function(...) {
+       data = list(...)
+       self$vars$cookies[names(data)] = data
+       YATAWEB$setCookies(self$name, self$vars$cookies)
+    }
   )
   ,private = list(
       pnlDef = list(
@@ -64,5 +73,10 @@ YATAPanel = R6::R6Class("YATA.PANEL"
          ,leftSide=FALSE
          ,rightSide=FALSE
       )
+      ,loadCookies = function() {
+          self$vars$cookies = list()
+          cookies = YATAWEB$getCookies(self$name)
+          if (!is.null(cookies)) self$vars$cookies = cookies
+      }
   )
 )

@@ -24,11 +24,16 @@ setVerbose = function(verbose) {
 
 log = function(level, txt, ...) {
     if (level > msgDet) return()
-    if (level > 0) txt = paste0(rep("\t",level),txt)
-    msg(paste0(sprintf(txt, ...), "\n"))
+    if (level > 0) {
+        prfx = paste0(rep("   ",level), collapse="")
+        txt = paste0(prfx,txt, collapse="")
+    }
+    msg(sprintf(txt, ...))
 }
-warn = function(txt, ...) { msg(.msg("wARNING:" , txt, ...), out=stderr()) }
-info = function(txt, ...) { message(.msg("INFO:", txt, ...), out=stderr()) }
+warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }
+info = function(txt, ...) { msg(.msg("INFO   :", txt, ...), out=stdout()) }
+err  = function(txt, ...) { msg(.msg("ERROR  :", txt, ...), out=stderr()) }
+cont = function(txt, ...) { msg(sprintf(paste0("        ",txt), ...), out=stderr()) }
 summary = function(level, txt, ...) {
     if (level <= msgSum) msg(.msg("", txt, ...))
 }

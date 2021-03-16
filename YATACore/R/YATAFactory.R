@@ -10,9 +10,26 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
        codes  = NULL
       ,parms  = NULL
       ,msgs   = NULL
+      ,logger = NULL
       # Ponemos init y clear para manejar fuera de initialize y finalize
-      ,initialize = function() { init(FALSE)}
-      ,finalize   = function() { clear() }
+      ,initialize = function() {
+         init(FALSE)
+         base = Sys.getenv("tmp")
+         fname = normalizePath(paste0(base, "/yata.log"))
+#         self$logger = file(fname, open="at", blocking=FALSE)
+       }
+      ,finalize   = function() {
+#         if (!is.null(logger)) close(logger)
+         clear()
+      }
+      ,clear     = function(){
+         if (!is.null(DBFactory))   DBFactory$finalize()
+         if (!is.null(ProvFactory)) ProvFactory$finalize()
+         self$parms = NULL
+         self$msgs  = NULL
+         private$objects = NULL
+#         gc(verbose=FALSE)
+      }
       ,getDBName  = function() {
           db = getDB()
           if (!is.null(db)) {
@@ -90,14 +107,6 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           } else {
               setDB(parms$defaultDB())
           }
-      }
-      ,clear     = function(){
-         if (!is.null(DBFactory))   DBFactory$finalize()
-         if (!is.null(ProvFactory)) ProvFactory$finalize()
-         self$parms = NULL
-         self$msgs  = NULL
-         private$objects = NULL
-         gc(verbose=FALSE)
       }
 
    )

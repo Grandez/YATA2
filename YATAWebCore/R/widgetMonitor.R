@@ -85,20 +85,20 @@ updYataMonitor = function(id, monitor, last) {
                 ,ui=tags$span(class=cls, id= paste0(id,"-week-delta-value"), "0"))
 
    }
-   for (idx in c("price", "session","day","week","last")) {
-       cls = "yataDeltaNone"
-       value = 0
-       if (monitor[[idx]] != 0) value = (last / monitor[[idx]]) - 1
-       if (value != 0) cls = ifelse(value > 0, "yataDeltaUp", "yataDeltaDown")
-       id0   =  paste0(id, "-", idx, "-delta")
-       id1   =  paste0(id0, "-value")
-       repDiv(id0, id1, tags$span(class=cls, id=id1, number2percentage(value, 2)))
-   }
+   # for (idx in c("price", "session","day","week","last")) {
+   #     cls = "yataDeltaNone"
+   #     value = 0
+   #     if (monitor[[idx]] != 0) value = (last / monitor[[idx]]) - 1
+   #     if (value != 0) cls = ifelse(value > 0, "yataDeltaUp", "yataDeltaDown")
+   #     id0   =  paste0(id, "-", idx, "-delta")
+   #     id1   =  paste0(id0, "-value")
+   #     repDiv(id0, id1, tags$span(class=cls, id=id1, number2percentage(value, 2)))
+   # }
 
    # Last
-   id0 =  paste0(id, "-last")
-   id1 =  paste0(id0, "-value")
-   repDiv(id0, id1, tags$span(class=cls, id=id1, number2string(monitor$last, 2)))
+   # id0 =  paste0(id, "-last")
+   # id1 =  paste0(id0, "-value")
+   # repDiv(id0, id1, tags$span(class=cls, id=id1, number2string(monitor$last, 2)))
 }
 yuiRank = function(id1, id2, n=5) {
    parent = tags$div(class="yata-ranks")

@@ -63,9 +63,9 @@ PROVPoloniex = R6::R6Class("PROV.POLONIEX"
           if (!base %in% pair) data = .applyFiat(data, base, pair[1], asDate(start), asDate(end))
           .adjustDFSession("POL", base, counter, data)
        }
-      ,getSessionDays = function(base, counter, from, to) {
-          getSession(base, counter, from, to, 86400)
-       }
+      # ,getSessionDays = function(base, counter, from, to) {
+      #     getSession(base, counter, from, to, 86400)
+      #  }
        ,getCloseSession = function(base, counter, day) {
           if (is.character(day)) day = as.Date(day)
           # Cogemos los datos del dia y del dia anterior para que haya dos

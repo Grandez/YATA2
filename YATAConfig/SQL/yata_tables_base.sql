@@ -20,15 +20,20 @@ ENGINE=InnoDB
 -- Tabla de crypto monedas con las que trabajamos
 DROP TABLE  IF EXISTS CURRENCIES CASCADE;
 CREATE TABLE CURRENCIES  (
-    SYMBOL   VARCHAR(18)  NOT NULL -- To Currency
-   ,NAME     VARCHAR(64)  NOT NULL -- From currency
-   ,DECIMALS INTEGER      DEFAULT 2 -- Numero de decimales
-   ,ACTIVE   TINYINT      DEFAULT 1-- 0 - Inactivo / 1 - activo
-   ,FEE      DOUBLE       DEFAULT 0.0 -- Tasa
-   ,PRTY     INTEGER      NOT NULL DEFAULT 999 -- Prioridad   segun marketcap
-   ,ICON     VARCHAR(255) 
-   ,PRIMARY KEY ( SYMBOL )
+    ID       INTEGER      DEFAULT 0
+   ,NAME     VARCHAR(64)  NOT NULL           -- Clearing Name
+   ,SYMBOL   VARCHAR(20)  NOT NULL -- Moneda   
+   ,SLUG     VARCHAR(64)   
+   ,RANK     INTEGER      DEFAULT 99999
+   ,DECIMALS TINYINT      DEFAULT 6
+   ,ICON     VARCHAR(255)    
+   ,CAMERAS  TIMESTAMP
+   ,TMS      TIMESTAMP DEFAULT   CURRENT_TIMESTAMP
+                       ON UPDATE CURRENT_TIMESTAMP
+   ,PRIMARY KEY ( ID )
+   ,INDEX       ( SYMBOL )
 );
+
 
 -- Tabla de Proveedores
 DROP TABLE  IF EXISTS PROVIDERS CASCADE;
@@ -102,13 +107,3 @@ CREATE TABLE MESSAGES  (
    ,PRIMARY KEY ( CODE, LANG, REGION ) 
 );
 
-DROP TABLE  IF EXISTS CMC CASCADE;
-CREATE TABLE CMC  (
-    ID      INTEGER      DEFAULT 0
-   ,NAME    VARCHAR(64) NOT NULL           -- Clearing Name
-   ,SYMBOL  VARCHAR(10)  NOT NULL -- Moneda   
-   ,SLUG    VARCHAR(64) 
-   ,CAMERAS TIMESTAMP
-   ,DATA    TIMESTAMP 
-   ,PRIMARY KEY ( ID )
-);

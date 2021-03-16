@@ -18,6 +18,7 @@ import(htmltools)
 import(shinyWidgets)
 import(shinyalert)
 import(bslib)
+import(shinycookie)
 
 # import(DT)
 

@@ -6,6 +6,7 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
     ,public = list(
           initialize    = function(name,  db=NULL) {
              super$initialize(name, fields=private$fields, db=db)
+              private$hMap = HashMap$new()
           }
           ,getNames     = function(codes, all=FALSE) {
               df = getData(codes, all)
@@ -16,18 +17,31 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
               df$name = paste(df$id, "-", df$name)
               df
           }
+         ,getID = function (symbol) {
+             id = hMap$get(symbol)
+             if (is.null(id)) {
+                 df = table(symbol=symbol)
+                 if (nrow(df) > 0) {
+                     id = df[1,"id"]
+                     hMap$put(symbol, id)
+                 }
+             }
+             id
+         }
      )
      ,private = list (
            fields = list(
-              id        = "SYMBOL"
+              id        = "ID"
               ,name     = "NAME"
+              ,symbol   = "SYMBOL"
+              ,slug     = "SLUG"
+              ,rank     = "RANK"
               ,decimals = "DECIMALS"
-              ,active   = "ACTIVE"
-              ,prty     = "PRTY"
-              ,fee      = "FEE"
               ,icon     = "ICON"
-              ,key      = "ID"
+              ,cameras  = "CAMERAS"
+              ,tms      = "TMS"
           )
+         ,hMap = NULL
          ,getData = function(codes, all) {
              parms = list(active = YATACodes$flag$active)
              if (all) parms = list()

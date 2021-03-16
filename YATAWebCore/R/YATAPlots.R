@@ -1,6 +1,12 @@
 # Se encarga de gestionar los plots
 # Se invoca desde widgetPlots
 
+# Iconos de la modebar
+# los cogemos de https://fontawesome.com
+# Cogemos el d de path
+# Jugamos con el escale
+
+
 #########################################
 # https://plotly-r.com/control-modebar.html
 
@@ -8,6 +14,49 @@
 # https://github.com/plotly/plotly.js/blob/master/src/components/modebar/buttons.js
 #############################################
 
+createJS = function(info, type) {
+  js = "function(gd) { Shiny.setInputValue('"
+  js = paste0(js, info$id, "', {")
+  js = paste0(js, " type: '", type, "'")
+  for (item in names(info)) {
+      js = paste0(js, ",", item, ": '", info[[item]], "'")
+  }
+  js = paste(js,"}, {priority: 'event'});}")
+  js
+}
+#     ,transform = "scale(2)"
+#    ,transform = "matrix(0.75 0 0 -0.75 0 1000)"
+
+barTickers = function(info) {
+   icoCandle = list(name="Candle", icon = list(
+       path= "M410.916,375.428v22.415H0V13.072h22.413v362.355H410.916z M89.193,315.652h11.208v-50.431h10.27V145.689h-10.27V93.393
+		H89.193v52.296H78.917v119.533h10.277V315.652z M152.69,241.872h11.207v-51.365h10.276V70.971h-10.276V19.606H152.69v51.365h-10.27
+		v119.536h10.27V241.872z M215.727,279.229h11.207v-49.488h10.271V110.194h-10.271V56.963h-11.207v53.231h-10.276V229.73h10.276
+		V279.229z M287.169,300.243h11.21v-49.965h10.273V130.742h-10.273V77.976h-11.21v52.767h-10.269v119.536h10.269V300.243z
+		 M360.484,242.349h11.206v-51.833h10.271V70.971H371.69V20.077h-11.206v50.895h-10.276v119.536h10.276V242.349z"
+     ,width  = 1000
+     ,height = 1000
+  ), click = htmlwidgets::JS(createJS(info,"candle")))
+   icoLinear = list(name="Linear", icon = list(
+       path= "M410.916,375.428v22.415H0V13.072h22.413v362.355H410.916z M89.193,315.652h11.208v-50.431h10.27V145.689h-10.27V93.393
+		H89.193v52.296H78.917v119.533h10.277V315.652z M152.69,241.872h11.207v-51.365h10.276V70.971h-10.276V19.606H152.69v51.365h-10.27
+		v119.536h10.27V241.872z M215.727,279.229h11.207v-49.488h10.271V110.194h-10.271V56.963h-11.207v53.231h-10.276V229.73h10.276
+		V279.229z M287.169,300.243h11.21v-49.965h10.273V130.742h-10.273V77.976h-11.21v52.767h-10.269v119.536h10.269V300.243z
+		 M360.484,242.349h11.206v-51.833h10.271V70.971H371.69V20.077h-11.206v50.895h-10.276v119.536h10.276V242.349z"
+     ,width  = 1000
+     ,height = 1000
+  ), click = htmlwidgets::JS(createJS(info,"linear")))
+   icoLog = list(name="Log", icon = list(
+       path= "M410.916,375.428v22.415H0V13.072h22.413v362.355H410.916z M89.193,315.652h11.208v-50.431h10.27V145.689h-10.27V93.393
+		H89.193v52.296H78.917v119.533h10.277V315.652z M152.69,241.872h11.207v-51.365h10.276V70.971h-10.276V19.606H152.69v51.365h-10.27
+		v119.536h10.27V241.872z M215.727,279.229h11.207v-49.488h10.271V110.194h-10.271V56.963h-11.207v53.231h-10.276V229.73h10.276
+		V279.229z M287.169,300.243h11.21v-49.965h10.273V130.742h-10.273V77.976h-11.21v52.767h-10.269v119.536h10.269V300.243z
+		 M360.484,242.349h11.206v-51.833h10.271V70.971H371.69V20.077h-11.206v50.895h-10.276v119.536h10.276V242.349z"
+     ,width  = 1000
+     ,height = 1000
+  ), click = htmlwidgets::JS(createJS(info,"log")))
+  list(icoCandle, icoLinear, icoLog)
+}
 .pltBase = function() {
    plot_ly() %>% .pltToolbar()
 }
@@ -15,22 +64,24 @@
 plotLineTypes = c("solid", "dot", "dash", "longdash", "dashdot", "longdashdot")
 
 .pltToolbar = function(p) {
-    p %>% plotly::config(p, displaylogo = FALSE, collaborate = FALSE
-           # ,modeBarButtonsToRemove = c(
+
+p =  p %>% plotly::config(displaylogo = FALSE, collaborate = FALSE
+            ,modeBarButtonsToRemove = c(
            #      'sendDataToCloud'
            #     ,'autoScale2d'
            #     ,'resetScale2d'
-           #     ,'toggleSpikelines'
+                 'toggleSpikelines'
            #     ,'hoverClosestCartesian'
            #     ,'hoverCompareCartesian'
            #     ,'zoom2d'
            #     ,'pan2d'
            #     ,'select2d'
            #     ,'lasso2d'
-           #     ,'zoomIn2d'
-           #     ,'zoomOut2d'
-           # )
+               ,'zoomIn2d'
+               ,'zoomOut2d'
+           )
           )
+p
 }
 
 axis <- list(
@@ -67,7 +118,8 @@ zone = function(x0, x1) {
     )
 }
 
-pltLines  = function(df, title=NULL, markers=TRUE) {
+pltLines  = function(info, df, title=NULL, markers=TRUE) {
+ # Espera el eje X en la columna 1, una columna por linea
   p = .pltBase()
   mode = "lines"
   names = colnames(df)
@@ -80,7 +132,14 @@ pltLines  = function(df, title=NULL, markers=TRUE) {
   p
 }
 
-
+pltCandle = function(info, df, title=NULL, markers=TRUE) {
+  p = .pltBase()
+  p =  p %>% plotly::config(modeBarButtonsToAdd = barTickers(info))
+  p =  p %>% add_trace(data=df, x=~tms, open=~open, close=~close, high=~high, low=~low, type="candlestick")
+  p =  p %>% layout(legend = list(orientation = 'h'))
+  if (!is.null(title)) p = p %>% layout(title = title)
+  p
+}
 
 #########################################################################
 #########################################################################
@@ -476,39 +535,39 @@ plotBar = function(plot, x, y, ...) {
 
 }
 
-#' @export
-plotCandle = function(plot, x, open, close, high, low, ...) {
-    p = list(...)
-    title = p$hover[1]
-    if (length(p$hover) > 1) title = paste0(title, " (", p$hover[2], ")")
 
-    add_trace(plot, type = "candlestick"
-              , x=x, open=open, close=close, high=high, low=low
-              , line=list(width=0.75)
-              ,alist(attrs)
-              , name = title
-              , hoverinfo = 'text'
-              , text = ~.hoverlbl(title, x, close)
-    ) %>% layout(xaxis = list(rangeslider = list(visible = F)))
-}
-
-
+# plotCandle = function(plot, x, open, close, high, low, ...) {
+#     p = list(...)
+#     title = p$hover[1]
+#     if (length(p$hover) > 1) title = paste0(title, " (", p$hover[2], ")")
+#
+#     add_trace(plot, type = "candlestick"
+#               , x=x, open=open, close=close, high=high, low=low
+#               , line=list(width=0.75)
+#               ,alist(attrs)
+#               , name = title
+#               , hoverinfo = 'text'
+#               , text = ~.hoverlbl(title, x, close)
+#     ) %>% layout(xaxis = list(rangeslider = list(visible = F)))
+# }
 
 
-#' @export
-plotLogs = function(plot, x, data, hoverText) {
 
-    cols = ncol(data)
-    if (cols > 2) lTypes = c(plotLineTypes[2], plotLineTypes[3], plotLineTypes[2])
-    if (cols > 4) lTypes = c(plotLineTypes[4], lTypes,           plotLineTypes[4])
 
-    for (i in 1:cols) {
-        title = hoverText[1]
-        if (length(hoverText) > 1) title = paste0(hoverText[1], " (", hoverText[i+1], ")")
-        plot = plotLog(plot, x, as.vector(data[,i]), cols[((i-1) %% cols) + 1], hoverText = title)
-    }
-    plot
-}
+
+# plotLogs = function(plot, x, data, hoverText) {
+#
+#     cols = ncol(data)
+#     if (cols > 2) lTypes = c(plotLineTypes[2], plotLineTypes[3], plotLineTypes[2])
+#     if (cols > 4) lTypes = c(plotLineTypes[4], lTypes,           plotLineTypes[4])
+#
+#     for (i in 1:cols) {
+#         title = hoverText[1]
+#         if (length(hoverText) > 1) title = paste0(hoverText[1], " (", hoverText[i+1], ")")
+#         plot = plotLog(plot, x, as.vector(data[,i]), cols[((i-1) %% cols) + 1], hoverText = title)
+#     }
+#     plot
+# }
 
 # Tipo de lineas
 # Sets the dash style of lines.
@@ -636,3 +695,81 @@ plotMaxMin = function(data, indicator, plots) {
     if (!is.null(p$title)) res = list.append(res, name=p$title)
     res
 }
+
+
+#   octocat <- list(
+#   name = "octocat",
+#   icon = "Icons.camera",
+#   # icon = list(
+#   #   path = "yata/img/graph_log.svg"
+#   # ,transform = 'matrix(1 0 0 1 -2 -2) scale(0.7)'
+#   # ),
+#   click = htmlwidgets::JS(
+# #    "function() { Shiny.setInputValue('plotlyJGG', {plot: 'id', type='linear'}, {priority: 'event'});}"
+#     "function() { alert('Icono clickado'); Shiny.setInputValue('JGGFOO', 'bar', {priority: 'event'});}"
+#   )
+# )
+#
+# mc_icon_svg_path = "M29.375 16c0-1.438-0.375-2.813-1.063-4.063-0.75-1.188-1.75-2.125-2.938-2.875-1.313-0.688-2.625-1.063-4-1.063-1.813 0-3.438 0.563-4.875 1.625 1.313 1.188 2.125 2.563 2.563 4.188h-0.75c-0.375-1.375-1.125-2.688-2.313-3.75-1.188 1.063-1.938 2.375-2.313 3.75h-0.75c0.438-1.625 1.25-3 2.563-4.188-1.438-1.063-3.063-1.625-4.875-1.625-1.375 0-2.688 0.375-4 1.063-1.188 0.75-2.188 1.688-2.938 2.875-0.688 1.25-1.063 2.625-1.063 4.063s0.375 2.813 1.063 4.063c0.75 1.188 1.75 2.125 2.938 2.875 1.313 0.688 2.625 1.063 4 1.063 1.813 0 3.438-0.563 4.875-1.625-1.188-1.063-2-2.313-2.5-3.875h0.75c0.438 1.313 1.188 2.5 2.25 3.438 1.063-0.938 1.813-2.125 2.25-3.438h0.75c-0.5 1.563-1.313 2.813-2.5 3.875 1.438 1.063 3.063 1.625 4.875 1.625 1.375 0 2.688-0.375 4-1.063 1.188-0.75 2.188-1.688 2.938-2.875 0.688-1.25 1.063-2.625 1.063-4.063zM6.125 14.063h1.25l-0.625 3.875h-0.813l0.5-2.938-1.063 2.938h-0.625v-2.938l-0.5 2.938h-0.813l0.688-3.875h1.188v2.375zM9.875 15.688c0 0.188-0.063 0.375-0.063 0.563-0.063 0.313-0.125 0.625-0.188 0.875 0 0.25-0.063 0.438-0.125 0.625v0.188h-0.625v-0.375c-0.188 0.313-0.5 0.438-0.875 0.438-0.25 0-0.375-0.063-0.5-0.188-0.188-0.188-0.25-0.438-0.25-0.688 0-0.375 0.125-0.688 0.375-0.875 0.313-0.188 0.688-0.313 1.125-0.313h0.313v-0.188c0-0.188-0.188-0.25-0.563-0.25-0.188 0-0.5 0-0.813 0.125 0-0.188 0.063-0.438 0.125-0.688 0.313-0.125 0.625-0.188 0.938-0.188 0.75 0 1.125 0.313 1.125 0.938zM8.938 16.5h-0.188c-0.438 0-0.688 0.188-0.688 0.5 0 0.188 0.063 0.313 0.25 0.313s0.313-0.063 0.438-0.188c0.125-0.125 0.188-0.313 0.188-0.625zM12.188 14.813l-0.125 0.75c-0.188-0.063-0.375-0.063-0.625-0.063s-0.375 0.063-0.375 0.25c0 0.063 0 0.125 0.063 0.188l0.25 0.125c0.375 0.25 0.563 0.5 0.563 0.875 0 0.688-0.375 1.063-1.25 1.063-0.375 0-0.688-0.063-0.813-0.063 0-0.188 0.063-0.438 0.125-0.75 0.313 0.063 0.563 0.125 0.688 0.125 0.313 0 0.5-0.063 0.5-0.25 0-0.063-0.063-0.188-0.063-0.188-0.125-0.125-0.188-0.188-0.375-0.188-0.375-0.188-0.563-0.5-0.563-0.875 0-0.688 0.375-1.063 1.188-1.063 0.375 0 0.688 0 0.813 0.063zM13.438 14.813h0.375l-0.063 0.813h-0.438c0 0.188-0.063 0.375-0.063 0.563 0 0.063-0.063 0.125-0.063 0.25 0 0.188-0.063 0.25-0.125 0.313v0.25c0 0.188 0.125 0.25 0.313 0.25 0.063 0 0.125 0 0.25-0.063l-0.125 0.75c-0.125 0-0.313 0.063-0.625 0.063-0.438 0-0.625-0.25-0.625-0.688 0-0.25 0-0.563 0.125-0.875l0.313-2.063h0.813zM16.375 15.875c0 0.313 0 0.563-0.063 0.813h-1.625c0 0.188 0.063 0.375 0.125 0.438 0.125 0.125 0.313 0.188 0.563 0.188 0.313 0 0.563-0.063 0.875-0.25l-0.125 0.813c-0.188 0.063-0.5 0.125-0.875 0.125-0.875 0-1.375-0.5-1.375-1.375 0-0.625 0.125-1.063 0.438-1.375 0.25-0.313 0.563-0.5 0.938-0.5s0.688 0.125 0.875 0.313c0.188 0.188 0.25 0.438 0.25 0.813zM14.75 16h0.938v-0.188l-0.063-0.125c0-0.063-0.063-0.125-0.063-0.125-0.063 0-0.125-0.063-0.188-0.063h-0.125c-0.25 0-0.438 0.125-0.5 0.5zM18.438 14.813c-0.063 0.063-0.125 0.375-0.313 0.938-0.188-0.063-0.313 0.063-0.5 0.313-0.125 0.5-0.188 1.125-0.313 1.875h-0.875l0.063-0.188c0.188-1.25 0.313-2.25 0.438-2.938h0.813l-0.125 0.438c0.188-0.188 0.313-0.313 0.438-0.375 0.125-0.125 0.25-0.125 0.375-0.063zM21.25 14.188l-0.188 0.813c-0.25-0.125-0.5-0.188-0.688-0.188-0.375 0-0.625 0.125-0.813 0.375s-0.25 0.563-0.25 1.063c0 0.313 0.063 0.563 0.188 0.688 0.125 0.188 0.313 0.25 0.563 0.25 0.188 0 0.438-0.063 0.688-0.188l-0.125 0.875c-0.188 0.063-0.438 0.125-0.75 0.125-0.438 0-0.75-0.188-1.063-0.5-0.25-0.25-0.375-0.625-0.375-1.188 0-0.625 0.188-1.188 0.563-1.625 0.313-0.438 0.75-0.688 1.313-0.688 0.188 0 0.5 0.063 0.938 0.188zM23.625 15.688c0 0-0.063 0.125-0.063 0.25s0 0.25 0 0.313c-0.063 0.25-0.125 0.563-0.188 0.938 0 0.375-0.063 0.625-0.125 0.75h-0.625v-0.375c-0.188 0.313-0.5 0.438-0.875 0.438-0.25 0-0.375-0.063-0.5-0.188-0.188-0.188-0.25-0.438-0.25-0.688 0-0.375 0.125-0.688 0.375-0.875 0.313-0.188 0.625-0.313 1.063-0.313h0.313c0.063-0.063 0.063-0.125 0.063-0.188 0-0.188-0.188-0.25-0.5-0.25-0.25 0-0.563 0-0.875 0.125 0-0.188 0-0.438 0.125-0.688 0.375-0.125 0.625-0.188 0.938-0.188 0.75 0 1.125 0.313 1.125 0.938zM22.688 16.5h-0.188c-0.438 0-0.688 0.188-0.688 0.5 0 0.188 0.125 0.313 0.25 0.313 0.188 0 0.313-0.063 0.438-0.188s0.188-0.313 0.188-0.625zM25.625 14.813c-0.125 0.188-0.25 0.5-0.313 0.938-0.188-0.063-0.313 0.063-0.438 0.313s-0.188 0.875-0.375 1.875h-0.813l0.063-0.188c0.188-1 0.313-2 0.375-2.938h0.813c0 0.188-0.063 0.313-0.063 0.438 0.125-0.188 0.25-0.313 0.375-0.375 0.188-0.063 0.313-0.125 0.375-0.063zM27.688 14.063h0.875l-0.688 3.875h-0.75l0.063-0.313c-0.188 0.25-0.438 0.375-0.75 0.375-0.375 0-0.563-0.125-0.688-0.375-0.25-0.25-0.375-0.563-0.375-0.875 0-0.625 0.188-1.063 0.5-1.438 0.188-0.313 0.5-0.5 0.875-0.5 0.313 0 0.563 0.125 0.813 0.375zM27.375 16.125c0-0.375-0.188-0.563-0.438-0.563-0.188 0-0.375 0.063-0.5 0.313-0.063 0.125-0.125 0.375-0.125 0.75s0.125 0.563 0.375 0.563c0.188 0 0.375-0.063 0.5-0.25s0.188-0.438 0.188-0.813z"
+#
+# icon2="M61.33,58.67H7l9.9-19.8L30.29,50.05a2.67,2.67,0,0,0,4-.68L50,23.24l1.31,4.09a2.67,2.67,0,0,0,2.54,1.86,2.54,2.54,0,0,0,.81-.13,2.68,2.68,0,0,0,1.73-3.35L53,15.34a2.66,2.66,0,0,0-3.35-1.73L39.53,16.84a2.67,2.67,0,0,0,1.62,5.08l4.19-1.33L31.32,44,17.71,32.62a2.68,2.68,0,0,0-4.1.85L5.33,50V2.67A2.67,2.67,0,1,0,0,2.67V61.33a3.49,3.49,0,0,0,.07.37,2.62,2.62,0,0,0,.12.57,2.76,2.76,0,0,0,.25.44,2.79,2.79,0,0,0,.28.42,2.58,2.58,0,0,0,.45.35,2.25,2.25,0,0,0,.3.24l.11,0,.15.05a2.58,2.58,0,0,0,.93.19H61.33a2.67,2.67,0,1,0,0-5.33Z"
+# # (2) Scale/translate works, after some trial and error
+#
+#
+# mc_button <- list(
+#   name = "MasterCard",
+#   icon = list(
+#     path = mc_icon_svg_path[[1]]
+#     ,transform = "scale(0.6 0.6) translate(-3, -2)"
+#   ),
+#   click = htmlwidgets::JS(
+#     "function(gd) {window.open('http://www.mastercard.com', '_blank')}"
+#   )
+# )
+#
+# barras = list(
+#   name="BARRAS"
+#   ,icon = list(
+#     path= "M332.8 320h38.4c6.4 0 12.8-6.4 12.8-12.8V172.8c0-6.4-6.4-12.8-12.8-12.8h-38.4c-6.4 0-12.8 6.4-12.8 12.8v134.4c0 6.4 6.4 12.8 12.8 12.8zm96 0h38.4c6.4 0 12.8-6.4 12.8-12.8V76.8c0-6.4-6.4-12.8-12.8-12.8h-38.4c-6.4 0-12.8 6.4-12.8 12.8v230.4c0 6.4 6.4 12.8 12.8 12.8zm-288 0h38.4c6.4 0 12.8-6.4 12.8-12.8v-70.4c0-6.4-6.4-12.8-12.8-12.8h-38.4c-6.4 0-12.8 6.4-12.8 12.8v70.4c0 6.4 6.4 12.8 12.8 12.8zm96 0h38.4c6.4 0 12.8-6.4 12.8-12.8V108.8c0-6.4-6.4-12.8-12.8-12.8h-38.4c-6.4 0-12.8 6.4-12.8 12.8v198.4c0 6.4 6.4 12.8 12.8 12.8zM496 384H64V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16z"
+#    ,width= 1000
+#    ,height= 1000
+#      ,transform = "scale(3)"
+# #    ,transform = "matrix(0.75 0 0 -0.75 0 1000)"
+#   )
+#     ,click = htmlwidgets::JS("function(gd) { Shiny.setInputValue('pot-plotly', {plot: 'id', type:'linear'}, {priority: 'event'});"
+# #    "function(gd) {alert('Pulsado');}"
+#   )
+#
+# )
+#
+# lockIcon = list(
+#   name = "LOCK"
+#   ,icon = list(
+#   path= "M320 768h512v192q0 106 -75 181t-181 75t-181 -75t-75 -181v-192zM1152 672v-576q0 -40 -28 -68t-68 -28h-960q-40 0 -68 28t-28 68v576q0 40 28 68t68 28h32v192q0 184 132 316t316 132t316 -132t132 -316v-192h32q40 0 68 -28t28 -68z"
+#    ,width= 1000
+#    ,height= 1000
+#     ,transform = "matrix(0.75 0 0 -0.75 0 1000)"
+#
+#   )
+#   ,click = htmlwidgets::JS("function(gd) { Shiny.setInputValue('pos-plotly', {id: 'unid', type:'grafico'}, {priority: 'event'});}")
+# #   ,click = htmlwidgets::JS("function(gd) {alert('Pulsado');}")
+# )
+#
+#
+# 	otro <- list(
+#   name = "Barrras",
+#   icon = list(svg="yata/img/graph_line2.svg",width=16,height=16),
+# #     path = icon2[[1]]
+# # #    ,transform = "scale(0.7 0.7) translate(-3, -2)"
+# #     ,transform = "scale(0.7 0.7) translate(-3, -2)"
+# #   ),
+#   click = htmlwidgets::JS("function(gd) {alert('Boton pulsado');}")
+# )
+#
+# # fig.show(config={'modeBarButtonsToAdd':['drawline',
+# #                                         'drawopenpath',
+# #                                         'drawclosedpath',
+# #                                         'drawcircle',
+# #                                         'drawrect',
+# #                                         'eraseshape'
+#                                        ]})

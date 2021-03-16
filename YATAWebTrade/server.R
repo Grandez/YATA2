@@ -7,7 +7,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,operations   = NULL
       ,cameras      = NULL
       ,providers    = NULL
-      ,interval     = 5
+      ,interval     = 15
       ,initialize    = function(id, parent, session) {
           super$initialize(id, parent, session)
           self$position   = self$factory$getObject(self$codes$object$position)
@@ -18,15 +18,13 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,updateData  = function (init = FALSE) {
           self$data$dfPosGlobal = self$position$getGlobalPosition()
           ctc = self$getCurrencies()
-          if (init) self$data$lstLast = self$providers$getMonitors("EUR", ctc)
-          else      self$data$lstLast = self$providers$getLatests ("EUR", ctc)
-
-          data              = self$data$lstLast
-
-          df0 = data.frame(tms=Sys.time())
-          df1 = as.data.frame(lapply(data, function(x) x$last))
-          df  = cbind(df0, df1)
-          df$tms = as.ITime(df$tms)
+          df = self$providers$getLatests ("EUR", ctc)
+          self$data$lstLast = list()
+          if (nrow(df) > 0) {
+              for (row in 1:nrow(df)) {
+                  self$data$lstLast[[df[row,"symbol"]]] = as.list(df[row,])
+              }
+          }
 
           if (init) {
               self$data$dfSession = df
@@ -38,6 +36,11 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,getGlobalPosition = function() { self$data$dfPosGlobal }
       ,getDFSession      = function() { self$data$dfSession   } 
       ,getLatestSession  = function() { self$data$lstLast     }
+      ,getSessionPrice   = function() { 
+         df = self$data$dfSession
+         if (!is.null(df)) df = df[,c("symbol", "price","tms")]
+         spread(df, symbol, price)
+       }
       ,getCurrencies = function() {
           df = self$data$dfPosGlobal
           df = df[df$currency != "EUR",]
@@ -51,6 +54,10 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
+   if (YATAWEB$inError) return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
+   if (restCheck())     return (yataErrGeneral(0, YATAWEB$getMsg("ERR.REST.DOWN"),  input, output, session))
+
+   YATAWEB$setSession(session)
    pnl = YATAWEB$getPanel("tradeMain")
    if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTradeMain$new("tradeMain", NULL, session))
    factory = pnl$factory
@@ -83,12 +90,13 @@ function(input, output, session) {
    
    # En este observer, cargamos la posicion y las cotizaciones
     observe({
-        invalidateLater(60000)
+        invalidateLater(pnl$interval * 60000)
         pnl$updateData()
+        rest("update")
     })
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
-      cat("Session stopped\n")
+      cat("Shiny Session stopped\n")
       pnl$factory$finalize()
       })
 }

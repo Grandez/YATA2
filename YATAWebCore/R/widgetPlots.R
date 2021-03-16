@@ -10,15 +10,15 @@ updPlot = function(plot) {
 }
 
 
-plotDay = function(df, title) {
-   pltLines(df, title)
+plotDay = function(info, df, title) {
+   pltLines(info, df, title)
 }
-plotDayVar = function(df, title) {
+plotDayVar = function(info, df, title) {
    dftmp = df
    for (idx in 2:ncol(dftmp)) {
       dftmp[,idx] = rollapply(dftmp[,idx], 2, function(x) ((x[2]/x[1]) - 1) * 100, align="right", fill=0)
    }
-   pltLines(dftmp, title)
+   pltLines(info, dftmp, title)
 }
 
 # plotBar = function(pnl) {
@@ -34,18 +34,24 @@ plotDayVar = function(df, title) {
 
 # PLOT el valor o la vaiacion.
 # Espera tms, monedas
-plotTicker = function(df, title) {
-   pltLines(df, title)
+plotTicker = function(info, df, title) {
+   pltLines(info, df, title)
 }
 
-plotTickerVar = function(df,title) {
+plotTickerVar = function(info, df,title) {
    dftmp = df
    for (idx in 2:ncol(dftmp)) {
       dftmp[,idx] = rollapply(dftmp[,idx], 2, function(x) ((x[2]/x[1]) - 1) * 100, align="right", fill=0)
    }
-   pltLines(dftmp, title)
+   pltLines(info, dftmp, title)
 }
 
+plotBest = function(info, df, title) {
+   dft = df
+   if (is.null(info$type))     return (pltCandle(info, df, title))
+   if (info$type == "linear")  return (pltLines (info, df[,-(2:7)], title))
+   pltCandle (info, df, title)
+}
 # https://plotly-r.com/control-modebar.html
 
 # La lista de botones esta en

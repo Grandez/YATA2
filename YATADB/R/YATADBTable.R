@@ -104,6 +104,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
                 df = db$query(sql, filter$values)
             }
             else {
+               private$.selected = FALSE
                return (FALSE)
             }
          }
