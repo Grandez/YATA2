@@ -10,21 +10,18 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            super$initialize(factory)
            name = "session"
            #JGG Especial
-           private$mktcap        = factory$getProvider("MKTCAP", "MarketCap")
+           private$provider        = factory$getProvider("MKTCAP", "MarketCap")
            private$tblSession    = factory$getTable(codes$tables$Session)
            private$tblCurrencies = factory$getTable(codes$tables$Currencies)
            private$tblExch    = factory$getTable(codes$tables$Exchanges)
-           private$provider   = factory$getObject(codes$object$providers)
+#           private$provider   = factory$getObject(codes$object$providers)
            private$lastGet    = as.Date.POSIXct(1)
            private$interval   = 15
 
-#           updateLatest()
        }
-       ,setInterval = function(interval) { private$interval = interval }
-       ,getBest     = function(top=15, from=24) {
+       ,setInterval   = function(interval) { private$interval = interval }
+       ,getBest       = function(top=15, from=24) {
             col = sprintf("var%02d", from)
-            # dfexch = tblExch$getExchanges()
-            # colnames(dfexch) = "symbol"
             session = tblSession$getLatest()
 
             # Se ha llamado sin coger la info
@@ -33,24 +30,22 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             # Si no hay movimiento no me vale
             session = session[session$volume > 10,]
 
-            # df = inner_join(dfexch, session, by = "symbol")
             ncol = which(col == colnames(session))
 
             dft = session[order(session[ncol], decreasing = TRUE),]
             dft = dft[1:top,]
             dft = dft[,c("id", "symbol", "name", "price", col, "volume")]
             colnames(dft) = c("id", "symbol", "name", "price", "var", "volume")
-
             dft
         }
-        ,getHistorical = function(base, idCurrency, from, to, period=24) {
-            id = suppressWarnings(as.numeric(idCurrency))
-            if (is.na(id)) id = tblCurrencies$getID(idCurrency)
-            if (is.null(id)) return (NULL)
-            mktcap$getHistorical(id,from,to)
+       ,getHistorical = function(base, idCurrency, from, to, period=24) {
+           id = suppressWarnings(as.numeric(idCurrency))
+           if (is.na(id)) id = tblCurrencies$getID(idCurrency)
+           if (is.null(id)) return (NULL)
+           provider$getHistorical(id,from,to)
         }
         ,updateCurrencies = function(max=3000) {
-            df = mktcap$getLatest(max)
+            df = provider$getLatest(max)
             df = df[,c("id", "name", "symbol", "slug", "rank",)]
             df
         }
@@ -62,16 +57,10 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             } else {
                 df = tblSession$getLatest()
             }
-
-
-            # ctc = c("BTC", "ETH", "ADA", "XRP", "LTC")
-            # ids = tblCMC$getID(ctc)
-            # lista = paste(unlist(ids), collapse=",")
-            # res = mktcap$getExchanges(lista)
         }
        ,updateLatest = function() {
            # Es publico para que se pueda lanzar asincronamente
-           df = mktcap$getLatest()
+           df = provider$getLatest()
            last = tblSession$getLastUpdate()
            diff = ifelse(is.na(last), 10, difftime(Sys.time(), last[[1]], units="days"))
 
@@ -80,11 +69,9 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            )
            df
         }
-
     )
     ,private = list(
-        mktcap     = NULL
-       ,tblSession = NULL
+        tblSession = NULL
        ,tblExch    = NULL
        ,tblCurrencies = NULL
        ,provider   = NULL

@@ -86,7 +86,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              while (idx <= nrow(df)) {
                  counter = df[idx, "currency"]
                  from    = as.numeric(df[idx, "since"])
-                 data    = self$session$getSession("EUR", counter, from, to)
+                 data    = self$session$getHistorical("EUR", counter, from, to)
                  self$data$mapSessionDay$put(counter, data)
                  idx = idx + 1
              }
@@ -234,7 +234,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                    if (from == 30) lbl = "Mes"
                    output$lblBest = updLabelText(paste("Mejores", lbl))
                    output$tblBest = updTableBest({
-                       df$symbol = YATAWEB$getCTCLabel(df$symbol)
+                       df$symbol = YATAWEB$getCurrencyLabel(df$symbol)
                        prepareTop(df) })
                   },function(err)    { 
                       message("ha ido mal 2"); message(err) }
