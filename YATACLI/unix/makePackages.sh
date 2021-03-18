@@ -1,7 +1,7 @@
 # Rebuild the packages
 
 oldwd=`pwd`
-cd /host/yata
+cd /srv/YATA2
 pkgs=( "Tools"  "DB"  "Providers"  "DT"  "Core" "REST" "WebCore")
 for i in "${pkgs[@]}" ; do
   echo "Making YATA${i}"

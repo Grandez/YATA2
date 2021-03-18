@@ -3,4 +3,4 @@
 #
 
 RCMD="Rscript --no-save --no-restore "
-$RCMD -e YATAREST::start(9090)
+$RCMD -e "YATAREST::start(9090)"
