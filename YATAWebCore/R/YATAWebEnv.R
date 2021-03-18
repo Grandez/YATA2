@@ -14,10 +14,12 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,initialize = function() {
          tryCatch({
             self$factory = YATACore::YATAFACTORY$new()
-            self$MSG = self$factory$msgs
+            self$MSG     = self$factory$MSG
+
             private$tblCurrencies = factory$getTable("Currencies")
             private$hID  = HashMap$new()
             private$hSym = HashMap$new()
+            loadFiats()
          }, error = function(e) {
            browser()
             self$inError = TRUE
@@ -55,14 +57,9 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
        private$cookies[[id]] = data
        updateCookie(self$session, private$cookies)
     }
-    ,getCTCLabel = function(codes, style = 11) {
-        if (length(codes) == 1) {
-            return (ifelse(is.numeric(codes)), .getNameByID (codes, style)
-                                             , .getNameBySym(codes, style))
-        }
+    ,getCurrencyLabel = function(codes, style = 10) {
         if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, style))
         else                   data = lapply(codes, function(code) .getNameBySym(code, style))
-
         names(data) = codes
         data
     }
@@ -119,10 +116,28 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         if (style ==  1) return (info$symbol)
         if (style ==  2) return (info$name)
         if (style == 10) return (info$lbl)
-        if (style == 11) return (info$lbl24)
+        if (style == 24) return (info$lbl24)
         if (style == 12) return (info$lbl12)
     }
-
+    ,loadFiats = function() {
+         info = list()
+         info$id     = 99999
+         info$symbol = "EUR"
+         info$name   = "Euro"
+         info$lbl    = paste0(info$symbol, " - ", info$name)
+         info$lbl24  = info$lbl
+         info$lbl12  = info$lbl
+         hSym$put(info$symbol, info)
+         hID$put (info$id, info)
+         info$id     = 99998
+         info$symbol = "USD"
+         info$name   = "US Dollar"
+         info$lbl    = paste0(info$symbol, " - ", info$name)
+         info$lbl24  = info$lbl
+         info$lbl12  = info$lbl
+         hSym$put(info$symbol, info)
+         hID$put (info$id, info)
+    }
 
   )
 )

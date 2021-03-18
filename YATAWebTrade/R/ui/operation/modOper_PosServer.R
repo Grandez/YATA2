@@ -35,7 +35,7 @@ modOperPosServer = function(id, full, pnl) {
       }
       loadPosition   = function() { 
          data = FALSE
-         df = pnl$loadOperations(YATACodes$status$pending)
+         df = pnl$loadOperations(pnl$codes$status$pending)
          shinyjs::hide("opPending")
          btns = NULL
          if (nrow(df) > 0) {
@@ -50,7 +50,7 @@ modOperPosServer = function(id, full, pnl) {
          }
          output$tblPending = updTableOperations(df, buttons=btns)
          
-         df = pnl$loadOperations(YATACodes$status$accepted)
+         df = pnl$loadOperations(pnl$codes$status$accepted)
          shinyjs::hide("opAccepted")
          btns = NULL         
          if (nrow(df) > 0) {
@@ -64,7 +64,7 @@ modOperPosServer = function(id, full, pnl) {
 
          shinyjs::hide("opExecuted")
          btns = NULL         
-         df = pnl$loadOperations(YATACodes$status$executed)
+         df = pnl$loadOperations(pnl$codes$status$executed)
          df = prepareTableOpen(df)
 
          if (nrow(df) > 0) {
@@ -97,10 +97,10 @@ modOperPosServer = function(id, full, pnl) {
       }
       formChangeInit = function() {
          title = ""
-         if (pnl$vars$nextAction == YATACodes$status$accepted) title = pnl$MSG$title("OPER.ACCEPT")
-         if (pnl$vars$nextAction == YATACodes$status$executed) title = pnl$MSG$title("OPER.EXECUTE")
-         if (pnl$vars$nextAction == YATACodes$status$rejected) title = pnl$MSG$title("OPER.REJECT")
-         if (pnl$vars$nextAction == YATACodes$status$closed)   title = pnl$MSG$title("OPER.CLOSE")
+         if (pnl$vars$nextAction == pnl$codes$status$accepted) title = YATAWEB$MSG$title("OPER.ACCEPT")
+         if (pnl$vars$nextAction == pnl$codes$status$executed) title = YATAWEB$MSG$title("OPER.EXECUTE")
+         if (pnl$vars$nextAction == pnl$codes$status$rejected) title = YATAWEB$MSG$title("OPER.REJECT")
+         if (pnl$vars$nextAction == pnl$codes$status$closed)   title = YATAWEB$MSG$title("OPER.CLOSE")
          
          output$formLblOper    = updLabelText( title )
          output$formLblCamera  = updLabelText( pnl$data$names$camera  )
@@ -109,7 +109,7 @@ modOperPosServer = function(id, full, pnl) {
 
          updNumericInput("ImpAmount", value=pnl$data$amount) 
          updNumericInput("ImpPrice",  value=pnl$data$price) 
-         if (pnl$vars$nextAction == YATACodes$status$closed) {
+         if (pnl$vars$nextAction == pnl$codes$status$closed) {
 #             updateSelectInput(session=session, inputId="formcboReasons", choices = pnl$cboReasons(DBParms$reasons$close), selected=0)
          }
                   
@@ -117,19 +117,18 @@ modOperPosServer = function(id, full, pnl) {
       
       # if (!pnl$valid) loadPosition() #input, output, session)
       observeEvent(input$btnTablePending, {
-          browser()
           if (pnl$vars$inForm) return()
           pnl$vars$inForm  = TRUE
           pnl$vars$inEvent = FALSE
-          selectOperation(input$btnTablePending, YATACodes$status$pending)
+          selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
-              pnl$vars$nextAction = YATACodes$status$accepted
+              pnl$vars$nextAction = pnl$codes$status$accepted
               data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
               output$form = renderUI({data})
               formChangeInit()
           }
           if (pnl$action == "cancel") {
-              pnl$vars$nextAction = YATACodes$status$cancelled
+              pnl$vars$nextAction = pnl$codes$status$cancelled
               data = yuiFormUI(ns2("form"), "OperCancel", data=pnl$data)
               output$form = renderUI({data})
               formChangeInit()
@@ -137,32 +136,30 @@ modOperPosServer = function(id, full, pnl) {
               output$formLblPrice  = updLabelNumber(pnl$data$price)
           }
           if (pnl$action == "rejected") {
-              pnl$vars$nextAction = YATACodes$status$rejected
+              pnl$vars$nextAction = pnl$codes$status$rejected
               data = yuiFormUI(ns2("form"), "OperReject", data=pnl$data)
               output$form = renderUI({data})
               formChangeInit()
           }
       })
        observeEvent(input$btnTableAccepted, {
-           browser()
           if (pnl$vars$inForm) return()           
           pnl$vars$inForm  = TRUE 
           pnl$vars$inEvent = FALSE
-          selectOperation(input$btnTableAccepted, YATACodes$status$accepted)
-          pnl$vars$nextAction = YATACodes$status$executed
+          selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
+          pnl$vars$nextAction = pnl$codes$status$executed
           data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
           output$form = renderUI({data})
           formChangeInit()
        })
        observeEvent(input$btnTableOpen, {
-           browser()
           if (pnl$vars$inForm) return()           
           pnl$vars$inForm = TRUE 
           pnl$vars$inEvent = FALSE
-          selectOperation(input$btnTableOpen, YATACodes$status$executed)
+          selectOperation(input$btnTableOpen, pnl$codes$status$executed)
           if (pnl$action == "close") {
-              pnl$data$type = YATACodes$oper$close
-              pnl$vars$nextAction = YATACodes$status$closed
+              pnl$data$type = pnl$codes$oper$close
+              pnl$vars$nextAction = pnl$codes$status$closed
               pnl$data$reasons = pnl$cboReasons(DBParms$reasons$close)
               data = yuiFormUI(ns2("form"), "OperClose", data=pnl$data)
               output$form = renderUI({data})
@@ -187,24 +184,23 @@ modOperPosServer = function(id, full, pnl) {
       # Modales
       ##############################################
       observeEvent(input$btnOK, {
-          browser()
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
              pnl$vars$inEvent = !pnl$vars$inEvent
              return()
          }
 
-          if (pnl$vars$nextAction == YATACodes$status$accepted) {
+          if (pnl$vars$nextAction == pnl$codes$status$accepted) {
               pnl$operations$accept( price  = input$formImpPrice
                                     ,amount = input$formImpAmount
                                     ,fee    = 0
                                     ,id     = pnl$data$id
               )
           }
-          if (pnl$vars$nextAction == YATACodes$status$cancelled) {
+          if (pnl$vars$nextAction == pnl$codes$status$cancelled) {
               pnl$operations$cancel( delete = input$formSwDelete, id = pnl$data$id)
           }
-          if (pnl$vars$nextAction == YATACodes$status$executed) {
+          if (pnl$vars$nextAction == pnl$codes$status$executed) {
               pnl$operations$execute(gas = 0, id = pnl$data$id)
           }
           if (pnl$action %in% c("cancel", "rejected") ) {
@@ -213,7 +209,7 @@ modOperPosServer = function(id, full, pnl) {
               if (nchar(cmt) > 0) cmt2 = cmt
               pnl$operations$reject(comment=cmt2, id=pnl$data$id)
           }
-          if (pnl$vars$nextAction == YATACodes$status$closed) {
+          if (pnl$vars$nextAction == pnl$codes$status$closed) {
               pnl$operations$close( id      = pnl$data$id
                                    ,amount  = input$formImpAmount
                                    ,price   = input$formImpPrice
@@ -230,17 +226,7 @@ modOperPosServer = function(id, full, pnl) {
           pnl$vars$inForm = YATAFormClose()
       })
 
-    #   updateSelectInput(session, "cboCamera",    choices=pnl$cboClearings())
-    #   updateSelectInput(session, "cboCounter",   choices=pnl$cboCurrency())
-    #   observeEvent(input$cboCamera, {
-    #      pnl$selectClearing(input$cboCamera)
-    #      # updateSelectInput(session, "cboTo",       choices=pnl$cboClearings(input$cboFrom))
-    #      updateSelectInput(session, "cbofull", choices=pnl$cboCurrency(input$cboCamera, TRUE))
-    # 
-    #   }, ignoreInit = TRUE)
-    # 
     loadPosition()
-    message("SALGO DE MODULO OPER_POSSERVER")
   })
 }
 

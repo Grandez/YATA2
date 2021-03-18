@@ -1,3 +1,4 @@
+# PAra los form habra que cambiar
 yuiYesNo = function(id=ns("tag"), lblOK, lblKO, cols=4, left=0) {
     toks = strsplit(id, "-")[[1]]
     toks = paste(toks[1:(length(toks)- 1)], collapse="-")
@@ -12,8 +13,8 @@ yuiYesNo = function(id=ns("tag"), lblOK, lblKO, cols=4, left=0) {
     divBtns = tags$div(class="row"
                        ,tags$div(class=paste0("col-lg-", lcol))
                        ,tags$div(class=paste0("col-lg-", cols), style="display: flex; justify-content: space-around;"
-                                 ,tags$div(yuiBtnOK(paste(toks, "btnOK", sep="_"), lblOK))
-                                 ,tags$div(yuiBtnKO(paste(toks, "btnKO", sep="_"), lblKO))
+                                 ,tags$div(yuiBtnOK(paste(toks, "btnOK", sep="-"), lblOK))
+                                 ,tags$div(yuiBtnKO(paste(toks, "btnKO", sep="-"), lblKO))
                        )
             )
     tagList(tags$div(class="container-fluid", divMsg), tags$div(class="container-fluid", divBtns))

@@ -25,6 +25,7 @@ YATATheme = function(base = "cerulean") {
      # theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
      # theme = bs_add_rules(theme, ".table th,  { padding: 0; }")
      # theme = bs_add_rules(theme, ".table td { padding: 0; }")
+    theme = bs_add_rules(theme, ".h1, .h2, .h3 { margin-top: 0; }")
     theme
 
 }

@@ -43,6 +43,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 db$commit()
                 self$current$idOper
             },error = function(cond) {
+                brower()
                 db$rollback()
                 message(cond)
                 0
@@ -53,7 +54,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ##############################
         ,accept  = function(price=0, amount=0, fee = 0, id=NULL) {
             if (!is.null(id)) select(id)
-            browser()
             tryCatch({
                db$begin()
                if (!is.null(current$idParent) && !is.na(current$idParent)) {
@@ -71,7 +71,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             })
         }
         ,execute = function(gas = 0, id=NULL) {
-            browser()
             # La operacion se ha realizado, esta en el wallet
             if (!is.null(id)) select(id)
             data = list( status=codes$status$executed
@@ -257,15 +256,14 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             invisible(self)
         }
         ,getReasons        = function(type) {
+            # JGG Checked
             gral = parms$getSubgroup(DBParms$group$reasons, DBParms$reasons$gral)
             oth  = parms$getSubgroup(DBParms$group$reasons, type)
             df = rbind(gral, oth)
             df$value = paste0("REASON.", df$value)
             df$name  = "MISSING"
-            msgs = factory$getMSG()
             for (row in 1:nrow(df)) {
-                data = msgs$get(df[row,"value"])
-                df[row, "name"] = msgs$get(df[row,"value"])
+                df[row, "name"] = factory$MSG$get(df[row,"value"])
             }
             df[order(df$id),c("id", "name")]
         }

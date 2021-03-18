@@ -9,7 +9,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
    ,public = list(
        codes  = NULL
       ,parms  = NULL
-      ,msgs   = NULL
+      ,MSG    = NULL  # Like WEB
       ,logger = NULL
       # Ponemos init y clear para manejar fuera de initialize y finalize
       ,initialize = function() {
@@ -26,7 +26,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
          if (!is.null(DBFactory))   DBFactory$finalize()
          if (!is.null(ProvFactory)) ProvFactory$finalize()
          self$parms = NULL
-         self$msgs  = NULL
+         self$MSG  = NULL
          private$objects = NULL
 #         gc(verbose=FALSE)
       }
@@ -98,9 +98,9 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
           private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
 
-          self$parms       = OBJParms$new   (private$DBFactory)
-          self$msgs        = OBJMessages$new(private$DBFactory)
-          self$codes       = YATACore::YATACODES$new()
+          self$parms  = OBJParms$new   (private$DBFactory)
+          self$MSG    = OBJMessages$new(private$DBFactory)
+          self$codes  = YATACore::YATACODES$new()
 
           if (parms$autoConnect()) {
               setDB(parms$lastOpen())

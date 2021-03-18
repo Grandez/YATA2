@@ -1,5 +1,5 @@
 TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
-    ,inherit    = YATATableSimple
+    ,inherit    = YATATable
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = FALSE
@@ -17,6 +17,12 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
               df$name = paste(df$id, "-", df$name)
               df
           }
+         ,getCurrencyNames = function() {
+             df = table()
+             df = df[,c("rank", "symbol", "name")]
+             colnames(df) = c("rank", "id", "name")
+             df
+         }
          ,getID = function (symbol) {
              id = hMap$get(symbol)
              if (is.null(id)) {

@@ -9,7 +9,6 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
            ,operations   = NULL
            ,currencies   = NULL
            ,position     = NULL
-           ,parms        = NULL
            ,bases        = NULL
            ,counters     = NULL
            ,valid        = FALSE
@@ -17,16 +16,13 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
            ,nextAction   = NULL
            ,action       = NULL 
            ,data         = NULL
-           ,defCtc       = NULL
            ,detail       = NULL    
            ,initialize     = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
-               self$cameras    = YATAFactory$getObject("Cameras")
-               self$operations = YATAFactory$getObject("Operation")
-               self$currencies = YATAFactory$getObject("Currencies")
-               self$position   = YATAFactory$getObject("Position")
-               self$parms      = YATAFactory$getParms()
-               self$defCtc     = self$parms$getDefCurrency()
+               self$cameras    = self$factory$getObject("Cameras")
+               self$operations = self$factory$getObject("Operation")
+               self$currencies = self$factory$getObject("Currencies")
+               self$position   = self$factory$getObject("Position")
                self$cameras$loadCameras()               
                self$vars$inForm  = FALSE
                self$vars$inEvent = FALSE
@@ -56,8 +52,10 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                   else {
                      df = self$cameras$getCameraPosition(camera, available = available) 
                      if (nrow(df) > 0) {
-                         data = self$currencies$getNames(df$currency, full=TRUE)
-                         self$makeCombo(data)
+                         data = YATAWEB$getCurrencyLabel(df$currency)
+                         values = names(data)
+                         names(values) = data
+                         values
                      }
                   }
                }
@@ -75,6 +73,7 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                }
                ,error = function(cond) {
                    browser()
+                   return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
                    TRUE
                  }
                )
@@ -133,11 +132,6 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         
-        # observeEvent(input$cboCamera,{
-        #     pnl$cameras$select(input$cboCamera)
-        #     updateSelectInput(session, "cboBase",  choices=pnl$cboBase(input$cboCamera, input$opBuy))
-        #     updateSelectInput(session, "cboCounter",  choices=pnl$cboBase(input$cboCamera))
-        # }, ignoreInit = TRUE)
         observeEvent(input$pnlOpType, {
             pnl$panel = input$pnlOpType
             act = yataActiveNS(input$pnlOpType)

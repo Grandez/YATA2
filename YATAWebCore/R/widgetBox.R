@@ -1,9 +1,9 @@
 yuiBoxClosable = function(id, title, style="primary", ...) {
-  boxPlus(..., title=title, status=style, solidHeader=TRUE)
+  box(..., title=title, status=style, solidHeader=TRUE)
 }
 yuiBox = function(id, title, ...) {
 
-res =        boxPlus( ..., title = title
+res =        box( ..., title = title
                    ,closable = FALSE
                    ,width = 12
                    ,status = "primary"

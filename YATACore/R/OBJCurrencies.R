@@ -28,9 +28,9 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             ifelse (full, paste0(data$id, " - ", data$name), data$id)
         }
         ,getCurrencyNames      = function(subset, full = TRUE) {
-            df = tblCurrencies$getTable()
+            df = tblCurrencies$getCurrencyNames()
             if (!missing(subset)) {
-                df = df[df$currency %in% subset,]
+                df = df[df$id %in% subset,]
             }
             if (full) df$name = paste(df$id, df$name, sep=" - ")
             df

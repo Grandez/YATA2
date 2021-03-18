@@ -3,13 +3,13 @@ YATAREST = R6::R6Class("YATA.REST"
     ,lock_class = TRUE
     ,public = list(
         initialize = function() {
-            cat("Initializing YATAREST")
+            cat("Initializing YATAREST\n")
             super$initialize()
             private$factory = YATACore::YATAFACTORY$new()
             private$initREST()
             private$setDoc()
         }
-        ,getPort = function() { factory$getParms()$getRESTPort() }
+        ,getPort = function() { private$factory$parms$getRESTPort() }
     )
    ,private = list(
         factory = NULL

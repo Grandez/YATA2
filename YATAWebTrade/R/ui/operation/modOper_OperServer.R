@@ -28,7 +28,7 @@ modOperOperServer = function(id, full, pnl) {
       # updCombo("cboCounter",    choices=pnl$makeCombo(df))
 
       observeEvent(input$cboOper, {
-         if (input$cboOper != YATACodes$oper$sell) {
+         if (input$cboOper != pnl$codes$oper$sell) {
              data = pnl$makeCombo(pnl$getCounters())
          }
          else {
@@ -52,6 +52,9 @@ modOperOperServer = function(id, full, pnl) {
       observeEvent(input$cboCamera, {
           pnl$vars$inEvent = FALSE
           dfPos = pnl$position$getCameraPosition(input$cboCamera, available = TRUE) 
+          # SI es compra, necesito un fiat
+          # Si es venta, no es fiat
+          data = pnl$cboCurrency(input$cboCamera, TRUE)
           updCombo("cboBase", choices=pnl$cboCurrency(input$cboCamera, TRUE))
           pnl$cameras$select(input$cboCamera)
           fee = pnl$cameras$current$taker

@@ -490,7 +490,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                   $("body").removeClass('sidebar-collapse').addClass('sidebar-expanded-on-hover');
                 },
                 collapse: function () {
-                                  alert("En Javascript collapse");
+//                                  alert("En Javascript collapse");
                   if ($('body').hasClass('sidebar-expanded-on-hover')) {
                     $('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
                   }
@@ -499,7 +499,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               // JGG. Carga el panel en el mapa y mueve los menus si existen
               $.YATA.yataSetPanel = function(data) {
-                  alert("Entra en yataSetPanel");
+//                  alert("Entra en yataSetPanel");
                   $.YATA.page = data.id;
 
                   data.left      = false;
