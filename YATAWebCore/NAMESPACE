@@ -12,7 +12,7 @@ import(future)
 import(shiny)
 import(shinyjs)
 import(shinyBS)          # Botones yataBtn
-import(shinydashboard)
+# import(shinydashboard)
 import(shinydashboardPlus)
 import(htmltools)
 import(shinyWidgets)

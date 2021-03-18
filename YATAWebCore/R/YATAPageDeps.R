@@ -16,20 +16,23 @@ yataDeps = function (x, md) {
         ripples_js <- "js/ripples.min.js"
         md_init_js <- "js/init.js"
     }
-    dashboardDeps <- list(htmltools::htmlDependency("shinydashboardPlus",
-        as.character(utils::packageVersion("shinydashboardPlus")),
-        c(file = system.file("shinydashboardPlus-0.6.0", package = "shinydashboardPlus")),
-        script = c(adminLTE_js, custom_js), stylesheet = adminLTE_css),
-        htmltools::htmlDependency("shinydashboard", as.character(utils::packageVersion("shinydashboard")),
-            c(file = system.file(package = "shinydashboard")),
-            script = shinydashboard_js, stylesheet = "shinydashboard.css"),
-        if (md) {
-            htmltools::htmlDependency("materialDesign", as.character(utils::packageVersion("shinydashboardPlus")),
-                c(file = system.file("materialDesign-1.0", package = "shinydashboardPlus")),
-                script = c(md_js, ripples_js, md_init_js), stylesheet = c(md_bootstrap_css,
-                    ripples_css, md_adminLTE_css, md_skins_css))
-        })
-    shinydashboardPlus:::appendDependencies(x, dashboardDeps)
+    dashboardDeps <- list(
+         htmltools::htmlDependency("shinydashboardPlus",
+             as.character(utils::packageVersion("shinydashboardPlus")),
+             c(file = system.file("shinydashboardPlus-2.0.0", package = "shinydashboardPlus")),
+             script = c(adminLTE_js, shinydashboardPlus_js),
+             stylesheet = c(adminLTE_css, custom_css))
+        ,htmltools::htmlDependency("shinydashboard", as.character(utils::packageVersion("shinydashboard")),
+             c(file = system.file(package = "shinydashboard")),
+             script = shinydashboard_js, stylesheet = "shinydashboard.css"),
+             if (md) {
+                   htmltools::htmlDependency("materialDesign"
+                           ,as.character(utils::packageVersion("shinydashboardPlus")),
+                           c(file = system.file("materialDesign-1.0", package = "shinydashboardPlus")),
+                           script = c(md_js, ripples_js, md_init_js), stylesheet = c(md_bootstrap_css,
+                           ripples_css, md_adminLTE_css, md_skins_css))
+             })
+    tagList(x, dashboardDeps)
 }
 
 # yataDeps <- function(tag, md) { #JGG }, options) {
