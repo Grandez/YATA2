@@ -225,9 +225,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
        
        getBest = function(top, from) {
           from=as.integer(from)
-#          restdf("best", top=top, from=from) %>%
-#             then( function(df) {
-          df = restdf("best", top=top, from=from)
+         restdf("best", top=top, from=from) %>%
+            then( function(df) {
                    pnl$data$dfBest = df
                    if (from ==  1) lbl = "Hora"
                    if (from ==  7) lbl = "Semana"
@@ -237,9 +236,9 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                    output$tblBest = updTableBest({
                        df$symbol = YATAWEB$getCurrencyLabel(df$symbol)
                        prepareTop(df) })
-               #    },function(err)    { 
-               #        message("ha ido mal 2"); message(err) }
-               # )
+                  },function(err)    {
+                      message("ha ido mal 2"); message(err) }
+               )
        } 
        getHistorical = function(id) {
            to = Sys.Date()
