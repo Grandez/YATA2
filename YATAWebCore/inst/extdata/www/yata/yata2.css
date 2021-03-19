@@ -504,15 +504,15 @@ body {
     font-size: 0.8em;
 }
 
-.yata-msg {
+.yata_msg {
     font-weight: bold;
 }
-.yata-msg-error   { font-weight: bold; color: red;         }
-.yata-msg-info    { font-weight: bold; color: black;       }
-.yata-msg-warning { font-weight: bold; color: yellow;      }
-.yata-msg-success { font-weight: bold; color: ForestGreen; }
+.yata_msg_error   { font-weight: bold; color: red;         }
+.yata_msg_info    { font-weight: bold; color: black;       }
+.yata_msg_warning { font-weight: bold; color: yellow;      }
+.yata_msg_success { font-weight: bold; color: ForestGreen; }
 
-.yata-btn-icon {
+.yata_btn_icon {
     color: white;
 }
 

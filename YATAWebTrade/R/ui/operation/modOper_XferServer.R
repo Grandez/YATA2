@@ -24,14 +24,13 @@ modOperXferServer = function(id, full, pnl) {
        }, ignoreInit = TRUE)
        observeEvent(input$btnKO, { output$msg = renderText({""}); reset() })
        observeEvent(input$btnOK, {
-          browser()
           if (validate()) return()
           res = pnl$operation(type = pnl$codes$oper$xfer, from=input$cboFrom, to=input$cboTo
                                                         , amount=input$impAmount
                                                         , currency=input$cboCurrency)
-          if (res) output$msg = updMessageKO(full, pnl$MSG$get("XFER.KO"))
+          if (res) output$msg = updMessageKO(full, YATAWEB$MSG$get("XFER.KO"))
           if (!res) {
-              output$msg = updMessageOK(full, pnl$MSG$get("XFER.OK"))
+              output$msg = updMessageOK(full, YATAWEB$MSG$get("XFER.OK"))
               reset()
           }
       })

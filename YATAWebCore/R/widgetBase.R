@@ -31,18 +31,17 @@ updMessage = function(txt) {
   renderUI({HTML(lbl)})
 
 }
-updMessageOK = function(id, txt) {
-  idm = paste0(id, "-msg-dat")
+.updMessage = function(id, txt, class) {
+  idm = paste0(id, "-msg_dat")
   shiny::removeUI(paste0("#", idm), immediate=TRUE)
-  dat = tags$span(id=idm, class = "yata-msg-success", txt)
+  dat = tags$span(id=idm, class = class, txt)
   shiny::insertUI(paste0("#", id, "-msg"),where="afterBegin",immediate=TRUE,ui=dat)
-}
-updMessageKO = function(txt) {
 
 }
-updMessageWarning = function(txt) {
+updMessageOK      = function(id, txt) { .updMessage(id, txt, "yata_msg_success") }
+updMessageKO      = function(id, txt) { .updMessage(id, txt, "yata_msg_error")   }
+updMessageWarning = function(id, txt) { .updMessage(id, txt, "yata_msg_warning") }
 
-}
 yuiTextInput = function(id, label=NULL, value="") {
   textInput(inputId=id, label=label, value = value, width = NULL, placeholder = NULL)
 }

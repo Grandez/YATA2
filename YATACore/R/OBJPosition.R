@@ -36,7 +36,6 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
          }
          if (to != "EXT") {
              res = prtPosition$select(camera=to, currency=currency, create=TRUE)
-             browser()
              prtPosition$set(balance   = prtPosition$current$balance   + amount)
              prtPosition$set(available = prtPosition$current$available + amount)
              prtPosition$apply()

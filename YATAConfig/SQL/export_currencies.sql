@@ -13,7 +13,7 @@
 
 -- Volcando datos para la tabla yatabase.currencies: ~3.026 rows (aproximadamente)
 /*!40000 ALTER TABLE `currencies` DISABLE KEYS */;
-INSERT IGNORE INTO `currencies` (`ID`, `NAME`, `SYMBOL`, `SLUG`, `RANK`, `DECIMALS`, `ICON`, `CAMERAS`, `TMS`) VALUES
+INSERT IGNORE INTO `CURRENCIES` (`ID`, `NAME`, `SYMBOL`, `SLUG`, `RANK`, `DECIMALS`, `ICON`, `CAMERAS`, `TMS`) VALUES
 	(1, 'Bitcoin', 'BTC', 'bitcoin', 1, 6, NULL, '2021-03-15 17:10:08', '2021-03-15 17:10:08'),
 	(2, 'Litecoin', 'LTC', 'litecoin', 9, 6, NULL, '2021-03-15 17:10:08', '2021-03-15 17:10:08'),
 	(3, 'Namecoin', 'NMC', 'namecoin', 690, 6, NULL, '2021-03-15 17:10:08', '2021-03-15 17:10:08'),

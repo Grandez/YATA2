@@ -8,7 +8,7 @@ yuiYesNo = function(id=ns("tag"), lblOK, lblKO, cols=4, left=0) {
     divMsg = tags$div(class="row"
                       ,tags$div(class=paste0("col-lg-", lcol))
                       ,tags$div( id=paste(toks, "msg", sep="-")
-                                ,class=paste0("col-lg-", cols), tags$span(id=paste0(toks, "-msg-dat"), "")))
+                                ,class=paste0("col-lg-", cols), tags$span(id=paste0(toks, "-msg_dat"), "")))
 
     divBtns = tags$div(class="row"
                        ,tags$div(class=paste0("col-lg-", lcol))

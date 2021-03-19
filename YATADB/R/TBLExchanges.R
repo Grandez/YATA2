@@ -12,7 +12,14 @@ TBLExchanges = R6::R6Class("TBL.EXCHANGES"
             delete(...)
             bulkAdd(data)
         }
-        ,getCameras    = function(symbol) { table(symbol=symbol, active = DBDict$flag$on) }
+        ,getCameras    = function(symbol) {
+            df = table(symbol=symbol, active = DBDict$flag$on)
+            if (nrow(df[df$camera == "YATA",]) == 0) {
+                df2 = table(camera = "YATA")
+                df = rbind(df, df2[1,])
+            }
+            df
+         }
         ,getCurrencies = function(camera) { table(camera=camera, active = DBDict$flag$on) }
         ,getExchanges  = function() {
             sql = paste("SELECT DISTINCT(", fields$symbol, ")")
