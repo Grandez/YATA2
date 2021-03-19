@@ -1,0 +1,28 @@
+$primary:           #fff !default;
+$headings-color:    black !default;
+/* Me dice el margen del grid de bootstrap */
+$grid-gutter-width: 6px !default;
+
+// Filas de tablas impares
+// $table-accent-bg:             rgba($black, .05) !default;
+$table-accent-bg: #ffc;
+
+@import "bootstrap-4.3.1/scss/bootstrap";
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  margin-right: 6px;
+  margin-left: 6px;
+}
+
+.tab-content {
+    width: 100%;
+}
+
+.nav-link, .nav-tabs > li > a,
+.nav-pills > li > a,
+ul.nav.navbar-nav > li > a {
+	display: block;
+	padding: .3rem 1rem;
+}

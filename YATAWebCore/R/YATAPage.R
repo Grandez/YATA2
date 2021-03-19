@@ -117,10 +117,14 @@ YATAPage =  function(title = NULL,id = NULL,
    bspage =   shiny::bootstrapPage(
          useShinyjs()
         ,tags$head(
-             tags$link  (rel="stylesheet", type="text/css", href="yata/yataoverride.css")
-            ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata2.css")
-            ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataDT.css")
-            ,tags$link  (rel="stylesheet", type="text/css", href="yata/AdminLTE2.css")
+              tags$link  (rel="stylesheet", type="text/css", href="yata/yatabootstrap.css")
+             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yatabase.css")
+             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yatadt.css")
+             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataAdminLTE.css")
+            #  tags$link  (rel="stylesheet", type="text/css", href="yata/yataoverride.css")
+            # ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata2.css")
+            # ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataDT.css")
+#            ,tags$link  (rel="stylesheet", type="text/css", href="yata/AdminLTE2.css")
             ,tags$script(src="yata/yata.js")
             ,tags$script(src="yata/yataapp.js")
             ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")

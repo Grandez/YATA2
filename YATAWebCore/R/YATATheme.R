@@ -1,14 +1,18 @@
 # Este es el tema general
 YATATheme = function(base = "cerulean") {
     bslib::bs_theme(bootswatch = base) %>%
-                   .addDeclarations() %>%
-                   .addRules() %>%
-                   .addRulesPosition
+                    .addSass()
+    #                .addDeclarations() %>%
+    #                .addRules() %>%
+    #                .addRulesPosition
 }
 
-.addDeclarations = function(theme) {
-    base <- system.file("extdata/www/yata", "yataBase.scss", package = "YATAWebCore")
+.addSass = function(theme) {
+    base <- system.file("extdata/www/yata", "yatabase.scss", package = "YATAWebCore")
     bs_add_rules(theme, sass::sass_file(base))
+    theme
+}
+.addDeclarations = function(theme) {
     dt <- system.file("extdata/www/yata", "yatadt.scss", package = "YATAWebCore")
     bs_add_rules(theme, sass::sass_file(dt))
     theme
@@ -25,7 +29,7 @@ YATATheme = function(base = "cerulean") {
      # theme = bs_add_rules(theme, ".table-striped tbody tr:nth-of-type(2n+1) { background-color: rgb(255,255,204); }")
      # theme = bs_add_rules(theme, ".table th,  { padding: 0; }")
      # theme = bs_add_rules(theme, ".table td { padding: 0; }")
-    theme = bs_add_rules(theme, ".h1, .h2, .h3 { margin-top: 0; }")
+    theme = bs_add_rules(theme, "h1, h2, h3 { margin-top: 0; }")
     theme
 
 }

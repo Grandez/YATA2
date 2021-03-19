@@ -14,6 +14,7 @@ yataDeps <- function(tag, md, options = NULL) {
   } else {
     "js/shinydashboardPlus.js"
   }
+  #JGG Los quitamos despues
   adminLTE_css <- c("css/AdminLTE.min.css", "css/_all-skins.min.css")
   custom_css <- ("css/custom.css")
 
@@ -54,7 +55,7 @@ yataDeps <- function(tag, md, options = NULL) {
       as.character(utils::packageVersion("shinydashboardPlus")),
       c(file = system.file("shinydashboardPlus-2.0.0", package = "shinydashboardPlus")),
       script = c(adminLTE_js, shinydashboardPlus_js),
-      stylesheet = c(adminLTE_css, custom_css)
+#JGG      stylesheet = c(adminLTE_css, custom_css)
     ),
     # shinydashboard css and js deps
     htmltools::htmlDependency(

@@ -1,0 +1,636 @@
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+.yata_clearfix {
+  /* overflow: auto; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.yata_text_err {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.yata-data-1 {
+  color: red;
+}
+
+.yata-data-2 {
+  color: green;
+}
+
+.yata-data-3 {
+  color: black;
+}
+
+.yata-data-4 {
+  color: blue;
+}
+
+.yata_flex_row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.yata-container {
+  height: 100%;
+  width: 100%;
+  /*  display: flex;
+    flex-direction: column;*/
+}
+
+.yata-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.yata-header {
+  /*
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+  */
+  height: 48px;
+  background-color: black;
+  color: white;
+}
+
+.yata-main {
+  flex: 1;
+  overflow: auto;
+}
+
+.yata-footer {
+  background-color: black;
+  /*
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  */
+  height: 40px;
+  color: white;
+}
+
+/*
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.header, .footer {
+  background: silver;
+}
+.content {
+  flex: 1;
+  overflow: auto;
+  background: pink;
+}
+
+*/
+/*********************************/
+/* Principal                     */
+/*********************************/
+td .selectize-control {
+  margin-bottom: 0;
+}
+
+.yata-primary {
+  background-color: #007bff;
+}
+
+.yata-secondary {
+  background-color: #6c757d;
+}
+
+.yata-success {
+  background-color: #28a745;
+}
+
+.yata-info {
+  background-color: #17a2b8;
+}
+
+.yata-warning {
+  background-color: #ffc107;
+}
+
+.yata-danger {
+  background-color: #dc3545;
+}
+
+.yata-light {
+  background-color: #f8f9fa;
+}
+
+.yata-dark {
+  background-color: #343a40;
+}
+
+/* en algun sitio se pone height: auto; */
+/*
+html {
+  min-height: 100%;
+  position: relative;
+}
+body {
+  margin: 0;
+  margin-bottom: 40px;
+}
+*/
+/*********************************/
+/* Basico                        */
+/*********************************/
+.yata-title {
+  text-align: center;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 30px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+.yata-title-1 {
+  text-align: center;
+}
+
+.yata-title-2 {
+  text-align: center;
+}
+
+.yata-title-3 {
+  text-align: center;
+}
+
+.yata-title-4 {
+  text-align: center;
+}
+
+.yata-title-5 {
+  text-align: center;
+}
+
+.yataTextRight {
+  text-align-last: right;
+}
+
+/*********************************/
+/* General                       */
+/*********************************/
+.yataSide {
+  display: none;
+}
+
+.sidebar {
+  background-color: gray;
+}
+
+#yataHeader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  background-color: black;
+  color: white;
+}
+
+#jggyataContent {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 100%;
+  overflow: auto;
+  margin-bottom: 20px;
+  /* Cuadra con footer */
+  padding-bottom: 40px;
+}
+
+#yataContentRight {
+  width: 234px;
+  background-color: lightblue;
+  float: right;
+}
+
+#yataFooter {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: black;
+  height: 20px;
+  color: white;
+}
+
+#yataContentMain {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+#yataContentLeft {
+  width: 200px;
+  height: 100%;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+#yata-right-menu-btn {
+  visibility: visible;
+}
+
+#yata-left-menu-btn {
+  visibility: visible;
+  /* visibility: hidden; */
+}
+
+/*********************************/
+/* Navegacion                    */
+/*********************************/
+.yata-brand {
+  float: left;
+  min-width: 8em;
+}
+
+.yata-brand:hover {
+  cursor: pointer;
+}
+
+.yata-nav-left {
+  float: left;
+}
+
+.yata-nav-right {
+  float: right;
+}
+
+.yata-logo {
+  min-width: 64px;
+}
+
+#yataMenu {
+  list-style: inline;
+}
+
+.yata-navbar {
+  background-image: linear-gradient(black, gray, black);
+  color: white;
+}
+
+.yata-navbar a {
+  color: white;
+}
+
+.yataCollapsed {
+  display: none;
+  transition: 0.5s;
+}
+
+.yataExpanded {
+  transition: 0.5s;
+}
+
+.yataLogo {
+  width: 128px;
+  height: 128px;
+}
+
+/*********************************/
+/* Paneles                       */
+/*********************************/
+.yata-panel-content {
+  display: flex;
+  flex-flow: row nowrap;
+  /*   padding-top: 12px; */
+  /*   background-color: DodgerBlue; */
+}
+
+.yata-form-header {
+  top: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.yata-panel-form {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background-color: RGBA(169, 169, 169, 0.8);
+}
+
+.yata_panel_err {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 900;
+  background-color: white;
+  opacity: 0.8;
+}
+
+.yata_panel_err_container {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.yata-form-center {
+  margin: 0;
+  position: absolute;
+  background-color: RGBA(255, 255, 255, 1);
+  border: 1px solid navy;
+  margin: 32px 12px 32px 12px;
+  top: 25%;
+  left: 25%;
+  -ms-transform: translateY(-25%);
+  -webkit-transform: translateY(-25%);
+  -moz-transform: translateY(-25%);
+  -o-transform: translateY(-25%);
+  transform: translateY(-25%);
+}
+
+.yata-row-buttons {
+  display: block;
+  text-align: center;
+  padding: 6px;
+}
+
+/*********************************/
+/* Paneles laterales             */
+/*********************************/
+.yata-panel-main {
+  /*margin-left: 340px;*/
+  width: 100%;
+}
+
+.yata-panel-left {
+  background-color: lightgray;
+  width: 380px;
+}
+
+.yata-leftside-closed {
+  display: none;
+}
+
+/*
+.yata-leftside-closed .yata-panel-main  ,
+.yata-leftside-closed .yata-panel-left  {
+    -webkit-transform: translate(-340px, 0);
+    -moz-transform:    translate(-340px, 0);
+    -ms-transform:     translate(-340px, 0);
+    -o-transform:      translate(-340px, 0);
+    transform:         translate(-340px, 0);
+}
+
+.yata-leftside-open .yata-panel-main ,
+.yata-leftside-open .yata-panel-left {
+    -webkit-transform: translate(0, 0);
+    -moz-transform:    translate(0, 0);
+    -ms-transform:     translate(0, 0);
+    -o-transform:      translate(0, 0);
+    transform:         translate(0, 0);
+}
+*/
+.yata-left-sidebar {
+  /*
+    padding-top: 50px;
+    min-height: 100%;
+
+    z-index: 810;
+  */
+  width: 340px;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  -moz-transition: -moz-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  -o-transition: -o-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+/*
+.yata-leftside-collapse {
+    -webkit-transform: translate(-340px, 0);
+    -moz-transform:    translate(-340px, 0);
+    -ms-transform:     translate(-340px, 0);
+    -o-transform:      translate(-340px, 0);
+    transform:         translate(-340px, 0);
+}
+*/
+/* Estan en yatadt */
+/*********************************/
+/* Monitor                       */
+/*********************************/
+/*
+.yataTblMonitor {
+    border: 1px solid blue;
+    border-spacing: 0;
+    line-height: 10px;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitor tr {
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitor tr td {
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitorCTC {
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+}
+
+*/
+#yataModal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  opacity: 0.75;
+  z-index: 100;
+  display: none;
+}
+
+#yataModalContent {
+  background-color: white;
+  margin: auto;
+}
+
+.yataCentered {
+  margin: 0 auto;
+}
+
+.yataForm {
+  width: 100%;
+}
+
+.yataDown {
+  color: Crimson;
+  font-size: 150%;
+}
+
+.yataUp {
+  color: ForestGreen;
+  font-size: 150%;
+}
+
+/* Monedas */
+.yataDeltaNone {
+  font-weight: bold;
+  text-align: right;
+  margin: 0;
+}
+
+.yataDeltaUp {
+  color: ForestGreen;
+  font-weight: bold;
+  text-align: right;
+}
+
+.yataDeltaDown {
+  color: Crimson;
+  font-weight: bold;
+  text-align: right;
+}
+
+/*
+.yataCellIcon {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.yataCellLabel {
+    text-align: left;
+    padding: 0 1em 0 1em;
+    margin: 0;
+}
+.yataCellData {
+    text-align: left;
+    padding: 0 1em 0 1em;
+    margin: 0;
+    vertical-align: middle;
+}
+.yataCellCTC {
+    text-align: center;
+    padding: 0 1em 0 1em;
+    margin: 0;
+    font-weight: bold;
+}
+
+.yataIconDelta {
+    display: flex;
+}
+
+*/
+#sessionLastUpdate {
+  float: right;
+  font-size: 0.8em;
+}
+
+.yata_msg {
+  font-weight: bold;
+}
+
+.yata_msg_error {
+  font-weight: bold;
+  color: red;
+}
+
+.yata_msg_info {
+  font-weight: bold;
+  color: black;
+}
+
+.yata_msg_warning {
+  font-weight: bold;
+  color: yellow;
+}
+
+.yata_msg_success {
+  font-weight: bold;
+  color: ForestGreen;
+}
+
+.yata_btn_icon {
+  color: white;
+}
+
+.yata_center {
+  margin: auto;
+}
+
+/*********************************/
+/* Textos y etiquetas            */
+/*********************************/
+.yata_txt_bold {
+  font-weight: bold;
+}
+
+.yata_num {
+  float: right;
+}
+
+.yata_num_bold {
+  font-weight: bold;
+}
+
+.yata_num_pos {
+  color: green;
+}
+
+.yata_num_neg {
+  color: crimson;
+}
+
+.yata-number {
+  text-align: right;
+}
+
+/*********************************/
+/* Cajas                         */
+/*********************************/
+.box-header {
+  padding: 5px;
+  color: white;
+  font-size: 14px;
+}
+
+.yata-rank-title {
+  text-align: center;
+  color: black;
+  font-weight: bold;
+}
+
+main-header {
+  padding: 0;
+  margin-left: 0 navbar;
+  margin-left-padding: 0;
+  margin-left-margin-left: 0;
+}
+
+navbar-static-top {
+  padding: 8px;
+}

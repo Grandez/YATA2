@@ -9,6 +9,8 @@
  * Core: General Layout Style
  * -------------------------
  */
+
+/*
 html,
 body {
   height: 100%;
@@ -23,6 +25,7 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 }
+*/
 /* Layout */
 .wrapper {
   height: 100%;
@@ -161,9 +164,16 @@ h6,
   font-family: 'Source Sans Pro', sans-serif;
 }
 /* General Links */
+/* JGG
 a {
   color: #3c8dbc;
 }
+*/
+/*
+a {
+  color: white;
+}
+
 a:hover,
 a:active,
 a:focus {
@@ -171,6 +181,7 @@ a:focus {
   text-decoration: none;
   color: #72afd2;
 }
+*/
 /* Page Header */
 .page-header {
   margin: 10px 0 20px 0;
@@ -1744,7 +1755,7 @@ a:focus {
 .box-header {
   color: #444;
   display: block;
-  padding: 10px;
+  padding: 6px;
   position: relative;
 }
 .box-header.with-border {
@@ -1761,6 +1772,7 @@ a:focus {
   font-size: 18px;
   margin: 0;
   line-height: 1;
+  color: white;
 }
 .box-header > .fa,
 .box-header > .glyphicon,
@@ -1782,6 +1794,11 @@ a:focus {
 .box-header > .box-tools .dropdown-menu > li > a {
   color: #444!important;
 }
+
+.box-title > h3 {
+  color: white;
+}
+
 .btn-box-tool {
   padding: 5px;
   font-size: 12px;
