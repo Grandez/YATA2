@@ -38,18 +38,15 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,getLatestSession  = function() { self$data$lstLast     }
       ,getSessionPrice   = function() { 
          df = self$data$dfSession
-         if (!is.null(df)) df = df[,c("symbol", "price","tms")]
+         if (is.null(df) || nrow(df) == 0) return(NULL)
+         df = df[,c("symbol", "price","tms")]
          spread(df, symbol, price)
        }
       ,getCurrencies = function() {
           df = self$data$dfPosGlobal
           df = df[df$currency != "EUR",]
           df = df[order(df$balance, decreasing=TRUE),]
-          ctc = df$currency
-          if (length(ctc) < 6 && !("BTC" %in% ctc)) ctc = c("BTC", ctc) 
-          if (length(ctc) < 6 && !("ETH" %in% ctc)) ctc = c("ETH", ctc) 
-          if (length(ctc) > 6) ctc = ctc[1:6]
-          ctc
+          df$currency
       }
    )
 )

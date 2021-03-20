@@ -18,7 +18,6 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,initialize = function(id, parent, session) {
         self$name    = id
         self$parent  = parent
-        #self$factory = ifelse (is.null(parent), YATAWEB$factory, parent$factory)
         self$factory = YATAWEB$factory
         self$codes   = self$factory$codes
         self$parms   = self$factory$parms

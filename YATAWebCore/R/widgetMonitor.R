@@ -1,6 +1,6 @@
-yuiYataMonitor = function(id, size=2) {
+yuiYataMonitor = function(id, data, size=2) {
 #    column(size, .yuiMonitorTable(id))
-   tags$div(column(size,.yuiMonitorTable(id)))
+   tags$div(column(size,.yuiMonitorTable(id,data)))
 }
 
 ###########################################
@@ -8,14 +8,17 @@ yuiYataMonitor = function(id, size=2) {
 ### Crea los tags: id - fila
 ###                id - fila - value
 ###########################################
-.yuiMonitorTable = function(id) {
+.yuiMonitorTable = function(id,data) {
+   browser()
   ns = strsplit(id, "-")[[1]]
   code = ns[length(ns)]
   base = paste(ns[1:length(ns)-1], sep = "-")
 #  tags$div(
       tags$table(class="yata-tbl-monitor"
         ,tags$tr(
-           tags$td(rowspan="3", class="yataCellIcon", img(src=paste0("icons/", code, ".png"),width="48px", height="48px"))
+           tags$td(rowspan="3", class="yataCellIcon",
+              img(src=paste0("icons/", code, ".png"),width="48px", height="48px",
+                  onerror="this.onerror=null;this.src='icons/YATA.png';"))
           ,tags$td(class="yata-cell-label", "Coste")
           ,tags$td(class="yata-cell-data",  id=paste0(id,"-price"))
           ,tags$td(class="yata-cell-data",  id=paste0(id,"-price-delta"))

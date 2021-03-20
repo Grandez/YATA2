@@ -3,22 +3,22 @@
 /* Monitor                       */
 /*********************************/
 
-.yata-monitors {
+.yata_monitors {
     padding-bottom: 1em;
     font-size: 1.25em;
     display: flex;
     flex-direction: row;
     padding-top: 12px;
 }
-
+/*
 .yata-ranks {
     padding-bottom: 1em;
     font-size: 1.25em;
     float: right;
     display: flex;
 }
-
-.yata-tbl-monitor {
+*/
+.yata_tbl_monitor {
     border: 1px solid blue;
     border-spacing: 0;
     line-height: 10px;
@@ -26,30 +26,30 @@
     margin: 0;
     padding: 0;
 }
-.yataCellIcon {
+.yata_cell_icon {
     padding-left: 16px;
     padding-right: 16px;
 }
-.yata-cell-label {
+.yata_cell_label {
     text-align: left;
     padding: 0 0.5em 0 0.5em;
     margin: 0;
 }
-.yata-cell-data {
+.yata_cell_data {
     text-align: right;
     padding: 0 0.5em 0 0.5em;
     margin: 0;
     vertical-align: middle;
     min-width: 5em;
 }
-.yataCellCTC {
+.yata_cell_ctc {
     text-align: center;
-    padding: 0 0.5em 0 0.5em;
+    padding: 2px 0.5em 0 0.5em;
     margin: 0;
     font-weight: bold;
 }
 
-.yataCellGroup {
+.yata_cell_group {
     padding-top: 6px;
     vertical-align: middle;
 }

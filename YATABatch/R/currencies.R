@@ -79,3 +79,40 @@ updateCurrencies = function(verbose) {
     #Borrar
     # Insertar las monedas
 }
+
+updateIcons = function(verbose) {
+    browser()
+     tmsBeg = Sys.time()
+    setVerbose(verbose)
+    base = "P:/R/YATA2/YATACore/inst/extdata/icons/"
+    # Actualiza las monedas que maneja cada exchange
+    # Obtiene los exchanges
+    # a cada uno de ellos le aplica la lista de monedas
+    codes   = YATACore::YATACodes
+    fact    = YATACore::YATAFACTORY$new()
+    tblCurrencies = fact$getTable("Currencies")
+    inc = 250
+    beg = 1
+    end = inc
+    db  = tblCurrencies$getDB()
+    df  = tblCurrencies$queryRaw("SELECT ID, ICON FROM CURRENCIES WHERE ID BETWEEN ? AND ?", list(beg, end))
+    while (nrow(df) > 0) {
+
+        db$begin()
+        for (i in 1:nrow(df)) {
+            if (is.na(df[i, "ICON"])) {
+                ico = paste0(df[i, "ID"], ".png")
+                if (file.exists(paste0(base, ico))) {
+                    tblCurrencies$execRaw("UPDATE CURRENCIES SET ICON = ? WHERE ID ?", list(ico, df[i,"ID"]))
+                    browser()
+                }
+            }
+        }
+        db$commit()
+        browser()
+        beg = inc + beg
+        end = end + inc
+    }
+    fact$clear()
+
+}

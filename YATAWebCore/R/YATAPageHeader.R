@@ -32,7 +32,7 @@
 
     custom_css <- NULL
 #    shiny::tags$header(
-           tags$div(class="yata-header",
+           tags$div(class="yata_header",
 #    tags$div(s
 #      class = "main-header",
       # custom_css,

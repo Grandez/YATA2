@@ -128,8 +128,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ###############################################
       # Operaciones sobre la tabla
       ##############################################
-      ,sqlraw  = function(sql,parms) {
+      ,queryRaw  = function(sql,parms) {
          db$query(sql, params=parms)
+      }
+      ,execRaw   = function(sql,parms) {
+         db$execute(sql, params=parms)
       }
       ,sql     = function(sql,...) {
          parms = NULL

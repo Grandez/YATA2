@@ -14,6 +14,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          ,providers    = NULL
          ,session     = NULL
          ,interval     = 5
+         ,monitor    = NULL
          ,fiats = c("EUR", "USD", "USDC", "USDT")
          ,plots = c( "Session day"          = "plotDay"
                     ,"Session day (var)"    = "plotDayVar"
@@ -29,14 +30,16 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              self$providers   = self$factory$getObject(self$codes$object$providers)
              self$operations  = self$factory$getObject(self$codes$object$operation)
              self$session    = self$factory$getObject(self$codes$object$session)
-             private$monitors = HashMap$new()
+
              
              self$vars$plotLeftChanged  = TRUE
              self$vars$plotRightChanged = TRUE
              self$vars$inEvent          = FALSE
              self$vars$inForm           = FALSE
+             self$vars$first            = 1
              self$vars$plotShow = list()
              private$applyCookies(session)
+             
          }
          ,setPlotVisible = function(left, right) {
              self$vars$plotShow = list(left, right)
@@ -95,25 +98,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
             self$interval = self$parms$getOnlineInterval()
             self$getRoot()$setInterval(self$interval)
         }
-         ,getMonitor  = function(name) {
-             if (missing(name)) return (private$monitors)
-             monitorDef = list(
-                 name    = ""
-                ,last    = 0
-                ,session = 0
-                ,day     = 0
-                ,week    = 0
-                ,price   = 0
-             )
-             if (is.null(private$monitors$get(name))) {
-                 monitorDef$name = name
-                 private$monitors$put(name, monitorDef)
-             }
-             private$monitors$get(name)                 
-         }
-         ,setMonitor = function(name, monitor) {
-             private$monitors$put(name, monitor)                 
-         }
       )
      ,private = list(
           opIdx        = list()
@@ -124,7 +108,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              cookies = self$vars$cookies
              self$vars$loading = TRUE
              if (!is.null(cookies$best)) {
-                 updIntegerInput("numBestTop", cookies$best$top)
+                 updIntegerInput("numBestTop", 23) # cookies$best$top)
                  updCombo("cboBestFrom", selected=cookies$best$interval)
              }
              self$vars$loading = FALSE
@@ -134,18 +118,23 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
     moduleServer(id, function(input, output, session) {
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl) || invalidate) pnl = YATAWEB$addPanel(PNLPos$new(id, pnlParent, session))
+#       cookie1 = pnl$getCookies("best")
+       cookie2 = pnl$getCookies("best")
        loadPanel = function() {
           pnl$setInterval()
           updNumericInput("numInterval", pnl$vars$interval)
           loadPosition()
-          initMonitors()
           pnl$loadSessionDay()
-#          if (!is.null(pnl$lastMonitors)) initMonitor()
           output$dtLast = updLabelDate({Sys.time()})
           updCombo("cboPlotLeft",  choices=pnl$plots, selected=pnl$plots[1])
           updCombo("cboPlotRight", choices=pnl$plots, selected=pnl$plots[3])
+          pnl$monitor = BLK.MONITORS$new(pnl, YATAWEB)
+          pnl$monitor$render(ns("monitor"))
           pnl$loaded = TRUE
        }
+       # updateNumericInput(session, "numBestTop", value=13)
+       # updateNumericInput(session, ns("numBestTop"), 18)
+       # browser()
        
        loadPosition = function() {
           output$tblPosGlobal  = updTablePosition(pnl$getGlobalPosition())
@@ -160,36 +149,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                                                         ," = updTablePosition(id=ns('"
                                                         ,paste0("pos", sfx), "'),   df)")))
                       })
-    #      insertMonitors(pnl$getMonitors())
            pnl$valid = TRUE
        }
-       initMonitors = function() {
-          ctc = pnl$getCurrencies()
-          lapply(ctc, function(item) pnl$getMonitor(item))
-
-          idDiv = paste0("#", ns("monitor"))
-          lapply(ctc, function(x) insertUI( selector = idDiv, immediate=TRUE
-                                           ,where = "beforeEnd"
-                                           ,ui=tagList(yuiYataMonitor(ns(paste0("monitor-",x))))))
-          monitors = pnl$getMonitor()
-          data     = pnl$getLatestSession()
-          df       = pnl$getGlobalPosition()
-
-          for (ctc in monitors$keys()) {
-               monitor         = monitors$get(ctc)
-               monitor$last    = data[[ctc]]$price
-               monitor$session = data[[ctc]]$price
-               monitor$hour    = data[[ctc]]$var01
-               monitor$day     = data[[ctc]]$var24
-               monitor$week    = data[[ctc]]$var07
-               monitor$price   = 0
-               if (nrow(df) > 0 && nrow(df[df$currency == ctc,]) > 0) {
-                  monitor$price = df[df$currency == ctc, "price"]
-               }
-               pnl$setMonitor(ctc, monitor)
-               updYataMonitor(ns(paste0("monitor-",ctc)), monitor) # No poner last
-          }
-       } 
        loadCameraUI = function(camera) {
           suffix = titleCase(camera)
           camera = pnl$cameras$getCameraName(camera)
@@ -263,25 +224,32 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
            
        }
 
-      autoInvalidate = reactiveTimer(pnl$interval * 60000)
-
-      # Antes del observer para que encuentre datos
+      if (!pnl$loaded) loadPanel()
       
-      if (!pnl$loaded) {
-          getBest(input$numBestTop, input$cboBestFrom )
-          loadPanel()
-      }
-
+      #####################################################
+      ### Timers                                        ###     
+      #####################################################
+      
       observe({
-         autoInvalidate()
-         output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
-
-         data = pnl$getLatestSession()
-         lapply(names(data), function(x) updYataMonitor(ns(paste0("monitor-",x)), pnl$getMonitor(x), data[[x]]$price))
-         plots()
-         
-#         info = list(id="rank", n=5)
-#         updRank(info, input,output,session)
+         message("observe primera vez")
+         # Se ejecuta una sola vez
+         invalidateLater(pnl$vars$first * 1000, session)
+         message("Entro en primera vez", pnl$vars$first)
+         if (pnl$vars$first > 1) {
+             # Carga inicial, todo esta actualizado
+             getBest(input$numBestTop, input$cboBestFrom )
+             plots()
+             pnl$vars$first = Inf
+         } else {
+            pnl$vars$first = pnl$vars$first + 1            
+         }
+      })
+      observe({
+          message("Observe normal")
+          invalidateLater(pnl$interval * 60000)
+          if (pnl$vars$first != Inf) return()
+          output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
+          pnl$monitor$update() 
      })
      
       observeEvent(input$plotBar, {
@@ -291,14 +259,15 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
      ### Panel Izquierdo
      #################################################
      
-      observeEvent(input$numInterval,  { pnl$interval = input$numInterval }, ignoreInit = TRUE)
+      observeEvent(input$numInterval,  { 
+          pnl$setCookies(interval= input$numInterval )
+          pnl$interval = input$numInterval 
+      }, ignoreInit = TRUE)
       observeEvent(list(input$cboPlotLeft, input$cboPlotRight), { 
           pnl$setPlotVisible(input$cboPlotLeft, input$cboPlotRight)
           plots()
       }, ignoreInit=TRUE)
-      # observeEvent(input$numBestTop,   { getBest(input$numBestTop, input$cboBestFrom )}, ignoreInit = TRUE)
-      # observeEvent(input$cboBestFrom,  { getBest(input$numBestTop, input$cboBestFrom )}, ignoreInit=TRUE)
-      
+
       observeEvent(input$tblBest_rows_selected, {
           pnl$vars$best = input$tblBest_rows_selected
           id = pnl$data$dfBest[input$tblBest_rows_selected, "id"]
@@ -316,9 +285,5 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           }
       })
       
-     #################################################
-     ### Ejecutar siempre
-     #################################################
-#      plots()
   })
 }    

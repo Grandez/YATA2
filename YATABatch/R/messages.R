@@ -7,7 +7,7 @@
 setVerbose = function(verbose) {
     msgDet <<- 0
     msgSum <<- 0
-    if (verbose) {
+    if (!missing(verbose)) {
         det = verbose %% 10
         msgDet <<- verbose %% 10
         msgSum <<- floor( verbose / 10)

@@ -68,13 +68,13 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
            tryCatch({res = RMariaDB::dbExecute(getConn(isolated), qry, params=params)
                      if (isolated) commit()
                     },warning = function(cond) {
-                       # browser()
+                        browser()
                        #  rollback();
                        #  yataWarning("Warning SQL", cond, "SQL", "Execute", cause=qry)
                        if (isolated) rollback()
                        stop(paste("WARNING en EXECUTE:", cond))
                     },error = function (cond) {
-                       # browser()
+                        browser()
                        #  rollback()
                         yataError("Error SQL", cond, "SQL", "Execute", cause=qry)
                        if (isolated) rollback()

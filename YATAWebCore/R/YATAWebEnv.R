@@ -36,15 +36,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          self$session = session
          # A veces hay YATA al final
          data = parseQueryString(session$request$HTTP_COOKIE)
-         #JGG Temporal
-         if (length(data) > 0) {
-             if ("prueba" %in% names(data)) return()
-             data = data[[1]]
-
-             idx = str_locate(data, ";[ \\t]+YATA$")
-             if (length(idx) && !is.na(idx[1])) data = substr(data,1,idx[1] - 1)
-             private$cookies = fromJSON(data)
-         }
+         private$cookies = fromJSON(data[[1]])
       }
      ,getPanel = function(name)  { private$panels$get(name) }
      ,addPanel = function(panel) {
@@ -54,8 +46,9 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
     ,getMsg      = function(code, ...) { MSG$get(code, ...) }
     ,getCookies  = function(id) { private$cookies[[id]] }
     ,setCookies = function(id, data) {
+      browser()
        private$cookies[[id]] = data
-       updateCookie(self$session, private$cookies)
+       updateCookie(self$session, YATA=private$cookies)
     }
     ,getCurrencyLabel = function(codes, style = 10) {
         if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, style))
@@ -63,9 +56,12 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         names(data) = codes
         data
     }
-    # ,currencyIcon = function(code) {
-    #   env$currencies(code)
-    # }
+    ,getCurrenciesID = function(codes) {
+        df = tblCurrencies$table(inValues=list(symbol=codes))
+        data = df$id
+        names(data) = df$symbol
+        data
+    }
   )
   ,private = list(
 # Cada objeto representa una pagina

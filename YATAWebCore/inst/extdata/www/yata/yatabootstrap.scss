@@ -1,4 +1,4 @@
-$primary:           #fff !default;
+$primary:           #000 !default;
 $headings-color:    black !default;
 /* Me dice el margen del grid de bootstrap */
 $grid-gutter-width: 6px !default;
@@ -25,4 +25,10 @@ $table-accent-bg: #ffc;
 ul.nav.navbar-nav > li > a {
 	display: block;
 	padding: .3rem 1rem;
+}
+
+.yata_header {
+   a {
+      color: #fff;
+   }
 }
