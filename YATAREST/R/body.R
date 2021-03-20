@@ -1,12 +1,12 @@
 logger = function(endp, beg=TRUE) {
     cat(paste(format(Sys.time(), "%H:%M:%S"), endp, ifelse (beg, "Started", "Ended"), "\n"))
 }
-best_body = function(top, count) {
+best_body = function(top, count, best) {
     logger("best")
     tryCatch({
     fact = YATACore::YATAFACTORY$new()
     sess = fact$getObject(YATACodes$object$session)
-    res = sess$getBest(top, count)
+    res = sess$getBest(top, count, best)
     fact$clear()
     logger("best", FALSE)
     res

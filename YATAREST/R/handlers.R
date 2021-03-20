@@ -1,5 +1,5 @@
 best_handler = function(.req, .res) {
-    writeLines(paste("best:", Sys.time()))
+      writeLines(paste("best:", Sys.time()))
 
     qryTop   = .req$parameters_query[["top"]]
     top      = ifelse(is.null(qryTop),10, as.integer(qryTop))
@@ -7,6 +7,17 @@ best_handler = function(.req, .res) {
     from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
       message("best - top: ", top, "- from: ", from)
     df = best_body(top, from)
+    .df_handler(df, .res)
+}
+besttop_handler = function(.req, .res) {
+    writeLines(paste("besttop:", Sys.time()))
+
+    qryTop   = .req$parameters_query[["top"]]
+    top      = ifelse(is.null(qryTop),10, as.integer(qryTop))
+    qryFrom  = .req$parameters_query[["from"]]
+    from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
+      message("besttop - top: ", top, "- from: ", from)
+    df = best_body(top, from, TRUE)
     .df_handler(df, .res)
 }
 

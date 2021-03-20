@@ -184,10 +184,11 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
            plot = eval(parse(text=paste0(idPlot, "(info, df, title)")))
        }
        
-       getBest = function(top, from) {
+       getBest = function(top, from, best) {
           from=as.integer(from)
-         restdf("best", top=top, from=from) %>%
-            then( function(df) {
+          rest = ifelse (best, "besttop", "best")
+          restdf(rest, top=top, from=from) %>%
+             then( function(df) {
                    pnl$data$dfBest = df
                    if (from ==  1) lbl = "Hora"
                    if (from ==  7) lbl = "Semana"
@@ -237,7 +238,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          message("Entro en primera vez", pnl$vars$first)
          if (pnl$vars$first > 1) {
              # Carga inicial, todo esta actualizado
-             getBest(input$numBestTop, input$cboBestFrom )
+             getBest(input$numBestTop, input$cboBestFrom, input$swBestTop )
              plots()
              pnl$vars$first = Inf
          } else {
@@ -274,8 +275,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           getHistorical(id)
      })
       observeEvent(input$btnTopOK, {
-          pnl$setCookies(best=list(top = input$numBestTop, interval = input$cboBestFrom))
-          getBest(input$numBestTop, input$cboBestFrom )
+          pnl$setCookies(best=list(top = input$numBestTop, interval = input$cboBestFrom, best=input$swBestTop))
+          getBest(input$numBestTop, input$cboBestFrom, input$swBestTop )
       })
       observeEvent(input$btnTopKO, {
           cookie = pnl$getCookies("best")

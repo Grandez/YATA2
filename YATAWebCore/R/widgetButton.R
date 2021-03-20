@@ -15,7 +15,7 @@ yuiBtnEdit      = function(id, label)        { shinyBS::bsButton(id, label, styl
 
 .btnIcon = function(color, ico, title) {
     sty = paste("simple; background-color:", color, ";")
-   yuiActionBtn(title=title, style = "simple", color=color, icon = icon(ico, class="yata-btn-icon"))
+   yuiActionBtn(title=title, style = "simple", color=color, icon = icon(ico, class="yata_btn_icon"))
 }
 yuiBtnIconAlert    = function(title) {.btnIcon("yellow"    , "bell"             ,ifelse(missing(title), "Alert" ,title)) }
 yuiBtnIconCancel   = function(title) {.btnIcon("red"       , "times"            ,ifelse(missing(title), "Cancel",title)) }

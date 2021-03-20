@@ -20,7 +20,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
 
        }
        ,setInterval   = function(interval) { private$interval = interval }
-       ,getBest       = function(top=15, from=24) {
+       ,getBest       = function(top=15, from=24, best=FALSE) {
             col = sprintf("var%02d", from)
             session = tblSession$getLatest()
 
@@ -31,6 +31,8 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             session = session[session$volume > 10,]
 
             ncol = which(col == colnames(session))
+
+            if (!missing(best) && best) session = session[session$rank < 150, ]
 
             dft = session[order(session[ncol], decreasing = TRUE),]
             dft = dft[1:top,]

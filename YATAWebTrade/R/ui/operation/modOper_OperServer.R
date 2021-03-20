@@ -83,6 +83,7 @@ modOperOperServer = function(id, full, pnl) {
           }
       },ignoreInit = TRUE, ignoreNULL = TRUE)
       observeEvent(input$btnOK, {
+         browser()
         # A veces se generan dos triggers (debe ser por los renderUI)
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {

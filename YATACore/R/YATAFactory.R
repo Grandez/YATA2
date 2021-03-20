@@ -13,8 +13,6 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       # Ponemos init y clear para manejar fuera de initialize y finalize
       ,initialize = function() {
          init(FALSE)
-         base = Sys.getenv("tmp")
-         fname = normalizePath(paste0(base, "/yata.log"))
        }
       ,finalize   = function() {
          clear()
