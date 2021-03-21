@@ -132,10 +132,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           pnl$monitor$render(ns("monitor"))
           pnl$loaded = TRUE
        }
-       # updateNumericInput(session, "numBestTop", value=13)
-       # updateNumericInput(session, ns("numBestTop"), 18)
-       # browser()
-       
+
        loadPosition = function() {
           output$tblPosGlobal  = updTablePosition(pnl$getGlobalPosition())
           cameras = pnl$position$getCameras()
@@ -172,12 +169,21 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
            }
        }
        makePlot = function(idPlot, uiplot, info) {
-           if (missing(info)) info = list(id=ns("plotBar"), ui=uiplot, plot=idPlot)
+           if (missing(info)) info = list()
+           info$observer = ns("modebar")
+           info$id   = ns(idPlot) 
+           info$ui   = uiplot
+           info$plot = idPlot
+           
            title = names(which(pnl$plots == idPlot))
            if (idPlot == "plotBest") {
+               info$src = "session"
                df  = pnl$data$dfBest
                row = pnl$vars$best
                title = paste0(df[row, "symbol"], " - ", df[row, "name"])
+           }
+           else {
+             info$src = "price"
            }
            df = pnl$getDFPlot(idPlot)
            if (is.null(df)) return (NULL)
@@ -253,8 +259,12 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           pnl$monitor$update() 
      })
      
-      observeEvent(input$plotBar, {
-          plots(input$plotBar$plot, input$plotBar)
+      observeEvent(input$modebar, {
+          info = input$modebar
+          tgt  = info$ui
+          
+          if (tgt == "plotLeft")  output$plotLeft  = updPlot({makePlot(info$plot, "plotLeft",  info)})
+          if (tgt == "plotRight") output$plotRight = updPlot({makePlot(info$plot, "plotRight", info)})
       })
      #################################################
      ### Panel Izquierdo

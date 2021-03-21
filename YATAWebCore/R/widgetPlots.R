@@ -1,6 +1,11 @@
 ###################################################
-### Widgets que dibujan graficos
+### Widgets que dibujan graficos por su nombre o tipo
 ### Utiliza YATAPlots para hacer los graficos
+### En funcion de la fuente sabemos que datos puede manejar
+### Con esta info establecemos los botones
+### Ejemplo:
+###   Si tenemos open/close/high/etc.
+###   Podemos hacer linea, diferencia, log, candle, etc
 ###################################################
 yuiPlot = function(id) {
    plotlyOutput(id)
@@ -22,12 +27,11 @@ plotDayVar = function(info, df, title) {
 }
 
 # plotBar = function(pnl) {
-#     browser()
 #    pltBars(pnl$df, x="symbol",y="prc")
 # }
 #
 # plotSession = function(pnl, df) {
-#    browser()
+
 #    if (missing(df)) df = pnl$getDFSession()
 #    pltLog(df)
 # }
@@ -47,10 +51,12 @@ plotTickerVar = function(info, df,title) {
 }
 
 plotBest = function(info, df, title) {
+   browser()
    dft = df
-   if (is.null(info$type))     return (pltCandle(info, df, title))
-   if (info$type == "linear")  return (pltLines (info, df[,-(2:7)], title))
-   pltCandle (info, df, title)
+   if (is.null(info$type))        return (pltCandle(info, df, title))
+   if (info$type == "Linear")     return (pltLines (info, df[,-(2:7)], title))
+   if (info$type == "Variation")  return (pltBars (info, prepareVariation(df), title))
+   NULL
 }
 # https://plotly-r.com/control-modebar.html
 

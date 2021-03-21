@@ -137,7 +137,6 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
 }
 
 ,updateMonitor = function(id, monitor, last) {
-  browser()
     idMon = paste0(id, "-monitor_", monitor$name)
 #         lapply(names(data), function(x) updateMonitor(ns(paste0("monitor-",x)), pnl$getMonitor(x), data[[x]]$price))
    repDiv = function (parent, child, ...) {

@@ -6,6 +6,7 @@ best_body = function(top, count, best) {
     tryCatch({
     fact = YATACore::YATAFACTORY$new()
     sess = fact$getObject(YATACodes$object$session)
+    browser()
     res = sess$getBest(top, count, best)
     fact$clear()
     logger("best", FALSE)

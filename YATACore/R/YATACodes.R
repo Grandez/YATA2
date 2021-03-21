@@ -11,6 +11,7 @@ YATACODES = R6::R6Class("YATA.CODES"
      ,currencies = "Currencies"
      ,providers  = "Providers"
      ,session    = "Session"
+     ,SVG        = "SVG"
     )
     ,tables = list(
          Position     = "Position"

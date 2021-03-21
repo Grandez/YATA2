@@ -34,9 +34,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      }
      ,setSession = function(session) {
          self$session = session
+         private$cookies = list()
          # A veces hay YATA al final
          data = parseQueryString(session$request$HTTP_COOKIE)
-         private$cookies = fromJSON(data[[1]])
+         if (length(data) > 0) private$cookies = fromJSON(data[[1]])
       }
      ,getPanel = function(name)  { private$panels$get(name) }
      ,addPanel = function(panel) {

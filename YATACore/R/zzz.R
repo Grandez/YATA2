@@ -6,7 +6,7 @@ library(YATATools)
 library(YATADB)
 library(YATAProviders)
 
-YATACodes = YATACore:::YATACODES$new()
+# YATACodes = YATACore:::YATACODES$new()
 .onAttach <- function(libname, pkgname){
   message("Loading YATACore")
   if (!exists("YATACodes")) {
