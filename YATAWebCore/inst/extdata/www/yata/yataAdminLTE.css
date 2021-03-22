@@ -1549,7 +1549,7 @@ a:focus {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 .box.box-primary {
-  border-top-color: #3c8dbc;
+  border-top-color: darkblue;
 }
 .box.box-info {
   border-top-color: #00c0ef;
@@ -1632,12 +1632,15 @@ a:focus {
   color: #444444;
 }
 .box.box-solid.box-primary {
-  border: 1px solid #3c8dbc;
+  border: 1px solid darkblue;
 }
 .box.box-solid.box-primary > .box-header {
   color: #ffffff;
+  background: darkblue;
+/* JGG
   background: #3c8dbc;
   background-color: #3c8dbc;
+*/
 }
 .box.box-solid.box-primary > .box-header a,
 .box.box-solid.box-primary > .box-header .btn {
@@ -1817,8 +1820,9 @@ a:focus {
   border-top-right-radius: 0;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
-  padding: 10px;
+  padding: 0 3px 0 3px;
 }
+
 .no-header .box-body {
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
@@ -2271,8 +2275,11 @@ a:focus {
   background-color: #e7e7e7;
 }
 .btn-primary {
+  background-color: darkblue;
+  /* JGG
   background-color: #3c8dbc;
   border-color: #367fa9;
+  */
 }
 .btn-primary:hover,
 .btn-primary:active,

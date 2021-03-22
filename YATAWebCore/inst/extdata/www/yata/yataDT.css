@@ -62,19 +62,14 @@
     display: flex;
 }
 
-/*
-table.dataTable.yata-table {
-    border: 1px solid red;
-}
-*/
-
 table.dataTable.yata-table thead th,
 table.dataTable.yata-table thead td {
-    padding: 2px;
+    padding: 0px;
 }
 
 table.dataTable.yata-table tbody td {
-    padding: 2px;
+    padding: 0px;
+    line-height: 1;
 }
 
 table.dataTable.yata-table tbody odd {

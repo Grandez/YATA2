@@ -17,16 +17,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
           private$env = env
           initMonitors()
      }
-     # ,setMonitor = function(name, monitor) { private$monitors$put(name, monitor) }
-     # ,getMonitor = function(name) {
-     #     def = tpl
-     #     if (is.null(monitors$get(name))) {
-     #         def$name = name
-     #         monitors$put(name, def)
-     #     }
-     #     monitors$get(name)
-     # }
-    ,render = function(size=2) {
+     ,render = function(size=2) {
         mon = monitors$values()
         lst = lapply(seq_len(ncol(mon)), function(i) mon[,i])
         lapply(lst, function(x) insertUI( selector = idDiv, immediate=TRUE
@@ -57,7 +48,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
                 ,id      = 0
              )
 
-      ,initMonitors = function() {
+    ,initMonitors  = function() {
           createMonitor = function(sym, dfPos, dfLast) {
               last = as.list(dfLast[dfLast$symbol == sym,])
               pos = dfPos[dfPos$symbol == sym,]
@@ -85,7 +76,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
 
           lapply(ctc, function(sym) createMonitor(sym, df, dfs))
       }
-     ,renderData = function(first=FALSE) {
+    ,renderData    = function(first=FALSE) {
          render = function(key) {
              mon = monitors$get(key)
              idMon = paste0(idDiv, "_", mon$name)
@@ -97,7 +88,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", x$name)
         tags$div(column(size,tableMonitor(idMon,x)))
      }
-    ,tableMonitor = function(idMon,data) {
+    ,tableMonitor  = function(idMon,data) {
          cprice = ""
          cday   = ""
          cweek  = ""
@@ -146,7 +137,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
           )
         )
     }
-   ,updateMonitor = function(id, last) {
+    ,updateMonitor = function(id, last) {
         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", id)
         mon = monitors$get(id)
 
@@ -162,7 +153,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
         updateRow(paste0(idMon,"_last_delta"),    value, percentage2string(value, calc=TRUE))
         shinyjs::html(paste0(idMon, "_last"), html = number2string(last, round=TRUE), asis = TRUE)
     }
-    ,updateRow = function(id, value, txt) {
+    ,updateRow     = function(id, value, txt) {
          shinyjs::removeCssClass(id, class = "yata_cell_data_up"   , asis = TRUE)
          shinyjs::removeCssClass(id, class = "yata_cell_data_down" , asis = TRUE)
          if (value != 1) cls = ifelse(value > 1, "yata_cell_data_up", "yata_cell_data_down")
