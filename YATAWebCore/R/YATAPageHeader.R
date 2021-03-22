@@ -40,7 +40,7 @@
              tags$div(style="float: left;",
 
 
-      shiny::tags$span(class="navbar-brand yata-brand", textOutput("appTitle", inline=TRUE)),
+      shiny::tags$span(class="navbar-brand yata_brand", textOutput("appTitle", inline=TRUE)),
             # Embed hidden icon so that we get the font-awesome dependency
       shiny::tags$span(shiny::icon("bars"), style = "display:none;"),
       # Sidebar toggle button
@@ -61,10 +61,10 @@
       #   role = "button",
       #   shiny::tags$span(class = "sr-only", "Toggle navigation")
       # ),
-      shiny::div(class="navbar yata-nav-left", tabnav),
+      shiny::div(class="navbar yata_nav_left", tabnav),
       # right menu
-      shiny::tags$div(id="yata-right-menu-btn",
-        class = "navbar-custom-menu yata-nav-right",
+      shiny::tags$div(id="yata_right_menu_btn",
+        class = "navbar-custom-menu yata_nav_right",
         shiny::tags$ul(class = "nav navbar-nav", items,
                        shiny::tags$li(shiny::tags$a(href = "#",`data-toggle` = "control-sidebar",controlbarIcon))
         )
@@ -165,7 +165,7 @@
       #JGG     left_menu_items
       #JGG   )
       #JGG ),
-      div(class="navbar-collapse collapse yata-brand", id=navId, nav),
+      div(class="navbar-collapse collapse yata_brand", id=navId, nav),
       # right menu
       shiny::tags$div(
         class = "navbar-custom-menu",

@@ -52,11 +52,11 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             df  = tblExchanges$uniques(c("camera"), symbol=currency)
             tblCameras$table(inValues=list(id=df$camera))
         }
-        ,getNames = function(codes, full = FALSE) {
-            df = tblCurrencies$table(inValues=list(id=codes))
-            if (full) df$name = paste(df$id, df$name, sep = " - ")
-            df
-        }
+        # ,getNames = function(codes, full = FALSE) {
+        #     df = tblCurrencies$table(inValues=list(id=codes))
+        #     if (full) df$name = paste(df$id, df$name, sep = " - ")
+        #     df
+        # }
         ,addBulk = function(data) { tblCurrencies$bulkAdd(data)}
     )
     ,private = list(

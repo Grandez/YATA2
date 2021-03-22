@@ -21,7 +21,7 @@ YATAPage =  function(title = NULL,id = NULL,
   pageTitle <- "YATA - Sin conexion"
 
   # navbar class based on options
-  navbarClass <- "navbar yata-navbar" # navbar-default
+  navbarClass <- "navbar yata_navbar" # navbar-default
   position <- match.arg(position)
   if (!is.null(position))
     navbarClass <- paste(navbarClass, " navbar-", position, sep = "")
@@ -32,7 +32,7 @@ YATAPage =  function(title = NULL,id = NULL,
   # build the tabset Devuelve una lista con: navlist y content
   tabs <- list(...)
 
-  tabset <- shiny:::buildTabset(tabs, "nav navbar-nav yata-menu", NULL, id, selected)
+  tabset <- shiny:::buildTabset(tabs, "nav navbar-nav yata_menu", NULL, id, selected)
 
   # function to return plain or fluid class name
   className <- function(name) {
@@ -94,10 +94,9 @@ YATAPage =  function(title = NULL,id = NULL,
   divFooter = "YATA - Grandez"
   divHeader = .yataPageHeader(tabnav=tabset$navList) #,tags$nav(class=navbarClass, role="navigation", containerDiv)
   divMain   =  contentDiv
-  page = tags$div( class="yata-page", divHeader
-#           ,tags$div(class="yata-header", divHeader)
-           ,tags$div(class="yata-main",   divMain)
-           ,tags$div(class="yata-footer", divFooter)
+  page = tags$div( class="yata_page", divHeader
+           ,tags$div(class="yata_main",   divMain)
+           ,tags$div(class="yata_footer", divFooter)
   )
 
   mainFormErr = hidden(tags$div(id="yata_main_err", class="yata_panel_err"
@@ -112,7 +111,7 @@ YATAPage =  function(title = NULL,id = NULL,
   #                                  ,class ="yata-form-center container"
   #                                  ,uiOutput("form")))
   # )
-  container   = tags$div(id="yata-container", class="yata-container", page, shinyjs::hidden(mainFormErr))
+  container   = tags$div(id="yata_container", class="yata_container", page, shinyjs::hidden(mainFormErr))
 
    bspage =   shiny::bootstrapPage(
          useShinyjs()

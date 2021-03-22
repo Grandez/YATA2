@@ -5,34 +5,6 @@ modOperPosServer = function(id, full, pnl) {
     
    }
    moduleServer(id, function(input, output, session) {
-      prepareTable   = function (df) {
-          asList = function(data) {
-             labels = data$name
-             names(labels) = data$id
-             labels
-          }
-         labels     = asList(pnl$cameras$getCameras())
-         df$camera  = labels[df$camera]
-         labels     = asList(pnl$currencies$getNames(df$base))
-         df$base    = labels[df$base]
-         labels     = asList(pnl$currencies$getNames(df$counter))
-         df$counter = labels[df$counter]
-         df
-      }
-      prepareTableOpen = function (df) {
-         if (nrow(df) == 0) return(df)
-         last = pnl$getRoot()$getLatestSession()
-         df$cost = df$price
-
-         for (idx in 1:nrow(df)) {
-             cc = df[idx, "counter"]
-             if (!is.null(last[[cc]])) df[idx, "price"] = last[[cc]]$last
-         }
-         df$delta = (df$price / df$cost) - 1
-         df$balance = df$delta * df$cost * df$amount
-         df = df[,c("camera", "base", "counter", "amount", "cost", "price", "delta", "value", "balance")]
-         yataSetClasses(df, prc=c(7), imp=c(4,5,6,8,9))
-      }
       loadPosition   = function() { 
          data = FALSE
          df = pnl$loadOperations(pnl$codes$status$pending)
@@ -65,27 +37,17 @@ modOperPosServer = function(id, full, pnl) {
          shinyjs::hide("opExecuted")
          btns = NULL         
          df = pnl$loadOperations(pnl$codes$status$executed)
-         df = prepareTableOpen(df)
+         df = prepareOpen(df, pnl)
 
          if (nrow(df) > 0) {
              data = TRUE
-             shinyjs::show("opOpen")
              table = "open"
-             df = prepareTable(df)
              btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
                       ,yuiTblButton(full, table, "View", yuiBtnIconView())
              )
          }
 
          output$tblOpen = updTableOperations(df, buttons=btns)
-         if (data) {
-             hide("nodata")
-             show("data")
-         } else {
-             hide("data")
-             show("nodata")
-         }
-         
          pnl$valid = TRUE
       }
       selectOperation = function(row, status) {

@@ -5,8 +5,7 @@ best_body = function(top, count, best) {
     logger("best")
     tryCatch({
     fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(YATACodes$object$session)
-    browser()
+    sess = fact$getObject(fact$codes$object$session)
     res = sess$getBest(top, count, best)
     fact$clear()
     logger("best", FALSE)
@@ -17,7 +16,7 @@ latest_body = function() {
     tryCatch({
     logger("latest")
     fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(YATACodes$object$session)
+    sess = fact$getObject(fact$codes$object$session)
     res = sess$getLatest()
     fact$clear()
     res
@@ -28,7 +27,7 @@ update_body = function() {
     tryCatch({
     logger("update")
     fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(YATACodes$object$session)
+    sess = fact$getObject(fact$codes$object$session)
     res = sess$updateLatest()
     fact$clear()
     logger("update", FALSE)
@@ -40,7 +39,7 @@ hist_body = function(id, from, to) {
     tryCatch({
     logger("hist")
     fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(YATACodes$object$session)
+    sess = fact$getObject(fact$codes$object$session)
     res = sess$getHistorical("EUR", id,from,to)
     fact$clear()
     res
@@ -49,7 +48,7 @@ hist_body = function(id, from, to) {
 
 execLatest = function() {
     fact = YATACore::YATAFACTORY$new()
-    session = fact$getObject(YATACodes$object$session)
+    session = fact$getObject(fact$codesodes$object$session)
     res = session$updateLatest()
     fact$clear()
     res

@@ -51,7 +51,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             df = df[,c("id", "name", "symbol", "slug", "rank",)]
             df
         }
-        ,getLatest = function() {
+        ,getLatest = function(currencies) {
             dt = Sys.time()
             if (difftime(dt, lastGet, units="mins")  > interval) {
                 private$lastGet = dt
@@ -59,6 +59,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             } else {
                 df = tblSession$getLatest()
             }
+            if (!missing(currencies)) df[df$symbol %in% currencies,]
         }
        ,updateLatest = function() {
            # Es publico para que se pueda lanzar asincronamente

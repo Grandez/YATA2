@@ -102,7 +102,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
      ,private = list(
           opIdx        = list()
          ,selected     = NULL
-         ,lastMonitors = NULL
          ,monitors     = NULL 
          ,applyCookies = function(session) {
              cookies = self$vars$cookies
@@ -128,8 +127,9 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           output$dtLast = updLabelDate({Sys.time()})
           updCombo("cboPlotLeft",  choices=pnl$plots, selected=pnl$plots[1])
           updCombo("cboPlotRight", choices=pnl$plots, selected=pnl$plots[3])
-          pnl$monitor = BLK.MONITORS$new(pnl, YATAWEB)
-          pnl$monitor$render(ns("monitor"))
+          pnl$monitor = BLK.MONITORS$new(ns("monitor"), pnl, YATAWEB)
+          pnl$monitor$render()
+#          pnl$monitor$update()
           pnl$loaded = TRUE
        }
 

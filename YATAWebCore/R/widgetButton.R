@@ -15,7 +15,7 @@ yuiBtnEdit      = function(id, label)        { shinyBS::bsButton(id, label, styl
 
 .btnIcon = function(color, ico, title) {
     sty = paste("simple; background-color:", color, ";")
-   yuiActionBtn(title=title, style = "simple", color=color, icon = icon(ico, class="yata_btn_icon"))
+   yuiActionBtn(title=title, style = "simple", color=color, class="yata_btn_icon", icon = icon(ico, class="yata_btn_icon"))
 }
 yuiBtnIconAlert    = function(title) {.btnIcon("yellow"    , "bell"             ,ifelse(missing(title), "Alert" ,title)) }
 yuiBtnIconCancel   = function(title) {.btnIcon("red"       , "times"            ,ifelse(missing(title), "Cancel",title)) }
@@ -43,7 +43,7 @@ yuiTblButton = function(id, table, label, btn) {
 # Action: Removed match.arg color control
 #         Removed id and label
 #         Removed attach
-yuiActionBtn = function (title=NULL, icon = NULL, style = "unite",
+yuiActionBtn = function (title=NULL, icon = NULL, style = "unite", class=NULL,
 #JGG yataActionBttn = function (inputId, label = NULL, icon = NULL, style = "unite",
     color = "default", size = "md", block = FALSE,
     no_outline = TRUE)
@@ -57,7 +57,7 @@ yuiActionBtn = function (title=NULL, icon = NULL, style = "unite",
     size <- match.arg(arg = size, choices = c("xs", "sm", "md", "lg"))
     tagBttn <- tags$button( type = "button"
                            ,title=title
-                           ,class = "action-button bttn"
+                           ,class = paste("action-button bttn", class)
                            ,class = paste0("bttn-", style)
                            ,class = paste0("bttn-",size)
                            ,list(icon,label)

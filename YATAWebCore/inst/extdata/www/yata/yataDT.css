@@ -41,7 +41,11 @@
     margin: 0;
     vertical-align: middle;
     min-width: 5em;
+    font-weight: bold;
 }
+.yata_cell_data_up   { color: green; }
+.yata_cell_data_down { color: red;   }
+
 .yata_cell_ctc {
     text-align: center;
     padding: 2px 0.5em 0 0.5em;

@@ -11,12 +11,8 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,parms  = NULL
       ,MSG    = NULL  # Like WEB
       # Ponemos init y clear para manejar fuera de initialize y finalize
-      ,initialize = function() {
-         init(FALSE)
-       }
-      ,finalize   = function() {
-         clear()
-      }
+      ,initialize = function() { init(FALSE) }
+      ,finalize   = function() { clear()     }
       ,clear     = function(){
          if (!is.null(DBFactory))   DBFactory$finalize()
          if (!is.null(ProvFactory)) ProvFactory$finalize()
@@ -25,14 +21,10 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
          private$objects = NULL
 #         gc(verbose=FALSE)
       }
-      ,getDBName  = function() {
+      ,getDBName = function() {
           db = getDB()
-          if (!is.null(db)) {
-              db$name
-          }
-          else {
-            NULL
-          }
+          if (!is.null(db)) db$name
+          else              NULL
       }
       ,getDBID   = function() { DBFactory$getID() }
       ,getDB     = function()                    { DBFactory$getDB()       }
@@ -88,14 +80,15 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
 
+          self$codes  = YATACore::YATACODES$new()
+
           private$objects     = HashMap$new()
           private$classes     = HashMap$new()
           private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
           private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
 
           self$parms  = OBJParms$new   (private$DBFactory)
-          self$MSG    = OBJMessages$new(private$DBFactory)
-          self$codes  = YATACore::YATACODES$new()
+          self$MSG    = OBJMessages$new(self$codes, private$DBFactory)
 
           if (parms$autoConnect()) {
               setDB(parms$lastOpen())

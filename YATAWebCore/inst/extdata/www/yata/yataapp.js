@@ -364,13 +364,13 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                     var page = $.YATA.page;
 
                     if (page !== null) {
-                        var id = "#" + page + "-container-left";
-                        if ($(id).hasClass('yata-leftside-closed')) {
-                            //$(id).addClass('yata-leftside-open');
-                            $(id).removeClass('yata-leftside-closed').trigger('expanded.pushMenu');
+                        var id = "#" + page + "_container_left";
+                        if ($(id).hasClass('yata_leftside_closed')) {
+                            //$(id).addClass('yata_leftside_open');
+                            $(id).removeClass('yata_leftside_closed').trigger('expanded.pushMenu');
                         } else {
-                            //$(id).removeClass('yata-leftside-open');
-                            $(id).addClass('yata-leftside-closed').trigger('collapsed.pushMenu');
+                            //$(id).removeClass('yata_leftside_open');
+                            $(id).addClass('yata_leftside_closed').trigger('collapsed.pushMenu');
                         }
                     }
 /*

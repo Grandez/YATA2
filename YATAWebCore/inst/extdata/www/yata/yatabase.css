@@ -15,19 +15,19 @@ html, body {
   font-weight: bold;
 }
 
-.yata-data-1 {
+.yata_data_1 {
   color: red;
 }
 
-.yata-data-2 {
+.yata_data_2 {
   color: green;
 }
 
-.yata-data-3 {
+.yata_data_3 {
   color: black;
 }
 
-.yata-data-4 {
+.yata_data_4 {
   color: blue;
 }
 
@@ -36,14 +36,13 @@ html, body {
   justify-content: space-around;
 }
 
-.yata-container {
+.yata_container {
   height: 100%;
-  width: 100%;
-  /*  display: flex;
-    flex-direction: column;*/
+  display: flex;
+  flex-direction: column;
 }
 
-.yata-page {
+.yata_page {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -61,12 +60,12 @@ html, body {
   color: white;
 }
 
-.yata-main {
+.yata_main {
   flex: 1;
   overflow: auto;
 }
 
-.yata-footer {
+.yata_footer {
   background-color: black;
   /*
     position: absolute;
@@ -100,35 +99,35 @@ td .selectize-control {
   margin-bottom: 0;
 }
 
-.yata-primary {
+.yata_primary {
   background-color: #007bff;
 }
 
-.yata-secondary {
+.yata_secondary {
   background-color: #6c757d;
 }
 
-.yata-success {
+.yata_success {
   background-color: #28a745;
 }
 
-.yata-info {
+.yata_info {
   background-color: #17a2b8;
 }
 
-.yata-warning {
+.yata_warning {
   background-color: #ffc107;
 }
 
-.yata-danger {
+.yata_danger {
   background-color: #dc3545;
 }
 
-.yata-light {
+.yata_light {
   background-color: #f8f9fa;
 }
 
-.yata-dark {
+.yata_dark {
   background-color: #343a40;
 }
 
@@ -146,7 +145,7 @@ body {
 /*********************************/
 /* Basico                        */
 /*********************************/
-.yata-title {
+.yata_title {
   text-align: center;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 30px;
@@ -157,23 +156,23 @@ body {
   color: inherit;
 }
 
-.yata-title-1 {
+.yata_title_1 {
   text-align: center;
 }
 
-.yata-title-2 {
+.yata_title_2 {
   text-align: center;
 }
 
-.yata-title-3 {
+.yata_title_3 {
   text-align: center;
 }
 
-.yata-title-4 {
+.yata_title_4 {
   text-align: center;
 }
 
-.yata-title-5 {
+.yata_title_5 {
   text-align: center;
 }
 
@@ -230,7 +229,6 @@ body {
 }
 
 #yataContentMain {
-  width: 100%;
   display: flex;
   flex-direction: row;
 }
@@ -243,11 +241,11 @@ body {
   transition: 0.5s;
 }
 
-#yata-right-menu-btn {
+#yata_right_menu_btn {
   visibility: visible;
 }
 
-#yata-left-menu-btn {
+#yata_left_menu_btn {
   visibility: visible;
   /* visibility: hidden; */
 }
@@ -255,24 +253,24 @@ body {
 /*********************************/
 /* Navegacion                    */
 /*********************************/
-.yata-brand {
+.yata_brand {
   float: left;
   min-width: 8em;
 }
 
-.yata-brand:hover {
+.yata_brand:hover {
   cursor: pointer;
 }
 
-.yata-nav-left {
+.yata_nav_left {
   float: left;
 }
 
-.yata-nav-right {
+.yata_nav_right {
   float: right;
 }
 
-.yata-logo {
+.yata_logo {
   min-width: 64px;
 }
 
@@ -280,12 +278,12 @@ body {
   list-style: inline;
 }
 
-.yata-navbar {
+.yata_navbar {
   background-image: linear-gradient(black, gray, black);
   color: white;
 }
 
-.yata-navbar a {
+.yata_navbar a {
   color: white;
 }
 
@@ -306,20 +304,18 @@ body {
 /*********************************/
 /* Paneles                       */
 /*********************************/
-.yata-panel-content {
+.yata_panel_content {
   display: flex;
   flex-flow: row nowrap;
-  /*   padding-top: 12px; */
-  /*   background-color: DodgerBlue; */
 }
 
-.yata-form-header {
+.yata_form_header {
   top: 0;
   margin: 0;
   padding: 0;
 }
 
-.yata-panel-form {
+.yata_panel_form {
   position: absolute;
   top: 0;
   left: 0;
@@ -352,7 +348,7 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.yata-form-center {
+.yata_form_center {
   margin: 0;
   position: absolute;
   background-color: RGBA(255, 255, 255, 1);
@@ -367,7 +363,7 @@ body {
   transform: translateY(-25%);
 }
 
-.yata-row-buttons {
+.yata_row_buttons {
   display: block;
   text-align: center;
   padding: 6px;
@@ -376,23 +372,23 @@ body {
 /*********************************/
 /* Paneles laterales             */
 /*********************************/
-.yata-panel-main {
+.yata_panel_main {
   /*margin-left: 340px;*/
   width: 100%;
 }
 
-.yata-panel-left {
+.yata_panel_left {
   background-color: lightgray;
   width: 380px;
 }
 
-.yata-leftside-closed {
+.yata_leftside_closed {
   display: none;
 }
 
 /*
-.yata-leftside-closed .yata-panel-main  ,
-.yata-leftside-closed .yata-panel-left  {
+.yata_leftside-closed .yata_panel-main  ,
+.yata_leftside-closed .yata_panel-left  {
     -webkit-transform: translate(-340px, 0);
     -moz-transform:    translate(-340px, 0);
     -ms-transform:     translate(-340px, 0);
@@ -400,8 +396,8 @@ body {
     transform:         translate(-340px, 0);
 }
 
-.yata-leftside-open .yata-panel-main ,
-.yata-leftside-open .yata-panel-left {
+.yata_leftside-open .yata_panel-main ,
+.yata_leftside-open .yata_panel-left {
     -webkit-transform: translate(0, 0);
     -moz-transform:    translate(0, 0);
     -ms-transform:     translate(0, 0);
@@ -409,7 +405,7 @@ body {
     transform:         translate(0, 0);
 }
 */
-.yata-left-sidebar {
+.yata_left_sidebar {
   /*
     padding-top: 50px;
     min-height: 100%;
@@ -424,7 +420,7 @@ body {
 }
 
 /*
-.yata-leftside-collapse {
+.yata_leftside-collapse {
     -webkit-transform: translate(-340px, 0);
     -moz-transform:    translate(-340px, 0);
     -ms-transform:     translate(-340px, 0);
@@ -517,7 +513,6 @@ body {
   text-align: right;
 }
 
-
 #sessionLastUpdate {
   float: right;
   font-size: 0.8em;
@@ -549,6 +544,7 @@ body {
 
 .yata_btn_icon {
   color: white;
+  width: 24px;
 }
 
 .yata_center {
@@ -578,7 +574,7 @@ body {
   color: crimson;
 }
 
-.yata-number {
+.yata_number {
   text-align: right;
 }
 
@@ -589,12 +585,6 @@ body {
   padding: 5px;
   color: white;
   font-size: 14px;
-}
-
-.yata-rank-title {
-  text-align: center;
-  color: black;
-  font-weight: bold;
 }
 
 main-header {
