@@ -47,7 +47,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
     ,getMsg      = function(code, ...) { MSG$get(code, ...) }
     ,getCookies  = function(id) { private$cookies[[id]] }
     ,setCookies = function(id, data) {
-      browser()
        private$cookies[[id]] = data
        updateCookie(self$session, YATA=private$cookies)
     }
@@ -55,6 +54,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, style))
         else                   data = lapply(codes, function(code) .getNameBySym(code, style))
         names(data) = codes
+        if (length(codes) == 1) return (data[[1]])
         data
     }
     ,getCurrenciesID = function(codes) {

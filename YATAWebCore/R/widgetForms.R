@@ -1,18 +1,3 @@
-# Componente que muestra una lista de opciones en modo tabla
-# Pone un columna de error
-# ... un conjunto de filas yuiFormRow
-# yuiFormTable = function(width=6,  ...) {
-#    divTbl  = tags$div(class="yataCentered")
-#    tbl  = tags$table(class="yataForm")
-#    #rows = lapply(list(...), function(row) .makeRow(row))
-#    divTbl = tagAppendChild(divTbl,tagAppendChildren(tbl, ...))
-#    if (width < 12) {
-#        left = floor((12-width)/2)
-#        if (left > 0) return (fluidRow(column(left), column(width, divTbl)))
-#    }
-#    fluidRow(column(width, divTbl))
-# }
-
 yuiFormTable = function(...) {
    divTbl  = tags$div(class="yataCentered")
    tbl  = tags$table(class="yataForm")

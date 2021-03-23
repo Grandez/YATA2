@@ -8,7 +8,7 @@ frmOperChangeInput = function(base, data) {
            ,column(4,
                h2("Base")
               ,yuiFormTable(
-                 yuiFormRow("Camara2",   yuiLabelText(ns("LblCamera")))
+                 yuiFormRow("Camara",   yuiLabelText(ns("LblCamera")))
                 ,yuiFormRow("Base",     yuiLabelText(ns("LblBase")))
                 ,yuiFormRow("Counter",  yuiLabelText(ns("LblCounter")))
                 ,yuiFormRow("Cantidad", yuiNumericInput(ns("ImpAmount"), NULL, value = amount))

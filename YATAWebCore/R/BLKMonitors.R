@@ -154,6 +154,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
         shinyjs::html(paste0(idMon, "_last"), html = number2string(last, round=TRUE), asis = TRUE)
     }
     ,updateRow     = function(id, value, txt) {
+         cls =""
          shinyjs::removeCssClass(id, class = "yata_cell_data_up"   , asis = TRUE)
          shinyjs::removeCssClass(id, class = "yata_cell_data_down" , asis = TRUE)
          if (value != 1) cls = ifelse(value > 1, "yata_cell_data_up", "yata_cell_data_down")

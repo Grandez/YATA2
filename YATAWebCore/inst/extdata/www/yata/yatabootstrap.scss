@@ -7,6 +7,36 @@ $grid-gutter-width: 6px !default;
 // $table-accent-bg:             rgba($black, .05) !default;
 $table-accent-bg: #ffc;
 
+$line-height-base:  1;
+$line-height-lg:    1;
+$line-height-sm:    1;
+$input-line-height: 1;
+
+$form-group-margin-bottom: 0;
+// Esto afecta a otros botones
+//TEST $input-btn-padding-y:         0; //JGG .375rem !default;
+//TEST $input-btn-padding-x:         0; //JGG .75rem !default;
+$input-btn-font-family:       null !default;
+// $input-btn-font-size:         $font-size-base !default;
+$input-btn-line-height:       $line-height-base !default;
+
+$input-btn-focus-width:       .2rem !default;
+// $input-btn-focus-color:       rgba($component-active-bg, .25) !default;
+// $input-btn-focus-box-shadow:  0 0 0 $input-btn-focus-width $input-btn-focus-color !default;
+
+$input-btn-padding-y-sm:      0; //JGG .25rem !default;
+$input-btn-padding-x-sm:      0; //JGG .5rem !default;
+// $input-btn-font-size-sm:      $font-size-sm !default;
+// $input-btn-line-height-sm:    $line-height-sm !default;
+
+$input-btn-padding-y-lg:      0; // .5rem !default;
+$input-btn-padding-x-lg:      0; // 1rem !default;
+// $input-btn-font-size-lg:      $font-size-lg !default;
+// $input-btn-line-height-lg:    $line-height-lg !default;
+
+// $input-btn-border-width:      $border-width !default;
+
+
 @import "bootstrap-4.3.1/scss/bootstrap";
 
 .row {

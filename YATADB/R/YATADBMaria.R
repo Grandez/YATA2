@@ -7,6 +7,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
         connRead   = NULL   # Conexion para leer datos
        ,connTran   = NULL   # Conexion para actualizar datos
        ,initialize = function(data) {
+#          message("Creando conexion a MariaDB")
            private$dbInfo = data
            self$engine    = dbInfo$engine
            self$name      = dbInfo$name
@@ -15,16 +16,21 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
        }
       ,finalize = function() {
           if (!is.null(connTran)) {
+#             message("Cerrando conexion transaccional")
               commit()
               disconnect(connTran)
           }
-          if (!is.null(connRead)) disconnect(connRead)
+          if (!is.null(connRead)) {
+#             message("Cerrando conexion lectura")
+             disconnect(connRead)
+          }
        }
       ,print      = function() {
           db = ifelse(is.null(self$connRead), "No Connection", paste0(dbInfo$name, " (", dbInfo$dbname, ")"))
           message(db, ": MariaDB Database")
        }
       ,connect    = function ()     {
+          message("Abriendo conexion")
           tryCatch({conn = RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
                                                ,username = dbInfo$user
                                                ,password = dbInfo$password
@@ -33,10 +39,17 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                                                ,dbname   = dbInfo$dbname
                     )
 #                    private$addConn(conn)
-          },error = function(cond) { yataError("Error de conexion", cond, "SQL", "connect") })
+          },error = function(cond) {
+              browser()
+              yataError("Error de conexion", cond, "SQL", "connect") })
       }
       ,disconnect = function(conn) {
-          tryCatch({ RMariaDB::dbDisconnect(self$conn) }, error = function(cond) {})
+#          message("Cerrando conexion")
+          tryCatch({ RMariaDB::dbDisconnect(conn) }, error = function(cond) {
+              message("ERROR en disconnect")
+             browser()
+              cat(cond)
+          })
       }
       ,begin      = function() {
           if (!private$trx) RMariaDB::dbBegin   (connTran)

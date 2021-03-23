@@ -5,6 +5,7 @@ modOperPosInput = function(id, title) {
           ,tags$div(column(7, yuiBox(ns("opOpen"),     "Abiertas",  yuiDataTable(ns("tblOpen")))))           
           ,tags$div( column(6,yuiBox(ns("opPending"),  "Pendiente", yuiDataTable(ns("tblPending"))))
                     ,column(6,yuiBox(ns("opAccepted"), "Aceptadas", yuiDataTable(ns("tblAccepted")))))
+           ,actionButton(ns("btnAdd"), "Crear")
           
         )
        ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))

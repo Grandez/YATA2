@@ -6,6 +6,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
    ,lock_class = TRUE
    ,public = list(
        initialize = function(base) {
+#          message("Creando DBFactory")
           if (!missing(base)) {
               private$dbBase  = connect(base)
           } else {
@@ -16,6 +17,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
        }
       ,print      = function()     { message("Databases Factory") }
       ,finalize   = function()     {
+#          message("Destruyendo DBFactory")
          if (!is.null(dbBase)) { dbBase$finalize(); private$dbBase = NULL }
          if (!is.null(dbAct))  { dbAct$finalize();  private$dbAct  = NULL }
       }

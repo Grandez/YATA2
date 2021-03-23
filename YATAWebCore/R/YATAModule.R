@@ -1,7 +1,11 @@
-YATAModule = function(id, title="", ...) {
+YATAModule = function(id, title="",mod=NULL, ...) {
     ns = NS(id)
-    modName =  paste0(YATATools::titleCase(strsplit(id, "-")[[1]]), collapse="")
-    data = eval(parse(text=paste0("mod", modName, "Input('", id, "')"))) #, title, "')")))
+    if (is.null(mod)) {
+        modName =  paste0(YATATools::titleCase(strsplit(id, "-")[[1]]), collapse="")
+        data = eval(parse(text=paste0("mod", modName, "Input('", id, "')"))) #, title, "')")))
+    } else {
+        data = eval(parse(text=paste0("mod", mod, "Input('", id, "')")))
+    }
 
     idForm = paste0(id, "_div_form")
     idErr  = paste0(id, "_div_err")
@@ -17,10 +21,10 @@ YATAModule = function(id, title="", ...) {
     divContent = tags$div( id=ns("container"), class="yata_panel_content"
                           ,divLeft, divMain, divRight)
     divForm = tags$div(id=ns("form_panel"), class="yata_panel_form"
-                       ,tags$div(id=paste0(idForm, "_container"), class="yata_form_center", uiOutput(ns("form")))
+                       ,tags$div(id=paste0(idForm, "-container"), class="yata_form_center", uiOutput(ns("form")))
         )
     divErr = tags$div(id=ns("err_panel"), class="yata_panel_err"
-                      ,tags$div(id=paste0(idErr, "_container"), class="yata_form_center", uiOutput(ns("err")))
+                      ,tags$div(id=paste0(idErr, "-container"), class="yata_form_center", uiOutput(ns("err")))
         )
     tagList( divContent # data
             ,shinyjs::hidden(divForm)
@@ -43,10 +47,10 @@ YATASubModule = function(name, id, title="", leftside=FALSE, ...) {
                          , tags$div(id=ns("container_data"), class="yata_nav_left",data)
     )
     divForm = tags$div(id=ns("form_panel"), class="yata_panel_form"
-                       ,tags$div(id=paste0(idForm, "_container"), class="yata_form_center", uiOutput(ns("form")))
+                       ,tags$div(id=paste0(idForm, "-container"), class="yata_form_center", uiOutput(ns("form")))
         )
     divErr = tags$div(id=ns("err_panel"), class="yata_panel_err"
-                      ,tags$div(id=paste0(idErr, "_container"), class="yata_form_center", uiOutput(ns("err")))
+                      ,tags$div(id=paste0(idErr, "-container"), class="yata_form_center", uiOutput(ns("err")))
         )
     tagList( divContent # data
             ,shinyjs::hidden(divForm)

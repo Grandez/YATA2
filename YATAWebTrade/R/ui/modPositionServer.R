@@ -117,8 +117,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
     moduleServer(id, function(input, output, session) {
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl) || invalidate) pnl = YATAWEB$addPanel(PNLPos$new(id, pnlParent, session))
-#       cookie1 = pnl$getCookies("best")
-       cookie2 = pnl$getCookies("best")
        loadPanel = function() {
           pnl$setInterval()
           updNumericInput("numInterval", pnl$vars$interval)
@@ -129,7 +127,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           updCombo("cboPlotRight", choices=pnl$plots, selected=pnl$plots[3])
           pnl$monitor = BLK.MONITORS$new(ns("monitor"), pnl, YATAWEB)
           pnl$monitor$render()
-#          pnl$monitor$update()
           pnl$loaded = TRUE
        }
 

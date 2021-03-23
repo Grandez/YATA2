@@ -10,7 +10,7 @@ best_body = function(top, count, best) {
     fact$clear()
     logger("best", FALSE)
     res
-    }, error = function(e) print("ERROR en best: ", e, "\n"))
+    }, error = function(e) print("ERROR en best: \n")) #, e, "\n"))
 }
 latest_body = function() {
     tryCatch({
@@ -21,7 +21,7 @@ latest_body = function() {
     fact$clear()
     res
     logger("latest", FALSE)
-}, error = function(e) print("ERROR en latest: ", e, "\n"))
+}, error = function(e) print("ERROR en latest: \n")) #, e, "\n"))
 }
 update_body = function() {
     tryCatch({
@@ -31,7 +31,7 @@ update_body = function() {
     res = sess$updateLatest()
     fact$clear()
     logger("update", FALSE)
-}, error = function(e) print("ERROR en update: ", e, "\n"))
+}, error = function(e) print("ERROR en update: \n")) #, e, "\n"))
 }
 
 hist_body = function(id, from, to) {
@@ -43,7 +43,7 @@ hist_body = function(id, from, to) {
     res = sess$getHistorical("EUR", id,from,to)
     fact$clear()
     res
-}, error = function(e) print("ERROR en Hist: ", e, "\n"))
+}, error = function(e) print("ERROR en Hist: \n")) #, e, "\n"))
 }
 
 execLatest = function() {

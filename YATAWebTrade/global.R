@@ -1,6 +1,3 @@
-#-- if ("YATAModels" %in% (.packages()))    detach("package:YATAModels", unload=T, force=T)
-# if ("YATADB"   %in% (.packages()))    detach("package:YATADB", unload=T, force=T)
-
 unloadNamespace("YATAWebCore")
 unloadNamespace("YATACore")
 unloadNamespace("YATADT")
@@ -64,14 +61,7 @@ plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeB
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
-# YATACodes   = YATACore::YATACODES$new()
-# YATAFactory = YATACore::YATAFACTORY$new() # Va primero
-
-#YATAFactory$env = YATACore::YATAENV$new()
 YATAWEB = YATAWebEnv$new()
-
-# Esto va en el .onLoad
-#registerInputHandler("sf_coord_point", convertToPoint)
 
 if (Sys.info()[["sysname"]] == "Windows") {
    future::plan(strategy="sequential")    

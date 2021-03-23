@@ -12,7 +12,7 @@ modOperXferInput = function(id, title) {
          )
        )
     )
-    ,yuiYesNo(id=ns("tpl"), "Transferir", "Cancelar", cols=3, left=3)     
+    ,yuiYesNo(id=ns("tpl"), "Transferir", "Cancelar") # , cols=3, left=3)     
   )
   list(left=NULL, main=main, right=NULL)
 }

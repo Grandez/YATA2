@@ -1,4 +1,4 @@
-modOperPosServer = function(id, full, pnl) {
+modOperPosServer = function(id, full, pnl, parent) {
    ns = NS(id)
    ns2 = NS(full)
    validate = function() {
@@ -67,7 +67,7 @@ modOperPosServer = function(id, full, pnl) {
          output$formLblOper    = updLabelText( title )
          output$formLblCamera  = updLabelText( pnl$data$names$camera  )
          output$formLblBase    = updLabelText( pnl$data$names$base    )
-         output$formLblCounter = updLabelText( pnl$data$names$counte  )
+         output$formLblCounter = updLabelText( pnl$data$names$counter )
 
          updNumericInput("ImpAmount", value=pnl$data$amount) 
          updNumericInput("ImpPrice",  value=pnl$data$price) 
@@ -77,7 +77,6 @@ modOperPosServer = function(id, full, pnl) {
                   
       }
       
-      # if (!pnl$valid) loadPosition() #input, output, session)
       observeEvent(input$btnTablePending, {
           if (pnl$vars$inForm) return()
           pnl$vars$inForm  = TRUE
@@ -127,6 +126,13 @@ modOperPosServer = function(id, full, pnl) {
               output$form = renderUI({data})
               formChangeInit()
           }
+          if (pnl$action == "view") {
+              lbl = paste(pnl$data$base, pnl$data$counter, sep="/")
+              id = paste(ns2("detail"), pnl$data$id, sep="_")
+              insertTab( "pnlOpType",tabPanel(lbl,value=id, YATAModule("oper-detail",lbl, mod="OperDetail"))
+                        ,"oper-hist", position="after", select=TRUE, session=parent)
+          }
+          
        })
 
        observeEvent(input$btnTable, {
@@ -188,6 +194,11 @@ modOperPosServer = function(id, full, pnl) {
           pnl$vars$inForm = YATAFormClose()
       })
 
+      observeEvent(input$btnAdd, {
+          # browser()
+          # updateTabsetPanel(session = parent, inputId = "pnlOpType", selected = "Operar")
+          insertTab("pnlOpType",tabPanel("Prueba2",     value="prueba", h3("Un tab")),"oper-detail", position="after", session=parent)
+      })
     loadPosition()
   })
 }

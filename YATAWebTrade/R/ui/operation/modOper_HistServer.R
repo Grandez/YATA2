@@ -1,4 +1,4 @@
-modOperHistServer = function(id, full, pnl) {
+modOperHistServer = function(id, full, pnl, parent) {
    ns = NS(id)
    dfPos        = NULL
    dfCamera     = NULL

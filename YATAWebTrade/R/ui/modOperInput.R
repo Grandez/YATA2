@@ -6,8 +6,9 @@ modOperInput = function(id, title) {
          ,tabPanel("Operar",      value=ns("oper"),   YATAModule(ns("oper")))
          ,tabPanel("Transferir",  value=ns("xfer"),   YATAModule(ns("xfer")))
          ,tabPanel("Historia",    value=ns("hist"),   YATAModule(ns("hist")))
-         ,tabPanel("Detalle",     value=ns("detail"), YATAModule(ns("detail")))
+#         ,tabPanel("Detalle",     value=ns("detail"), YATAModule(ns("detail")))
       )
+
     )
     list(left=NULL, main=main, right=NULL)        
 }

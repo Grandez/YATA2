@@ -1,4 +1,5 @@
 modOperPosInput = function(id, title) {
+  browser()
     ns = NS(id)
     main = tagList(
        yuiBox(ns("opPending"),  "Pendiente", yuiDataTable(ns("tblPending")))

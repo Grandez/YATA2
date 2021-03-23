@@ -41,49 +41,15 @@ YATAPage =  function(title = NULL,id = NULL,
     else
       name
   }
-
-  # built the container div dynamically to support optional collapsibility
-  # if (collapsible) {
-  #   navId <- paste("navbar-collapse-", p_randomInt(1000, 10000), sep="")
-  #   containerDiv <- div(class=className("container"),
-  #     div(class="navbar-header",
-  #       tags$button(type="button", class="navbar-toggle collapsed",
-  #         `data-toggle`="collapse", `data-target`=paste0("#", navId),
-  #         span(class="sr-only", "Toggle navigation"),
-  #         span(class="icon-bar"),
-  #         span(class="icon-bar"),
-  #         span(class="icon-bar")
-  #       ),
-  #       #span(class="navbar-brand", pageTitle)
-  #       span(class="navbar-brand", textOutput("appTitle"))
-  #     ),
-  #     div(class="navbar-collapse collapse yata-brand", id=navId, tabset$navList)
-  #   )
-  # } else {
     containerDiv <- div(class=className("container"),
       div(class="navbar-header",
         span(class="navbar-brand", textOutput("appTitle"))
       ),
       tabset$navList
     )
-#  }
-
-  # # build the main tab content div
-  # contentDiv = shiny::tags$div(id="yataContent")
-  # # leftDiv    = shiny::tags$div(id="yataContentLeft")
-  # # rightDiv   = shiny::tags$div(id="yataContentRight")
-  # mainDiv    = shiny::tags$div(id="yataContentMain")
-  #
-  # mainDiv    = tagAppendChild(mainDiv, tabset$content)
-  # contentDiv = tagAppendChildren(contentDiv, mainDiv)
-  #
-  # options = list(sidebarExpandOnHover = TRUE)
-
 
   # build the main tab content div
   contentDiv = shiny::tags$div(id="yataContent")
-  # leftDiv    = shiny::tags$div(id="yataContentLeft")
-  # rightDiv   = shiny::tags$div(id="yataContentRight")
   mainDiv    = shiny::tags$div(id="yataContentMain")
 
   mainDiv    = tagAppendChild(mainDiv, tabset$content)
@@ -92,7 +58,7 @@ YATAPage =  function(title = NULL,id = NULL,
   options = list(sidebarExpandOnHover = TRUE)
 
   divFooter = "YATA - Grandez"
-  divHeader = .yataPageHeader(tabnav=tabset$navList) #,tags$nav(class=navbarClass, role="navigation", containerDiv)
+  divHeader = .yataPageHeader(tabnav=tabset$navList)
   divMain   =  contentDiv
   page = tags$div( class="yata_page", divHeader
            ,tags$div(class="yata_main",   divMain)
@@ -106,11 +72,6 @@ YATAPage =  function(title = NULL,id = NULL,
                                           ,tags$span(class="yata_text_err", textOutput("yata_main_text_err"))))))
   )
 
-  # mainFormErr = hidden(tags$div( id="yata-main-err", class="yata-panel-form"
-  #                        ,tags$div( id    ="yata-main-err-container"
-  #                                  ,class ="yata-form-center container"
-  #                                  ,uiOutput("form")))
-  # )
   container   = tags$div(id="yata_container", class="yata_container", page, shinyjs::hidden(mainFormErr))
 
    bspage =   shiny::bootstrapPage(
@@ -120,14 +81,10 @@ YATAPage =  function(title = NULL,id = NULL,
              ,tags$link  (rel="stylesheet", type="text/css", href="yata/yatabase.css")
              ,tags$link  (rel="stylesheet", type="text/css", href="yata/yatadt.css")
              ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataAdminLTE.css")
-            #  tags$link  (rel="stylesheet", type="text/css", href="yata/yataoverride.css")
-            # ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata2.css")
-            # ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataDT.css")
-#            ,tags$link  (rel="stylesheet", type="text/css", href="yata/AdminLTE2.css")
-            ,tags$script(src="yata/yata.js")
-            ,tags$script(src="yata/yataapp.js")
-            ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
-            ,initShinyCookie("YATA")
+             ,tags$script(src="yata/yata.js")
+             ,tags$script(src="yata/yataapp.js")
+             ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
+             ,initShinyCookie("YATA")
         )
         ,container
         ,tags$script('
@@ -146,14 +103,7 @@ YATAPage =  function(title = NULL,id = NULL,
       ,theme = theme, lang="es" # ) # end boostrappage
 
    )
+   yataDeps(shiny::tags$body(bspage),md = FALSE)
 
-# res =  shinydashboardPlus:::addDeps(
- res =  yataDeps(
-    shiny::tags$body(
-        bspage
-    ),md = FALSE
-  )
-
-res
 }
 

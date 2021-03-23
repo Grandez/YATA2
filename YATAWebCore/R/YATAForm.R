@@ -4,7 +4,7 @@ yataForm = function() {
 yuiFormUI = function(id, uiName, title=NULL, ...) {
     # Quitar el que exista
     #volver  a crear
-    shinyjs::show("form-panel")
+    shinyjs::show("form_panel")
     if (!is.null(title)) {
         yataBoxClosable(id,title, eval(parse(text=paste0("frm", uiName, "Input('", id, "', ...)"))))
     }
@@ -19,6 +19,6 @@ YATAFormServer = function(id, modName, input, output, session, ...) {
 
 YATAFormClose = function() {
     # Devuelve FALSE para indicar que se ha finalizado la accion
-    shinyjs::hide("form-panel")
+    shinyjs::hide("form_panel")
     FALSE
 }

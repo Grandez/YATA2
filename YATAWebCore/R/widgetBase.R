@@ -1,6 +1,11 @@
 ############################
 #### Shiny
 ###########################
+yuiColumn = function(width, ...) {
+    if (!is.numeric(width) || (width < 1) || (width > 12)) stop("column width must be between 1 and 12")
+    colClass <- paste0("col-xl-", width)
+    div(class = colClass, ...)
+}
 
 yuiTitle1 = function(txt) { h1(class="yata-title-1", txt) }
 yuiTitle2 = function(txt) { h2(class="yata-title-2", txt) }
@@ -155,7 +160,7 @@ yuiSwitch = function(id, value=FALSE, onLbl="Yes", offLbl="No") {
     switchInput( inputId = id
                 ,onLabel = onLbl ,offLabel = offLbl
                 ,onStatus = "success" ,offStatus = "danger"
-                , value = value)
+                , value = value, width=NULL)
 }
 
 

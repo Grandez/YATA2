@@ -2,7 +2,9 @@
 ### Los nombres de columnas, columnas, formatos, etc
 ### De los data frames para web se gestionan aqui
 ########################################################
-
+prepareTable = function(df) {
+   yataSetClasses(df)
+}
 preparePosition = function(df) {
    df = subset(df, select=c(currency,balance, priceBuy,priceSell,price))
    colnames(df) = c("currency", "balance", "cost", "return", "net")

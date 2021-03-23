@@ -1,3 +1,12 @@
+/***
+*  Override shiny
+***/
+
+.shiny-input-container:not(.shiny-input-container-inline) {
+  width: 100%;
+}
+
+
 html, body {
   height: 100% !important;
   margin: 0 !important;

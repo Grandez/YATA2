@@ -51,7 +51,6 @@ plotTickerVar = function(info, df,title) {
 }
 
 plotBest = function(info, df, title) {
-   browser()
    dft = df
    if (is.null(info$type))        return (pltCandle(info, df, title))
    if (info$type == "Linear")     return (pltLines (info, df[,-(2:7)], title))

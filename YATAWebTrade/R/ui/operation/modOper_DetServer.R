@@ -1,176 +1,79 @@
-modOperDetailServer = function(id, full, pnl) {
+modOperDetailServer = function(id, full, pnloper, parent) {
    ns = NS(id)
    ns2 = NS(full)
-   validate = function() {
-    
-   }
+   PNLDetail = R6::R6Class("PNL.DETAIL"
+        ,inherit    = YATAPanel
+        ,cloneable  = FALSE
+        ,lock_class = TRUE
+        ,public = list(
+            names = list()
+           ,oper  = NULL
+           ,plots = c( "Plot1"          = "plot1"
+                      ,"Plot2"          = "plot2"
+                      ,"Plot3"          = "plot3"
+                      ,"Plot4"          = "plot4"
+            )
+           ,initialize     = function(id, pnlParent, session) {
+               super$initialize("oper-detail", pnlParent, session)
+               private$getObjects()
+               private$loadOperation(id)
+               private$loadPanel()
+           }
+           ,getCameraName = function() {  }
+        )
+       ,private = list(
+           operation = NULL
+          ,camera    = NULL
+          ,getObjects = function() {
+               private$operation = self$factory$getObject(self$codes$object$operation)
+               private$camera    = self$factory$getObject(self$codes$object$cameras)
+          }
+          ,loadOperation = function(id) {
+               private$operation$select(id)
+               private$camera$select(private$operation$current$camera)
+          }
+          ,loadPanel = function() {
+              self$oper = private$operation$current
+              self$names$camera = private$camera$getCameraName()[[1]]
+              lbls = YATAWEB$getCurrencyLabel(c(self$oper$base, self$oper$counter))
+              self$names$base    = lbls[[1]]
+              self$names$counter = lbls[[2]]
+              #self$dataIn$
+          } 
+           
+       )
+    )
+   
    moduleServer(id, function(input, output, session) {
-      prepareTable   = function (df) {
-         data       = pnl$cameras$getCameras()
-         df$camera  = data[data$id == df$camera,"name"]
-         data       = pnl$currencies$getNames(df$base)
-         df$base    = data[data$id == df$base,"name"]
-         data       = pnl$currencies$getNames(df$counter, full=TRUE)
-         df$counter = data[data$id == df$counter,"name"]
-         df
-      }
-      loadPosition   = function() { 
-         data = FALSE
-         df = pnl$loadOperations(YATACodes$status$pending)
-         shinyjs::hide("opPending")
-         btns = NULL
-         if (nrow(df) > 0) {
-             data = TRUE
-             shinyjs::show(ns("opPending"))
-             df = prepareTable(df)
-             table = "pending"
-             btns = c(  yuiTblButton(full, table, "Accept",   yuiBtnIconOK())
-                       ,yuiTblButton(full, table, "Rejected", yuiBtnIconRefuse())
-                       ,yuiTblButton(full, table, "Cancel",   yuiBtnIconDel())
-             )
-         }
-         output$tblPending = updTableOperations(df, buttons=btns)
-         
-         df = pnl$loadOperations(YATACodes$status$accepted)
-         shinyjs::hide("opAccepted")
-         btns = NULL         
-         if (nrow(df) > 0) {
-             data = TRUE
-             shinyjs::show("opAccepted")
-             table = "accepted"
-             df = prepareTable(df)
-             btns = c(yuiTblButton(full, table, "Executed", yuiBtnIconCloud("Executed")))
-         }
-         output$tblAccepted = updTableOperations(df, buttons=btns)
-         df = pnl$loadOperations(YATACodes$status$executed)
-         shinyjs::hide("opExecuted")
-         btns = NULL         
+        pnl = pnloper$getOper(pnloper$idOper)
+        if (is.null(pnl)) pnl = pnloper$setOper(pnloper$idOper, PNLDetail$new(pnloper$idOper, pnloper, session))
 
-         if (nrow(df) > 0) {
-             data = TRUE
-             shinyjs::show("opExecuted")
-             table = "executed"
-             df = prepareTable(df)
-             btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
-                      ,yuiTblButton(full, table, "View", yuiBtnIconView())
-             )
-         }
-         output$tblOpen = updTableOperations(df, buttons=btns)
-         if (data) {
-             hide("nodata")
-             show("data")
-         } else {
-             hide("data")
-             show("nodata")
-         }
-         
-         pnl$valid = TRUE
-      }
-      selectOperation = function(row, status) {
-          # me devuelve: operacion - fila
-          data = strsplit(toLower(row), "-")[[1]]
-          pnl$action = data[1]
-          index = as.integer(data[2])
-          pnl$selectOperation(status, index)
-      }
-      formChangeInit = function() {
-         title = ""
-         if (pnl$vars$nextAction == YATACodes$status$accepted) title = "Aceptar"
-         if (pnl$vars$nextAction == YATACodes$status$executed) title = "Ejecutar"
-         if (pnl$vars$nextAction == YATACodes$status$rejected) title = "Rechazar"
-         if (pnl$vars$nextAction == YATACodes$status$closed)   title = "Cerrar"
-         
-         output$formLblOper    = updLabelText( paste(title, "operacion") )
-         output$formLblCamera  = updLabelText( pnl$data$cameraName  )
-         output$formLblBase    = updLabelText( pnl$data$baseName    )
-         output$formLblCounter = updLabelText( pnl$data$counterName )
-         
-      }
-      
-      # if (!pnl$valid) loadPosition() #input, output, session)
-      observeEvent(input$btnTablePending, {
-          selectOperation(input$btnTablePending, YATACodes$status$pending)
-          if (pnl$action == "accept") {
-              pnl$vars$nextAction = YATACodes$status$accepted
-              data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
-              output$form = renderUI({data})
-              formChangeInit()
-          }
-          if (pnl$action == "cancel") {
-              pnl$vars$nextAction = YATACodes$status$cancelled
-              data = yuiFormUI(ns2("form"), "OperCancel", data=pnl$data)
-              output$form = renderUI({data})
-          }
-          if (pnl$action == "rejected") {
-              pnl$vars$nextAction = YATACodes$status$rejected
-              data = yuiFormUI(ns2("form"), "OperReject", data=pnl$data)
-              output$form = renderUI({data})
-          }
-      })
-       observeEvent(input$btnTableAccepted, {
-          selectOperation(input$btnTableAccepted, YATACodes$status$accepted)
-          pnl$vars$nextAction = YATACodes$status$executed
-          data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
-          output$form = renderUI({data})
-       })
+        updCombo("cboPlot1Left",  choices=pnl$plots, selected=pnl$plots[1])
+        updCombo("cboPlot1Right", choices=pnl$plots, selected=pnl$plots[2])
+        updCombo("cboPlot2Left",  choices=pnl$plots, selected=pnl$plots[3])
+        updCombo("cboPlot2Right", choices=pnl$plots, selected=pnl$plots[4])
+                
+        output$lblCamera  = updLabelText(pnl$names$camera)
+        output$lblBase    = updLabelText(pnl$names$base)
+        output$lblCounter = updLabelText(pnl$names$counter)
+        output$lblAmount  = updLabelText(number2string(pnl$oper$amount))
+        output$lblPriceIn = updLabelText(number2string(pnl$oper$price))
+        output$lblValueIn = updLabelText(number2string(pnl$oper$price * pnl$oper$amount))
 
-       observeEvent(input$btnTable, {
-          # me devuelve: tabla - operacion - fila
-          data = strsplit(toLower(input$btnTable), "-")[[1]]
-      #   showModal(modalDialog(
-      #   title = "Important message",
-      #   "This is an important message!"
-      # ))
-        
-        id = pnl$getOperationID(data[1], as.integer(data[3]))
-
-      # selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
-      # myValue$employee <<- paste('click on ',df$data[selectedRow,1])
-    })
-      ##############################################
-      # Modales
-      ##############################################
-      observeEvent(input$btnOK, {
-          if (pnl$vars$nextAction == YATACodes$status$accepted) {
-              pnl$operations$accept( price  = input$formImpPrice
-                                    ,amount = input$formImpAmount
-                                    ,fee    = 0
-                                    ,id     = pnl$data$id
-              )
-          }
-          if (pnl$vars$nextAction == YATACodes$status$cancelled) {
-              pnl$operations$cancel( delete = input$formSwDelete, id = pnl$data$id)
-          }
-          if (pnl$vars$nextAction == YATACodes$status$executed) {
-              pnl$operations$execute(gas = 0, id = pnl$data$id)
-          }
-          if (pnl$action %in% c("cancel", "rejected") ) {
-              cmt = trimws(input$formComment)
-              cmt2 = NULL
-              if (nchar(cmt) > 0) cmt2 = cmt
-              pnl$operations$reject(comment=cmt2, id=pnl$data$id)
-          }
-          YATAFormClose()
-          loadPosition()
-      })
-      observeEvent(input$formBtnKO, {
-          pnl$nextAction = NULL
-          YATAFormClose()
-      })
-      # observeEvent(input$BtnOK, {
-      #     browser()
-      # })
-      
-    #   updateSelectInput(session, "cboCamera",    choices=pnl$cboClearings())
-    #   updateSelectInput(session, "cboCounter",   choices=pnl$cboCurrency())
-    #   observeEvent(input$cboCamera, {
-    #      pnl$selectClearing(input$cboCamera)
-    #      # updateSelectInput(session, "cboTo",       choices=pnl$cboClearings(input$cboFrom))
-    #      updateSelectInput(session, "cbofull", choices=pnl$cboCurrency(input$cboCamera, TRUE))
-    # 
-    #   }, ignoreInit = TRUE)
-    # 
-    loadPosition()
+        observeEvent(input$btnPlotOK,{
+            if (input$cboPlot1Left == input$cboPlot1Right) {
+                shinyjs::toogle("plot1")
+                shinyjs::toogle("plot1x")
+            }
+            if (input$cboPlot2Left == input$cboPlot2Right) {
+                shinyjs::toogle("plot2")
+                shinyjs::toogle("plot2x")
+            }
+            
+        })
+     observeEvent(input$btnTest, {
+         browser()
+     })
   })
 }
 

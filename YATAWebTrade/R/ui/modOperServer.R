@@ -16,7 +16,7 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
            ,nextAction   = NULL
            ,action       = NULL 
            ,data         = NULL
-           ,detail       = NULL    
+           ,idOper       = NULL    
            ,initialize     = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
                self$cameras    = self$factory$getObject("Cameras")
@@ -26,8 +26,14 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                self$cameras$loadCameras()               
                self$vars$inForm  = FALSE
                self$vars$inEvent = FALSE
+               private$opers = HashMap$new()
            }
-           ,getCounters = function() {self$currencies$getCurrencyNames()  }
+           ,getOper = function (id)        { private$opers$get(id)       }
+           ,setOper = function (id, oper)  { 
+               private$opers$put(id, oper) 
+               oper
+            }
+           ,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,cboCameras   = function(exclude, full=FALSE) {
               data = self$cameras$getCameras(full)
@@ -79,14 +85,14 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                )
            } 
            ,loadOperations = function(status) {
-               df = self$operations$getOperations(active = YATACodes$flag$active, status = status)
+               df = self$operations$getOperations(active = self$codes$flag$active, status = status)
                # Guardar los id               
-               stname = YATACodes$xlateStatus(status)
+               stname = self$codes$xlateStatus(status)
                private$opIdx[[stname]] = df$id
                prepareOperation(df)
            }
            ,selectOperation = function(status, row) {
-               name = YATACodes$xlateStatus(status)
+               name = self$codes$xlateStatus(status)
                private$selected = private$opIdx[[name]][[row]]
                self$operations$select(private$selected)
                self$cameras$select(self$operations$current$camera)
@@ -95,48 +101,36 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                self$data$camera = self$cameras$current
                self$data$names = list()
                self$data$names$camera  = self$cameras$current$name
-               self$data$names$base    = self$currencies$getCurrencyName(self$data$base,    TRUE)
-               self$data$names$counter = self$currencies$getCurrencyName(self$data$counter, TRUE)
-               # self$data = list.merge(self$data, self$operations$current)
-               # self$data$baseName    = self$currencies$getCurrencyName(self$data$base,    TRUE)
-               # self$data$counterName = self$currencies$getCurrencyName(self$data$counter, TRUE)
+               self$data$names$base    = YATAWEB$getCurrencyLabel(self$data$base, 12)
+               self$data$names$counter = YATAWEB$getCurrencyLabel(self$data$counter, 12)
            }
-          # ,getOperation = function() {
-          #     self$operations$current
-          # }
         )
        ,private = list(
            opIdx     = list() # Contiene los id de las operaciones
            ,selected = NULL
+           ,opers = NULL
        )
     )
-    # createOperation = function() {
-    #   # Graba la operacion
-    #   op = Operation$new(type=input$opType, clearing=input)
-    #   with(input, op$set(type=opType, clearing=cboCamera, base=cboBase, counter=cboCounter)
-    #   )
-    #   op$apply()
-    # }
-    # initPage = function(input, output, session) {
-    #   pnl = YATAWEB$addPanel(PNLOper$new(id))
-    #   updateSelectInput(session, "cboCamera",  choices=pnl$cboCameras())
-    #   # updateSelectInput(session, "cboBase",    choices=pnl$bases$toCombo())
-    #   # updateSelectInput(session, "cboCounter", choices=pnl$counters$toCombo())
-    #   pnl
-    # }
-    # removeModal = function(session) {
-    #   session$sendCustomMessage("toggleModal", "nada")
-    #   removeUI("#operModal", immediate=TRUE)
-    # }
     moduleServer(id, function(input, output, session) {
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         
         observeEvent(input$pnlOpType, {
-            pnl$panel = input$pnlOpType
-            act = yataActiveNS(input$pnlOpType)
+            # recibe oper-pos
+            #pone modOperPosServer
+            if (grepl("_", input$pnlOpType)) {
+                toks = strsplit(input$pnlOpType, "_")[[1]]
+                act = yataActiveNS(toks[1])
+                pnl$idOper = toks[2]
+                idx = str_locate_all(toks[1], "-")[[1]]
+                pnl$panel = substr(toks[1], 1, idx[nrow(idx), 1] - 1)
+            }
+            else {
+               pnl$panel = input$pnlOpType 
+               act = yataActiveNS(input$pnlOpType)
+            }
             module = paste0("modOper", titleCase(act),"Server")
-            eval(parse(text=paste0(module, "(act, input$pnlOpType, pnl)")))
+            eval(parse(text=paste0(module, "(act, pnl$panel, pnl,parent=session)")))
         })
     })
 }    

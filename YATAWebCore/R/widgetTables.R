@@ -1,3 +1,46 @@
+yuiDataTable = function(id) { DT::dataTableOutput(id) }
+
+###############################################################
+# REVISAR
+
+.updTableButtons = function(df, buttons) {
+     data = df
+     cols = ncol(df)
+     code = lapply(strsplit(buttons, "__"), function(x) paste0(x[[1]], seq(1,nrow(df)), x[[2]]))
+     dfb = as.data.frame(code)
+     colnames(dfb) = paste0("col", seq(1,ncol(dfb)))
+     dfb = tidyr::unite(dfb, "btn", colnames(dfb), sep=" ", remove=TRUE)
+     data = cbind(df, dfb)
+     cols = colnames(data)
+     cols[length(cols)] = ""
+     colnames(data) = titleCase(cols)
+     data
+}
+.getOptions = function(df, ...) {
+    args = list(...)
+    opts = list(
+       searching = FALSE
+      ,paging = FALSE
+    )
+
+    if (length(args) == 0) return (opts)
+    if (length(args) == 1 && is.list(args[[1]])) args = args[[1]]
+
+    if (!is.null(args$page)) {
+        opts$pageLength = args$page[[1]]
+        opts$paging = TRUE
+    }
+    # opts$searching = args$search # ifelse(is.null(args$search), FALSE, TRUE)
+
+    if (!is.null(args$noSort)) {
+        colDefs = lapply(seq(1:ncol(df)), function(x) NULL)
+        for (col in args$noSort) colDefs[[col]] = list(orderable=FALSE)
+        opts$columns=colDefs
+    }
+    opts
+}
+
+#################################################################
 yuiTablePosition = function(id, dfbase, dfAux, ...) {
     df = dfbase
     df$value = dfbase$price * dfbase$balance

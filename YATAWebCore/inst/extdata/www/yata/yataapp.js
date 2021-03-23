@@ -364,7 +364,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                     var page = $.YATA.page;
 
                     if (page !== null) {
-                        var id = "#" + page + "_container_left";
+                        var id = "#" + page + "-container_left";
                         if ($(id).hasClass('yata_leftside_closed')) {
                             //$(id).addClass('yata_leftside_open');
                             $(id).removeClass('yata_leftside_closed').trigger('expanded.pushMenu');
@@ -499,7 +499,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               // JGG. Carga el panel en el mapa y mueve los menus si existen
               $.YATA.yataSetPanel = function(data) {
-//                  alert("Entra en yataSetPanel");
+                  alert("Entra en yataSetPanel");
                   $.YATA.page = data.id;
 
                   data.left      = false;
