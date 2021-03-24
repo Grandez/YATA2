@@ -234,11 +234,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
       ### Timers                                        ###     
       #####################################################
       
-      observe({
-         message("observe primera vez")
-         # Se ejecuta una sola vez
+      observe({ # Se ejecuta una sola vez
          invalidateLater(pnl$vars$first * 1000, session)
-         message("Entro en primera vez", pnl$vars$first)
          if (pnl$vars$first > 1) {
              # Carga inicial, todo esta actualizado
              getBest(input$numBestTop, input$cboBestFrom, input$swBestTop )

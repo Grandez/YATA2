@@ -123,7 +123,9 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                 act = yataActiveNS(toks[1])
                 pnl$idOper = toks[2]
                 idx = str_locate_all(toks[1], "-")[[1]]
-                pnl$panel = substr(toks[1], 1, idx[nrow(idx), 1] - 1)
+                pnl$panel = toks[1] # substr(toks[1], 1, idx[nrow(idx), 1] - 1)
+                sp = strsplit(toks[1], "-")[[1]]
+                pnl$panel = paste(sp[1], act, sep="-")
             }
             else {
                pnl$panel = input$pnlOpType 

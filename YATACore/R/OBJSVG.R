@@ -38,7 +38,7 @@ OBJSVG = R6::R6Class("OBJ.SVG"
            list(name=name, icon = list(svg=readSVG(fname)), click=createJS(info, name))
        }
        ,svgmarkers   = function(info, name) {
-           name="Markersr"
+           name="Markers"
            fname = "plot-line-markers.svg"
            list(name=name, icon = list(svg=readSVG(fname)), click=createJS(info, name))
         }
@@ -60,14 +60,15 @@ OBJSVG = R6::R6Class("OBJ.SVG"
            l
        }
        ,createJS = function(info, type) {
+           info$type = type
            js = "function(gd) { Shiny.setInputValue('"
            js = paste0(js, info$observer, "', {")
-           js = paste0(js, " type: '", type, "'")
+           js = paste0(js, " tag: '", type, "'")
            for (item in names(info)) {
                 js = paste0(js, ",", item, ": '", info[[item]], "'")
            }
            js = paste(js,"}, {priority: 'event'});}")
-           js
+           message(js)
            htmlwidgets::JS(js)
        }
        ,readSVG = function(fname) {

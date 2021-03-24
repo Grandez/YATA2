@@ -306,7 +306,6 @@ pltLog = function(df, x=NULL, y=NULL, lType="solid", hoverText="titulo") {
 }
 
 pltBars = function(info, df, title=NULL, markers=TRUE) {
-    browser()
   p = .pltBase(info)
   cols = colnames(df)
   for (idx in 2:ncol(df)) {

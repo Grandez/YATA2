@@ -14,7 +14,30 @@ updPlot = function(plot) {
    renderPlotly({plot})
 }
 
+plotSession = function(info, df, title=NULL) {
+   browser()
+   if (is.null(info$type)) info$type = "Candlestick"
+   genPlot(info,df,title)
+}
+plotPrice = function(info, df, title=NULL) {
+   dfp = df
+   if (info$src == "session") dfp = df[,c("tms","close")]
+   if (is.null(info$type)) info$type = "Linear"
+   genPlot(info,dfp,title)
+}
+plotVolume = function(info, df, title=NULL) {
+   dfp = df
+   if (info$src == "session") dfp = df[,c("tms","volume")]
+   if (is.null(info$type)) info$type = "Bar"
+   genPlot(info,dfp,title)
+}
 
+genPlot = function(info, df, title) {
+   if (info$type == "Candlestick") return (pltCandle(info, df, title))
+   if (info$type == "Linear")      return (pltLines (info, prepareLines(info, df), title))
+   if (info$type == "Variation")   return (pltBars  (info, prepareVariation(df), title))
+   if (info$type == "Bar")         return (pltBars  (info, df, title))
+}
 plotDay = function(info, df, title) {
    pltLines(info, df, title)
 }
@@ -70,3 +93,32 @@ plotBest = function(info, df, title) {
 
 # plot_ly() %>%
 #   config(displayModeBar = FALSE)
+
+prepareVariation = function(info, df) {
+   prcVar = function(x) { ifelse (x[1] == 0, 0, (x[2] / x[1] - 1) * 100) }
+   # Obtiene las variaciones
+   cols = colnames(df)
+   idx = which(cols == "close")
+   if (length(idx) > 0) {
+      if (length(cols) > 7) {
+          dft = rollapply(df[,8:ncol(df)], 2, prcVar, by.column=TRUE,fill=0, na.pad=0, align="right")
+      } else {
+         dft = rollapply(df[,"close"], 2, prcVar, by.column=TRUE,fill=0, partial=TRUE)
+      }
+      df2 = as.data.frame(cbind(df[,"tms"], dft))
+      colnames(df2) = c("tms", cols[8:length(cols)])
+   }
+   df2
+}
+prepareLines = function(info, df) {
+   dfp = df
+   if (info$src == "session") { # Tenemos high,low, etc y posiblemente mas
+      if (ncol(df) == 8) {
+         dfp = df[,c("tms","close")]
+         if (!is.null(info$symbol)) colnames(dfp) = c("tms", info$symbol)
+      } else {
+         dfp = df[,-(2:7)]
+      }
+   }
+   dfp
+}

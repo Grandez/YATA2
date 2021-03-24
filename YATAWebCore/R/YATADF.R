@@ -44,19 +44,3 @@ prepareTop = function(df) {
     yataSetClasses(df)
 }
 
-prepareVariation = function(df) {
-   prcVar = function(x) { ifelse (x[1] == 0, 0, (x[2] / x[1] - 1) * 100) }
-   # Obtiene las variaciones
-   cols = colnames(df)
-   idx = which(cols == "close")
-   if (length(idx) > 0) {
-      if (length(cols) > 7) {
-          dft = rollapply(df[,8:ncol(df)], 2, prcVar, by.column=TRUE,fill=0, na.pad=0, align="right")
-      } else {
-         dft = rollapply(df[,"close"], 2, prcVar, by.column=TRUE,fill=0, partial=TRUE)
-      }
-      df2 = as.data.frame(cbind(df[,"tms"], dft))
-      colnames(df2) = c("tms", cols[8:length(cols)])
-   }
-   df2
-}

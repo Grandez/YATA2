@@ -20,11 +20,11 @@ modOperDetailInput = function(id, title="") {
     )
   
   main = tagList(
-      h3("Pagina de detalle")
-     ,hidden(fluidRow(id=ns("plotl1"), yuiPlot(ns("plot1"))))
-     ,fluidRow(id=ns("plot1x"), column(6,yuiPlot(ns("plot11"))), column(6,yuiPlot(ns("plot12"))))
-     ,hidden(fluidRow(id=ns("plotl2"), yuiPlot(ns("plot2"))))
-     ,fluidRow(id=ns("plot2x"),column(6,yuiPlot(ns("plot21"))), column(6,yuiPlot(ns("plot22"))))
+      fluidRow(htmlOutput(ns("icon")), h3(yuiLabelText(ns("title"))))
+     ,fluidRow(id=ns("plotl1"), yuiPlot(ns("plot10")))
+     ,hidden(fluidRow(id=ns("plot1x"), column(6,yuiPlot(ns("plot11"))), column(6,yuiPlot(ns("plot12")))))
+     ,fluidRow(id=ns("plotl2"), yuiPlot(ns("plot20")))
+     ,hidden(fluidRow(id=ns("plot2x"), column(6,yuiPlot(ns("plot21"))), column(6,yuiPlot(ns("plot22")))))
        
       ,actionButton(ns("btnTest"), "Probar")
             ,fluidRow(tags$table(

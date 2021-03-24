@@ -30,7 +30,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           message(db, ": MariaDB Database")
        }
       ,connect    = function ()     {
-          message("Abriendo conexion")
+#          message("Abriendo conexion")
           tryCatch({conn = RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
                                                ,username = dbInfo$user
                                                ,password = dbInfo$password
