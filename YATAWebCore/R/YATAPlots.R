@@ -6,6 +6,16 @@
 # Cogemos el d de path
 # Jugamos con el escale
 
+yataPlot = function(info, df, title) {
+  plot = NULL
+   if (info$type == "Candlestick") plot = pltCandle(info, df, title)
+   if (info$type == "Linear")    {
+       if (info$src == "session") df = df[,-(2:7)]
+       plot = pltLines (info, df, title)
+   }
+   if (info$type == "Variation")   plot = pltBars (info, prepareVariation(df), title)
+   plot
+}
 
 #########################################
 # https://plotly-r.com/control-modebar.html
@@ -214,8 +224,8 @@ pltLines  = function(info, df, title=NULL, markers=TRUE) {
 
 pltCandle = function(info, df, title=NULL, markers=TRUE) {
   p = .pltBase(info)
-#  p =  p %>% plotly::config(modeBarButtonsToAdd = barTickers(info))
   p =  p %>% add_trace(data=df, x=~tms, open=~open, close=~close, high=~high, low=~low, type="candlestick")
+  p =  p %>% layout(xaxis = list(rangeslider = list(visible = F)))
   p =  p %>% layout(legend = list(orientation = 'h'))
   if (!is.null(title)) p = p %>% layout(title = title)
   p

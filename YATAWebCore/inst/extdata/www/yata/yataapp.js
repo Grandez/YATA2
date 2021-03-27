@@ -368,9 +368,13 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                         if ($(id).hasClass('yata_leftside_closed')) {
                             //$(id).addClass('yata_leftside_open');
                             $(id).removeClass('yata_leftside_closed').trigger('expanded.pushMenu');
+                            $("#left_side_closed").addClass("yata_side_closed");
+                            $("#left_side_open").removeClass("yata_side_closed");
                         } else {
                             //$(id).removeClass('yata_leftside_open');
                             $(id).addClass('yata_leftside_closed').trigger('collapsed.pushMenu');
+                            $("#left_side_closed").removeClass("yata_side_closed");
+                            $("#left_side_open").addClass("yata_side_closed");
                         }
                     }
 /*
@@ -499,7 +503,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               // JGG. Carga el panel en el mapa y mueve los menus si existen
               $.YATA.yataSetPanel = function(data) {
-                  alert("Entra en yataSetPanel");
+//                  alert("Entra en yataSetPanel");
                   $.YATA.page = data.id;
 
                   data.left      = false;

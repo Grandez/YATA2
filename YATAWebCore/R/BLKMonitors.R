@@ -58,8 +58,9 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
               mon$price = ifelse(nrow(pos) > 0, pos[1,"price"], last$price)
               mon$session = last$price
               mon$last    = last$price
-              mon$day     = last$price / (1 + (last$var24 / 100))
-              mon$week    = last$price / (1 + (last$var07 / 100))
+              mon$hour    = last$price / (1 + (last$hour / 100))
+              mon$day     = last$price / (1 + (last$day  / 100))
+              mon$week    = last$price / (1 + (last$week / 100))
               private$monitors$put(sym, mon)
           }
 

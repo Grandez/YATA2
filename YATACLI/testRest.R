@@ -1,4 +1,3 @@
-unloadNamespace("YATAWebREST")
 unloadNamespace("YATAREST")
 unloadNamespace("YATACore")
 unloadNamespace("YATAProviders")
@@ -13,6 +12,7 @@ rest = YATAREST$new()
 #request = Request$new(path = "/update")
 #request = Request$new(path = "/latest")
 request = Request$new(path = "/best", parameters_query = list(top = 10))
+#request = Request$new(path = "/top", parameters_query = list(top = 10))
 #request = Request$new(path = "/hist", parameters_query = list(id = 3137, from='2021/02/13', to='2021-03-15'))
 response = rest$process_request(request)
 

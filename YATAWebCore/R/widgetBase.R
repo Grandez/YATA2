@@ -6,12 +6,10 @@ yuiColumn = function(width, ...) {
     colClass <- paste0("col-xl-", width)
     div(class = colClass, ...)
 }
-
-yuiTitle1 = function(txt) { h1(class="yata-title-1", txt) }
-yuiTitle2 = function(txt) { h2(class="yata-title-2", txt) }
-yuiTitle3 = function(txt) { h3(class="yata-title-3", txt) }
-yuiTitle4 = function(txt) { h4(class="yata-title-4", txt) }
-yuiTitle5 = function(txt) { h5(class="yata-title-5", txt) }
+yuiTitle = function(level, txt, ...) {
+  data = sprintf(txt, ...)
+  eval(parse(text=paste0("h", level, "(class='yata_title_", level, "', '", data, "')")))
+}
 
 yuiMessage = function(id) {
   htmlOutput(outputId=id, inline=TRUE)
@@ -52,6 +50,11 @@ yuiTextInput = function(id, label=NULL, value="") {
 }
 yuiLabelText = function(id, label=NULL, value="") {
   textOutput(outputId=id, inline=TRUE)
+}
+yuiLabelBold = function(id, class) {
+  cls = "yata_txt_bold"
+  if (!missing(class)) cls = class
+  tags$span(class=cls, textOutput(outputId=id, inline=TRUE))
 }
 updLabelText = function(txt) {
   renderText({ txt })
@@ -103,12 +106,16 @@ yuiLabelDate = function(id, label=NULL, inline=TRUE) {
      textOutput(outputId=id, inline=TRUE)
   }
 }
+updLabelTime = function(epoch) {
+  if (missing(epoch)) epoch=as.numeric(Sys.time())
+  renderText({format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S")})
+}
 updLabelDate = function(epoch) {
   if (missing(epoch)) epoch=as.numeric(Sys.time())
-
-  renderText({txt = format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S")
-              HTML(paste0("<span style=\"text-align: right;\">", txt, "</span>"))
-  })
+  renderText({txt = format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S") })
+  # renderText({txt = format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S")
+  #             HTML(paste0("<span style=\"text-align: right;\">", txt, "</span>"))
+  # })
 }
 
 yuiNumericInput = function(id, label=NULL, value=0, step, min, max) {
@@ -163,6 +170,9 @@ yuiSwitch = function(id, value=FALSE, onLbl="Yes", offLbl="No") {
                 , value = value, width=NULL)
 }
 
+yuiCheck = function(id, value=TRUE) {
+  awesomeCheckbox(id, NULL, value = value)
+}
 
 yuiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
 #                                values
@@ -211,3 +221,6 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   lbl = paste0("<span class='", cls, "'>",text,"</span>")
   renderUI({HTML(lbl)})
 }
+
+yuiPlot = function(id)   { plotlyOutput(id)     }
+updPlot = function(plot) { renderPlotly({plot}) }

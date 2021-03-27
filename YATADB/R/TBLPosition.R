@@ -13,6 +13,7 @@ TBLPosition = R6::R6Class("TBLPOSITION"
         ,getGlobalPosition = function() {
             stmt = paste("SELECT  CURRENCY, SUM(BALANCE) AS BALANCE, SUM(AVAILABLE) AS AVAILABLE"
                                ,",AVG(BUY) AS BUY, AVG(SELL) AS SELL, AVG(PRICE) AS PRICE"
+                               ,",AVG(PRICEBUY) AS PRICEBUY, AVG(PRICESELL) AS PRICESELL"
                                ,",MIN(SINCE) AS SINCE, MAX(LAST) AS LAST")
             group = c("CURRENCY")
             sql(stmt, group=group)

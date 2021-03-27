@@ -70,8 +70,11 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           if (!is.null(params)) names(params) = NULL
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, param=params) }
                     ,error = function (cond) {
-                        browser()
-                        yataError("Error SQL", cond, "SQL", "Query", cause=qry) })
+                       cat("ERROR EN QUERY\n")
+                       cat(cond)
+#                        browser()
+                        #yataError("Error SQL", cond, "SQL", "Query", cause=qry)
+                       })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
           # isolated crea una transaccion para esa query
@@ -81,17 +84,20 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
            tryCatch({res = RMariaDB::dbExecute(getConn(isolated), qry, params=params)
                      if (isolated) commit()
                     },warning = function(cond) {
-                        browser()
+#                        browser()
                        #  rollback();
                        #  yataWarning("Warning SQL", cond, "SQL", "Execute", cause=qry)
                        if (isolated) rollback()
                        stop(paste("WARNING en EXECUTE:", cond))
                     },error = function (cond) {
-                        browser()
+#                        browser()
                        #  rollback()
-                        yataError("Error SQL", cond, "SQL", "Execute", cause=qry)
+ #                       yataError("Error SQL", cond, "SQL", "Execute", cause=qry)
                        if (isolated) rollback()
-                       stop(paste("ERROR en EXECUTE:", cond))
+                                              cat("ERROR EN EXECUTE\n")
+                       cat(cond)
+
+#                       stop(paste("ERROR en EXECUTE:", cond))
 
                     })
       }

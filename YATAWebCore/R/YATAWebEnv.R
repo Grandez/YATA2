@@ -36,8 +36,8 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          self$session = session
          private$cookies = list()
          # A veces hay YATA al final
-         data = parseQueryString(session$request$HTTP_COOKIE)
-         if (length(data) > 0) private$cookies = fromJSON(data[[1]])
+          data = parseQueryString(session$request$HTTP_COOKIE)
+         # if (length(data) > 0) private$cookies = fromJSON(data[[1]])
       }
      ,getPanel = function(name)  { private$panels$get(name) }
      ,addPanel = function(panel) {
@@ -50,14 +50,24 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
        private$cookies[[id]] = data
        updateCookie(self$session, YATA=private$cookies)
     }
-    ,getCurrencyLabel = function(codes, style = 10) {
-        if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, style))
-        else                   data = lapply(codes, function(code) .getNameBySym(code, style))
+    ,getCTCLabels = function(codes, type="medium", invert = FALSE) {
+        # Acepta: id, sym, name, long, medium, short
+        # Devuelve una lista
+        # Invert se usa para combos, en vez de la lista de etiquetas las da de codess
+        if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, type))
+        else                   data = lapply(codes, function(code) .getNameBySym(code, type))
         names(data) = codes
-        if (length(codes) == 1) return (data[[1]])
+        if (invert) {
+           names(codes) = data
+           data = codes
+        }
         data
     }
-    ,getCurrenciesID = function(codes) {
+    ,getCTCLabel = function(code, type="medium", invert = FALSE) {
+        data = getCTCLabels(code,type,invert)
+        data[[1]]
+    }
+    ,getCTCID = function(codes) {
         df = tblCurrencies$table(inValues=list(symbol=codes))
         data = df$id
         names(data) = df$symbol
@@ -73,15 +83,15 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,hID     = NULL
      ,hSym    = NULL
      ,cookies = list()
-     ,.getNameByID = function (id, style) {
+     ,.getNameByID = function (id, type) {
          info = hID$get(id)
          if (is.null(info)) info = .addSymbol(id)
-         .getName(info, style)
+         .getName(info, type)
      }
-     ,.getNameBySym = function (sym, style) {
+     ,.getNameBySym = function (sym, type) {
          info = hSym$get(sym)
          if (is.null(info)) info = .addSymbol(sym)
-         .getName(info, style)
+         .getName(info, type)
      }
     ,.addSymbol = function(code) {
          if (is.numeric(code)) tblCurrencies$select(id=code)
@@ -108,13 +118,13 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          hSym$put(info$symbol, info)
          info
     }
-    ,.getName = function(info, style) {
-        if (style ==  0) return (info$id)
-        if (style ==  1) return (info$symbol)
-        if (style ==  2) return (info$name)
-        if (style == 10) return (info$lbl)
-        if (style == 24) return (info$lbl24)
-        if (style == 12) return (info$lbl12)
+    ,.getName = function(info, type) {
+        if (type == "id")     return (info$id)
+        if (type == "symbol") return (info$symbol)
+        if (type == "name")   return (info$name)
+        if (type == "full")   return (info$lbl)
+        if (type == "long")   return (info$lbl24)
+        if (type == "medium") return (info$lbl12)
     }
     ,loadFiats = function() {
          info = list()

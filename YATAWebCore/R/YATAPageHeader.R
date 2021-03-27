@@ -33,11 +33,16 @@
          shiny::tags$span(class="navbar-brand yata_brand", textOutput("appTitle", inline=TRUE)),
          # Embed hidden icon so that we get the font-awesome dependency
          shiny::tags$span(shiny::icon("bars"), style = "display:none;"),
-         shiny::tags$a(href = "#",   # Sidebar toggle button
-                       class = "sidebar-toggle",
-                      `data-toggle` = "yataoffcanvas", # esto es para detectarlo en javascript
-                       role = "button",
-                       shiny::tags$span(shiny::icon("bars", style="padding-top: 14px;")) #, "Toggle navigation")
+         shiny::tags$a(href = "#",  id="leftButton", # Sidebar toggle button
+                class = "sidebar-toggle",
+                `data-toggle` = "yataoffcanvas", # esto es para detectarlo en javascript
+                 role = "button"
+                ,shiny::tags$span( id="left_side_closed"
+                                  ,class="yata_side_open"
+                                  ,shiny::icon("chevron-right fa-lg", style="padding-top: 12px"))
+                ,shiny::tags$span( id="left_side_open"
+                                  ,class="yata_side_closed"
+                                  ,shiny::icon("chevron-left fa-lg", style= "padding-top: 12px"))
          )),
          shiny::div(class="navbar yata_nav_left", tabnav),
          shiny::tags$div(id="yata_right_menu_btn", # right menu

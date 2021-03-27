@@ -70,3 +70,10 @@ if (Sys.info()[["sysname"]] == "Windows") {
                     tweak(multisession, workers = 4)))
 }
 
+panel = list(
+     pos    = "pos"
+    ,oper   = "oper"
+    ,ana    = "ana"
+    ,config = "config"
+    ,log    = "log"
+)

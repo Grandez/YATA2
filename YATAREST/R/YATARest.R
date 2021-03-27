@@ -15,11 +15,11 @@ YATAREST = R6::R6Class("YATA.REST"
         factory = NULL
        ,initREST = function() {
          super$add_get("/alive", FUN = function(.req, .res) { .res$set_body("OK") })
-         super$add_get("/best"    , best_handler)
-         super$add_get("/besttop" , besttop_handler)
-         super$add_get("/hist"    , hist_handler)
-         super$add_get("/latest"  , latest_handler)
-         super$add_get("/update"  , update_handler)
+         super$add_get("/best"   , best_handler)
+         super$add_get("/top"    , top_handler)
+         super$add_get("/hist"   , hist_handler)
+         super$add_get("/latest" , latest_handler)
+         super$add_get("/update" , update_handler)
        }
        ,setDoc = function() {
            doc_file = system.file("doc/yatarest.yaml", package = packageName())

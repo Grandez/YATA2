@@ -14,31 +14,22 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            private$tblSession    = factory$getTable(codes$tables$Session)
            private$tblCurrencies = factory$getTable(codes$tables$Currencies)
            private$tblExch    = factory$getTable(codes$tables$Exchanges)
-#           private$provider   = factory$getObject(codes$object$providers)
            private$lastGet    = as.Date.POSIXct(1)
            private$interval   = 15
 
        }
        ,setInterval   = function(interval) { private$interval = interval }
-       ,getBest       = function(top=15, from=24, best=FALSE) {
-            col = sprintf("var%02d", from)
+       ,getBest       = function(top=10, from=7) {
             session = tblSession$getLatest()
-
-            # Se ha llamado sin coger la info
             if (nrow(session) == 0) session = updateLatest()
-
-            # Si no hay movimiento no me vale
-            session = session[session$volume > 10,]
-
-            ncol = which(col == colnames(session))
-
-            if (!missing(best) && best) session = session[session$rank < 150, ]
-
-            dft = session[order(session[ncol], decreasing = TRUE),]
-            dft = dft[1:top,]
-            dft = dft[,c("id", "symbol", "name", "price", col, "volume")]
-            colnames(dft) = c("id", "symbol", "name", "price", "var", "volume")
-            dft
+            session = session[session$volume > 10,] # Solo los que se mueven
+            getBestDF(session, top, from)
+       }
+       ,getTop       = function(top=10, from=7) {
+            session = tblSession$getLatest()
+            if (nrow(session) == 0) session = updateLatest()
+            session = session[session$volume > 10,] # Solo los que se mueven
+            getBestDF(session[session$rank <= 150,], top, from)
         }
        ,getHistorical = function(base, idCurrency, from, to, period=24) {
            id = suppressWarnings(as.numeric(idCurrency))
@@ -80,6 +71,16 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,provider   = NULL
        ,lastGet    = NULL
        ,interval   = NULL
+       ,getBestDF = function(df, top, from) {
+           col = ""
+           if (from ==  1) col = "hour"
+           if (from == 24) col = "day"
+           if (from ==  7) col = "day"
+           if (from == 30) col = "month"
+           if (col == "") return (NULL)
+           dft = df[order(df[col], decreasing = TRUE),]
+           dft[1:top,]
+       }
     )
 )
 

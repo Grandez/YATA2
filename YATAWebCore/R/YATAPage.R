@@ -84,6 +84,7 @@ YATAPage =  function(title = NULL,id = NULL,
              ,tags$script(src="yata/yata.js")
              ,tags$script(src="yata/yataapp.js")
              ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
+             ,tags$script("Shiny.addCustomMessageHandler('closeLeftSide', function() { document.getElementById('#leftButton').click(); })")
              ,initShinyCookie("YATA")
         )
         ,container

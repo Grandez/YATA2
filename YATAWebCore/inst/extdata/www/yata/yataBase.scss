@@ -438,11 +438,20 @@ body {
 	 margin: auto;
 }
 
-.yataCentered {
+.yata_centered {
   margin: 0 auto;
 }
-.yataForm {
+.yata_form {
     width: 100%;
+    td {
+        padding-bottom: 12px;
+        padding-right: 12px;
+    }
+}
+
+.yata_buttons {
+   display: flex;
+   justify-content: space-around;
 }
 
 .yataDown {
@@ -548,4 +557,14 @@ main-header {
 }
 navbar-static-top {
    padding: 8px;
+}
+
+.yata_side_noside {
+    visibility: hidden;
+}
+.yata_side_open {
+    padding-top: 14px;
+}
+.yata_side_closed {
+    display: none;
 }

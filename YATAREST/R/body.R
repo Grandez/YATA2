@@ -1,17 +1,37 @@
 logger = function(endp, beg=TRUE) {
     cat(paste(format(Sys.time(), "%H:%M:%S"), endp, ifelse (beg, "Started", "Ended"), "\n"))
 }
-best_body = function(top, count, best) {
+best_body = function(top, count) {
     logger("best")
     tryCatch({
     fact = YATACore::YATAFACTORY$new()
     sess = fact$getObject(fact$codes$object$session)
-    res = sess$getBest(top, count, best)
+    res = sess$getBest(top, count)
     fact$clear()
     logger("best", FALSE)
     res
-    }, error = function(e) print("ERROR en best: \n")) #, e, "\n"))
+    }, error = function(e) {
+        print("ERROR en best: \n")
+        cat(e)
+        stop(e)
+    })
 }
+top_body = function(top, count) {
+    logger("top")
+    tryCatch({
+    fact = YATACore::YATAFACTORY$new()
+    sess = fact$getObject(fact$codes$object$session)
+    res = sess$getTop(top, count)
+    fact$clear()
+    logger("top", FALSE)
+    res
+    }, error = function(e) {
+        print("ERROR en top: \n")
+        cat(e)
+        stop(e)
+    })
+}
+
 latest_body = function() {
     tryCatch({
     logger("latest")

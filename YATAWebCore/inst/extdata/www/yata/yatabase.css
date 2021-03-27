@@ -85,22 +85,6 @@ html, body {
   color: white;
 }
 
-/*
-.wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.header, .footer {
-  background: silver;
-}
-.content {
-  flex: 1;
-  overflow: auto;
-  background: pink;
-}
-
-*/
 /*********************************/
 /* Principal                     */
 /*********************************/
@@ -243,7 +227,7 @@ body {
 }
 
 #yataContentLeft {
-  width: 200px;
+  width: 128px;
   height: 100%;
   background-color: #111;
   overflow-x: hidden;
@@ -388,7 +372,7 @@ body {
 
 .yata_panel_left {
   background-color: lightgray;
-  width: 380px;
+  width: 256px;
 }
 
 .yata_leftside_closed {
@@ -485,14 +469,23 @@ body {
   margin: auto;
 }
 
-.yataCentered {
+.yata_centered {
   margin: 0 auto;
 }
 
-.yataForm {
-  width: 100%;
+.yata_form {
+   width: 100%;
 }
 
+.yata_form td {
+  padding-bottom: 12px;
+  padding-right: 12px;
+}
+
+.yata_buttons {
+   display: flex;
+   justify-content: space-around;
+}
 .yataDown {
   color: Crimson;
   font-size: 150%;
@@ -605,4 +598,14 @@ main-header {
 
 navbar-static-top {
   padding: 8px;
+}
+
+.yata_side_noside {
+    visibility: hidden;
+}
+.yata_side_open {
+    padding-top: 14px;
+}
+.yata_side_closed {
+    display: none;
 }

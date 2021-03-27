@@ -56,12 +56,37 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             if (!is.null(id)) select(id)
             tryCatch({
                db$begin()
+                browser()
                if (!is.null(current$idParent) && !is.na(current$idParent)) {
                    prtOper$setField("active", codes$flag$inactive)
                    prtOper$apply()
                }
-               if (current$type == codes$oper$sell) acceptSell(price, amount, fee)
-               if (current$type != codes$oper$sell) acceptBuy (price, amount, fee)
+           # Acepta una compra, puede haber cambiado el precio y la cantidad
+           # Se aplican las tasas
+           data = list( status=codes$status$accepted
+                       ,amount=amount
+                       ,price=price
+                       ,fee=fee
+                       ,reason=codes$reason$accept
+                       ,logType=codes$log$accept
+           )
+
+           prtOper$update(data)
+           if (amount < 0) { # Es enta
+               ctc = current$counter
+               imp = amount
+           } else {
+               ctc = current$base
+               imp  = amount * price * -1
+               price = 1
+           }
+
+           addFlow(codes$flow$output, ctc, imp, price)
+           if (fee != 0) addFlow(codes$flow$fee, imp * fee / 100, 1)
+           objPos$updateOper(current$camera, ctc, imp, price, fee)
+               #
+               # if (current$type == codes$oper$sell) acceptSell(price, amount, fee)
+               # if (current$type != codes$oper$sell) acceptBuy (price, amount, fee)
                db$commit()
                FALSE
             },error = function(cond) {
@@ -73,21 +98,27 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ,execute = function(gas = 0, id=NULL) {
             # La operacion se ha realizado, esta en el wallet
             if (!is.null(id)) select(id)
+            ctc = current$counter
+            cant = current$amount
+
             data = list( status=codes$status$executed
                         ,gas=gas
                         ,reason=codes$reason$executed
                         ,logType=codes$log$executed
             )
             # Es la venta de una posicion abierta
-            if (current$type == codes$oper$sell && current$parent > 0) {
-                data$active = codes$flag$inactive
+            if (current$type == codes$oper$sell) {
+                ctc = current$base
+                cant = current$amount * current$price * -1
+                if (current$parent > 0) data$active = codes$flag$inactive
             }
+
             tryCatch({
                db$begin()
                prtOper$update(data)
-               addFlow(codes$flow$input, current$counter, current$amount, current$price)
+               addFlow(codes$flow$input, ctc, cant, current$price)
                if (gas != 0) addFlow(codes$flow$gas, current$counter, gas * amount * -1 / 100, 1) #current$price)
-               objPos$updateOper(current$camera, current$counter, current$amount, current$price, gas)
+               objPos$updateOper(current$camera, ctc, cant, current$price, gas)
                db$commit()
                FALSE
             },error = function(cond) {
@@ -344,46 +375,46 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            if (fee != 0) addFlow(codes$flow$fee, imp * fee / 100, 1)
            objPos$updateOper(current$camera, current$base, imp, 1, fee)
        }
-       ,acceptSell   = function(price, amount, fee) {
-           # Acepta una compra, puede haber cambiado el precio y la cantidad
-            oldPrice  = current$price
-            oldAmount = current$amount
-            newPrice  = ifelse(price  == 0, oldPrice,  price)
-            newAmount = ifelse(amount == 0, oldAmount, amount)
-            diffAmount = newAmount - oldAmount
-            diffPrice  = newPrice  - oldPrice
-            impFee     = (newAmount * fee) / -100
-            imp        = newAmount * newPrice
-            regularize = ifelse(diffAmount != 0 || diffPrice != 0, TRUE, FALSE)
-
-            tryCatch({
-               db$begin()
-               prtOper$set(status=codes$status$accepted, amount=newAmount, price=newPrice)
-               prtOper$apply()
-               addFlow(codes$flow$output, current$counter, oldAmount, 1)
-               if (regularize) addFlow(codes$flow$regInput,current$counter,diffAmount,1)
-               addFlow(codes$flow$pending, current$base, newAmount * -1, newPrice)
-               if (impFee != 0) {
-                   addFlow(codes$flow$fee, self$current$counter, impFee,    newPrice)
-                   objPos$updateBalance(current$camera, current$base, impFee * -1)
-               }
-               if (diffAmount != 0) objPos$updateAvailable(current$camera, current$counter, diffAmount)
-               objPos$update(current$camera, current$counter, newAmount, newPrice, FALSE)
-
-               if (current$parent != 0) {
-                   select(current$parent)
-                   prtOper$set(status=codes$status$closed, active=codes$flag$inactive)
-                   prtOper$apply()
-               }
-               db$commit()
-               FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                TRUE
-            })
-
-       }
+       # ,acceptSell   = function(price, amount, fee) {
+       #     # Acepta una compra, puede haber cambiado el precio y la cantidad
+       #      oldPrice  = current$price
+       #      oldAmount = current$amount
+       #      newPrice  = ifelse(price  == 0, oldPrice,  price)
+       #      newAmount = ifelse(amount == 0, oldAmount, amount)
+       #      diffAmount = newAmount - oldAmount
+       #      diffPrice  = newPrice  - oldPrice
+       #      impFee     = (newAmount * fee) / -100
+       #      imp        = newAmount * newPrice
+       #      regularize = ifelse(diffAmount != 0 || diffPrice != 0, TRUE, FALSE)
+       #
+       #      tryCatch({
+       #         db$begin()
+       #         prtOper$set(status=codes$status$accepted, amount=newAmount, price=newPrice)
+       #         prtOper$apply()
+       #         addFlow(codes$flow$output, current$counter, oldAmount, 1)
+       #         if (regularize) addFlow(codes$flow$regInput,current$counter,diffAmount,1)
+       #         addFlow(codes$flow$pending, current$base, newAmount * -1, newPrice)
+       #         if (impFee != 0) {
+       #             addFlow(codes$flow$fee, self$current$counter, impFee,    newPrice)
+       #             objPos$updateBalance(current$camera, current$base, impFee * -1)
+       #         }
+       #         if (diffAmount != 0) objPos$updateAvailable(current$camera, current$counter, diffAmount)
+       #         objPos$update(current$camera, current$counter, newAmount, newPrice, FALSE)
+       #
+       #         if (current$parent != 0) {
+       #             select(current$parent)
+       #             prtOper$set(status=codes$status$closed, active=codes$flag$inactive)
+       #             prtOper$apply()
+       #         }
+       #         db$commit()
+       #         FALSE
+       #      },error = function(cond) {
+       #          message(cond)
+       #          db$rollback()
+       #          TRUE
+       #      })
+       #
+       # }
        ,createTables = function() {
             private$prtOper        = factory$getTable(codes$tables$Operations)
             private$tblFlows       = factory$getTable(codes$tables$Flows)

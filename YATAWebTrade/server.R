@@ -10,9 +10,24 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,interval     = 15
       ,initialize    = function(id, parent, session) {
           super$initialize(id, parent, session)
+         
           self$position   = self$factory$getObject(self$codes$object$position)
           self$providers  = self$factory$getObject(self$codes$object$providers)
           self$updateData(TRUE)
+      }
+      ,root        = function() { TRUE }
+      ,invalidate  = function(panel) {
+         private$invalid = c(private$invalid, panel)
+         invisible(self)
+      } 
+      ,isInvalid   = function(panel) {
+         pos = which(private$invalid == panel)
+         ifelse (length(pos) > 0, TRUE, FALSE)
+      }
+      ,reset       = function(panel) {
+          pos = which(private$invalid == panel)
+         if (length(pos) > 0) private$invalid = private$invalid[-pos]
+         invisible(self)
       }
       ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
@@ -87,9 +102,10 @@ function(input, output, session) {
    
    # En este observer, cargamos la posicion y las cotizaciones
     observe({
+       message("SERVER Actualiza Sessiones")
         invalidateLater(pnl$interval * 60000)
-        pnl$updateData()
-        rest("update")
+       pnl$updateData()
+       rest("update")
     })
    onclick("appTitle"     , changeDB()  )
    onStop(function() {

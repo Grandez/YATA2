@@ -15,18 +15,13 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getGlobalPosition = function() {
           df = prtPosition$getGlobalPosition()
-          df = add_column(df, value = df$balance * df$price, .after="price")
-          yataSetClasses(df, dat=c("since", "last"))
-       }
+          df[df$balance != 0,]
+        }
        ,getPosition       = function(camera, currency) { prtPosition$getPosition(camera, currency) }
        ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
            df = prtPosition$getCameraPosition(camera, balance, available)
-           # df = df[,2:ncol(df)]
-           # browser()
-           # df = add_column(df, value = df$balance * df$price, .after="price")
-           #
-           # yataSetClasses(df, dat=c("since", "last"))
-      }
+           df[df$balance != 0,]
+       }
       ,transfer = function(from, to, currency, amount) {
          if (from != "EXT") {
              res = prtPosition$select(camera=from, currency=currency, create=TRUE)
@@ -54,7 +49,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
               pSell = ifelse((nSell - amount) == 0, 0, pSell / (nSell - amount))
               nSell = nSell - amount
               prtPosition$set(priceSell = pSell, sell=nSell)
-              nBalance = amount * price
+              nBalance = amount
           }
 
           pBuy = curr$priceBuy
@@ -76,7 +71,8 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
               tax = nBalance * prcTaxes / 100
               if (tax > 0) tax = tax * -1
           }
-          prtPosition$setField("balance", curr$balance + nBalance + tax)
+          prtPosition$setField("balance",   curr$balance + nBalance + tax)
+          prtPosition$setField("available", curr$balance + nBalance + tax)
           prtPosition$apply()
       }
       ,update = function(camera, currency, amount, price, available=TRUE) {

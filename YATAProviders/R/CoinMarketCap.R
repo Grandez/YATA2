@@ -58,6 +58,11 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
               tms = rep(Sys.time(), nrow(dfl))
               dfl$tms = tms
           }
+          # CAmbiamos los nombres de las columnas
+          colnames(dfl) = c( "id", "name", "symbol", "slug", "rank", "price"
+                            ,"volume", "volday", "volweek", "volmonth"
+                            ,"hour", "day", "week", "month", "bimonth", "quarter"
+                            ,"dominance", "turnover", "tms")
           dfl
       }
       ,unloadCurrencies = function(from, limit) {

@@ -1,6 +1,6 @@
 yuiFormTable = function(...) {
-   divTbl  = tags$div(class="yataCentered")
-   tbl  = tags$table(class="yataForm")
+   divTbl  = tags$div(class="yata_centered")
+   tbl  = tags$table(class="yata_form")
    #rows = lapply(list(...), function(row) .makeRow(row))
    divTbl = tagAppendChild(divTbl,tagAppendChildren(tbl, ...))
    # if (width < 12) {

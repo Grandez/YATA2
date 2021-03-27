@@ -1,3 +1,20 @@
+top_handler = function(.req, .res) {
+      writeLines(paste("top:", Sys.time()))
+
+    qryTop   = .req$parameters_query[["top"]]
+    top      = ifelse(is.null(qryTop),10, as.integer(qryTop))
+    qryFrom  = .req$parameters_query[["from"]]
+    from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
+      message("top - top: ", top, "- from: ", from)
+    tryCatch({
+        df = top_body(top, from)
+       .df_handler(df, .res)
+    }, error = function(e) {
+      .res$set_status_code(500)
+      .res$set_content_type("application/json")
+      .res$set_body(jsonlite::toJSON(e))
+    })
+}
 best_handler = function(.req, .res) {
       writeLines(paste("best:", Sys.time()))
 
@@ -6,21 +23,15 @@ best_handler = function(.req, .res) {
     qryFrom  = .req$parameters_query[["from"]]
     from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
       message("best - top: ", top, "- from: ", from)
-    df = best_body(top, from)
-    .df_handler(df, .res)
+    tryCatch({
+        df = best_body(top, from)
+       .df_handler(df, .res)
+    }, error = function(e) {
+      .res$set_status_code(500)
+      .res$set_content_type("application/json")
+      .res$set_body(jsonlite::toJSON(e))
+    })
 }
-besttop_handler = function(.req, .res) {
-    writeLines(paste("besttop:", Sys.time()))
-
-    qryTop   = .req$parameters_query[["top"]]
-    top      = ifelse(is.null(qryTop),10, as.integer(qryTop))
-    qryFrom  = .req$parameters_query[["from"]]
-    from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
-      message("besttop - top: ", top, "- from: ", from)
-    df = best_body(top, from, TRUE)
-    .df_handler(df, .res)
-}
-
 hist_handler = function(.req, .res) {
     writeLines(paste("hist:", Sys.time()))
     id   = .req$parameters_query[["id"]]
