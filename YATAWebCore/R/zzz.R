@@ -3,7 +3,7 @@
     if (Sys.info()[["sysname"]] == "Windows") {
         shiny::addResourcePath("icons",   normalizePath("P:\\R\\YATA2\\YATAExternal\\icons"))
     } else {
-        shiny::addResourcePath("icons",   normalizePath("P:\\R\\YATA2\\YATAExternal\\icons"))
+        shiny::addResourcePath("icons",   normalizePath("/srv/YATA2/YATAExternal/icons"))
     }
 
     shiny::addResourcePath("icons2",  normalizePath(system.file("extdata/www/icons", package = "YATAWebCore")))
