@@ -222,5 +222,24 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   renderUI({HTML(lbl)})
 }
 
-yuiPlot = function(id)   { plotlyOutput(id)     }
-updPlot = function(plot) { renderPlotly({plot}) }
+yuiPlot = function(id)   {
+  cls  = "yata_plot_nodata"
+  data = h3(style="padding-top: 16px", "No data selected")
+  tagList( plotlyOutput(id)
+          ,hidden(tags$div(id=paste0(id, "_nodata"), class=cls
+            ,tags$img(src="yata/img/warning.png", width="48px", height="48px", style="margin-right: 32px")
+            ,data))
+          )
+}
+updPlot = function(plot, id) {
+  if (is.null(plot)) {
+      shinyjs::hide(id)
+      shinyjs::show(paste0(id, "_nodata"))
+      NULL
+  } else {
+      shinyjs::show(id)
+      shinyjs::hide(paste0(id, "_nodata"))
+     renderPlotly({plot})
+  }
+
+}

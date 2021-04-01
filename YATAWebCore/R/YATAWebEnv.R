@@ -17,8 +17,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             self$MSG     = self$factory$MSG
 
             private$tblCurrencies = factory$getTable("Currencies")
-            private$hID  = HashMap$new()
-            private$hSym = HashMap$new()
+            private$tblCameras    = factory$getTable("Cameras")
+            private$hID   = HashMap$new()
+            private$hSym  = HashMap$new()
+            private$hCam  = HashMap$new()
             loadFiats()
          }, error = function(e) {
            browser()
@@ -28,8 +30,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      }
      ,finalize = function() {
          private$tblCurrencies = NULL
+         private$tblCameras    = NULL
          private$hID    = NULL
          private$hSym   = NULL
+         private$hCam   = NULL
          factory$clear()
      }
      ,setSession = function(session) {
@@ -68,10 +72,26 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         data[[1]]
     }
     ,getCTCID = function(codes) {
-        df = tblCurrencies$table(inValues=list(symbol=codes))
+        cdg = codes
+        eur = which(codes == "EUR")
+        if (length(eur)) cdg = codes[-eur]
+        df = tblCurrencies$table(inValues=list(symbol=cdg))
         data = df$id
         names(data) = df$symbol
+        if (length(eur)) data = c(data,EUR=0)
         data
+    }
+    ,getCameraNames = function(codes) {
+        lst = lapply(codes, function(code) { name = private$hCam$get(code)
+                            if (is.null(name)) {
+                                df = tblCameras$table(id=code)
+                                name = df[1,"name"]
+                                private$hCam$put(code, name)
+                                name
+                            }
+                   })
+        names(lst) = codes
+        lst
     }
   )
   ,private = list(
@@ -79,9 +99,11 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 # De esta forma se gestiona la inicializacion de la pagina
 # Y guardamos los datos temporales
       panels  = HashMap$new()
-     ,tblCurrencies  = NULL
+     ,tblCurrencies = NULL
+     ,tblCameras    = NULL
      ,hID     = NULL
      ,hSym    = NULL
+     ,hCam    = NULL
      ,cookies = list()
      ,.getNameByID = function (id, type) {
          info = hID$get(id)
@@ -103,16 +125,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
            info$symbol = code
            info$name   = code
            info$lbl    = code
-           info$lbl24  = code
-           info$lbl12  = code
+           info$lbl32  = code
+           info$lbl20  = code
          }
          else {
             info$id     = tblCurrencies$current$id
             info$symbol = tblCurrencies$current$symbol
             info$name   = tblCurrencies$current$name
             info$lbl    = paste0(info$symbol, " - ", info$name)
-            info$lbl24  = ifelse(nchar(info$lbl) > 24, substr(info$lbl, 1, 24), info$lbl)
-            info$lbl12  = ifelse(nchar(info$lbl) > 12, substr(info$lbl, 1, 12), info$lbl)
+            info$lbl32  = ifelse(nchar(info$lbl) > 32, substr(info$lbl, 1, 20), info$lbl)
+            info$lbl20  = ifelse(nchar(info$lbl) > 30, substr(info$lbl, 1, 32), info$lbl)
          }
          hID$put (info$id,     info)
          hSym$put(info$symbol, info)
@@ -123,8 +145,8 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         if (type == "symbol") return (info$symbol)
         if (type == "name")   return (info$name)
         if (type == "full")   return (info$lbl)
-        if (type == "long")   return (info$lbl24)
-        if (type == "medium") return (info$lbl12)
+        if (type == "long")   return (info$lbl32)
+        if (type == "medium") return (info$lbl20)
     }
     ,loadFiats = function() {
          info = list()
@@ -132,16 +154,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          info$symbol = "EUR"
          info$name   = "Euro"
          info$lbl    = paste0(info$symbol, " - ", info$name)
-         info$lbl24  = info$lbl
-         info$lbl12  = info$lbl
+         info$lbl32  = info$lbl
+         info$lbl20  = info$lbl
          hSym$put(info$symbol, info)
          hID$put (info$id, info)
          info$id     = 99998
          info$symbol = "USD"
          info$name   = "US Dollar"
          info$lbl    = paste0(info$symbol, " - ", info$name)
-         info$lbl24  = info$lbl
-         info$lbl12  = info$lbl
+         info$lbl32  = info$lbl
+         info$lbl20  = info$lbl
          hSym$put(info$symbol, info)
          hID$put (info$id, info)
     }

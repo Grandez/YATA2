@@ -10,7 +10,7 @@ yuiBtnInfo      = function(id, label)        { shinyBS::bsButton(id, label, styl
 yuiBtnLight     = function(id, label)        { shinyBS::bsButton(id, label, style="light"     ) }
 yuiBtnDark      = function(id, label)        { shinyBS::bsButton(id, label, style="dark"      ) }
 yuiBtnLink      = function(id, label)        { shinyBS::bsButton(id, label, style="link"      ) }
-yuiBtnEdit      = function(id, label)        { shinyBS::bsButton(id, label, style="navy"      ) }
+yuiBtnEdit      = function(id, label)        { shinyBS::bsButton(id, label, style="silver"    ) }
 
 
 .btnIcon = function(color, ico, title) {
@@ -24,7 +24,7 @@ yuiBtnIconDel      = function(title) {.btnIcon("orange"    , "trash"            
 yuiBtnIconRefuse   = function(title) {.btnIcon("navy"      , "thumbs-down"      ,ifelse(missing(title), "Refuse",title)) }
 yuiBtnIconCloud    = function(title) {.btnIcon("aqua"      , "cloud-upload-alt" ,ifelse(missing(title), "Cloud" ,title)) }
 yuiBtnIconEdit     = function(title) {.btnIcon("darkgreen" , "pen"              ,ifelse(missing(title), "Edit"  ,title)) }
-yuiBtnIconCash     = function(title) {.btnIcon("purple"    , "cash-register"    ,ifelse(missing(title), "Close" ,title)) }
+yuiBtnIconCash     = function(title) {.btnIcon("violet"    , "wallet"           ,ifelse(missing(title), "Close" ,title)) }
 yuiBtnIconView     = function(title) {.btnIcon("mediumblue", "search-dollar"    ,ifelse(missing(title), "View"  ,title)) }
 yuiBtnIconActive   = function(title) {.btnIcon("limegreen" , "plus-circle"      ,ifelse(missing(title), "Activar"  ,title)) }
 yuiBtnIconInactive = function(title) {.btnIcon("maroon"    , "minus-circle"     ,ifelse(missing(title), "Desactivar"  ,title)) }

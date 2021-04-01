@@ -18,149 +18,130 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
           initMonitors()
      }
      ,render = function(size=2) {
-        mon = monitors$values()
-        lst = lapply(seq_len(ncol(mon)), function(i) mon[,i])
-        lapply(lst, function(x) insertUI( selector = idDiv, immediate=TRUE
+        lapply(monitors$keys(), function(x) insertUI( selector = idDiv, immediate=TRUE
                                            ,where = "beforeEnd"
-                                           ,ui=tagList(renderMonitor(x, size))))
+                                           ,ui=tagList(renderMonitor(monitors$get(x), size))))
+        update(TRUE)
      }
      ,update = function(first=FALSE) {
          ctc = monitors$keys()
-         dfs   = sess$getLatest(ctc)
-         last = as.list(dfs$price)
-         names(last) = ctc
-         lapply(ctc, function(x) updateMonitor(x, last[[x]]))
+         private$last = sess$getLatest(ctc)
+         updateData = function(sym) {
+            lst = as.list(private$last[private$last$symbol == sym,])
+            mon  = monitors$get(sym)
+            updateMonitor(mon, lst)
+            mon = list.merge(mon, lst)
+            monitors$put(sym, mon)
+         }
+         lapply(ctc, function(sym) updateData(sym))
      }
+     ,getLast = function() { private$last }
    )
   ,private = list(
        monitors = NULL
       ,pnl      = NULL
       ,env      = NULL
       ,sess     = NULL
+      ,last     = NULL
       ,idDiv    = NULL  # DIV donde va el monitor
-      ,tpl  = list(
-                 name    = ""
-                ,last    = -Inf
-                ,session = -Inf
-                ,day     = -Inf
-                ,week    = -Inf
-                ,price   = -Inf
-                ,id      = 0
-             )
-
-    ,initMonitors  = function() {
-          createMonitor = function(sym, dfPos, dfLast) {
-              last = as.list(dfLast[dfLast$symbol == sym,])
-              pos = dfPos[dfPos$symbol == sym,]
-              mon  = tpl
-              mon$id      = last$id
-              mon$name    = sym
-              mon$price = ifelse(nrow(pos) > 0, pos[1,"price"], last$price)
-              mon$session = last$price
-              mon$last    = last$price
-              mon$hour    = last$price / (1 + (last$hour / 100))
-              mon$day     = last$price / (1 + (last$day  / 100))
-              mon$week    = last$price / (1 + (last$week / 100))
+      ,clsUp    = "yata_cell_data_up"
+      ,clsDown  = "yata_cell_data_down"
+      ,clsLbl   = "yata_cell_label"
+      ,clsData  = "yata_cell_data"
+      ,initMonitors  = function() {
+          createMonitor = function(sym, dfPos, dfLast, names) {
+              mon         = as.list(dfLast[dfLast$symbol == sym,])
+              mon$name    = names[[sym]]
+              mon$session = mon$price
+              pos         = dfPos[dfPos$currency == sym,]
+              mon$cost    = ifelse(nrow(pos) > 0,pos[1,"price"], mon$price)
               private$monitors$put(sym, mon)
           }
-
-          df = pnl$getRoot()$data$dfPosGlobal
-          df = df[df$currency != "EUR",]
-          df = df[order(df$balance, decreasing=TRUE),]
-          ctc = df$currency
-          if (length(ctc) < 6 && !("BTC" %in% ctc)) ctc = c("BTC", ctc)
-          if (length(ctc) < 6 && !("ETH" %in% ctc)) ctc = c("ETH", ctc)
+          df  = pnl$getRoot()$data$dfPosGlobal
+          df  = df[df$currency != "EUR",]
+          ctc = unique(c(df$currency, "BTC", "ETH"))
           if (length(ctc) > 6) ctc = ctc[1:6]
 
           private$sess = pnl$factory$getObject("Session")
-          dfs   = sess$getLatest(ctc)
-
-          lapply(ctc, function(sym) createMonitor(sym, df, dfs))
+          dfs          = sess$getLatest(ctc)
+          names        = YATAWEB$getCTCLabels(ctc, type="name")
+          lapply(ctc, function(sym) createMonitor(sym, df, dfs, names))
       }
-    ,renderData    = function(first=FALSE) {
-         render = function(key) {
+      ,renderData    = function(first=FALSE) {
+          render = function(key) {
              mon = monitors$get(key)
              idMon = paste0(idDiv, "_", mon$name)
              shinyjs::html(paste0(idMon, "_price"), number2string(mon$price), asis=TRUE)
          }
          lapply(monitors$keys(), function(key) render(key))
-     }
-    ,renderMonitor = function(x, size) {
-        idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", x$name)
-        tags$div(column(size,tableMonitor(idMon,x)))
-     }
-    ,tableMonitor  = function(idMon,data) {
-         cprice = ""
-         cday   = ""
-         cweek  = ""
-         vprice = data$last/data$price
-         vday   = data$last/data$day
-         vweek  = data$last/data$week
-         if (vprice != 1) cprice = ifelse(vprice > 1, "yata_cell_data_up", "yata_cell_data_down")
-         if (vday   != 1) cday   = ifelse(vday   > 1, "yata_cell_data_up", "yata_cell_data_down")
-         if (vweek  != 1) cweek  = ifelse(vweek  > 1, "yata_cell_data_up", "yata_cell_data_down")
+      }
+     ,renderMonitor = function(x, size) {
+         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", x$symbol)
+         tags$div(class="yata_monitor_container", tableMonitor(idMon,x))
+      }
+     ,tableMonitor  = function(idMon,data) {
          tags$table(class="yata_tbl_monitor"
            ,tags$tr(
-              tags$td(rowspan="3", class="yata_cell_icon",
-                     img(src=paste0("icons/", data$id, ".png"),width="48px", height="48px",
+              tags$td(rowspan="6", class="yata_cell_icon",
+                     img(src=paste0("icons/", data$id, ".png"),width="60px", height="60px",
                      onerror="this.onerror=null;this.src='icons2/YATA.png';"))
-             ,tags$td(class="yata_cell_label", "Coste")
-             ,tags$td(class="yata_cell_data",  id=paste0(idMon,"_price"),
-                      number2string(data$price,round=TRUE))
-             ,tags$td(class=paste("yata_cell_data", cprice),  id=paste0(idMon,"_price_delta"),
-                      percentage2string(vprice,calc=TRUE))
+             ,tags$td(class=clsLbl, "Coste")
+             ,tags$td(class=clsData,  id=paste0(idMon,"_cost_delta"))
            )
            ,tags$tr(
-              tags$td(class="yata_cell_label", "Dia")
-             ,tags$td(class="yata_cell_data",  id=paste0(idMon,"_day"),
-                      number2string(data$day,round=TRUE))
-             ,tags$td(class=paste("yata_cell_data", cday),  id=paste0(idMon,"_day_delta"),
-                      percentage2string(vday,calc=TRUE))
+              tags$td(class=clsLbl, "Sesion")
+             ,tags$td(class=clsData, id=paste0(idMon,"_session_delta"))
            )
            ,tags$tr(
-              tags$td(class="yata_cell_label yataCellGroup", "Semana")
-             ,tags$td(class="yata_cell_data  yataCellGroup",  id=paste0(idMon,"_week"),
-                      number2string(data$week,round=TRUE))
-             ,tags$td(class=paste("yata_cell_data", cweek),  id=paste0(idMon,"_week_delta"),
-                      percentage2string(vweek,calc=TRUE))
+              tags$td(class=clsLbl, "Hora")
+             ,tags$td(class=clsData, id=paste0(idMon,"_hour_delta"))
            )
            ,tags$tr(
-              tags$td(rowspan="2", class="yata_cell_ctc", data$name)
-             ,tags$td(class="yata_cell_label", "Sesion")
-             ,tags$td(class="yata_cell_data",  id=paste0(idMon,"_session"), number2string(data$session,round=TRUE))
-             ,tags$td(class="yata_cell_data",  id=paste0(idMon,"_session_delta"))
+              tags$td(class=clsLbl, "Dia")
+             ,tags$td(class=clsData,  id=paste0(idMon,"_day_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Semana")
+             ,tags$td(class=clsData,  id=paste0(idMon,"_week_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Mes")
+             ,tags$td(class=clsData,  id=paste0(idMon,"_month_delta"))
            )
           ,tags$tr(
-              tags$td(class="yata_cell_label", "Ultimo")
-             ,tags$td(class="yata_cell_data yata_cell_group", id=paste0(idMon,"_last"),
-                      number2string(data$last,round=TRUE))
-             ,tags$td(class="yata_cell_data yata_cell_group", id=paste0(idMon,"_last_delta"))
+              tags$td(style="padding-bottom: 6px;", class="yata_cell_ctc", substr(data$name, 1, 12))
+             ,tags$td(colspan="2", class="yata_cell_data yata_cell_group", style="padding-bottom: 6px;", id=paste0(idMon,"_last"))
           )
         )
     }
-    ,updateMonitor = function(id, last) {
-        idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", id)
-        mon = monitors$get(id)
-
-        value = last/mon$price
-        updateRow(paste0(idMon,"_price_delta"),   value, percentage2string(value, calc=TRUE))
-        value = last/mon$day
-        updateRow(paste0(idMon,"_day_delta"),     value, percentage2string(value, calc=TRUE))
-        value = last/mon$week
-        updateRow(paste0(idMon,"_week_delta"),    value, percentage2string(value, calc=TRUE))
-        value = last/mon$session
-        updateRow(paste0(idMon,"_session_delta"), value, percentage2string(value, calc=TRUE))
-        value = last/mon$last
-        updateRow(paste0(idMon,"_last_delta"),    value, percentage2string(value, calc=TRUE))
-        shinyjs::html(paste0(idMon, "_last"), html = number2string(last, round=TRUE), asis = TRUE)
+    ,updateMonitor = function(mon, last) {
+        idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", last$symbol)
+        vcost = ((last$price / mon$cost)    - 1) * 100
+        vsess = ((last$price / mon$session) - 1) * 100
+        updateRow(paste0(idMon,"_cost_delta"),    mon$cost,    vcost,      TRUE)
+        updateRow(paste0(idMon,"_session_delta"), mon$session, vsess,      TRUE)
+        updateRow(paste0(idMon,"_hour_delta"),    mon$hour,    last$hour,  TRUE)
+        updateRow(paste0(idMon,"_day_delta"),     mon$day,     last$day,   TRUE)
+        updateRow(paste0(idMon,"_week_delta"),    mon$week,    last$week,  TRUE)
+        updateRow(paste0(idMon,"_month_delta"),   mon$month,   last$month, TRUE)
+        updateRow(paste0(idMon,"_last"),          mon$price,   last$price, FALSE)
     }
-    ,updateRow     = function(id, value, txt) {
-         cls =""
-         shinyjs::removeCssClass(id, class = "yata_cell_data_up"   , asis = TRUE)
-         shinyjs::removeCssClass(id, class = "yata_cell_data_down" , asis = TRUE)
-         if (value != 1) cls = ifelse(value > 1, "yata_cell_data_up", "yata_cell_data_down")
-         shinyjs::addCssClass(id, class = cls , asis = TRUE)
+    ,updateRow     = function(id, old, act, prc) {
+         if (prc) {
+             shinyjs::removeCssClass(id, class = clsDown, asis=TRUE)
+             shinyjs::removeCssClass(id, class = clsUp  , asis=TRUE)
+             if (act > 0 ) shinyjs::addCssClass(id, class=clsUp,   asis=TRUE)
+             if (act < 0 ) shinyjs::addCssClass(id, class=clsDown, asis=TRUE)
+         }
+         if (!prc && act != 0) {
+             shinyjs::removeCssClass(id, class = clsDown , asis = TRUE)
+             shinyjs::removeCssClass(id, class = clsUp   , asis = TRUE)
+             if (old < act) shinyjs::addCssClass(id, class = clsUp   , asis = TRUE)
+             if (old > act) shinyjs::addCssClass(id, class = clsUp   , asis = TRUE)
+         }
+         txt = ifelse (prc, percentage2string(act / 100), number2string(act))
          shinyjs::html(id, html = txt, asis = TRUE)
      }
+
   )
 )

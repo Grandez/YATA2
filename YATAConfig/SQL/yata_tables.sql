@@ -119,10 +119,9 @@ CREATE TABLE OPERATIONS_CONTROL  (
    ,STOP         DOUBLE                  -- Stop
    ,LIMITE       DOUBLE                  -- Limit
    ,DEADLINE     INTEGER   DEFAULT 0     -- Plazo en dias
-   ,AMOUNT       DOUBLE      NOT NULL -- Cantidad propuesta
-   ,PRICE        DOUBLE      NOT NULL -- Precio de la operacion   
+   ,AMOUNT_IN    DOUBLE      NOT NULL -- Cantidad propuesta
+   ,PRICE_IN     DOUBLE      NOT NULL -- Precio de la operacion   
    ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
-   ,RANK         INTEGER     DEFAULT 0           -- Resultado operacion
    ,TMS_ALERT    DATE                -- Para chequear la operacion         
    ,PRIMARY KEY ( ID_OPER )
 );
@@ -177,11 +176,9 @@ CREATE TABLE FLOWS  (
 DROP TABLE  IF EXISTS SESSION;
 CREATE TABLE SESSION  (
     ID        INTEGER       NOT NULL
-   ,NAME      VARCHAR(255)    
    ,SYMBOL    VARCHAR(18)   NOT NULL
    ,PRICE     DOUBLE   
    ,VOLUME    DOUBLE   
-   ,SLUG      VARCHAR(255)
    ,RANK      INTEGER
    ,VAR01     DOUBLE
    ,VAR24     DOUBLE
@@ -198,4 +195,14 @@ CREATE TABLE SESSION  (
    ,PRIMARY KEY (ID, TMS)
    ,UNIQUE  KEY (SYMBOL, TMS)
    ,INDEX       (SYMBOL)
+);
+
+-- ----------------------------------------------------------
+-- Contiene la ultima vez que se acutalizo session
+-- Nos evita hacer una query
+-- ----------------------------------------------------------
+DROP TABLE  IF EXISTS SESSION_CTRL;
+CREATE TABLE SESSION_CTRL  (
+    TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+   ,PRIMARY KEY (TMS)
 );

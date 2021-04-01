@@ -56,7 +56,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             if (!is.null(id)) select(id)
             tryCatch({
                db$begin()
-                browser()
                if (!is.null(current$idParent) && !is.na(current$idParent)) {
                    prtOper$setField("active", codes$flag$inactive)
                    prtOper$apply()
@@ -258,14 +257,15 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             self$current$idOper = prtOper$current$id
             invisible(self)
         }
-        ,getPending        = function()    { getOperations(status=codes$status$pending)   }
-        ,getAccepted       = function()    { getOperations(status=codes$status$accepted)  }
-        ,getExecuted       = function()    { getOperations(status=codes$status$executed)  }
-        ,getCancelled      = function()    { getOperations(status=codes$status$cancelled) }
-        ,getRejected       = function()    { getOperations(status=codes$status$rejected)  }
-        ,getActive         = function(...) { prtOper$table(active=codes$flag$active, ...) }
-        ,getOperations     = function(...) { prtOper$table(...)                               }
-        ,getOperation      = function (id) {
+        ,getPending    = function()    { getOperations(status=codes$status$pending)   }
+        ,getAccepted   = function()    { getOperations(status=codes$status$accepted)  }
+        ,getActive     = function()    { getOperations(status=codes$status$executed)  }
+        ,getCancelled  = function()    { getOperations(status=codes$status$cancelled) }
+        ,getRejected   = function()    { getOperations(status=codes$status$rejected)  }
+        ,getOpen       = function()    { getOperations( active=codes$flag$active
+                                                       ,status=codes$status$executed) }
+        ,getOperations = function(...) { prtOper$get(...)                           }
+        ,getOperation  = function (id) {
             res = prtOper$table(id=id)
             if (nrow(res) != 1) return (NULL)
             as.list(res)

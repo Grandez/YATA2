@@ -53,13 +53,16 @@ modOperDetailServer = function(id, full, pnloper, parent) {
            to = Sys.Date()
            
            from = self$oper$tms - as.difftime(7, unit="days")
-           restdf("hist",id=self$currency$id,from=from,to=to)  %>%
-              then( function(df) { 
+           # restdf("hist",id=self$currency$id,from=from,to=to)  %>%
+           #    then( function(df) { 
+           #        df$tms = as.Date(df$tms)
+           #        self$data$dfHist = df
+           #        },function(err)    {  
+           #            message("ha ido mal 3") ; message(err)})
+          df =  restdf("hist",id=self$currency$id,from=from,to=to)  %>%
                   df$tms = as.Date(df$tms)
                   self$data$dfHist = df
-                  },function(err)    {  
-                      message("ha ido mal 3") ; message(err)})
-           
+ 
        }
         ,initPlotsInfo = function() {
             tpl = list(observer = ns2("modebar"), idPlot=NA, src="session", symbol=self$oper$counter)

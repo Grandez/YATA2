@@ -1,23 +1,4 @@
-//---------------------------------------------------------------------
-  // Source file: ../srcjs/YATA/app.js
-
-/*! YATA app.js
-* ================
-  * Main JS application file for YATA v2. This file
-* should be included in all pages. It controls some layout
-* options and implements exclusive YATA plugins.
-*
-  * @Author  Almsaeed Studio
-* @Support <http://www.almsaeedstudio.com>
-  * @Email   <abdullah@almsaeedstudio.com>
-  * @version 2.3.11
-* @license MIT <http://opensource.org/licenses/MIT>
-  */
-
-  //Make sure jQuery has been loaded before app.js
-if (typeof jQuery === "undefined") {
-  throw new Error("YATA requires jQuery");
-}
+if (typeof jQuery === "undefined") { throw new Error("YATA requires jQuery"); }
 
 /* Detectar la dimension de la pantalla
 
@@ -39,15 +20,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
    })
 
 */
-/* YATA
-*
-  * @type Object
-* @description $.YATA is the main object for the template's app.
-*              It's used for implementing functions and options related
-*              to the template. Keeping everything wrapped in an object
-*              prevents conflict with other plugins and is a better
-*              way to organize our code.
-*/
+/* YATA Objeto para guardar las cosas y no pregarnos con otros js */
   $.YATA = {
      page: null
     ,panels: new Map()
@@ -259,12 +232,29 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
             });
         });
 
-      /* ----------------------------------
-        * - Initialize the YATA Object -
-        * ----------------------------------
-        * All YATA functions are implemented below.
-      */
+      // All YATA functions are implemented below.
+
         function _init() {
+          $.YATA.showBlock = function(data) {
+            // Pone y quita bloques
+            var idParent    = data.ns + "-block_" + data.row;
+            if (data.col !== 0) idParent = idParent + "_" + data.col;
+            const parent = document.getElementById(idParent);
+            const child  = document.getElementById(data.ns + "-" + data.block);
+            const blocks = document.getElementById(data.ns + "-blocks");
+            var childs   = parent.children;
+
+            if (data.block == "none") {
+                parent.style.display = "none";
+            } else {
+              parent.appendChild(child);
+              parent.style.display = "";
+              for (var i = 0; i < childs.length - 1; i++) {
+                   const hijo =  document.getElementById(childs[i].id);
+                   blocks.appendChild(hijo);
+              }
+            }
+          };
           'use strict';
           /* Layout
           * ======

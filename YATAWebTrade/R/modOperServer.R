@@ -9,12 +9,11 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
            ,operations   = NULL
            ,currencies   = NULL
            ,position     = NULL
+           ,session      = NULL
            ,bases        = NULL
            ,counters     = NULL
            ,valid        = FALSE
            ,panel        = NULL
-           ,nextAction   = NULL
-           ,action       = NULL 
            ,data         = NULL
            ,idOper       = NULL    
            ,initialize     = function(id, pnlParent, session) {
@@ -23,10 +22,11 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                self$operations = self$factory$getObject("Operation")
                self$currencies = self$factory$getObject("Currencies")
                self$position   = self$factory$getObject("Position")
+               self$session    = self$factory$getObject(self$codes$object$session)
                self$cameras$loadCameras()               
                self$vars$inForm  = FALSE
                self$vars$inEvent = FALSE
-               private$opers = HashMap$new()
+               private$opers   = HashMap$new()
            }
            ,getOper = function (id)        { private$opers$get(id)       }
            ,setOper = function (id, oper)  { 
@@ -66,7 +66,6 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
            # ,cboCameraCurrencies  =function (camera) {
            #     private$asCombo(self$getCamerasCurrency(camera))
            # }
-           ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }
            ,selectCamera = function(camera) { self$cameras$select(camera) }
            ,operation    = function(...) {
                data = args2list(...)
@@ -87,29 +86,14 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                stname = self$codes$xlateStatus(status)
                private$opIdx[[stname]] = df$id
                prepareOperation(df)
-           }
-           ,selectOperation = function(status, row) {
-               name = self$codes$xlateStatus(status)
-               private$selected = private$opIdx[[name]][[row]]
-               self$operations$select(private$selected)
-               self$cameras$select(self$operations$current$camera)
-               
-               self$data        = self$operations$current
-               self$data$camera = self$cameras$current
-               self$data$names = list()
-               self$data$names$camera  = self$cameras$current$name
-               self$data$names$base    = YATAWEB$getCTCLabel(self$data$base, "medium")
-               self$data$names$counter = YATAWEB$getCTCLabel(self$data$counter, "medium")
-           }
+           }            
         )
        ,private = list(
-           opIdx     = list() # Contiene los id de las operaciones
-           ,selected = NULL
-           ,opers = NULL
+            opIdx    = list() # Contiene los id de las operaciones
+           ,opers    = NULL
        )
     )
     moduleServer(id, function(input, output, session) {
-        browser()
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         

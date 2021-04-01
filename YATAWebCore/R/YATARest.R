@@ -3,7 +3,7 @@ restCheck = function() {
    url = paste0(url,"alive")
    tryCatch({httr::http_error(httr::GET(url))}, error = function(e) TRUE)
 }
-rest   = function(endpoint, ...) {
+PUT   = function(endpoint, ...) {
    url = "http://127.0.0.1:9090/"
    url = paste0(url, endpoint)
    message("GET: ", url)
@@ -12,7 +12,7 @@ rest   = function(endpoint, ...) {
 restdf = function(endpoint, ...) {
    url = "http://127.0.0.1:9090/"
    url = paste0(url, endpoint)
-   message("GET: ", url)
+#   message("GET: ", url)
    future({
       req = httr::GET(url, query = args2list(...))
       json = httr::content(req, type="application/json")

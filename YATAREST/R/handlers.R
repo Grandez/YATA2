@@ -1,30 +1,14 @@
-top_handler = function(.req, .res) {
-      writeLines(paste("top:", Sys.time()))
-
-    qryTop   = .req$parameters_query[["top"]]
-    top      = ifelse(is.null(qryTop),10, as.integer(qryTop))
-    qryFrom  = .req$parameters_query[["from"]]
-    from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
-      message("top - top: ", top, "- from: ", from)
-    tryCatch({
-        df = top_body(top, from)
-       .df_handler(df, .res)
-    }, error = function(e) {
-      .res$set_status_code(500)
-      .res$set_content_type("application/json")
-      .res$set_body(jsonlite::toJSON(e))
-    })
+.getParm = function(req, parm, default) {
+    p  = req$parameters_query[[parm]]
+    ifelse(is.null(p), dafult, p)
 }
-best_handler = function(.req, .res) {
+best_handler = function(req, .res) {
       writeLines(paste("best:", Sys.time()))
-
-    qryTop   = .req$parameters_query[["top"]]
-    top      = ifelse(is.null(qryTop),10, as.integer(qryTop))
-    qryFrom  = .req$parameters_query[["from"]]
-    from     = ifelse(is.null(qryFrom), 1, as.integer(qryFrom))
-      message("best - top: ", top, "- from: ", from)
+    top   = .getParm(req, "top",  10)
+    from  = .getParm(req, "from",  7)
+    group = .getParm(req, "group", 0)
     tryCatch({
-        df = best_body(top, from)
+        df = best_body(top, from, group)
        .df_handler(df, .res)
     }, error = function(e) {
       .res$set_status_code(500)
@@ -38,8 +22,19 @@ hist_handler = function(.req, .res) {
     from = .req$parameters_query[["from"]]
     to   = .req$parameters_query[["to"]]
     writeLines(paste("hist id: ", id, "from: ", from, "to: ", to))
-    df = hist_body(id, from, to)
-    .df_handler(df, .res)
+    tryCatch({
+        browser()
+       fact = YATACore::YATAFACTORY$new()
+       sess = fact$getObject(fact$codes$object$session)
+       df   = sess$getHistorical("EUR", id,from,to)
+      .df_handler(df, .res)
+    }, error = function(e) {
+      .res$set_status_code(500)
+      .res$set_content_type("application/json")
+      .res$set_body(jsonlite::toJSON(e))
+    }, finally =  {
+        fact$clear()
+    })
 }
 
 latest_handler = function(.req, .res) {
@@ -50,10 +45,25 @@ latest_handler = function(.req, .res) {
 
 update_handler = function(.req, .res) {
     message(Sys.time(), "update Called")
-    update_body()
+    tryCatch({
+       fact = YATACore::YATAFACTORY$new()
+       sess = fact$getObject(fact$codes$object$session)
+       sess$updateLatest()
+      .res$set_status_code(200)
+      .res$set_content_type("text/plain")
+      .res$set_body("OK")
+    }, error = function(e) {
+      .res$set_status_code(500)
+      .res$set_content_type("text/plain")
+      .res$set_body(e)
+    }, finally =  {
+        fact$clear()
+    })
+    .res
 }
 
 .df_handler = function(df, .res) {
+  .res$set_status_code(200)
   .res$set_content_type("application/json")
   .res$set_body(jsonlite::toJSON(df, data.frame = "rows"))
 }

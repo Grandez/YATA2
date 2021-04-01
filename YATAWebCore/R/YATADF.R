@@ -5,20 +5,20 @@
 prepareTable = function(df) {
    yataSetClasses(df)
 }
-preparePosition = function(df) {
-   df = subset(df, select=c(currency,balance, priceBuy, priceSell, price, since, last))
-   colnames(df) = c("currency", "balance", "cost", "return", "net", "since", "last")
-   yataSetClasses(df, dat=c("since", "last"))
-}
+# preparePosition = function(df) {
+#    df = subset(df, select=c(currency,balance, priceBuy, priceSell, price, since, last))
+#    colnames(df) = c("currency", "balance", "cost", "return", "net", "since", "last")
+#    yataSetClasses(df, dat=c("since", "last"))
+# }
 
-prepareOperation = function(df, type="simple") {
-    df = add_column(df, value = df$price * df$amount, .after = "price")
-    df = yataSetClasses(df[,3:8])
-   # df = subset(df, select=c(currency,balance, priceBuy,priceSell,price))
-   # colnames(df) = c("currency", "balance", "cost", "return", "net")
-   # yataSetClasses(df)
-    df
-}
+# prepareOperation = function(df, type="simple") {
+#     df = add_column(df, value = df$price * df$amount, .after = "price")
+#     df = yataSetClasses(df[,3:8])
+#    # df = subset(df, select=c(currency,balance, priceBuy,priceSell,price))
+#    # colnames(df) = c("currency", "balance", "cost", "return", "net")
+#    # yataSetClasses(df)
+#     df
+# }
 
 prepareOpen = function (df, pnl) {
    if (nrow(df) == 0) return(df)
@@ -39,14 +39,14 @@ prepareOpen = function (df, pnl) {
    yataSetClasses(df, prc=c(6), imp=c(3, 4,5,7,8))
 }
 
-prepareTop = function(df) {
-    df = df[, c("symbol", "price", "hour", "day", "week", "month", "volume")]
-    df$hour  = df$hour  / 100
-    df$day   = df$day   / 100
-    df$week  = df$week  / 100
-    df$month = df$month / 100
-    yataSetClasses(df, prc= c("hour", "day", "week", "month"))
-}
+# prepareBest = function(df) {
+#     df = df[, c("symbol", "price", "hour", "day", "week", "month", "volume")]
+#     df$hour  = df$hour  / 100
+#     df$day   = df$day   / 100
+#     df$week  = df$week  / 100
+#     df$month = df$month / 100
+#     yataSetClasses(df, prc= c("hour", "day", "week", "month"))
+# }
 
 
 prepareVariation = function(info, df) {

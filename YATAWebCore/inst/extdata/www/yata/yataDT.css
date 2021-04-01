@@ -18,10 +18,13 @@
     display: flex;
 }
 */
+.yata_monitor_container {
+    padding-right: 6px;
+}
 .yata_tbl_monitor {
     border: 1px solid blue;
     border-spacing: 0;
-    line-height: 10px;
+    line-height: 14px;
     font-size: 12px;
     margin: 0;
     padding: 0;

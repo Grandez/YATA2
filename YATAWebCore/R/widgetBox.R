@@ -4,7 +4,7 @@ yuiBox             = function(id, title, ...) { .yuiBox(id, title, closable=FALS
 
 .yuiBox = function(id, title, closable, collapsible, ...) {
    box( ..., title = title, width = 12, status = "primary",solidHeader = TRUE
-           ,closable = closable, collapsible = collapsible
+           ,closable = closable, collapsible = collapsible,id=id
     )
 }
 

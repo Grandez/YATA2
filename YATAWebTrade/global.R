@@ -15,10 +15,10 @@ library(tidyr)
 library(dplyr)
 
 # YATA
-library(YATATools)
-library(YATACore)
-library(YATAWebCore)
-library(YATADT)
+suppressMessages(library(YATATools))
+suppressMessages(library(YATACore))
+suppressMessages(library(YATAWebCore))
+suppressMessages(library(YATADT))
 
 # Shiny
 library(shiny)
@@ -39,9 +39,9 @@ library(plotly)
 library(RColorBrewer)
 
 # Async
-library(jsonlite)
-library(promises)
-library(future)
+suppressMessages(library(jsonlite))
+suppressMessages(library(promises))
+suppressMessages(library(future))
 
 options( warn = -1
         ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)

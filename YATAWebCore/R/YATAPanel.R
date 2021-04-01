@@ -10,9 +10,6 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,codes      = NULL  # short code to factory$codes
     ,parms      = NULL  # short code to factory$parms
     ,MSG        = NULL  # short code to factory$msgs
-#    ,msg        = NULL
-    ,layout     = NULL   # Matriz de layout del panel
-#    ,nextAction = NULL  Esto no es generico
     ,data       = list()  # Datos
     ,vars       = list()  # Variables temporales con memoria
     ,initialize = function(id, parent, session) {
@@ -29,17 +26,6 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
         private$loadCookies()
     }
-    ,layoutInit = function(layout) {
-        self$layout = layout
-        private$layoutOld = matrix("", nrow = nrow(layout), ncol=ncol(layout))
-        invisible(self)
-    }
-    ,layoutSet = function(layout) {
-       private$layoutOld = self$layout
-       self$layout = layout
-       invisible(self)
-    }
-    ,layoutChanges = function() { self$layout != private$layoutOld }
     ,root      = function() { FALSE }
     ,getParent = function(name) {
         pp = self$parent
@@ -70,12 +56,11 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     # ,getMsg = function() {
     #   self$msg
     # }
-    ,getCookies = function(key) {
-        self$vars$cookies[[key]]
-    }
+    ,getCookie = function(key) { self$vars$cookies[[key]] }
     ,setCookies = function(...) {
+      browser()
        data = list(...)
-       self$vars$cookies[names(data)] = data
+       if (length(data) > 0) self$vars$cookies = list.merge(self$vars$cookies, data)
        YATAWEB$setCookies(self$name, self$vars$cookies)
     }
     ,invalidate = function(panel) {
@@ -90,7 +75,6 @@ YATAPanel = R6::R6Class("YATA.PANEL"
   )
   ,private = list(
        invalid = c("")
-      ,layoutOld = NULL
       ,pnlDef = list(
          name="name"
          ,id=NULL

@@ -4,11 +4,11 @@ TBLCameras = R6::R6Class("TBL.CAMERAS"
     ,cloneable  = FALSE
     ,lock_class = FALSE
     ,public = list(
-          initialize = function(name, db=NULL) {
-             super$initialize(name, fields=private$fields, db=db)
+        initialize = function(name, db=NULL) {
+            super$initialize(name, fields=private$fields, db=db)
           }
          ,getCameras = function(all=FALSE) { getTable(all)  }
-        ,getCameraNames = function(codes, full=FALSE) {
+         ,getCameraNames = function(codes, full=FALSE) {
             df = table()
             if (!missing(codes) && length(codes) > 0) {
                 df = df[df$id %in% codes,]

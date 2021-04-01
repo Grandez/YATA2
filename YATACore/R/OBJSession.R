@@ -14,23 +14,17 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            private$tblSession    = factory$getTable(codes$tables$Session)
            private$tblCurrencies = factory$getTable(codes$tables$Currencies)
            private$tblExch    = factory$getTable(codes$tables$Exchanges)
-           private$lastGet    = as.Date.POSIXct(1)
+           private$lastGet    = tblSession$getLastUpdate()
            private$interval   = 15
-
+           private$dfLast     = tblSession$getLatest()
        }
        ,setInterval   = function(interval) { private$interval = interval }
-       ,getBest       = function(top=10, from=7) {
+       ,getBest       = function(top=10, from=7, group=0) {
             session = tblSession$getLatest()
             if (nrow(session) == 0) session = updateLatest()
             session = session[session$volume > 10,] # Solo los que se mueven
-            getBestDF(session, top, from)
+            getBestDF(session, top, from, group)
        }
-       ,getTop       = function(top=10, from=7) {
-            session = tblSession$getLatest()
-            if (nrow(session) == 0) session = updateLatest()
-            session = session[session$volume > 10,] # Solo los que se mueven
-            getBestDF(session[session$rank <= 150,], top, from)
-        }
        ,getHistorical = function(base, idCurrency, from, to, period=24) {
            id = suppressWarnings(as.numeric(idCurrency))
            if (is.na(id)) id = tblCurrencies$getID(idCurrency)
@@ -42,26 +36,46 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             df = df[,c("id", "name", "symbol", "slug", "rank",)]
             df
         }
-        ,getLatest = function(currencies) {
-            dt = Sys.time()
-            if (difftime(dt, lastGet, units="mins")  > interval) {
-                private$lastGet = dt
-                df = updateLatest()
-            } else {
-                df = tblSession$getLatest()
-            }
-            if (!missing(currencies)) df[df$symbol %in% currencies,]
+        ,getLast   = function(currencies) {
+            df = private$dfLast
+            if (!missing(currencies)) df = df[df$symbol %in% currencies,]
+            df
         }
+        ,getLatest = function(currencies) {
+            df = private$dfLast
+#            df = tblSession$getLatest()
+            if (nrow(df) == 0) df = updateLatest()
+            if (!missing(currencies)) df = df[df$symbol %in% currencies,]
+            df
+        }
+       ,getPrices = function(currencies) {
+           data = lapply(currencies, function(x) {
+               if (x != "EUR") {
+                   df = tblSession$table(symbol=x)
+                   df = df[,c("tms", "price")]
+                   colnames(df) = c("tms", x)
+                   df
+               }
+           })
+           if (length(data) == 0) return (NULL)
+           dfp = data[[1]]
+           if (length(data) > 1) {
+               for (idx in 2:length(data)) {
+                   if (!is.null(data[[idx]])) dfp = full_join(dfp, data[[idx]], by="tms")
+               }
+           }
+           dfp
+       }
        ,updateLatest = function() {
-           # Es publico para que se pueda lanzar asincronamente
-           df = provider$getLatest()
-           last = tblSession$getLastUpdate()
-           diff = ifelse(is.na(last), 10, difftime(Sys.time(), last[[1]], units="days"))
-
-           tryCatch(tblSession$update(df, ifelse(diff > 0.75, FALSE, TRUE))
-                    ,error = function(e) stop(paste("Fallo en el update", e))
-           )
-           df
+           res = ""
+           if (difftime(Sys.time(), lastGet, units="mins")  > 15) {
+               df = provider$getLatest()
+               df[,c("name", "slug")] = NULL
+               private$dfLast = df
+               tryCatch(tblSession$update(df)
+                       ,error = function(e) { stop(paste("Fallo en el update", e)) })
+           }
+           res
         }
     )
     ,private = list(
@@ -71,13 +85,16 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,provider   = NULL
        ,lastGet    = NULL
        ,interval   = NULL
-       ,getBestDF = function(df, top, from) {
+       ,dfLast     = NULL
+       ,getBestDF = function(df, top, from, group) {
+           groups = c(25, 150)
            col = ""
            if (from ==  1) col = "hour"
            if (from == 24) col = "day"
            if (from ==  7) col = "day"
            if (from == 30) col = "month"
            if (col == "") return (NULL)
+           if (group > 0) df = df[df$rank <= groups[group],]
            dft = df[order(df[col], decreasing = TRUE),]
            dft[1:top,]
        }

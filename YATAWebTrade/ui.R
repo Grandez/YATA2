@@ -1,4 +1,5 @@
 YATAPage("Navbar!", id="mainMenu"
+  ,tabPanel("Test",      value="test",    YATAModule("test"))  
   ,tabPanel("Posicion",      value=panel$pos,    YATAModule(panel$pos))  
   ,tabPanel("Operaciones",   value=panel$oper,   YATAModule(panel$oper))  
   ,tabPanel("Analisis",      value=panel$ana,    YATAModule(panel$ana))  

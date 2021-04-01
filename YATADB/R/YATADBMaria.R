@@ -72,7 +72,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                     ,error = function (cond) {
                        cat("ERROR EN QUERY\n")
                        cat(cond)
-#                        browser()
+                        browser()
                         #yataError("Error SQL", cond, "SQL", "Query", cause=qry)
                        })
       }

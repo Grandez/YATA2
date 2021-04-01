@@ -7,38 +7,38 @@ TBLSession = R6::R6Class("TBL.SESSION"
           initialize    = function(name,  db=NULL) {
              super$initialize(name, fields=private$fields, db=db)
           }
-          ,update    = function(data, append=FALSE) {
+          ,update    = function(data, append=TRUE) {
               bulkAdd(data, append=append, isolated=TRUE)
+              execRaw("UPDATE SESSION_CTRL SET TMS = CURRENT_TIMESTAMP", isolated=TRUE);
           }
           ,getLastUpdate = function() {
-              df = sql("SELECT MAX(TMS) AS TMS")
-              as.list(df)
+              df = queryRaw("SELECT TMS FROM SESSION_CTRL")
+              if (nrow(df) == 0) df = sql("SELECT MAX(TMS) AS TMS")
+              if (nrow(df) == 0) return(as.POSIXct(0, origin="1970-01-01"))
+              df[1,1]
            }
           ,getLatest     = function() {
               last = getLastUpdate()
               if (is.na(last)) return (data.frame())
-              df = table(tms=last)
-              df
+              table(tms=last)
            }
      )
      ,private = list (
          fields = list(
-             id      = "ID"
-            ,name    = "NAME"
-            ,symbol  = "SYMBOL"
-            ,price   = "PRICE"
-            ,slug    = "SLUG"
-            ,rank    = "RANK"
-            ,hour    = "VAR01"
-            ,day     = "VAR24"
-            ,week    = "VAR07"
-            ,month   = "VAR30"
-            ,bimonth = "VAR60"
-            ,quarter = "VAR90"
-            ,volume  = "VOLUME"
-            ,volday   = "VOL24"
-            ,volweek  = "VOL07"
-            ,volmonth = "VOL30"
+             id        = "ID"
+            ,symbol    = "SYMBOL"
+            ,price     = "PRICE"
+            ,rank      = "RANK"
+            ,hour      = "VAR01"
+            ,day       = "VAR24"
+            ,week      = "VAR07"
+            ,month     = "VAR30"
+            ,bimonth   = "VAR60"
+            ,quarter   = "VAR90"
+            ,volume    = "VOLUME"
+            ,volday    = "VOL24"
+            ,volweek   = "VOL07"
+            ,volmonth  = "VOL30"
             ,dominance = "DOMINANCE"
             ,turnover  = "TURNOVER"
             ,tms       = "TMS"

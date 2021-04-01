@@ -1,12 +1,7 @@
-number2string = function(value, dec, round=FALSE) {
-    decimals = NULL
-    if (!missing(dec)) decimals = dec
-    if (round) {
-        if (value > 100) {
-            value = round(value)
-        }
-    }
-    format(value, digits=decimals, big.mark=".", decimal.mark=",", mode="character")
+number2string = function(value, dec=-1, round=FALSE) {
+    if (round && value > 100) value = round(value)
+    if (dec > -1) format(value, nsmall=dec, big.mark=".", decimal.mark=",", mode="character", scientific=FALSE)
+    else          format(value, big.mark=".", decimal.mark=",", mode="character", scientific=FALSE)
 }
 percentage2string = function(value, calc=FALSE, dec=2, symbol=TRUE) {
     if (calc) {
@@ -16,7 +11,7 @@ percentage2string = function(value, calc=FALSE, dec=2, symbol=TRUE) {
             value = (1 - value) * -1
         }
     }
-    txt = format(value * 100, digits=dec, big.mark=".", decimal.mark=",", mode="character")
+    txt = format(round(value * 100, dec), nsmall=dec, big.mark=".", decimal.mark=",", mode="character", scientific=FALSE)
     sfx = ifelse(symbol, " %","")
     sprintf("%s%s", txt, sfx)
 }

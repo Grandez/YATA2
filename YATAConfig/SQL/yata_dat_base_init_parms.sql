@@ -16,7 +16,8 @@ DELETE FROM PARMS;
 --   Sub 1 - Configuracion
 --           1 - Moneda por defecto
 --           2 - Moneda alternativa
---           3 - Directorio de plugins      
+--           3 - Directorio de plugins 
+--           4 - Monedas por defecto     
 --   Sub 2 - Base de datos
 --           1 - autoOpen
 --           2 - Base de datos de defecto
@@ -31,6 +32,7 @@ DELETE FROM PARMS;
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'currency'    , 'EUR');
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 2,  1, 'altcurrency' , 'USD');
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 3,  1, 'Plugins'  , 'P:\\R\\YATA2\\YATAExternal');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 4, 10, 'Monedas'  , '1000');
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 1, 20, 'autoOpen' , '1');
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 2, 10, 'defaultDB', '2');

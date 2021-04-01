@@ -110,29 +110,34 @@ yuiRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
 ### Tables                                        ###
 #####################################################
 
-updTablePosition = function(df, ...) {
-    if (is.null(df)) return (NULL)
-    colnames(df) = titleCase(colnames(df))
-    yataDataTable({df}, type="position")
-}
+# updTablePosition = function(df, ...) {
+#     if (is.null(df)) return (NULL)
+#     colnames(df) = titleCase(colnames(df))
+#     yataDataTable({df}, type="position")
+# }
 
-updTableOperations = function(df, buttons=NULL, ...) {
-   if (!is.null(buttons)) df = .updTableButtons(df, buttons)
-   colnames(df) = titleCase(colnames(df))
-
-   dt =  yataDT({df}, type="operation")
-   # dt = dt %>%  YATADT::formatStyle("Value", color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
-   #                         , values=c("red","black","green","green")))
-
-   if ("Balance" %in% colnames(df)) {
-        dt = dt %>%  YATADT::formatStyle("Balance",
-                             color = DT::styleInterval( cuts=c(-Inf,0,+Inf)
-                                                       ,values=c("red","red","green","green")))
-   }
-
-   yataDTRender(dt)
-}
+# updTableOperations = function(df, buttons=NULL, ...) {
+#   yataDTButtons
+#    if (!is.null(buttons)) df = .updTableButtons(df, buttons)
+#    colnames(df) = titleCase(colnames(df))
+#
+#    dt =  yataDT({df}, type="operation")
+#    # dt = dt %>%  YATADT::formatStyle("Value", color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
+#    #                         , values=c("red","black","green","green")))
+#
+#    if ("Balance" %in% colnames(df)) {
+#         dt = dt %>%  YATADT::formatStyle("Balance",
+#                              color = DT::styleInterval( cuts=c(-Inf,0,+Inf)
+#                                                        ,values=c("red","red","green","green")))
+#    }
+#
+#    yataDTRender(dt)
+# }
 updTableBest = function(df) {
     colnames(df) = titleCase(colnames(df))
-    yataDataTable({df}, type="best", selection="single")
+    dt = yataDT({df}, type="best", selection="single")
+    dt = YATADT::formatStyle(dt, colnames(df)[3:6], color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
+                            , values=c("red","darkred","darkgreen","green")))
+    yataDTRender(dt)
+  #  yataDataTable({df}, type="best", selection="single")
 }

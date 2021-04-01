@@ -31,38 +31,35 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
-          self$data$dfPosGlobal = self$position$getGlobalPosition()
-          ctc = self$getCurrencies()
-          df = self$providers$getLatests ("EUR", ctc)
-          self$data$lstLast = list()
-          if (nrow(df) > 0) {
-              for (row in 1:nrow(df)) {
-                  self$data$lstLast[[df[row,"symbol"]]] = as.list(df[row,])
-              }
-          }
-
-          if (init) {
-              self$data$dfSession = df
-          } else {
-              self$data$dfSession = rbind(self$data$dfSession, df)
-          }
+          df = self$position$getGlobalPosition()
+          ids = YATAWEB$getCTCID(df$currency)
+          self$data$dfPosGlobal = inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")
+          
+          # df = self$providers$getLatests ("EUR", ctc)
+          # self$data$lstLast = list()
+          # if (nrow(df) > 0) {
+          #     for (row in 1:nrow(df)) {
+          #         self$data$lstLast[[df[row,"symbol"]]] = as.list(df[row,])
+          #     }
+          # }
+          # 
+          # if (init) {
+          #     self$data$dfSession = df
+          # } else {
+          #     self$data$dfSession = rbind(self$data$dfSession, df)
+          # }
           invisible(self)
       }
       ,getGlobalPosition = function() { self$data$dfPosGlobal }
       ,getDFSession      = function() { self$data$dfSession   } 
-      ,getLatestSession  = function() { self$data$lstLast     }
+#      #,getLatestSession  = function() { self$data$lstLast     }
+      ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() { 
          df = self$data$dfSession
          if (is.null(df) || nrow(df) == 0) return(NULL)
          df = df[,c("symbol", "price","tms")]
          spread(df, symbol, price)
        }
-      ,getCurrencies = function() {
-          df = self$data$dfPosGlobal
-          df = df[df$currency != "EUR",]
-          df = df[order(df$balance, decreasing=TRUE),]
-          df$currency
-      }
    )
 )
 function(input, output, session) {
@@ -102,10 +99,10 @@ function(input, output, session) {
    
    # En este observer, cargamos la posicion y las cotizaciones
     observe({
-       message("SERVER Actualiza Sessiones")
-        invalidateLater(pnl$interval * 60000)
-       pnl$updateData()
-       rest("update")
+       message("SERVER Update")
+#       pnl$updateData()
+       PUT("update")
+       invalidateLater(pnl$interval * 60000)       
     })
    onclick("appTitle"     , changeDB()  )
    onStop(function() {

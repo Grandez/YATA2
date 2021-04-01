@@ -6,8 +6,51 @@
 # Cogemos el d de path
 # Jugamos con el escale
 
+yataPlotScatter = function(plot, df, name=NULL, cols=NULL, mode) {
+    colX = 1
+    colY = 2
+    if (!is.null(cols)) {
+      colX = cols[1]
+      colY = cols[2]
+    }
+    lbl =ifelse(is.null(name), colnames(df)[2], name)
+    plot %>% add_trace(data=df, x=df[,1],y=df[,2],type="scatter", mode=mode, name=lbl)
+
+}
+yataPlotLine = function(plot, df, name=NULL, cols=NULL) {
+  yataPlotScatter(plot,df,name,cols,mode="lines")
+}
+yataPlotLine = function(plot, df, name=NULL, cols=NULL) {
+  yataPlotScatter(plot,df,name,cols,mode="lines+markers")
+}
+
+yataPlotBase = function(info) {
+   p = plot_ly() %>%
+       plotly::config( displaylogo = FALSE
+                  ,modeBarButtonsToRemove = c(
+                 'sendDataToCloud'
+           #     ,'autoScale2d'
+           #     ,'resetScale2d'
+                 ,'toggleSpikelines'
+                ,'hoverClosestCartesian'
+                ,'hoverCompareCartesian'
+           #     ,'zoom2d'
+                ,'pan2d'
+           #     ,'select2d'
+                ,'lasso2d'
+               ,'zoomIn2d'
+               ,'zoomOut2d'
+            ,'toImage'
+           )
+          )
+   svg = YATAWEB$factory$getObject("SVG")
+   buttons = svg$getSVGGroup(info, info$src)
+   if (!is.null(buttons)) p = p %>% plotly::config(modeBarButtonsToAdd = buttons)
+   p
+}
+
 yataPlot = function(info, df, title) {
-  plot = NULL
+   if (is.null(df)) return (NULL)
    if (info$type == "Candlestick") plot = pltCandle(info, df, title)
    if (info$type == "Linear")    {
        if (info$src == "session") df = df[,-(2:7)]
@@ -17,6 +60,44 @@ yataPlot = function(info, df, title) {
    plot
 }
 
+yataPlotXLines = function(plot, df ) {
+  if (is.null(df) || nrow(df)== 0) return (plot)
+  for (row in 1:nrow(df)) {
+       line = list( type = "line", fillcolor = "blue", opacity=0.9
+                   ,xref = "x"   , yref = "y"
+                   ,x0 = df[row, "tms"], x1 = df[row, "tms"]
+                   ,y0 = 0             , y1 = df[row, "price"]
+       )
+       plot = plot %>% layout(shapes = line)
+  }
+  plot
+#  (plot, pnl$data$dfOper[,c("counter", "price", "tms")])
+#   p <- layout(p, shapes  = list(type = “line”, fillcolor = “blue”,
+#                line    = list(color = “blue”),
+#                opacity = 0.3,
+#                x0      = “1997–02–11”,
+#                x1      = “1997–02–11”,
+#                xref    = “x”,
+#                y0      = 0,
+#                y1      = 10.22,
+#                yref    = “y”))
+#
+#    line_list <- list()
+# for(i in 1:nrow(line_dat)){
+#      line_color <- ifelse(line_dat$signal[i] == 'buy','green','red')
+#      line_list[[i]] <-
+#           list(type      = “line”,
+#                fillcolor = line_color,
+#                line      = list(color = line_color),
+#                opacity   = 0.3,
+#                x0        = line_dat[[1]][i],
+#                x1        = line_dat[[1]][i],
+#                xref      = “x”,
+#                y0        = 0,
+#                y1        = line_dat[[2]][i],
+#                yref      = “y”)
+# }
+}
 #########################################
 # https://plotly-r.com/control-modebar.html
 
@@ -146,30 +227,6 @@ pltModeBar = function(info) {
 #
 #   list(icoCandle, icoLinear, icoLog, icoVar, icoBar)
 }
-.pltBase = function(info) {
-   p = plot_ly() %>%
-       plotly::config( displaylogo = FALSE
-                  ,modeBarButtonsToRemove = c(
-                 'sendDataToCloud'
-           #     ,'autoScale2d'
-           #     ,'resetScale2d'
-                 ,'toggleSpikelines'
-                ,'hoverClosestCartesian'
-                ,'hoverCompareCartesian'
-           #     ,'zoom2d'
-                ,'pan2d'
-           #     ,'select2d'
-                ,'lasso2d'
-               ,'zoomIn2d'
-               ,'zoomOut2d'
-            ,'toImage'
-           )
-          )
-   svg = YATAWEB$factory$getObject("SVG")
-   buttons = svg$getSVGGroup(info, info$src)
-   if (!is.null(buttons)) p = p %>% plotly::config(modeBarButtonsToAdd = buttons)
-   p
-}
 
 plotLineTypes = c("solid", "dot", "dash", "longdash", "dashdot", "longdashdot")
 
@@ -208,12 +265,11 @@ zone = function(x0, x1) {
     )
 }
 
-pltLines  = function(info, df, title=NULL, markers=TRUE) {
+pltLines  = function(info, df, title=NULL) {
  # Espera el eje X en la columna 1, una columna por linea
-  p = .pltBase(info)
+  p = yataPlotBase(info)
   mode = "lines"
   names = colnames(df)
-  if (markers) mode = paste0(mode, "+markers")
   for (icol in 2:ncol(df)) {
        p = p %>% add_trace(data=df, x=df[,1], y=df[,icol], type = 'scatter', mode = mode, name=names[icol])
   }
@@ -223,7 +279,7 @@ pltLines  = function(info, df, title=NULL, markers=TRUE) {
 }
 
 pltCandle = function(info, df, title=NULL, markers=TRUE) {
-  p = .pltBase(info)
+  p = yataPlotBase(info)
   p =  p %>% add_trace(data=df, x=~tms, open=~open, close=~close, high=~high, low=~low, type="candlestick")
   p =  p %>% layout(xaxis = list(rangeslider = list(visible = F)))
   p =  p %>% layout(legend = list(orientation = 'h'))
@@ -316,7 +372,7 @@ pltLog = function(df, x=NULL, y=NULL, lType="solid", hoverText="titulo") {
 }
 
 pltBars = function(info, df, title=NULL, markers=TRUE) {
-  p = .pltBase(info)
+  p = yataPlotBase(info)
   cols = colnames(df)
   for (idx in 2:ncol(df)) {
      p = p %>% add_trace(y = df[,idx], name = cols[idx], type='bar')

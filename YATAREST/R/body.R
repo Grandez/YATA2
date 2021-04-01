@@ -1,12 +1,12 @@
 logger = function(endp, beg=TRUE) {
     cat(paste(format(Sys.time(), "%H:%M:%S"), endp, ifelse (beg, "Started", "Ended"), "\n"))
 }
-best_body = function(top, count) {
+best_body = function(top, count, group) {
     logger("best")
     tryCatch({
     fact = YATACore::YATAFACTORY$new()
     sess = fact$getObject(fact$codes$object$session)
-    res = sess$getBest(top, count)
+    res = sess$getBest(top, count, group)
     fact$clear()
     logger("best", FALSE)
     res
@@ -43,30 +43,6 @@ latest_body = function() {
     res
 }, error = function(e) print("ERROR en latest: \n")) #, e, "\n"))
 }
-update_body = function() {
-    tryCatch({
-    logger("update")
-    fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(fact$codes$object$session)
-    res = sess$updateLatest()
-    fact$clear()
-    logger("update", FALSE)
-    res
-}, error = function(e) print("ERROR en update: \n")) #, e, "\n"))
-}
-
-hist_body = function(id, from, to) {
-    tryCatch({
-    logger("hist")
-    fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(fact$codes$object$session)
-    res = sess$getHistorical("EUR", id,from,to)
-    fact$clear()
-    logger("hist", FALSE)
-    res
-}, error = function(e) print("ERROR en Hist: \n")) #, e, "\n"))
-}
-
 execLatest = function() {
     fact = YATACore::YATAFACTORY$new()
     session = fact$getObject(fact$codesodes$object$session)
