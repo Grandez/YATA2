@@ -1,4 +1,5 @@
 YATAModule = function(id, title="",mod=NULL, ...) {
+    message("Ejecutando YATAModule para ", id)
     ns = NS(id)
     if (is.null(mod)) {
         modName =  paste0(YATATools::titleCase(strsplit(id, "-")[[1]]), collapse="")

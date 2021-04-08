@@ -86,9 +86,7 @@ formatString = function(table, columns, prefix = '', suffix = '') {
 #' @export
 #' @rdname formatCurrency
 #' @param digits the number of decimal places to round to
-formatPercentage = function(
-  table, columns, digits = 0, interval = 3, mark = ',', dec.mark = getOption('OutDec')
-) {
+formatPercentage = function(table, columns, digits = 0, interval = 3, mark = ',', dec.mark = getOption('OutDec')) {
   formatColumns(table, columns, tplPercentage, digits, interval, mark, dec.mark)
 }
 

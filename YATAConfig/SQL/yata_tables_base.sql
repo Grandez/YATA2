@@ -98,12 +98,14 @@ CREATE TABLE CHAIN  (
 );
 
 -- Tabla de Textos
+-- bLOCK ES para recuperar traducciones de bloques
 DROP TABLE  IF EXISTS MESSAGES;
 CREATE TABLE MESSAGES  (
-    CODE     VARCHAR    (64) NOT NULL
+    BLOCK    INTEGER         NOT NULL DEFAULT 0
+   ,CODE     VARCHAR    (64) NOT NULL
    ,LANG     CHAR(2)         NOT NULL DEFAULT "XX"
    ,REGION   CHAR(2)         NOT NULL DEFAULT "XX"
    ,MSG      VARCHAR(255)
-   ,PRIMARY KEY ( CODE, LANG, REGION ) 
+   ,PRIMARY KEY ( BLOCK, CODE, LANG, REGION ) 
 );
 

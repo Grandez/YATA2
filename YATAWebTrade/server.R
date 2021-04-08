@@ -82,6 +82,8 @@ function(input, output, session) {
       if (is.null(name)) name = "Sin conexion"
       paste("YATA", name, sep = "-")
    })
+   # Vamos a usar req para evitar cargar todo
+   # "test"
    observeEvent(input$mainMenu,{
         eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl)")))
     })

@@ -194,11 +194,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          df1 = df[,1:ncol(df) - 1]
          df1 = as.data.frame(sapply(df1,as.numeric))
          tms = anytime::anytime(df[,ncol(df)])
-         df1 = cbind(tms=tms,df1)
-         nm = colnames(df1)
-         df1$price = df1$close
-         colnames(df1) = c(nm, body[[3]])
-         df1
+         cbind(tms=tms,df1)
       }
    )
    ,private = list(

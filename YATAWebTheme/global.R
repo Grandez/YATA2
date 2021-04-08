@@ -46,9 +46,10 @@ options( warn = -1
           # ,shiny.trace=TRUE
 )
 
-plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE
-               ,displayModeBar = FALSE, responsive=TRUE
-               ,locale="es")
+#JGG No hace ni puto caso
+# plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE
+#                ,displayModeBar = FALSE, responsive=TRUE
+#                ,locale="es")
 
 ######################################
 ### Carga de fuentes

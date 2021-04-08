@@ -255,6 +255,33 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
               }
             }
           };
+          $.YATA.movePanel = function(data) {
+            // Pone y quita bloques
+//JGGALERT            alert("MovePanel");
+            const source = document.getElementById(data.from);
+            const target = document.getElementById(data.to);
+            target.appendChild(source);
+            /*
+            var idParent    = data.ns + "-block_" + data.row;
+            if (data.col !== 0) idParent = idParent + "_" + data.col;
+            const parent = document.getElementById(idParent);
+            const child  = document.getElementById(data.ns + "-" + data.block);
+            const blocks = document.getElementById(data.ns + "-blocks");
+            var childs   = parent.children;
+
+            if (data.block == "none") {
+                parent.style.display = "none";
+            } else {
+              parent.appendChild(child);
+              parent.style.display = "";
+              for (var i = 0; i < childs.length - 1; i++) {
+                   const hijo =  document.getElementById(childs[i].id);
+                   blocks.appendChild(hijo);
+              }
+
+            }*/
+          };
+
           'use strict';
           /* Layout
           * ======
@@ -342,13 +369,13 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
             */
               $.YATA.pushMenu = {
                 activate: function (toggleBtn) {
-//JGG                                  alert("En Javascript activate");
+//ALERT                                  alert("En Javascript activate");
                   //Get the screen sizes
                   var screenSizes = $.YATA.options.screenSizes;
 
                   //Enable sidebar toggle
                   $(document).on('click', toggleBtn, function (e) {
-//JGG                                    alert("Pushmenu onclick");
+//ALERT                                    alert("Pushmenu onclick");
                     e.preventDefault();
 
                     var page = $.YATA.page;
@@ -423,7 +450,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
                   $("body").removeClass('sidebar-collapse').addClass('sidebar-expanded-on-hover');
                 },
                 collapse: function () {
-//JGG                                  alert("En Javascript collapse");
+//ALERT                                  alert("En Javascript collapse");
                   if ($('body').hasClass('sidebar-expanded-on-hover')) {
                     $('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
                   }
@@ -432,11 +459,11 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               $.YATA.yataTraceMenu = {
                 activate: function (datatoggle) {
-//JGG                                  alert("JGG En Javascript activate");
+//ALERT                                 alert("JGG En Javascript activate");
 
                   //Enable sidebar toggle
                   $(document).on('click', datatoggle, function (e) {
-//JGG                                    alert("JGG Menu clickeado");
+//ALERT                                    alert("JGG Menu clickeado");
                   e.preventDefault();
                     //alert(e.target.dataset.value);
 
@@ -920,7 +947,7 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
     };
     }(jQuery));
 
-    //# sourceMappingURL=app.js.map
+/*JGGMAP    //# sourceMappingURL=app.js.map */
 
 // Esto se supone que cargaria los scripts despues de todo lo demas
 /*

@@ -250,26 +250,26 @@ YATATable <- R6::R6Class("YATA.TABLE"
       #  }
        ,mountWhere = function(..., inValues=NULL) {
            #devuelve una lista de 2: sql la parte WHERE y values los valores
-           where  = ""
-
+           cond  = ""
            data = makeList(...)
            if (is.null(data) && is.null(inValues)) return (list(sql="", values=NULL))
            values = list.clean(data)      # Quitar nulos
 
            if (!is.null(values)) {
                marks = lapply(values, function(x) " = ?") # Montar la secuencia campo = ? ...
-               where = asString(paste(fields[names(values)], marks), " AND ")
+               cond = asString(paste(fields[names(values)], marks), " AND ")
            }
 
            if (!is.null(inValues)) {
                marks = lapply(inValues, function(x) asString(rep("?", length(x)), ","))
                stmt = paste(fields[names(marks)], "IN (", marks, ")")
                stmt = asString(stmt, " AND ")
-               values = list.append(values, unlist(inValues))
-               if (nchar(where) > 0) where = paste(where, "AND")
-               where = paste(where, stmt)
+               #values = list.append(values, unlist(inValues))
+               values = c(values, unlist(inValues))
+               if (nchar(cond) > 0) cond = paste(cond, "AND")
+               cond = paste(cond, stmt)
            }
-           list(sql=paste("WHERE", where),values=values)
+           list(sql=paste("WHERE", cond),values=values)
        }
       ,makeList = function(...) {
            data = list(...)

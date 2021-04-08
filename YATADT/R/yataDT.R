@@ -53,11 +53,7 @@ yataDataTable = function(data, ...) {
     # renderDataTable(dt, escape=FALSE, style='auto', ...)
 #    yataDTRender(dt, ...)
 }
-yataDTUpDown = function(dt, cols) {
-    dt %>% YATADT::formatStyle( cols, color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
-                               ,values=c("red","darkred","darkgreen","green")))
-}
-.yataFormat = function(dt, mt) {
+.yataFormat          = function(dt, mt) {
     for (cls in yataGetClasses()) {
         clsname = paste0("yata", cls)
         cols = which(mt == clsname)
@@ -65,21 +61,26 @@ yataDTUpDown = function(dt, cols) {
     }
     dt
 }
-yataFormatText    = function(dt, cols) { dt }
-yataFormatLabel   = function(dt, cols) { dt }
-yataFormatNumber  = function(dt, cols) { formatCurrency(dt, columns=cols, currency="", mark=".", dec.mark=",") }
-yataFormatInteger = function(dt, cols) { formatRound  (dt, columns=cols, digits=0,    mark=".") }
-yataFormatPercentage = function(dt, cols) { formatPercentage  (dt, columns=cols, digits=2,    mark=".", dec.mark=",") }
-yataFormatAmount  = function(dt, cols) { yataFormatNumber(dt, cols) }
-yataFormatDate = function(dt,cols) {
+
+yataDTUpDown         = function(dt, cols) {
+    dt %>% YATADT::formatStyle( cols, color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
+                               ,values=c("red","darkred","darkgreen","green")))
+}
+yataFormatText       = function(dt, cols) { dt }
+yataFormatLabel      = function(dt, cols) { dt }
+yataFormatNumber     = function(dt, cols) { formatCurrency(dt, columns=cols, currency="", mark=".", dec.mark=",") }
+yataFormatInteger    = function(dt, cols) { formatRound  (dt, columns=cols, digits=0,    mark=".") }
+yataFormatPercentage = function(dt, cols) {formatPercentage  (dt, columns=cols, digits=3,    mark=".", dec.mark=",") }
+yataFormatAmount     = function(dt, cols) { yataFormatNumber(dt, cols) }
+yataFormatDate       = function(dt,cols) {
     formatDate(dt, columns=cols, method = 'toLocaleDateString',
                    params = list('es-ES',  list(year = 'numeric', month = 'numeric', day = 'numeric')))
 }
-yataFormatTime = function(dt,cols) {
+yataFormatTime       = function(dt,cols) {
     formatDate(dt, columns=cols, method = 'toLocaleDateString',
                    params = list('es-ES',  list(year = 'numeric', month = 'numeric', day = 'numeric')))
 }
-yataFormatTms = function(dt,cols) {
+yataFormatTms        = function(dt,cols) {
     formatDate(dt, columns=cols, method = 'toLocaleDateString',
                    params = list('es-ES',  list(year = 'numeric', month = 'numeric', day = 'numeric')))
 }

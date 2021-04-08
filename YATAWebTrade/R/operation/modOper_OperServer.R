@@ -1,9 +1,11 @@
 modOperOperServer = function(id, full, pnl, parent) {
    ns = NS(id)
+   ns2 = NS(full)
    dfPos        = NULL
    dfCamera     = NULL
    fee          = 0
    moduleServer(id, function(input, output, session) {
+      txtType = c("OPER", "BUY", "SELL") 
       pnl$vars$inEvent = FALSE 
       validate = function() {
           res = FALSE
@@ -82,7 +84,7 @@ modOperOperServer = function(id, full, pnl, parent) {
              } 
           }
       },ignoreInit = TRUE, ignoreNULL = TRUE)
-      observeEvent(input$btnOK, {
+      observeEvent(input$operBtnOK, {
         # A veces se generan dos triggers (debe ser por los renderUI)
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
@@ -120,17 +122,16 @@ modOperOperServer = function(id, full, pnl, parent) {
              data$idLog   = getID()
          }     
          res = pnl$operation(data)
-          if (res) {
-#              yataMsgErr(ns2("msg"), "Error al realizar la operacion")
-              # alert = paste(strsplit(mod, "-")[[1]][1], "alert", sep="-")
-              # yataAlertPanelServer(alert, session)
-          }
-          else {
- #             yataMsgSuccess(ns2("msg"), "Operacion realizada")
-               resetValues()
+         if (res) {
+             yataMsgErr(ns2("msg"), pnl$MSG$get("OPER.MAKE.ERR"))
+         } else {
+             pnl$valid = FALSE
+             msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
+             yataMsgSuccess(ns2("operMsg"), pnl$MSG$get(msgKey))
+             resetValues()
           }
       }, ignoreInit = TRUE)
-      observeEvent(input$btnKO, { resetValues() })
+      observeEvent(input$operBtnKO, { resetValues() })
     })
 }
 

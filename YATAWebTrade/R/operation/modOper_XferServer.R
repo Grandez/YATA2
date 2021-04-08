@@ -1,4 +1,4 @@
-modOperXferServer = function(id, full, pnl, parent) {
+modOperXferServer = function(id, full, pnlParent, parent) {
    ns = NS(id)
    moduleServer(id, function(input, output, session) {
        validate = function() {

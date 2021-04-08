@@ -1,4 +1,4 @@
-modTableServer <- function(id, full) {
+modTableServer <- function(id, full, pnlParent, invalidate=FALSE) {
    ns = NS(id)
    makeDF = function() {
       dfpos = data.frame( currency = c("EUR", "BTC", "ETH")

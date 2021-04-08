@@ -82,14 +82,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         data
     }
     ,getCameraNames = function(codes) {
-        lst = lapply(codes, function(code) { name = private$hCam$get(code)
-                            if (is.null(name)) {
-                                df = tblCameras$table(id=code)
-                                name = df[1,"name"]
-                                private$hCam$put(code, name)
-                                name
-                            }
-                   })
+        fun = function(code) {
+            name = private$hCam$get(code)
+            if (is.null(name)) {
+                df = tblCameras$table(id=code)
+                name = df[1,"name"]
+                private$hCam$put(code, name)
+            }
+            name
+        }
+        lst = lapply(codes, function(code) fun(code) )
         names(lst) = codes
         lst
     }

@@ -7,6 +7,12 @@ TBLRegularization = R6::R6Class("TBLREGULARIZATION"
          initialize = function(name, db=NULL) {
              super$initialize(name, fields=private$fields,key=key, db=db)
          }
+        ,getRegularizations = function() {
+            stmt = paste("SELECT CAMERA, CURRENCY, MAX(LAST) AS LAST FROM REGULARIZATION GROUP BY CAMERA, CURRENCY")
+            df = queryRaw(stmt)
+            colnames(df) = c("camera", "counter", "last")
+            df
+        }
         ,getRegularizationDate = function(camera, currency) {
             stmt = paste("SELECT MAX(LAST) AS LAST")
             df = sql(stmt, where=list(camera=camera, currency=currency))

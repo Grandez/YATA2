@@ -36,9 +36,21 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             }
             df
         }
+        ,getInactives = function(camera, counter, from) {
+            df = self$get(camera=camera, counter=counter, active=DBDict$flag$off)
+            df[df$tms >= from,]
+        }
+        ,getClosed = function(camera, counter, from) {
+            df = self$get(camera=camera, counter=counter,active=DBDict$flag$parent)
+            df[df$tms >= from,]
+        }
         ,select = function(idOper, create=FALSE) {
             super$select(id=idOper, create=create)
             tblOperControl$select(id=idOper, create=create)
+        }
+        ,getInactiveCounters = function(active) {
+            df = uniques(c("camera", "counter"), list(active=active))
+            df[df$camera != "XFER",]
         }
      )
      ,private = list (

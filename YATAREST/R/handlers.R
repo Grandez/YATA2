@@ -23,7 +23,6 @@ hist_handler = function(.req, .res) {
     to   = .req$parameters_query[["to"]]
     writeLines(paste("hist id: ", id, "from: ", from, "to: ", to))
     tryCatch({
-        browser()
        fact = YATACore::YATAFACTORY$new()
        sess = fact$getObject(fact$codes$object$session)
        df   = sess$getHistorical("EUR", id,from,to)

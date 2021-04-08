@@ -22,7 +22,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         self$factory = YATAWEB$factory
         self$codes   = self$factory$codes
         self$parms   = self$factory$parms
-        self$MSG     = self$factory$msgs
+        self$MSG     = self$factory$MSG
         self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
         private$loadCookies()
     }
@@ -64,12 +64,14 @@ YATAPanel = R6::R6Class("YATA.PANEL"
        YATAWEB$setCookies(self$name, self$vars$cookies)
     }
     ,invalidate = function(panel) {
-       self$getRoot()$invalidate(self$name)
+       if (!is.null(self$parent)) self$parent$invalidate(panel)
        invisible(self)
     }
-    ,isInvalid = function() { self$getRoot()$isInvalid(self$name) }
+    ,isInvalid = function(panel) {
+        if (!is.null(self$parent)) self$parent$isInvalid(panel)
+     }
     ,reset     = function() {
-        self$getRoot()$reset(self$name)
+        if (!is.null(self$parent)) self$parent$reset(self$name)
         invisible(self)
     }
   )

@@ -12,7 +12,7 @@ modOperOperInput = function(id, title="") {
      )
     ,fluidRow(
          yuiColumn(2)
-        ,yuiColumn(2
+        ,yuiColumn(3
             ,fluidRow(h2("Base"))
             ,fluidRow(tags$table(
                  tags$tr(tags$td("Camara"),   tags$td(yuiCombo(ns("cboCamera"), choices=list(" "))))
@@ -47,7 +47,7 @@ modOperOperInput = function(id, title="") {
      )  
     ,fluidRow(yuiColumn(2), yuiColumn(4, h2("Notas")))
     ,fluidRow(yuiColumn(2), yuiColumn(7, yuiTextArea(ns("comment"), label=NULL, cols="200", rows="20")))
-    ,fluidRow(yuiColumn(2), yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar"))
+    ,fluidRow(yuiColumn(2), yuiColumn(6, yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar")))
   )
   list(left=NULL, main=main, right=NULL)
 }

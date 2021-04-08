@@ -22,6 +22,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            df = prtPosition$getCameraPosition(camera, balance, available)
            df[df$balance != 0,]
        }
+      ,getRegularizations = function() { prtPosition$getRegularizations() }
       ,transfer = function(from, to, currency, amount) {
          if (from != "EXT") {
              res = prtPosition$select(camera=from, currency=currency, create=TRUE)

@@ -36,6 +36,7 @@ modConfigServer <- function(id, full, pnlParent, invalidate=FALSE) {
        )
     )
     moduleServer(id, function(input, output, session) {
+        message("Ejecutando server para Config")
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLCfg$new(id, pnlParent, session))
         loadPage = function() {

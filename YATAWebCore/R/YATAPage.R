@@ -85,6 +85,7 @@ YATAPage =  function(title = NULL,id = NULL,
              ,tags$script(src="yata/yataapp.js")
              ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
              ,tags$script("Shiny.addCustomMessageHandler('yataShowBlock', function(data) { $.YATA.showBlock(data); })")
+             ,tags$script("Shiny.addCustomMessageHandler('yataMovePanel', function(data) { $.YATA.movePanel(data); })")
              ,tags$script('Shiny.addCustomMessageHandler("closeLeftSide",
                            function(message) { $("[data-toggle=\'yataoffcanvas\']").trigger("click");});')
              ,initShinyCookie("YATA")

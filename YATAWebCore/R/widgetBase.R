@@ -1,6 +1,10 @@
 ############################
 #### Shiny
 ###########################
+yuiRow = function(id=NULL, style=NULL, class=NULL, ...) {
+  if (!is.null(id)) fluidRow(id=id,...)
+  else              fluidRow(...)
+}
 yuiColumn = function(width, ...) {
     if (!is.numeric(width) || (width < 1) || (width > 12)) stop("column width must be between 1 and 12")
     colClass <- paste0("col-xl-", width)
@@ -122,7 +126,7 @@ yuiNumericInput = function(id, label=NULL, value=0, step, min, max) {
   st = NA ; if (!missing(step)) st=step
   mn = NA ; if (!missing(min))  mn=min
   ma = NA ; if (!missing(max))  ma=max
-  widget = numericInput(id, label = label, value = value, mn, ma,st)
+  widget = numericInput(id, label = label, value = value, mn, ma,st, width="auto")
   widget[[3]][[2]]$attribs$class = "form-control yata-number"
   widget
 }
@@ -147,7 +151,7 @@ yuiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
     choice = c("")
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
-    selectInput(id, lbl, choice, selected,selectize=FALSE)
+    selectInput(id, lbl, choice, selected,width="auto", selectize=FALSE)
 }
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
@@ -167,7 +171,7 @@ yuiSwitch = function(id, value=FALSE, onLbl="Yes", offLbl="No") {
     switchInput( inputId = id
                 ,onLabel = onLbl ,offLabel = offLbl
                 ,onStatus = "success" ,offStatus = "danger"
-                , value = value, width=NULL)
+                , value = value, width="auto")
 }
 
 yuiCheck = function(id, value=TRUE) {
@@ -222,24 +226,24 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   renderUI({HTML(lbl)})
 }
 
-yuiPlot = function(id)   {
-  cls  = "yata_plot_nodata"
-  data = h3(style="padding-top: 16px", "No data selected")
-  tagList( plotlyOutput(id)
-          ,hidden(tags$div(id=paste0(id, "_nodata"), class=cls
-            ,tags$img(src="yata/img/warning.png", width="48px", height="48px", style="margin-right: 32px")
-            ,data))
-          )
-}
-updPlot = function(plot, id) {
-  if (is.null(plot)) {
-      shinyjs::hide(id)
-      shinyjs::show(paste0(id, "_nodata"))
-      NULL
-  } else {
-      shinyjs::show(id)
-      shinyjs::hide(paste0(id, "_nodata"))
-     renderPlotly({plot})
-  }
-
-}
+# yuiPlot = function(id)   {
+#   cls  = "yata_plot_nodata"
+#   data = h3(style="padding-top: 16px", "No data selected")
+#   tagList( plotlyOutput(id)
+#           ,hidden(tags$div(id=paste0(id, "_nodata"), class=cls
+#             ,tags$img(src="yata/img/warning.png", width="48px", height="48px", style="margin-right: 32px")
+#             ,data))
+#           )
+# }
+# updPlot = function(plot, id) {
+#   if (is.null(plot)) {
+#       shinyjs::hide(id)
+#       shinyjs::show(paste0(id, "_nodata"))
+#       NULL
+#   } else {
+#       shinyjs::show(id)
+#       shinyjs::hide(paste0(id, "_nodata"))
+#      renderPlotly({plot}) # %>% event_register("plotly_legendclick")
+#   }
+#
+# }

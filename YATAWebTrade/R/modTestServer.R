@@ -14,6 +14,7 @@ modTestServer <- function(id, full, pnlParent, invalidate=FALSE) {
       )
    )
     moduleServer(id, function(input, output, session) {
+       message("Ejecutando server para Test")
       pnl = YATAWEB$getPanel(id)
       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTest$new(id, pnlParent, session))
 

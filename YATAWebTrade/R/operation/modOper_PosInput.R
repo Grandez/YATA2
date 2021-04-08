@@ -2,6 +2,11 @@
 
 modOperPosInput = function(id, title) {
     ns = NS(id)
+    noAccept = YATAWEB$getMsg("OPER.PEND.ACCEPT")
+    noExec   = YATAWEB$getMsg("OPER.PEND.EXECUTE")
+    boxOpen  = YATAWEB$getMsg("BOX.OPER.OPEN")
+    boxPend  = YATAWEB$getMsg("BOX.OPER.PEND")
+    boxExec  = YATAWEB$getMsg("BOX.OPER.EXEC")
     blocks = c("Plot" = "plotOpen", "Data"="data", "None"="none")
     left = tagList(
          fluidRow(column(4, "Up"),   column(8, yuiCombo(ns("cboUp"), choices=blocks, selected="plot")))
@@ -9,23 +14,27 @@ modOperPosInput = function(id, title) {
     )
 
     main = tagList(fluidRow(id=ns("block_1")), fluidRow(id=ns("block_2"))
-                   #         ,fluidRow(yuiBox(ns("opOpen"),     "Abiertas",  yuiDataTable(ns("tblOpen"))))
-                   # ,fluidRow( column(6, yuiBox(ns("opPending"),  "Pendiente", yuiDataTable(ns("tblPending"))))
-                   #           ,column(6, yuiBox(ns("opAccepted"), "Aceptadas", yuiDataTable(ns("tblAccepted"))))
-                   #  )
-                   # 
-#        )
-      ,yuiBlocks(ns("blocks")
-          ,tags$div(id=ns("data"), style="margin: auto;"
-                   ,fluidRow(yuiBox(ns("opOpen"),     "Abiertas",  yuiDataTable(ns("tblOpen"))))
-                   ,fluidRow( column(6, yuiBox(ns("opPending"),  "Pendiente", yuiDataTable(ns("tblPending"))))
-                             ,column(6, yuiBox(ns("opAccepted"), "Aceptadas", yuiDataTable(ns("tblAccepted"))))
-                    )
-           )
-          ,tags$div(id=ns("plot"), yuiPlot(ns("plotOpen")))
-       )
-     ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))
-    )
+         ,yuiBlocks(ns("blocks")
+          ,tags$div(id=ns("data"), style="width: 100%;"
+                   ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  yuiDataTable(ns("tblOpen"))))
+                   ,hidden(fluidRow(id=ns("divPend")
+                             ,column(6, yuiBox(ns("opPending"),  boxPend, 
+                                                yuiDataTable(ns("tblPending"))
+                                               ,hidden(tags$span(id=ns("noPending"), noAccept))
+                                        )
+                                    )
+                             ,column(6, yuiBox( ns("opAccepted"), boxExec
+                                               ,yuiDataTable(ns("tblAccepted"))
+                                               ,hidden(tags$span(id=ns("noAccepted"), noExec))
+                                        )
+                              )
+                         )
+                     )
+                   ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))
+      )
+                   ,tags$div(id=ns("plot"), yuiPlot(ns("plotOpen")))
+
+    ))
     list(left=left, main=main, right=NULL)
 }
 

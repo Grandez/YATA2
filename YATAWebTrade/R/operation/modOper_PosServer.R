@@ -1,4 +1,4 @@
-modOperPosServer = function(id, full, pnl, parent) {
+modOperPosServer = function(id, full, pnlParent, parent) {
    ns = NS(id)
    ns2 = NS(full)
    PNLPosOper = R6::R6Class("PNL.POS.OPER"
@@ -20,14 +20,17 @@ modOperPosServer = function(id, full, pnl, parent) {
                ,src  = "price"
                ,ype = "Linear"
            )
-        ,valid = FALSE
+           ,valid = FALSE
            ,initialize     = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
                self$operations = self$factory$getObject("Operation")
                self$session    = self$factory$getObject(self$codes$object$session)
                self$cameras    = self$factory$getObject(self$codes$object$cameras)
                self$loadData()
-               self$plot = yataPlotBase(self$info)
+               self$plot = OBJPlot$new("plotPos", type="Line", scale="date")
+               self$vars$layout = c("plotOpen", "data")
+               self$data$dfHist = list()
+#               private$applyCookies(session)
            }
         ,loadData = function() {
             self$data$lstHist    = list()
@@ -53,12 +56,13 @@ modOperPosServer = function(id, full, pnl, parent) {
             self$operations$select(private$selected)
             self$cameras$select(self$operations$current$camera)
                
-            self$data        = self$operations$current
+            self$data        = list.merge(self$data, self$operations$current)
             self$data$camera = self$cameras$current
             self$data$names = list()
             self$data$names$camera  = self$cameras$current$name
             self$data$names$base    = YATAWEB$getCTCLabel(self$data$base, "medium")
             self$data$names$counter = YATAWEB$getCTCLabel(self$data$counter, "medium")
+            row
          }
         ,getOpenCurrency = function() { self$data$dfOpen[,c("counter", "tms")] }
         ,prepareOpen = function () {
@@ -67,7 +71,7 @@ modOperPosServer = function(id, full, pnl, parent) {
             colnames(df) = c("camera", "currency", "amount", "price", "target", "stop", "deadline")
             df$value = df$price * df$amount
 
-            last = pnl$session$getLast()
+            last = self$session$getLast()
       
             if (is.null(last)) {
                 df = add_column(df, act   = 0, .after = "price")
@@ -88,7 +92,6 @@ modOperPosServer = function(id, full, pnl, parent) {
             df$currency = labels[df$currency]
             cameras = YATAWEB$getCameraNames(unique(df$camera))
             df$camera = cameras[df$camera]
-      
       # df$cost = df$price
       # 
       # for (idx in 1:nrow(df)) {
@@ -98,8 +101,21 @@ modOperPosServer = function(id, full, pnl, parent) {
       # df$delta = (df$price / df$cost) - 1
       # df$balance = df$delta * df$cost * df$amount
       # df = df[,c("camera", "counter", "amount", "cost", "price", "delta", "value", "balance")]
+            self$data$tblOpen = df
             df
         }
+        ,prepareNotOpen = function (df) {
+            df = df[,c("camera", "counter", "amount", "price")]
+            colnames(df) = c("camera", "currency", "amount", "price")
+            df$value = df$price * df$amount
+
+            labels     = YATAWEB$getCTCLabels(unique(df$currency), type="full")
+            df$currency = labels[df$currency]
+            cameras = YATAWEB$getCameraNames(unique(df$camera))
+            df$camera = cameras[df$camera]
+            df
+        }
+
        ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }            
      )
       ,private = list(
@@ -109,8 +125,20 @@ modOperPosServer = function(id, full, pnl, parent) {
    
    moduleServer(id, function(input, output, session) {
       pnl = YATAWEB$getPanel(full)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnl, session))
+      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnlParent, session))
 
+       updateLeftSide = function() {
+          updCombo("cboUp",   selected = pnl$vars$layout[1])
+          updCombo("cboDown", selected = pnl$vars$layout[2])
+      }
+
+      refresh = function(reload) {
+          pnl$loadData()
+          pnl$nextAction = NULL
+          YATAFormClose()
+          loadHistory()
+          renderData()
+      }       
       renderPlot = function(symbol) { 
           if (missing(symbol)) {
               return (NULL)
@@ -120,7 +148,9 @@ modOperPosServer = function(id, full, pnl, parent) {
           colnames(df) = c("Date", symbol)
           pnl$plot = pnl$plot %>% yataPlotLine(df)
           #(data=df, x=df[,1],y=df[,2],type="scatter", mode="lines", name=symbol)
-          output$plotOpen = updPlot(pnl$plot, "plotOpen")
+          output$plotOpen = updPlot(pnl$plot %>% event_register("plotly_legendclick") %>%
+      event_register("plotly_legenddoubleclick")
+, "plotOpen")
       }
       ######################################################
       ### REST                                          ###
@@ -135,8 +165,10 @@ modOperPosServer = function(id, full, pnl, parent) {
            from = since - as.difftime(7, unit="days")
            restdf("hist",id=id,from=from,to=to) %>%
                   then(function(df) {
-                      pnl$addHistory(symbol,df)
-                       renderPlot(symbol)
+                      pnl$plot$addData(df, symbol)
+                      output$plotOpen = updPlot(pnl$plot, "plotOpen") # %>% event_register("plotly_legendclick") %>%
+                      # pnl$addHistory(symbol,df)
+                      #  renderPlot(symbol)
                    },function(err)    {
                        browser()
                       message("ha ido mal 3") ; message(err)
@@ -165,10 +197,10 @@ modOperPosServer = function(id, full, pnl, parent) {
       }
       renderPending = function() {
          if (nrow(pnl$data$dfPending) == 0) return()
-         df = pnl$data$dfPending
-         
-             shinyjs::toggle(ns("opPending"))
-             table = "pending"
+         df = pnl$prepareNotOpen(pnl$data$dfPending)
+
+         shinyjs::toggle(ns("opPending"))
+         table = "pending"
              btns = c(  yuiTblButton(full, table, "Accept",   yuiBtnIconOK())
                        ,yuiTblButton(full, table, "Rejected", yuiBtnIconRefuse())
                        ,yuiTblButton(full, table, "Cancel",   yuiBtnIconDel()))
@@ -178,15 +210,34 @@ modOperPosServer = function(id, full, pnl, parent) {
       }
       renderAccepted = function() {
          if (nrow(pnl$data$dfAccepted) == 0) return()
-         df = pnl$data$dfAccepted
+         df = pnl$prepareNotOpen(pnl$data$dfAccepted)
+
          shinyjs::toggle(ns("opAccepted"))
          table = "accepted"
          btns = c(yuiTblButton(full, table, "Executed", yuiBtnIconCloud("Executed")))
          df = yataDTButtons(df, btns)
          output$tblAccepted = yataDFOutput({df}, type='operation')
+      } 
+     showBoxes = function() {
+         if (nrow(pnl$data$dfPending) == 0 && nrow(pnl$data$dfAccepted) == 0) {
+             shinyjs::hide("divPend")
+         } else {
+             shinyjs::show("divPend") 
+         }
+         if (nrow(pnl$data$dfPending) == 0) {
+             shinyjs::show("noPending")
+         } else {
+             shinyjs::hide("noPending") 
+         }
+         if (nrow(pnl$data$dfAccepted) == 0) {
+             shinyjs::show("noAccepted")
+         } else {
+             shinyjs::hide("noAccepted") 
+         }
      } 
      renderData = function() {
         renderOpen()
+        showBoxes() 
         renderPending()
         renderAccepted()
      }
@@ -194,11 +245,11 @@ modOperPosServer = function(id, full, pnl, parent) {
          df = pnl$getOpenCurrency()
         lapply(1:nrow(df), function(x) getHistorical(df[x,1], df[x,2]))
      }
-      if (!pnl$loaded) {
-          output$plotOpen = updPlot(pnl$plot, "plotOpen")
-          renderData()
-          loadHistory()
+      if (!pnl$loaded) updateLeftSide()
+      if (!pnl$loaded || !pnl$parent$valid) {
+          refresh(TRUE)
           pnl$loaded = TRUE
+          pnl$parent$valid = TRUE
       }
 
 #       loadPosition   = function() { 
@@ -264,17 +315,33 @@ modOperPosServer = function(id, full, pnl, parent) {
          output$formLblCounter = updLabelText( pnl$data$names$counter )
 
          updNumericInput("ImpAmount", value=pnl$data$amount) 
-         updNumericInput("ImpPrice",  value=pnl$data$price) 
          if (pnl$vars$nextAction == pnl$codes$status$closed) {
+             updNumericInput("formImpPrice",  value=pnl$data$act) 
              updateSelectInput(session=session, inputId="formcboReasons", choices = pnl$cboReasons(DBParms$reasons$close), selected=0)
+         } else {
+           updNumericInput("ImpPrice",  value=pnl$data$price)     
          }
                   
       }
+# output$click <- renderPrint({
+#     event_data("plotly_legendclick")
+#   })
+
+  # output$doubleclick <- renderPrint({
+  #   event_data("plotly_legenddoubleclick")
+  # })      
+  #     observe({
+  #         browser()
+  #         res = event_data("plotly_legendclick")
+  #         browser()
+  #     })
+  #     observe({
+  #         browser()
+  #         res = event_data("plotly_afterplot")
+  #         browser()
+  #     })
       
       observeEvent(input$btnTablePending, {
-          if (pnl$vars$inForm) return()
-          pnl$vars$inForm  = TRUE
-          pnl$vars$inEvent = FALSE
           pnl$selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
               pnl$vars$nextAction = pnl$codes$status$accepted
@@ -296,26 +363,22 @@ modOperPosServer = function(id, full, pnl, parent) {
               output$form = renderUI({data})
               formChangeInit()
           }
-      })
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableAccepted, {
-          if (pnl$vars$inForm) return()           
-          pnl$vars$inForm  = TRUE 
-          pnl$vars$inEvent = FALSE
+
           pnl$selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
           pnl$vars$nextAction = pnl$codes$status$executed
           data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
           output$form = renderUI({data})
           formChangeInit()
-       })
+       }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableOpen, {
-          # if (pnl$vars$inForm) return()           
-          # pnl$vars$inForm = TRUE 
-          # pnl$vars$inEvent = FALSE
-          pnl$selectOperation(input$btnTableOpen, pnl$codes$status$executed)
+          row = pnl$selectOperation(input$btnTableOpen, pnl$codes$status$executed)
           if (pnl$action == "close") {
               pnl$data$type = pnl$codes$oper$close
               pnl$vars$nextAction = pnl$codes$status$closed
               pnl$data$reasons = pnl$cboReasons(DBParms$reasons$close)
+              pnl$data$act     = pnl$data$tblOpen[row, "act"]
               data = yuiFormUI(ns2("form"), "OperClose", data=pnl$data)
               output$form = renderUI({data})
               formChangeInit()
@@ -327,7 +390,7 @@ modOperPosServer = function(id, full, pnl, parent) {
                         ,"oper-hist", position="after", select=TRUE, session=parent)
           }
           
-       })
+       }, ignoreInit = TRUE, ignoreNULL = TRUE)
 
        observeEvent(input$btnTable, {
           # me devuelve: tabla - operacion - fila
@@ -344,14 +407,9 @@ modOperPosServer = function(id, full, pnl, parent) {
     })
       ##############################################
       # Modales
+      # El mismo boton para todos
       ##############################################
-      observeEvent(input$btnOK, {
-         pnl$vars$inEvent = !pnl$vars$inEvent
-         if (!pnl$vars$inEvent) {
-             pnl$vars$inEvent = !pnl$vars$inEvent
-             return()
-         }
-
+      observeEvent(input$operBtnOK, {
           if (pnl$vars$nextAction == pnl$codes$status$accepted) {
               pnl$operations$accept( price  = input$formImpPrice
                                     ,amount = input$formImpAmount
@@ -364,7 +422,7 @@ modOperPosServer = function(id, full, pnl, parent) {
           }
           if (pnl$vars$nextAction == pnl$codes$status$executed) {
               pnl$operations$execute(gas = 0, id = pnl$data$id)
-              pnl$getRoot()$invalidate(panel$pos)
+              pnl$invalidate(panel$pos)
           }
           if (pnl$action %in% c("cancel", "rejected") ) {
               cmt = trimws(input$formComment)
@@ -380,19 +438,15 @@ modOperPosServer = function(id, full, pnl, parent) {
                                    ,comment = input$formcomment
                                    ,rank    = input$formSlRank)
           }
-          pnl$vars$inForm = YATAFormClose()
-
-          pnl$vars$nextAction = 0 # Parece que a veces lanza 2 triggers
-      })
-      observeEvent(input$formBtnKO, {
-          pnl$nextAction = NULL
-          pnl$vars$inForm = YATAFormClose()
-      })
+          refresh(TRUE)
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
+      # Los botones van prefijados
+      observeEvent(input$operBtnKO, { refresh(FALSE) }, ignoreInit = TRUE, ignoreNULL = TRUE)
 
       observeEvent(input$btnAdd, {
           # updateTabsetPanel(session = parent, inputId = "pnlOpType", selected = "Operar")
           insertTab("pnlOpType",tabPanel("Prueba2",     value="prueba", h3("Un tab")),"oper-detail", position="after", session=parent)
-      })
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
 
      #################################################
      ### Panel Izquierdo
@@ -400,10 +454,10 @@ modOperPosServer = function(id, full, pnl, parent) {
     
       observeEvent(input$cboUp, {
          session$sendCustomMessage('yataShowBlock',list(ns=full,row=1,col=0,block=input$cboUp))
-      })
+      }, ignoreNULL = TRUE)
       observeEvent(input$cboDown, {
          session$sendCustomMessage('yataShowBlock',list(ns=full,row=2,col=0,block=input$cboDown))
-      })
+      }, ignoreNULL = TRUE)
 
           
   })

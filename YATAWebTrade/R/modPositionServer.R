@@ -14,6 +14,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          ,session     = NULL
          # ,operations  = NULL 
          ,monitors    = NULL
+         ,plots = list()
          ,initialize    = function(id, pnlParent, session) {
              super$initialize(id, pnlParent, session)
              self$position  = self$factory$getObject(self$codes$object$position)
@@ -30,12 +31,12 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              self$vars$layout = matrix(c("Hist", "Session", "Best", "Position"),2,2,byrow=TRUE)
              self$data$dfHist = list()
              private$applyCookies(session)
+             private$makePlots()
              
          }
          ,loadData = function() {
              private$loadPosition()
              self$monitors = BLK.MONITORS$new(ns("monitor"), self, YATAWEB)
-             self$updateBest()
              ctc = self$data$dfGlobal$currency
              self$data$dfSession = self$session$getPrices(ctc)
              self$loaded = TRUE
@@ -124,14 +125,15 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                  info$observer = ns("modebar")
                  info$id   = ns(idPlot)
                  info$ui   = uiPlot
-                 info$plot = idPlot
+                 info$render = idPlot
+                 info$datavalue = "Value" 
                  if (idPlot %in% c("plotSession", "plotHist")) {
-                     info$src  = "price"
-                     info$type = "Linear"
+                     info$datasource  = "value"
+                     info$plot = "Line"
                  }
                  else {
-                     info$src  = "session"
-                     info$type = "Candlestick"
+                     info$datasource  = "session"
+                     info$plot = "Candlestick"
                  }
                  self$vars$info[[uiPlot]][[idPlot]] = info
              }
@@ -142,7 +144,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
             self$getRoot()$setInterval(self$vars$interval)      # Global
         }
         # ,getPositionID = function() {
-        #     browser()
         #     ids = NULL
         #     syms = self$data$dfGlobal[self$data$dfGlobal$currency != "EUR", "currency"]
         #     if (length(syms) != 0) ids = YATAWEB$getCTCID(syms)
@@ -153,7 +154,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
        #     self$operations = self$factory$getObject(self$codes$object$operation)
        #     self$data$dfOper = self$operations$getActive()
        #  }
-        ,getPlots  = function() { private$plots  }
+        ,getPlots  = function() { private$cboplots  }
         ,getTables = function() { private$tables }  
         ,updateBest = function() {
             cols = c("hour", "day", "week", "month")
@@ -162,11 +163,9 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
             rows = self$vars$best$top
             df = df[order(df[,col],decreasing=TRUE),]
             self$data$dfBest = df[1:rows,]
-            self$data$dfTop  = df[df$rank < 21,][1:self$vars$best$top,]
-            self$data$dfFav  = df[df$rank < 101,][1:self$vars$best$top,]
-         #    browser()
+            self$data$dfTop  = df[df$rank <  21,][1:rows,]
+            self$data$dfFav  = df[df$rank < 101,][1:rows,]
          #    df = df[order(df$tms, decreasing=TRUE),]
-         #    browser()
          # # getBest(input$numBestTop, input$cboBestFrom, TRUE )
          # # getBest(input$numBestTop, input$cboBestFrom, FALSE )
          # pnl$monitors$update()
@@ -185,7 +184,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
      ,private = list(
          #   opIdx      = list()
          #  ,monitor   = NULL 
-         plots = c( "Position" = "Hist", "Session" = "Session"
+         cboplots = c( "Position" = "Hist", "Session" = "Session"
                    ,"Best Info"  = "Best", "Top Info" = "Top"
          )
          ,tables = c( "Position"    = "Position", "Best"              = "Best"
@@ -214,6 +213,14 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                                           })
              names(self$data$position) = cameras
           }
+         ,makePlots = function() {
+              self$plots[["plotSession"]] = OBJPlot$new("plotSession", plot="Line", observer=ns("modebar")
+                                          , scale = "time")
+              self$plots[["plotHist"]] = OBJPlot$new("plotHist", plot="Line", observer=ns("modebar")
+                                  , scale = "date")
+
+
+         }
        )
     )
    #####################################################################
@@ -241,6 +248,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
     }
 
     moduleServer(id, function(input, output, session) {
+      message("Ejecutando server para Position")
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(id, pnlParent, session))
        makeID = function(tag) { paste0("#", ns(tag)) }
@@ -314,7 +322,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #              cameras = names(pnl$data$position)
 #             # cameras = pnl$data$position
 #              divs = lapply(names(pnl$data$position), function(camera) cameraUI(camera))
-              # browser()
               # tagAppendChildren(ns("posCameras"), tagList(divs))
 #              insertUI(paste0("#", ns("posCameras")), where = "afterBegin", ui=divs,  immediate=TRUE)           
 # 
@@ -423,67 +430,55 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #            if (pnl$layout[1,1] == type) output$plot1 = eval(parse(text=paste0("plot", type, "('plot1')")))
 #            if (pnl$layout[1,2] == type) output$plot2 = eval(parse(text=paste0("plot", type, "('plot2')")))
 #        }
-       plotHist = function(uiPlot) {
-          df = NULL
-          if (length(pnl$data$dfHist) > 0) {
-              df = pnl$data$dfHist[[1]][,c(1,8)]
-              df$tms = as.Date(df$tms)
-              if (length(pnl$data$dfHist) > 1) {
-                  for (idx in 2:length(pnl$data$dfHist)) {
-                       df2 = pnl$data$dfHist[[idx]][,c(1,8)]
-                       df2$tms = as.Date(df2$tms)
-                       df = full_join(df, df2, by="tms")
-                  }
-              }
-          }
-          info = pnl$getPlotInfo("plotHist", uiPlot)
-          plt = yataPlot(info, df, "Open positions")
-          updPlot(plt, uiPlot)
-
-
-#           updPlotNoData()
-#            if (length(pnl$data$lstHist) == 0) return (NULL)
-#            info = pnl$getPlotInfo("Hist", uiPlot)
-#            if (length(pnl$data$lstHist) > 1) {
-#                data = lapply(pnl$data$lstHist, function(df) df[,"close"])
-#                tms = pnl$data$lstHist[[1]]$tms
-#                df = as.data.frame(data)
-#                df = cbind(tms, df)
-#                info$type = "Linear"
-#                info$src  = "price"
-#                title = "Historico posicion"
-#            } else {
-#                df = pnl$data$lstHist[[1]]
-#                info$type = "Candlestick"
-#                info$src  = "session"
-#                title = names(pnl$data$lstHist)[1]
-#            }
-#            plot = yataPlot(info, df, title)
-#            if (input$chkOper && !is.null(pnl$data$dfOper)) {
-#                plot = yataPlotXLines(plot, pnl$data$dfOper[,c("counter", "price", "tms")])
-#            }
-#            updPlot(plot)
+       plotHist = function(uiPlot, info) {
+           if (length(pnl$data$dfHist) == 0) return()
+           lapply(names(pnl$data$dfHist), function(name) pnl$plots[["plotHist"]]$addData(pnl$data$dfHist[[name]], name))
+#            browser()
+#             pltHist = OBJPlot$new("pltHist", plot="Line", observer=ns("modebar")
+#                                   , data = pnl$data$dfHist, scale = "date")
+# browser()
+          # df = NULL
+          # if (length(pnl$data$dfHist) > 0) {
+          #     df = pnl$data$dfHist[[1]][,c(1,8)]
+          #     df$tms = as.Date(df$tms)
+          #     if (length(pnl$data$dfHist) > 1) {
+          #         for (idx in 2:length(pnl$data$dfHist)) {
+          #              df2 = pnl$data$dfHist[[idx]][,c(1,8)]
+          #              df2$tms = as.Date(df2$tms)
+          #              df = full_join(df, df2, by="tms")
+          #         }
+          #     }
+          # }
+          # if (missing(info)) {
+          #     info = pnl$getPlotInfo("plotHist", uiPlot)
+          #     info$title = "Open positions"
+          # }
+          # plt = yataPlot(info, df)
+          updPlot(pnl$plots[["plotHist"]], uiPlot)
        }
        plotBest = function(uiPlot) {
 #           df = pnl$data$dfBestHist
 #           if (is.null(df)) return (NULL)
 #           info = pnl$getPlotInfo("plotBest", uiPlot)
 #          plt = yataPlot(info, df, "Title 1")
-#          updPlot(plt)
+#          updPlot(plt, info)
        }
        plotTop = function(uiPlot) {
 #           df = pnl$data$dfTopHist
 #           if (is.null(df)) return (NULL)
 #           info = pnl$getPlotInfo("plotTop", uiPlot)
 #           plt = yataPlot(info, df, "Title 2")
-#           updPlot(plt)
+#           updPlot(plt, info)
        }
        plotSession = function(uiPlot) {
-          df = pnl$data$dfSession
-#          if (!is.null(pnl$data$dfSession)) df = spread(df, symbol, price)
-          info = pnl$getPlotInfo("plotSession", uiPlot)
-          plt = yataPlot(info, pnl$data$dfSession, "Current Session")
-          updPlot(plt, uiPlot)
+           pnl$plots[["plotSession"]]$addData(pnl$data$dfSession, "session")
+
+#           df = pnl$data$dfSession
+# #          if (!is.null(pnl$data$dfSession)) df = spread(df, symbol, price)
+#           info = pnl$getPlotInfo("plotSession", uiPlot)
+#           info$title = "Current Session"
+#           plt = yataPlot(info, pnl$data$dfSession)
+          updPlot(pnl$plots[["plotSession"]], uiPlot)
        }
        plotFav = function(uiPlot) {
        }
@@ -516,7 +511,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
            restdf("hist",id=id,from=from,to=to)  %>%
               then( function(df) {
                     if (nrow(df) > 0) {
-                        browser()
                         df = df[,c(1, ncol(df))]
                         pnl$updateHistory(id, df, colnames(df)[2])
                         renderPlot("plotSession")
@@ -547,12 +541,11 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #           getHistorical(id, "Top")
 #       })
 #        
-#       observeEvent(input$modebar, {
-#           info = input$modebar
-#           pnl$vars$info[[info$plot]] = info
-#           if (info$ui == "plot1")  output$plot1 = updPlot({makePlot(info$plot, "plot1")})
-#           if (info$ui == "plot2")  output$plot2 = updPlot({makePlot(info$plot, "plot2")})
-#       })
+      observeEvent(input$modebar, {
+          info = input$modebar
+          pnl$vars$info[[info$render]] = info
+          eval(parse(text=paste0("output$", info$ui, "=", info$render, "('", info$ui, "', info)")))
+      })
 #        makePlot = function(idPlot, uiPlot) {
 # #           df = pnl$getPlotDF(idPlot)
 #            info = pnl$getPlotInfo(idPlot, uiPlot)
@@ -594,9 +587,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
        output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
        pnl$updateData()
        renderPanel()
-         #    browser()
          #    df = df[order(df$tms, decreasing=TRUE),]
-         #    browser()
          # # getBest(input$numBestTop, input$cboBestFrom, TRUE )
          # # getBest(input$numBestTop, input$cboBestFrom, FALSE )
          # pnl$monitors$update()
@@ -657,13 +648,14 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #           updateLeftSide() 
 #        })
       
-        if (!pnl$loaded || pnl$isInvalid()) {
+        if (!pnl$loaded || pnl$isInvalid(pnl$id)) {
             pnl$loadData()
             renderUIPosition()
             renderPosition()
             pnl$monitors$render() 
             lapply(pnl$data$dfGlobal$id, function(id) getHistorical(id))
             updateLeftSide()
+            updateBest()
             output$plot1 = eval(parse(text=paste0("plot", pnl$vars$layout[1,1], "('plot1')")))
             output$plot2 = eval(parse(text=paste0("plot", pnl$vars$layout[1,2], "('plot2')")))
          }       

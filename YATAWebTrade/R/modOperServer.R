@@ -35,6 +35,7 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
             }
            ,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
+           ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
            ,cboCameras   = function(exclude, full=FALSE) {
               data = self$cameras$getCameras(full)
               if (!missing(exclude)) data = data[!data$id %in% exclude,]
@@ -94,20 +95,29 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
        )
     )
     moduleServer(id, function(input, output, session) {
+        message("Ejecutando server para Oper")
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         
         observeEvent(input$pnlOpType, {
-            # recibe oper-pos
-            #pone modOperPosServer
+            if (input$pnlOpType == "oper-detail" && is.null(pnl$idOper)) pnl$idOper = 2803220
             if (grepl("_", input$pnlOpType)) {
+                #from = ns(detail)
                 toks = strsplit(input$pnlOpType, "_")[[1]]
-                act = yataActiveNS(toks[1])
-                pnl$idOper = toks[2]
-                idx = str_locate_all(toks[1], "-")[[1]]
-                pnl$panel = toks[1] # substr(toks[1], 1, idx[nrow(idx), 1] - 1)
-                sp = strsplit(toks[1], "-")[[1]]
-                pnl$panel = paste(sp[1], act, sep="-")
+                idOper = toks[length(toks)] 
+                from = ns(toks[1])
+                to = ns(idOper)
+                act = toks[1]
+                pnl$idOper = as.integer(idOper)
+                # act = yataActiveNS(toks[1])
+                
+                # idx = str_locate_all(toks[1], "-")[[1]]
+                # pnl$panel = toks[1] # substr(toks[1], 1, idx[nrow(idx), 1] - 1)
+                # sp = strsplit(toks[1], "-")[[1]]
+                # pnl$panel = paste(sp[1], act, sep="-")
+                #session$sendCustomMessage('yataMovePanel',list(from=from, to=to))
+                # "oper-detail"
+                # <div id="div_oper-hist-detail_2803220"></div>
             }
             else {
                pnl$panel = input$pnlOpType 

@@ -14,11 +14,15 @@ TBLMessages = R6::R6Class("TBL.MESSAGES"
             }
             data$msg
         }
+        ,getBlock = function(block, lang, region) {
+            table(block=block,lang=lang,region=region)
+        }
      )
      ,private = list (
            key = c("code", "lang", "region")
           ,fields = list(
-              code   = "CODE"
+              block  = "BLOCK"
+             ,code   = "CODE"
              ,lang   = "LANG"
              ,region = "REGION"
              ,msg    = "MSG"

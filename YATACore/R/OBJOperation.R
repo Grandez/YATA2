@@ -43,7 +43,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 db$commit()
                 self$current$idOper
             },error = function(cond) {
-                brower()
+                browser()
                 db$rollback()
                 message(cond)
                 0
@@ -262,9 +262,46 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ,getActive     = function()    { getOperations(status=codes$status$executed)  }
         ,getCancelled  = function()    { getOperations(status=codes$status$cancelled) }
         ,getRejected   = function()    { getOperations(status=codes$status$rejected)  }
-        ,getOpen       = function()    { getOperations( active=codes$flag$active
-                                                       ,status=codes$status$executed) }
-        ,getOperations = function(...) { prtOper$get(...)                           }
+        ,getOpen       = function()    { getOperations(status=codes$status$executed
+                                                      ,active=codes$flag$active) }
+        ,getSons       = function(group, type) {
+            if (missing(type)) {
+               getOperations(inValues=list(parent=group))
+            }
+            else {
+                getOperations(type=type, inValues=list(parent=group))
+            }
+        }
+        ,getHistory    = function()    {
+            dfCounter = prtOper$getInactiveCounters(codes$flag$inactive)
+            if (nrow(dfCounter) == 0) return (NULL)
+            if (is.null(dfReg)) private$dfReg = objPos$getRegularizations()
+            dfj = left_join(dfCounter, dfReg, by=c("camera", "counter"))
+            if (nrow(dfj) == 0) return (NULL)
+            df = NULL
+            for (row in 1:nrow(dfj)) {
+                dft = prtOper$getInactives(dfj[row,"camera"], dfj[row,"counter"], dfj[row,"last"])
+                if (is.null(df)) df = dft
+                else             df = rbind(df, dft)
+            }
+            df
+        }
+        ,getClosed    = function()    {
+            dfCounter = prtOper$getInactiveCounters(codes$flag$parent)
+            if (nrow(dfCounter) == 0) return (NULL)
+            if (is.null(dfReg)) private$dfReg = objPos$getRegularizations()
+            dfj = left_join(dfCounter, dfReg, by=c("camera", "counter"))
+            if (nrow(dfj) == 0) return (NULL)
+            df = NULL
+            for (row in 1:nrow(dfj)) {
+                dft = prtOper$getClosed(dfj[row,"camera"], dfj[row,"counter"], dfj[row,"last"])
+                if (is.null(df)) df = dft
+                else             df = rbind(df, dft)
+            }
+            df
+        }
+
+        ,getOperations = function(...) { prtOper$get(...)   }
         ,getOperation  = function (id) {
             res = prtOper$table(id=id)
             if (nrow(res) != 1) return (NULL)
@@ -305,6 +342,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 #       ,tblOperControl = NULL
 #       ,tblOperLog     = NULL
        ,objPos         = NULL
+       ,dfReg          = NULL
        ,tblFlows       = NULL
        ,addFlow        = function(type, currency, amount, price) {
            data = list(

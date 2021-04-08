@@ -1,4 +1,4 @@
-modBarServer <- function(id, full) {
+modBarServer <- function(id, full, pnlParent, invalidate=FALSE) {
    ns = NS(id)
    df1 = data.frame(tms=seq.Date(as.Date("2020-01-01"), as.Date("2020-01-31"), by="days")
                     ,EUR=runif(n=31, min=200, max=500)
