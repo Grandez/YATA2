@@ -16,3 +16,4 @@
 .onUnload <- function(libname, pkgname) {
    shiny::removeResourcePath("icons")
 }
+

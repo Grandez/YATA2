@@ -121,6 +121,8 @@ CREATE TABLE OPERATIONS_CONTROL  (
    ,DEADLINE     INTEGER   DEFAULT 0     -- Plazo en dias
    ,AMOUNT_IN    DOUBLE      NOT NULL -- Cantidad propuesta
    ,PRICE_IN     DOUBLE      NOT NULL -- Precio de la operacion   
+   ,AMOUNT_OUT   DOUBLE       -- Cantidad a la salida
+   ,PRICE_OUT    DOUBLE       -- Precio de salida
    ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
    ,TMS_ALERT    DATE                -- Para chequear la operacion         
    ,PRIMARY KEY ( ID_OPER )
@@ -206,3 +208,20 @@ CREATE TABLE SESSION_CTRL  (
     TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
    ,PRIMARY KEY (TMS)
 );
+
+DROP TABLE IF EXISTS PROFILE;
+CREATE TABLE PROFILE (
+    SESSION BIGINT
+   ,LEVEL0  BIGINT
+   ,LEVEL1  BIGINT
+   ,LEVEL2  BIGINT
+   ,LEVEL3  BIGINT
+   ,LEVEL4  BIGINT
+   ,LEVEL5  BIGINT
+   ,LEVEL6  BIGINT
+   ,LEVEL7  BIGINT
+   ,LEVEL8  BIGINT
+   ,LEVEL9  BIGINT
+   ,ELAPSED BIGINT
+   ,NAME    VARCHAR(64)
+)

@@ -76,7 +76,8 @@ modOperDetailServer = function(id, full, pnlParent, parent) {
     )
    
    moduleServer(id, function(input, output, session) {
-       message("SERVER Detalle Cerrada")
+       YATAWEB$beg("modOper_Det")
+
         pnl = pnlParent$getOper(pnlParent$idOper)
         if (is.null(pnl)) pnl = pnlParent$setOper(pnlParent$idOper, PNLDetail$new(pnlParent$idOper, pnlParent, session))
     #     selectPlots = function() {
@@ -185,6 +186,7 @@ modOperDetailServer = function(id, full, pnlParent, parent) {
 #             pnl$vars$first = pnl$vars$first + 1            
 #          }
 #       })
+               YATAWEB$end("modOper_Det")
   })
 }
 

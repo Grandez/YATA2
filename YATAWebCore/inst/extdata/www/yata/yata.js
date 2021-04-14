@@ -11,6 +11,15 @@ function listenerButtonInTable(mode) {
     });
 }
 
+function listenerLayout() {
+//  alert("Entro en creador de listener");
+  // Aqui añade el listener a la clase de los botones
+  var elements = document.getElementsByClassName("yata_layout");
+  Array.from(elements).forEach(function(element) {
+      element.addEventListener('change', function (event) { yataLayoutChanged(event) });
+    });
+}
+
 function yatabtnClickable(event) {
   alert("Click en el menu " + event.target.id);
   /*
@@ -19,6 +28,58 @@ function yatabtnClickable(event) {
   var tag = "#";
   */
 }
+
+function yataMoveChildren(from, to) {
+   let   childs   = from.children;
+   for (let i = 0; i < childs.length; i++) {
+        let hijo =  document.getElementById(childs[i].id);
+        to.appendChild(hijo);
+    }
+}
+
+function yataUpdateLayout(data) {
+   let id = data[0];
+   let tgt = data[1];
+   let idParent = id.replace("cboLayout", "block");
+   let col = idParent[idParent.length - 1];
+
+   let toks = id.split("-");
+   let item = toks.pop();
+   const panel = toks.join("-");
+
+   let pat = idParent.substr(0, idParent.length - 1);
+   let diva = document.getElementById(pat + "a");
+   let divb = document.getElementById(pat + "b");
+   let div1 = document.getElementById(pat + "1");
+   let div2 = document.getElementById(pat + "2");
+   let blocks = document.getElementById(panel + "-blocks");
+
+   diva.style.display = (tgt == "none") ? ""     : "none";
+   divb.style.display = (tgt == "none") ? "none" : "";
+
+   if (tgt == "none" || diva.children.length > 0) {
+       let div  = (col == "1")    ? div2 : div1;
+       let from = (tgt == "none") ? div  : diva;
+       let to   = (tgt == "none") ? diva : div;
+       yataMoveChildren(from, to);
+   }
+   if (tgt != "none") {
+       let parent = document.getElementById(id.replace("cboLayout", "block"));
+       let child  = document.getElementById(panel + "-" + tgt);
+       yataMoveChildren(parent, blocks);
+       parent.appendChild(child);
+   }
+   let nfo = id.split("_");
+
+   let evt = {"value": event.target.value, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
+   Shiny.setInputValue(panel + "-layout", evt);
+}
+function yataLayoutChanged(event) {
+   yataUpdateLayout([event.currentTarget.id, event.target.value]);
+}
+/*
+
+*/
 /*
 var tabActive = null;
 
@@ -62,7 +123,7 @@ $(function() {
     console.log( "Ha ocurrido document.ready: documento listo" );
     Shiny.addCustomMessageHandler('buttonInTable', listenerButtonInTable);
     Shiny.addCustomMessageHandler('setTitle', function(text) {document.title = "YATA - " + text;});
-
+    listenerLayout();
     /*
         document.body.style.backgroundColor = color;
         document.body.innerText = color;

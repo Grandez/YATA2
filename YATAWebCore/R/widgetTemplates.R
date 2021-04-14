@@ -1,5 +1,3 @@
-yuiBlocks = function(id, ...) { tags$div(id=id, class="yata_blocks_container", ...) }
-
 yuiYesNo = function(id=ns("tag"), lblOK, lblKO){ # , cols=4, left=0) {
     # el tag es para crear el nombre completo
     toks = strsplit(id, "-")[[1]]
@@ -30,3 +28,19 @@ yuiDiv = function(..., id, class) {
    }
    res
 }
+# yuiLayout = function(id, rows) {
+#   makerow = function(row, cols) {
+#     td1 = NULL
+#     td2 = NULL
+#     if (cols == 1 ) {
+#         td1 = tags$td(colspan="2", yuiCombo(paste0(id, row, 0)))
+#     } else {
+#         td1 = tags$td(class="yata_layout_left", yuiCombo(paste0(id, row, 1)))
+#         td2 = tags$td(yuiCombo(paste0(id, row, 2)))
+#     }
+#     tags$tr(class="yata_layout_row", td1, td2)
+#   }
+#   names(rows) = seq(1,length(rows))
+#   trs = lapply(names(rows), function(row) makerow(row, rows[row]))
+#   tagList(yuiTitle(5, "Layout"), tags$table(class="yata_layout_table", trs))
+# }

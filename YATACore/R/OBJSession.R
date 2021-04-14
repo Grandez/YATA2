@@ -68,7 +68,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        }
        ,updateLatest = function() {
            res = ""
-           if (difftime(Sys.time(), lastGet, units="mins")  > 15) {
+           if (difftime(Sys.time(), lastGet, units="mins") > 15) {
                df = provider$getLatest()
                df[,c("name", "slug")] = NULL
                private$dfLast = df

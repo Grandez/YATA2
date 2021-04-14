@@ -1,0 +1,19 @@
+# Funciones sobrecargadas
+
+A veces nos interesa o necesitamos ampliar cierta funcionalidad de los controles de shiny que no se puede "hacer por fuera"
+
+Un ejemplo es la configuracion del layout de la pagina.
+Es definida por un conjunto de __combobox__ que indican que debe aparecer en cada bloque, pero el problema que se genera es que, dado que la pagina puede ser tan compleja como se quiera, para detectar los cambios necesitariamos tantos __observers__ como bloques; sin embargo podemos agrupar esos __combos__ bajo una clase comun y manejar un unico evento para todos.
+
+El siguiente problema es que el componente __selectInput__ de shiny no permite customizar sus clases, asi que lo sobreescribimos; es decir, copiamos el codigo y le añadimos esa funcionalidad.
+
+## Componentes sobrecargados
+
+Por convencion, todos los componentes Web sobrecargados se encuentran en el fichero **YATAWrappers** y se nombran como:
+
+`yataNombreDelComponente`
+
+### yataSelectInput
+
+Es un selectInput que acepta clases
+

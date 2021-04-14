@@ -232,8 +232,6 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
             });
         });
 
-      // All YATA functions are implemented below.
-
         function _init() {
           $.YATA.showBlock = function(data) {
             // Pone y quita bloques
@@ -459,11 +457,11 @@ paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension
 
               $.YATA.yataTraceMenu = {
                 activate: function (datatoggle) {
-//ALERT                                 alert("JGG En Javascript activate");
+//                       alert("JGG En Javascript activate");
 
                   //Enable sidebar toggle
                   $(document).on('click', datatoggle, function (e) {
-//ALERT                                    alert("JGG Menu clickeado");
+//                            alert("JGG Menu clickeado");
                   e.preventDefault();
                     //alert(e.target.dataset.value);
 

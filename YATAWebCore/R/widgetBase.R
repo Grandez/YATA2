@@ -1,9 +1,14 @@
+yuiLayout = function(id, choices, selected=NULL) {
+  yataSelectInput(id, label=NULL, choices=choices, selected = selected, width="auto", class="yata_layout")
+}
 ############################
 #### Shiny
 ###########################
 yuiRow = function(id=NULL, style=NULL, class=NULL, ...) {
-  if (!is.null(id)) fluidRow(id=id,...)
-  else              fluidRow(...)
+  if (!is.null(id)) res = shiny::fluidRow(id=id,...)
+  else              res = shiny::fluidRow(...)
+  browser()
+  res
 }
 yuiColumn = function(width, ...) {
     if (!is.numeric(width) || (width < 1) || (width > 12)) stop("column width must be between 1 and 12")
@@ -156,7 +161,6 @@ yuiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
 }
-
 yuiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = NULL) {
     lbl = NULL
     choice = c("")
@@ -225,6 +229,12 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   lbl = paste0("<span class='", cls, "'>",text,"</span>")
   renderUI({HTML(lbl)})
 }
+yuiRadio = function(id, label=NULL, choices, selected=NULL) {
+   shinyWidgets::awesomeRadio(id,label,choices,selected,inline = TRUE,checkbox = TRUE)
+}
+
+
+
 
 # yuiPlot = function(id)   {
 #   cls  = "yata_plot_nodata"

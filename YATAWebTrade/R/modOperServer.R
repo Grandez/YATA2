@@ -57,10 +57,11 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
                       self$makeCombo(data)
                   }
                   else {
-                     df = self$cameras$getCameraPosition(camera, available = available) 
-                     if (nrow(df) > 0) {
-                         YATAWEB$getCTCLabels(df$currency, invert = TRUE)
-                     }
+                      #JGG Por ahora solo EUR
+                     # df = self$cameras$getCameraPosition(camera, available = available) 
+                     # if (nrow(df) > 0) {
+                         YATAWEB$getCTCLabels("EUR", invert = TRUE)
+                     # }
                   }
                }
            }
@@ -95,6 +96,7 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
        )
     )
     moduleServer(id, function(input, output, session) {
+        YATAWEB$beg("modOperServer")
         message("Ejecutando server para Oper")
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
@@ -127,4 +129,5 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE) {
             eval(parse(text=paste0(module, "(act, pnl$panel, pnl,parent=session)")))
         })
     })
+    YATAWEB$end("modOperServer")
 }    

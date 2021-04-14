@@ -88,8 +88,11 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 98, 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 99,    1, ''    , 'OTHER'      );
                                                                          
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 11,    1, ''    ,  'UP'        );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 12,    1, ''    ,  'SUGGEST'   );
                                                                          
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  2, 21,    1, ''    ,  'DOWN'      );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  3, 31,    1, ''    ,  'TOP'       );
                                                                          
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 41,    1, ''    , 'TARGET'     );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 42,    1, ''    , 'LIMIT'      );

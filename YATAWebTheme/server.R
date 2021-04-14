@@ -8,8 +8,10 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,cameras      = NULL
       ,providers    = NULL
       ,interval     = 15
+      ,layout       = NULL
       ,initialize    = function(id, parent, session) {
           super$initialize(id, parent, session)
+         self$layout = OBJLayout$new()
       }
       ,root        = function() { TRUE }
    )
@@ -29,4 +31,8 @@ function(input, output, session) {
    observeEvent(input$mainMenu,{
         eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl)")))
     })
+   observeEvent(input$layout, {
+      browser()
+      pnl$layout$update(input$layout)
+   })
 }

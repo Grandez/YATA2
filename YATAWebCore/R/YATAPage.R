@@ -74,6 +74,8 @@ YATAPage =  function(title = NULL,id = NULL,
 
   container   = tags$div(id="yata_container", class="yata_container", page, shinyjs::hidden(mainFormErr))
 
+  jsCode <- "shinyjs.yataUpdateLayout = function(id, tgt) {yataUpdateLayout(id, tgt);}"
+
    bspage =   shiny::bootstrapPage(
          useShinyjs()
         ,tags$head(
@@ -89,6 +91,7 @@ YATAPage =  function(title = NULL,id = NULL,
              ,tags$script('Shiny.addCustomMessageHandler("closeLeftSide",
                            function(message) { $("[data-toggle=\'yataoffcanvas\']").trigger("click");});')
              ,initShinyCookie("YATA")
+             ,extendShinyjs(text = jsCode, functions = c("yataUpdateLayout"))
         )
         ,container
         ,tags$script('

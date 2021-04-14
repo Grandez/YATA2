@@ -3,7 +3,7 @@
     ifelse(is.null(p), dafult, p)
 }
 best_handler = function(req, .res) {
-      writeLines(paste("best:", Sys.time()))
+#      message(paste("best:", Sys.time()))
     top   = .getParm(req, "top",  10)
     from  = .getParm(req, "from",  7)
     group = .getParm(req, "group", 0)
@@ -17,22 +17,27 @@ best_handler = function(req, .res) {
     })
 }
 hist_handler = function(.req, .res) {
-    writeLines(paste("hist:", Sys.time()))
     id   = .req$parameters_query[["id"]]
     from = .req$parameters_query[["from"]]
     to   = .req$parameters_query[["to"]]
-    writeLines(paste("hist id: ", id, "from: ", from, "to: ", to))
+    cat(paste("hist    id: ", id, "from: ", from, "to: ", to, "\n"))
     tryCatch({
        fact = YATACore::YATAFACTORY$new()
        sess = fact$getObject(fact$codes$object$session)
        df   = sess$getHistorical("EUR", id,from,to)
+#       cat(paste("hist OK id: ", id, "from: ", from, "to: ", to))
       .df_handler(df, .res)
     }, error = function(e) {
+        message("HIST ERROR")
+        # cat(paste("hist KO id: ", id, "from: ", from, "to: ", to))
+        # cat(e)
+        # cat("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
       .res$set_status_code(500)
       .res$set_content_type("application/json")
       .res$set_body(jsonlite::toJSON(e))
     }, finally =  {
         fact$clear()
+        .res
     })
 }
 

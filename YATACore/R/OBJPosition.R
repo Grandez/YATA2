@@ -37,44 +37,73 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
              prtPosition$apply()
          }
       }
-      ,updateOper = function(camera, currency, amount, price, prcTaxes) {
+      ,updateBase = function(camera, currency, amount, price, prcTaxes) {
+          # La base no cuenta para actualizar precios, es solo la herramienta
           if (amount == 0) return()
           prtPosition$select(camera=camera, currency=currency, create=TRUE)
-          curr  = prtPosition$current
+          current  = prtPosition$current
+          prtPosition$setField("balance",   current$balance   - (amount * price))
+          prtPosition$setField("available", current$available - (amount * price))
+          prtPosition$apply()
 
-          pSell = curr$priceSell
-          nSell = curr$sell
+      }
+      ,updateCounter = function(camera, currency, amount, price, prcTaxes) {
+          # La base no cuenta para actualizar precios, es solo la herramienta
+          if (amount == 0) return()
+          prtPosition$select(camera=camera, currency=currency, create=TRUE)
+          current  = prtPosition$current
+
           # Si amount es positivo es compra, si no venta
           if (amount < 0) {
-              pSell = (pSell * nSell) - (amount * price)
-              pSell = ifelse((nSell - amount) == 0, 0, pSell / (nSell - amount))
-              nSell = nSell - amount
-              prtPosition$set(priceSell = pSell, sell=nSell)
-              nBalance = amount
+              pSell = (current$sell * current$priceSell) - (amount * price)
+              pSell = pSell / (current$sell - amount)
+              prtPosition$set(priceSell = pSell, sell = current$sell - amount)
           }
-
-          pBuy = curr$priceBuy
-          nBuy = curr$buy
           if (amount > 0) {
-              pBuy = (pBuy * nBuy) + (amount * price)
-              pBuy = ifelse((nBuy + amount) == 0, 0, pBuy / (nBuy + amount))
-              nBuy = nBuy + amount
-              prtPosition$set(priceBuy = pBuy, buy=nBuy)
-              nBalance = amount
+              pBuy = (current$buy * current$priceBuy) + (amount * price)
+              pBuy = pBuy / (current$buy + amount)
+              prtPosition$set(priceBuy = pBuy, buy = current$buy + amount)
           }
-          pPrice = 0
-          if ((nBuy - nSell) != 0) pPrice = ((pBuy * nBuy) - (pSell * nSell)) / (nBuy - nSell)
 
-          prtPosition$setField("price", pPrice)
-
-          tax = 0
-          if (prcTaxes != 0) {
-              tax = nBalance * prcTaxes / 100
-              if (tax > 0) tax = tax * -1
+          if (amount != 0 && current$buy != current$sell) {
+              current$price = (current$priceBuy * current$buy) - (current$priceSell * current$sell)
+              current$price = current$price / (current$buy - current$sell)
+              prtPosition$set(price = current$price)
           }
-          prtPosition$setField("balance",   curr$balance + nBalance + tax)
-          prtPosition$setField("available", curr$balance + nBalance + tax)
+          prtPosition$set(balance = current$balance   + amount, available = current$available + amount)
           prtPosition$apply()
+      }
+
+      ,updateOper = function(camera, currency, amount, price, prcTaxes) {
+          #JGG Hay que revisar modificado sin querer
+          # if (amount == 0) return()
+          # prtPosition$select(camera=camera, currency=currency, create=TRUE)
+          # curr  = prtPosition$current
+          #
+          # pSell = curr$priceSell
+          # nSell = curr$sell
+          # pBuy = curr$priceBuy
+          # nBuy = curr$buy
+          # if (amount > 0) {
+          #     pBuy = (pBuy * nBuy) + (amount * price)
+          #     pBuy = ifelse((nBuy + amount) == 0, 0, pBuy / (nBuy + amount))
+          #     nBuy = nBuy + amount
+          #     prtPosition$set(priceBuy = pBuy, buy=nBuy)
+          #     nBalance = amount
+          # }
+          # pPrice = 0
+          # if ((nBuy - nSell) != 0) pPrice = ((pBuy * nBuy) - (pSell * nSell)) / (nBuy - nSell)
+          #
+          # prtPosition$setField("price", pPrice)
+          #
+          # tax = 0
+          # if (prcTaxes != 0) {
+          #     tax = nBalance * prcTaxes / 100
+          #     if (tax > 0) tax = tax * -1
+          # }
+          # prtPosition$setField("balance",   curr$balance + nBalance + tax)
+          # prtPosition$setField("available", curr$balance + nBalance + tax)
+          # prtPosition$apply()
       }
       ,update = function(camera, currency, amount, price, available=TRUE) {
           # Actualiza balance y calcula precios

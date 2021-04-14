@@ -29,11 +29,11 @@ modOperHistServer = function(id, full, pnlParent, parent) {
          ,prepareClosed = function() {
              df = private$prepare(self$data$dfClosed)
              df[,c("status", "parent")] = list(NULL)    
-             dfOut = self$data$dfSell[,c("parent", "amount", "price")]
-             colnames(dfOut) = c("id","amountOut", "priceOut")
-             
-             df = inner_join(df, dfOut, by="id")
-             df$amountOut = abs(df$amountOut)
+             # dfOut = self$data$dfSell[,c("parent", "amount", "price")]
+             # colnames(dfOut) = c("id","amountOut", "priceOut")
+             # 
+             # df = inner_join(df, dfOut, by="id")
+             # df$amountOut = abs(df$amountOut)
              df = df[,c("camera", "counter", "amountIn", "priceIn", "amount", "price", "amountOut", "priceOut")]
              df$revenue = (df$priceOut / df$price) - 1
              df$profit = df$amountOut * (df$priceOut - df$price)
@@ -64,7 +64,19 @@ modOperHistServer = function(id, full, pnlParent, parent) {
       )
    )
    moduleServer(id, function(input, output, session) {
-       message("SERVER History")
+      YATAWEB$beg("modOper_Hist")
+
+      headerClosed = htmltools::withTags(table(class = 'display', thead(
+         tr( th(colspan = 2, class="yata_dt_header_false", '')
+            ,th(colspan = 2, class="yata_dt_header", 'In')
+            ,th(colspan = 2, class="yata_dt_header", 'Real')
+            ,th(colspan = 2, class="yata_dt_header", 'Out')
+            ,th(colspan = 2, class="yata_dt_header_false", ' ') 
+         )
+        ,tr( th('Camera'),th('Counter')
+            ,th('Amount'),th('Price'),th('Amount'),th('Price'),th('Amount'),th('Price')
+            ,th('Revenue'),th('Profit'))
+      )))      
       pnl = YATAWEB$getPanel(full)
       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosHist$new(full, pnlParent, session))
 
@@ -75,7 +87,8 @@ modOperHistServer = function(id, full, pnlParent, parent) {
           # refresh(TRUE)
           pnl$loaded = TRUE
       }
-      output$tblDetClosed = yataDFOutput(pnl$prepareClosed(), type="operation")
+      opts = list(header=headerClosed, sortable=FALSE)
+      output$tblDetClosed = yataDFOutput(pnl$prepareClosed(), type="operation", opts=opts)
       output$tblDetExec   = yataDFOutput(pnl$prepareExec(input),   type="operation")
  
       isolate({
@@ -102,5 +115,6 @@ modOperHistServer = function(id, full, pnlParent, parent) {
       observeEvent(input$chkSon, {
          output$tblDetExec = yataDFOutput(pnl$prepareExec(input),   type="operation") 
       }, ignoreInit = TRUE)
+      YATAWEB$end("modOper_Hist")
    })
 }

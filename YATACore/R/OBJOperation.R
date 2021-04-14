@@ -22,24 +22,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ,split = function()   { error("Split no implementado todavia")}
         ,net   = function()   { error("Net no implementado todavia")}
         ,add   = function(type, ...) {
-            # Genera una operacion, devuelve el id
-            # Si hay error devuelve TRUE
-            self$current        = args2list(...)
-            self$current$type   = type
-            self$current$id     = YATATools::getID()
-            self$current$idOper = self$current$id
-            if (type %in% c(codes$oper$sell, codes$oper$close)) {
-                self$current$amount = current$amount * -1
-            }
             tryCatch({
                 db$begin()
-                if (type == codes$oper$xfer)  operXfer()
-                if (type == codes$oper$oper)  operOper()
-                if (type == codes$oper$buy)   operOper()
-                if (type == codes$oper$sell)  operOper()
-#                if (type == codes$oper$close) operClose()
-#                if (type == codes$oper$split) {}
-                if (type == codes$oper$net)  {}
+                addNoTran(type, ...)
                 db$commit()
                 self$current$idOper
             },error = function(cond) {
@@ -52,6 +37,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ##############################
         # Acciones sobre operacion
         ##############################
+        #JGG Temporal
         ,accept  = function(price=0, amount=0, fee = 0, id=NULL) {
             if (!is.null(id)) select(id)
             tryCatch({
@@ -109,7 +95,11 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             if (current$type == codes$oper$sell) {
                 ctc = current$base
                 cant = current$amount * current$price * -1
-                if (current$parent > 0) data$active = codes$flag$inactive
+                if (current$parent > 0) {
+                    data$active = codes$flag$inactive
+                    data$amountOut = current$amount * -1
+                    data$priceOut  = current$price
+                }
             }
 
             tryCatch({
@@ -222,7 +212,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 self$current$price  = data$price
                 self$current$parent = data$id
                 self$current$reason = data$reason
-                add(type=codes$oper$sell, current)
+                addNoTran(type=codes$oper$sell, current)
                 FALSE
             },error = function(cond) {
                 message(cond)
@@ -384,7 +374,36 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                addFlow (codes$flow$xferIn,  current$counter, current$amount, 1)
            }
            objPos$transfer(current$from, current$to, current$currency, current$amount)
-        }
+       }
+       ,operOper2     = function() {
+           # Temporal. No genera flujos y la ejecuta
+           # Abre una operacion de compra o venta
+           self$current$active = ifelse (current$type == codes$oper$oper
+                                                       , codes$flag$active
+                                                       , codes$flag$inactive)
+           self$current$status = codes$status$executed
+
+           days = ifelse(is.null(self$current$alert), lubridate::days(parms$getAlertDays(1))
+                                                    , self$current$alert)
+           self$current$dtAlert = Sys.Date() + lubridate::days(days)
+           self$current$alert   = codes$flag$active
+
+           self$current$amountIn = self$current$amount
+           self$current$priceIn  = self$current$price
+
+           prtOper$add(current)
+           objPos$updateBase   (current$camera, current$base,    current$amount, current$price, 0)
+           objPos$updateCounter(current$camera, current$counter, current$amount, current$price, 0)
+
+           if (!is.null(current$idParent) && !is.na(current$idParent)) {
+               select(idParent)
+               current$flag = codes$flags$parent
+               current$amountOut = current$amount
+               current$priceOut  = current$price
+               prtOper$apply()
+           }
+       }
+
        ,operOper     = function() {
            # Abre una operacion de compra o venta
            self$current$active = codes$flag$active
@@ -459,6 +478,27 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 #            private$tblOperControl = factory$getTable(codes$tables$OperControl)
 #            private$tblOperLog     = factory$getTable(codes$tables$OperLog)
        }
+       ,addNoTran   = function(type, ...) {
+            # Se llama desde add y desde close
+            # Genera una operacion, devuelve el id
+            # Si hay error devuelve TRUE
+            self$current        = args2list(...)
+            self$current$type   = type
+            self$current$id     = YATATools::getID()
+            self$current$idOper = self$current$id
+            if (type %in% c(codes$oper$sell, codes$oper$close)) {
+                self$current$amount = current$amount * -1
+            }
+                if (type == codes$oper$xfer)  operXfer()
+                if (type == codes$oper$oper)  operOper2()
+                if (type == codes$oper$buy)   operOper2()
+                if (type == codes$oper$sell)  operOper2()
+#                if (type == codes$oper$close) operClose()
+#                if (type == codes$oper$split) {}
+                if (type == codes$oper$net)  {}
+                self$current$idOper
+        }
+
     )
 )
 

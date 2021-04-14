@@ -29,6 +29,10 @@
     margin: 0;
     padding: 0;
 }
+.yata_tbl_monitor_fiat {
+    margin-left: auto;
+}
+
 .yata_cell_icon {
     padding-left: 16px;
     padding-right: 16px;
@@ -79,6 +83,16 @@ table.dataTable.yata-table tbody odd {
     background-color: lightyellow;
 }
 
+.yata_dt_header_false {
+    border: none !important;
+}
+
+.yata_dt_header {
+    border-bottom-style: solid !important;
+    border-bottom-color: navy  !important;
+    text-align: center;
+}
+
 /*
 .yataTblMonitor tr {
     margin: 0;
@@ -96,3 +110,18 @@ table.dataTable.yata-table tbody odd {
     font-size: 150%;
 }
 */
+
+.yata_layout_table {
+    border: 1px solid navy;
+    border-collapse: collapse;
+    margin: 6px;
+    width: 95%;
+}
+.yata_layout_row {
+    border-bottom: 1px solid navy;
+    border-collapse: collapse;
+}
+.yata_layout_left {
+    border-right: 1px solid navy;
+    border-collapse: collapse;
+}

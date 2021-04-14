@@ -1,4 +1,34 @@
+# Cambiamos selectInput para añadir la clase yata_layout
+yataSelectInput = function (inputId, label=NULL, choices, selected = NULL, multiple = FALSE,
+    selectize = FALSE, width = NULL, size = NULL, class=NULL)
+{
+  #JGG Append class to select control
+  cls = "form-control"
+  if (!is.null(class)) cls = paste(cls, class)
 
+    selected <- restoreInput(id = inputId, default = selected)
+    choices <- shiny:::choicesWithNames(choices)
+    if (is.null(selected)) {
+        if (!multiple)
+            selected <- shiny:::firstChoice(choices)
+    }
+    else selected <- as.character(selected)
+    if (!is.null(size) && selectize) {
+        stop("'size' argument is incompatible with 'selectize=TRUE'.")
+    }
+    selectTag <- tags$select(id = inputId, class = if (!selectize) cls,
+                             size = size, shiny:::selectOptions(choices,
+                             selected, inputId, selectize))
+    if (multiple)
+        selectTag$attribs$multiple <- "multiple"
+    res <- div(class = "form-group shiny-input-container",
+        style = css(width = validateCssUnit(width)), shiny:::shinyInputLabel(inputId,
+            label), div(selectTag))
+    if (!selectize)
+        return(res)
+    shiny:::selectizeIt(inputId, res, NULL, nonempty = !multiple && !("" %in%
+        choices))
+}
 
 
 yataUpload = function(id, label=NULL, btnLabel="Browse...", imgLabel="no file", accept = NULL) {

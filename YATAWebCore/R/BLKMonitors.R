@@ -18,9 +18,17 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
           initMonitors()
      }
      ,render = function(size=2) {
-        lapply(monitors$keys(), function(x) insertUI( selector = idDiv, immediate=TRUE
-                                           ,where = "beforeEnd"
-                                           ,ui=tagList(renderMonitor(monitors$get(x), size))))
+       mons = tags$div(class="yata_monitors")
+       mons = tagAppendChildren(mons, lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size)))
+       eur = tags$div(class="yata_tbl_monitor_fiat", tablePosition())
+
+#       ui = lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size))
+
+       insertUI( selector = idDiv, immediate=TRUE, where = "beforeEnd",ui=tagList(mons, eur))
+        # lapply(monitors$keys(), function(x) insertUI( selector = idDiv, immediate=TRUE
+        #                                    ,where = "beforeEnd"
+        #                                    ,ui=tagList(renderMonitor(monitors$get(x), size))))
+       #,tags$div(tablePosition()))
         update(TRUE)
      }
      ,update = function(first=FALSE) {
@@ -77,7 +85,7 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
       }
      ,renderMonitor = function(x, size) {
          idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", x$symbol)
-         tags$div(class="yata_monitor_container", tableMonitor(idMon,x))
+         tags$div(class="yata_monitor_container",tags$div(tableMonitor(idMon,x)))
       }
      ,tableMonitor  = function(idMon,data) {
          tags$table(class="yata_tbl_monitor"
@@ -113,7 +121,43 @@ BLK.MONITORS = R6::R6Class("YATA.WEB.BLOCK.MONITORS"
              ,tags$td(colspan="2", class="yata_cell_data yata_cell_group", style="padding-bottom: 6px;", id=paste0(idMon,"_last"))
           )
         )
+     }
+     ,tablePosition  = function() {
+         tags$table(class="yata_tbl_monitor"
+           ,tags$tr(
+              tags$td(rowspan="6", class="yata_cell_icon",
+                     img(src="icons/euro03.png",width="60px", height="60px",
+                     onerror="this.onerror=null;this.src='icons2/YATA.png';"))
+             ,tags$td(class=clsLbl, "Coste")
+             ,tags$td(class=clsData,  "Dato") #id=paste0(idMon,"_cost_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Sesion")
+             ,tags$td(class=clsData, "Dato") #id=paste0(idMon,"_session_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Hora")
+             ,tags$td(class=clsData, "Dato") #id=paste0(idMon,"_hour_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Dia")
+             ,tags$td(class=clsData,  "Dato") #id=paste0(idMon,"_day_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Semana")
+             ,tags$td(class=clsData,"Dato") #  id=paste0(idMon,"_week_delta"))
+           )
+           ,tags$tr(
+              tags$td(class=clsLbl, "Mes")
+             ,tags$td(class=clsData,  "Dato") #id=paste0(idMon,"_month_delta"))
+           )
+          # ,tags$tr(
+          #     tags$td(style="padding-bottom: 6px;", class="yata_cell_ctc", substr(data$name, 1, 12))
+          #    ,tags$td(colspan="2", class="yata_cell_data yata_cell_group", style="padding-bottom: 6px;", id=paste0(idMon,"_last"))
+          # )
+        )
     }
+
     ,updateMonitor = function(mon, last) {
         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", last$symbol)
         vcost = ((last$price / mon$cost)    - 1) * 100

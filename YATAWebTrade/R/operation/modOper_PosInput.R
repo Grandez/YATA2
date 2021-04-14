@@ -13,12 +13,14 @@ modOperPosInput = function(id, title) {
         ,fluidRow(column(4, "Down"), column(8, yuiCombo(ns("cboDown"), choices=blocks, selected="data")))
     )
 
-    main = tagList(fluidRow(id=ns("block_1")), fluidRow(id=ns("block_2"))
-         ,yuiBlocks(ns("blocks")
-          ,tags$div(id=ns("data"), style="width: 100%;"
+    main = tagList(
+      tags$div(id=ns("plot"), yuiPlot(ns("plotOpen")))
+#      fluidRow(id=ns("block_1")), fluidRow(id=ns("block_2"))
+      #    ,yuiBlocks(ns("blocks")
+      #     ,tags$div(id=ns("data"), style="width: 100%;"
                    ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  yuiDataTable(ns("tblOpen"))))
                    ,hidden(fluidRow(id=ns("divPend")
-                             ,column(6, yuiBox(ns("opPending"),  boxPend, 
+                             ,column(6, yuiBox(ns("opPending"),  boxPend,
                                                 yuiDataTable(ns("tblPending"))
                                                ,hidden(tags$span(id=ns("noPending"), noAccept))
                                         )
@@ -32,9 +34,6 @@ modOperPosInput = function(id, title) {
                      )
                    ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))
       )
-                   ,tags$div(id=ns("plot"), yuiPlot(ns("plotOpen")))
-
-    ))
     list(left=left, main=main, right=NULL)
 }
 

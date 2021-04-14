@@ -1,4 +1,9 @@
-# dashboard dinamico
+# Dashboard configurable
+
+Permite definir la configuracion de la pagina de acuerdo con un conjunto de opciones
+
+Lo gestiona el objeto OBJLayout
+
 
 **IMPORTANTE**
 

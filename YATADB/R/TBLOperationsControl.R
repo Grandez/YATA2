@@ -11,17 +11,19 @@ TBLOperControl   = R6::R6Class("TBL.OPER.CONTROL"
    ,private = list (
        key = c("id")
       ,fields = list(
-          id       = "ID_OPER"
-         ,fee      = "FEE"
-         ,gas      = "GAS"
-         ,limit    = "LIMITE"
-         ,stop     = "STOP"
-         ,target   = "TARGET"
-         ,deadline = "DEADLINE"
-         ,amountIn = "AMOUNT_IN"
-         ,priceIn  = "PRICE_IN"
-         ,alert    = "ALERT"
-         ,dtAlert  = "TMS_ALERT"
+          id        = "ID_OPER"
+         ,fee       = "FEE"
+         ,gas       = "GAS"
+         ,limit     = "LIMITE"
+         ,stop      = "STOP"
+         ,target    = "TARGET"
+         ,deadline  = "DEADLINE"
+         ,amountIn  = "AMOUNT_IN"
+         ,priceIn   = "PRICE_IN"
+         ,amountOut = "AMOUNT_OUT"
+         ,priceOut  = "PRICE_OUT"
+         ,alert     = "ALERT"
+         ,dtAlert   = "TMS_ALERT"
        )
   )
 )

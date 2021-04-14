@@ -22,6 +22,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            )
            ,valid = FALSE
            ,initialize     = function(id, pnlParent, session) {
+               YATAWEB$beg("PNLPosOper init")          
                super$initialize(id, pnlParent, session)
                self$operations = self$factory$getObject("Operation")
                self$session    = self$factory$getObject(self$codes$object$session)
@@ -31,6 +32,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                self$vars$layout = c("plotOpen", "data")
                self$data$dfHist = list()
 #               private$applyCookies(session)
+               YATAWEB$end("PNLPosOper init")          
            }
         ,loadData = function() {
             self$data$lstHist    = list()
@@ -124,6 +126,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
    )
    
    moduleServer(id, function(input, output, session) {
+     YATAWEB$beg("modOper_Pos")
       pnl = YATAWEB$getPanel(full)
       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnlParent, session))
 
@@ -139,19 +142,28 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           loadHistory()
           renderData()
       }       
-      renderPlot = function(symbol) { 
-          if (missing(symbol)) {
-              return (NULL)
-          }
-          df = pnl$data$lstHist[[symbol]]
-          df = df[,c("tms", "close")]#
-          colnames(df) = c("Date", symbol)
-          pnl$plot = pnl$plot %>% yataPlotLine(df)
-          #(data=df, x=df[,1],y=df[,2],type="scatter", mode="lines", name=symbol)
-          output$plotOpen = updPlot(pnl$plot %>% event_register("plotly_legendclick") %>%
-      event_register("plotly_legenddoubleclick")
-, "plotOpen")
+      renderPlot = function(df, symbol) {
+         if (!is.data.frame(df)) {
+             message("ha ido mal 3")
+             return()
+         }
+         output$plotOpen = pnl$plot$addData(df, symbol, "plotOpen")
+         # browser()
+         # output$plotOpen = updPlot(pnl$plot, "plotOpen") # %>% event_register("plotly_legendclick") %>%
       }
+#       renderPlot = function(symbol) { 
+#           if (missing(symbol)) {
+#               return (NULL)
+#           }
+#           df = pnl$data$lstHist[[symbol]]
+#           df = df[,c("tms", "close")]#
+#           colnames(df) = c("Date", symbol)
+#           pnl$plot = pnl$plot %>% yataPlotLine(df)
+#           #(data=df, x=df[,1],y=df[,2],type="scatter", mode="lines", name=symbol)
+#           output$plotOpen = updPlot(pnl$plot %>% event_register("plotly_legendclick") %>%
+#       event_register("plotly_legenddoubleclick")
+# , "plotOpen")
+#       }
       ######################################################
       ### REST                                          ###
       #####################################################
@@ -163,16 +175,15 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            if (id == 0) return()
            to = Sys.Date()
            from = since - as.difftime(7, unit="days")
-           restdf("hist",id=id,from=from,to=to) %>%
-                  then(function(df) {
-                      pnl$plot$addData(df, symbol)
-                      output$plotOpen = updPlot(pnl$plot, "plotOpen") # %>% event_register("plotly_legendclick") %>%
-                      # pnl$addHistory(symbol,df)
-                      #  renderPlot(symbol)
-                   },function(err)    {
-                       browser()
-                      message("ha ido mal 3") ; message(err)
-                   })
+#           YATAWEB$log("hist: %d - %s - %s", id,from,to)
+           renderPlot(restdfsync("hist",id=id,from=from,to=to), symbol)
+           # restdf("hist",id=id,from=from,to=to) %>%
+           #        then( renderPlot(df)
+           #             ,function(err)    {
+           #                YATAWEB$log("hist resp: %d - %s - %s", id,from,to)
+           #                browser()
+           #                message("ha ido mal 3") ; message(err)
+           #            })
         }
       
       renderOpen = function() {
@@ -190,13 +201,24 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                       ,yuiTblButton(full, table, "View", yuiBtnIconView())
              )
              dfb = yataDTButtons(df, btns)
-             types = list(dat = c("deadline"), prc = c("var"))
 
-             output$tblOpen = yataDFOutput(dfb, types=types,colorize=c("var"), type="operation")  # yataDFOutput({df}, type='operation')
-          
+             opts = list(sortable=FALSE
+                 
+                 ,types = list(dat = c("Deadline"), prc = c("Var"))
+                ,color = list( var = c("Var")
+                              ,date = c("Deadline")
+                               )
+             )
+             # output$tblOpen = yataDFOutput({dfb}, type='operation')
+             output$tblOpen = yataDFOutput({dfb}, opts, type='operation')
+             # dt = yataDT2(dfb,opts=opts)
+              #output$tblOpen = yataDTRender({dt}, type="operation")
       }
       renderPending = function() {
-         if (nrow(pnl$data$dfPending) == 0) return()
+         if (nrow(pnl$data$dfPending) == 0) {
+             output$tblPending = NULL
+             return()
+         }
          df = pnl$prepareNotOpen(pnl$data$dfPending)
 
          shinyjs::toggle(ns("opPending"))
@@ -209,7 +231,10 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          
       }
       renderAccepted = function() {
-         if (nrow(pnl$data$dfAccepted) == 0) return()
+         if (nrow(pnl$data$dfAccepted) == 0) {
+             output$tblAccepted = NULL
+             return()
+         }
          df = pnl$prepareNotOpen(pnl$data$dfAccepted)
 
          shinyjs::toggle(ns("opAccepted"))
@@ -342,6 +367,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
   #     })
       
       observeEvent(input$btnTablePending, {
+          YATAWEB$beg("Table Pending")
           pnl$selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
               pnl$vars$nextAction = pnl$codes$status$accepted
@@ -363,14 +389,16 @@ modOperPosServer = function(id, full, pnlParent, parent) {
               output$form = renderUI({data})
               formChangeInit()
           }
+          YATAWEB$end("Table Pending")
       }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableAccepted, {
-
+          YATAWEB$beg("Table Accepted")
           pnl$selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
           pnl$vars$nextAction = pnl$codes$status$executed
           data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
           output$form = renderUI({data})
           formChangeInit()
+          YATAWEB$end("Table Accepted")
        }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableOpen, {
           row = pnl$selectOperation(input$btnTableOpen, pnl$codes$status$executed)
@@ -458,7 +486,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       observeEvent(input$cboDown, {
          session$sendCustomMessage('yataShowBlock',list(ns=full,row=2,col=0,block=input$cboDown))
       }, ignoreNULL = TRUE)
-
+     YATAWEB$end("modOper_Pos")
           
   })
 }

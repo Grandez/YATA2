@@ -12,7 +12,9 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,MSG        = NULL  # short code to factory$msgs
     ,data       = list()  # Datos
     ,vars       = list()  # Variables temporales con memoria
-    ,initialize = function(id, parent, session) {
+    ,cookies    = list() # Variables con estado
+    ,layout     = NULL
+    ,initialize = function(id, parent, session, ns) {
         self$name         = id
         self$parent       = parent
         private$pnlDef$id = id
@@ -23,8 +25,12 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         self$codes   = self$factory$codes
         self$parms   = self$factory$parms
         self$MSG     = self$factory$MSG
-        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
+#        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
         private$loadCookies()
+        if (!missing(ns) && !is.null(self$cookies$layout)) {
+            self$layout = OBJLayout$new(ns)
+            self$layout$update(session, self$cookies$layout)
+        }
     }
     ,root      = function() { FALSE }
     ,getParent = function(name) {
@@ -56,13 +62,22 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     # ,getMsg = function() {
     #   self$msg
     # }
-    ,getCookie = function(key) { self$vars$cookies[[key]] }
-    ,setCookies = function(...) {
-      browser()
-       data = list(...)
-       if (length(data) > 0) self$vars$cookies = list.merge(self$vars$cookies, data)
-       YATAWEB$setCookies(self$name, self$vars$cookies)
+#    ,getCookie = function(key) { self$vars$cookies[[key]] }
+    ,setCookies = function() {
+        YATAWEB$setCookies(self$name, self$cookies)
+        invisible(self)
     }
+    #   browser()
+    #    data = list(...)
+    #    if (length(data) > 0) {
+    #        if (length(self$vars$cookies) == 0) {
+    #            self$vars$cookies = data
+    #        } else {
+    #            self$vars$cookies = list.merge(self$vars$cookies, data)
+    #        }
+    #        YATAWEB$setCookies(self$name, self$vars$cookies)
+    #    }
+    # }
     ,invalidate = function(panel) {
        if (!is.null(self$parent)) self$parent$invalidate(panel)
        invisible(self)
@@ -84,9 +99,8 @@ YATAPanel = R6::R6Class("YATA.PANEL"
          ,rightSide=FALSE
       )
       ,loadCookies = function() {
-          self$vars$cookies = list()
           cookies = YATAWEB$getCookies(self$name)
-          if (!is.null(cookies)) self$vars$cookies = cookies
+          if (!is.null(cookies)) self$cookies = list.merge(self$cookies, cookies)
       }
   )
 )

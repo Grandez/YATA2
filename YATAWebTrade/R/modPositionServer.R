@@ -10,35 +10,24 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
       ,public = list(
           position    = NULL
          ,cameras     = NULL
-         # ,providers   = NULL
          ,session     = NULL
-         # ,operations  = NULL 
          ,monitors    = NULL
          ,plots = list()
-         ,initialize    = function(id, pnlParent, session) {
-             super$initialize(id, pnlParent, session)
+         ,initialize    = function(session) {
+             private$defaultValues()
+             super$initialize(id, pnlParent, session, ns)
              self$position  = self$factory$getObject(self$codes$object$position)
              self$cameras   = self$factory$getObject(self$codes$object$cameras)
-             # self$providers = self$factory$getObject(self$codes$object$providers)
              self$session   = self$factory$getObject(self$codes$object$session)
-             # 
-             # self$data$lstHist    = list()
-             # self$data$lstBalance = list(EUR=list(day=0,week=0,month=0))
-             # Default values
-             self$setInterval()
-             self$vars$best = list(top = 10, from = 2)
-             self$vars$history = 15
-             self$vars$layout = matrix(c("Hist", "Session", "Best", "Position"),2,2,byrow=TRUE)
-             self$data$dfHist = list()
-             private$applyCookies(session)
+             self$data$lstHist = list()
              private$makePlots()
-             
          }
          ,loadData = function() {
              private$loadPosition()
              self$monitors = BLK.MONITORS$new(ns("monitor"), self, YATAWEB)
              ctc = self$data$dfGlobal$currency
              self$data$dfSession = self$session$getPrices(ctc)
+             self$updateBest()
              self$loaded = TRUE
              invisible(self)
          }
@@ -53,6 +42,12 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              } else {
                  self$data$dfSession = rbind(self$data$dfSession, dfp)
              }
+         }
+         ,loadHistory = function(id, symbol, df) {
+             if (!is.data.frame(df)) return()
+             if (nrow(df) == 0)      return()
+             df$tms = as.Date(df$tms)
+             self$data$lstHist[[symbol]] = list(id=id,symbol=symbol, df=df)
          }
          ,updateHistory = function(id, df, symbol) {
              # Para evitar fallos en la fecha, ordenamos en inverso
@@ -73,7 +68,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
               }
               self$data$dfGlobal = updPos(self$data$dfGlobal)
               self$data$position = lapply(self$data$position, function(dfpos) updPos(dfpos))
-          }
+         }
+         ,getHistory = function(symbol) { self$data$lstHist[[symbol]]$df }
        #   ,updateHistorical = function(id, df, type) {
        #       df$tms = as.Date(df$tms)
        #       if (type == "Best" && is.null(self$data$dfBestHist)) {
@@ -130,19 +126,17 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
                  if (idPlot %in% c("plotSession", "plotHist")) {
                      info$datasource  = "value"
                      info$plot = "Line"
+                     info$type = "Line"
                  }
                  else {
                      info$datasource  = "session"
                      info$plot = "Candlestick"
+                     info$type = "Candlestick"
                  }
                  self$vars$info[[uiPlot]][[idPlot]] = info
              }
              info
          }
-        ,setInterval = function(interval=15) {
-            self$vars$interval = interval # Local
-            self$getRoot()$setInterval(self$vars$interval)      # Global
-        }
         # ,getPositionID = function() {
         #     ids = NULL
         #     syms = self$data$dfGlobal[self$data$dfGlobal$currency != "EUR", "currency"]
@@ -157,31 +151,14 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
         ,getPlots  = function() { private$cboplots  }
         ,getTables = function() { private$tables }  
         ,updateBest = function() {
-            cols = c("hour", "day", "week", "month")
             df = self$session$getLatest()
-            col = cols[self$vars$best$from]
-            rows = self$vars$best$top
-            df = df[order(df[,col],decreasing=TRUE),]
-            self$data$dfBest = df[1:rows,]
-            self$data$dfTop  = df[df$rank <  21,][1:rows,]
-            self$data$dfFav  = df[df$rank < 101,][1:rows,]
-         #    df = df[order(df$tms, decreasing=TRUE),]
-         # # getBest(input$numBestTop, input$cboBestFrom, TRUE )
-         # # getBest(input$numBestTop, input$cboBestFrom, FALSE )
-         # pnl$monitors$update()
-         # data = pnl$monitors$getLast()
-         # dfp = data[,c("tms", "symbol", "price")]
-         # dfp$tms = as.POSIXct(dfp$tms, format="%H:%M:%S")
-         # if (is.null(pnl$data$dfSession)) {
-         #     pnl$data$dfSession = dfp
-         # } else {
-         #     pnl$data$dfSession = rbind(pnl$data$dfSession, dfp)
-         # }
-         # pnl$updateBest()
+            self$data$dfBest = private$sortBest(df,   0)
+            self$data$dfTop  = private$sortBest(df,  26)
+            self$data$dfFav  = private$sortBest(df, 101)                        
       }
           
-      )
-     ,private = list(
+    )
+    ,private = list(
          #   opIdx      = list()
          #  ,monitor   = NULL 
          cboplots = c( "Position" = "Hist", "Session" = "Session"
@@ -190,17 +167,13 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
          ,tables = c( "Position"    = "Position", "Best"              = "Best"
                      ,"Best of Top" = "Top"     , "Best of favorites" = "Fav"
          )
-         ,applyCookies = function(session) {
-             cookies = self$vars$cookies
-             if (length(cookies) == 0) return()
-             # self$vars$loading = TRUE
-             if (!is.null(cookies$best)) self$vars$best = cookies$best
-             if (!is.null(cookies$layout)) {
-                 browser()
-             }
-             if (!is.null(cookies$interval)) pnl$setInterval(cookies$interval)
-             if (!is.null(cookies$days))     pnl$vars$history = cookies$days
-         }
+        ,defaultValues = function() {
+             self$cookies$interval = 15
+             self$cookies$best = list(top = 10, from = 2)
+             self$cookies$history = 15
+             self$cookies$layout = matrix(c("plotHist","blkTop","plotSession","Position"),ncol=2)
+             self$cookies$position = "All"
+        }
           ,loadPosition = function() {
              df = self$getRoot()$getGlobalPosition()
              df = cbind(df, day=0, week=0, month=0)
@@ -214,61 +187,159 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
              names(self$data$position) = cameras
           }
          ,makePlots = function() {
-              self$plots[["plotSession"]] = OBJPlot$new("plotSession", plot="Line", observer=ns("modebar")
-                                          , scale = "time")
-              self$plots[["plotHist"]] = OBJPlot$new("plotHist", plot="Line", observer=ns("modebar")
-                                  , scale = "date")
-
-
-         }
+             info  = list(type="Line", observer=ns("modebar"), scale="date")
+             plots = c("plotHist","plotTop","plotBest","plotFav")
+             
+             self$plots[["plotSession"]] = OBJPlot$new("plotSession", info=info, scale="time") 
+             for (plt in plots) self$plots[[plt]] = OBJPlot$new(plt, info=info) 
+          }
+         ,sortBest = function(df, first) {
+             cols = c("hour", "day", "week", "month")
+             col = cols[as.integer(self$cookies$best$from)]
+             rows = self$cookies$best$top
+             if (first > 0) df = df[df$rank <  first,]
+             dfb = df[order(df[,col],decreasing=TRUE),]
+             dfb[1:rows,]
+          }
        )
     )
    #####################################################################
    ### FUNCTIONS                                                     ###
    #####################################################################   
    preparePosition = function(df) {
-      types = list(dat = c("since"), prc = c("day", "week", "month"))
+      types = list(dat = c("Since"), prc = c("Day", "Week", "Month"))
       df =  df %>% select(currency,balance, priceBuy, priceSell, price, day, week, month, since)
       df$since = as.Date(df$since)
       colnames(df) = c("currency", "balance", "cost", "return", "net", "day", "week", "month", "since")
-      yataDT(df,types=types,colorize=c("day", "week", "month"))
+      yataDT(df,opts=list(types=types,color=list(var=c("Day", "Week", "Month"))))
     }
     prepareBest = function(df) {
-       prc = c("hour", "day", "week", "month")
+       prc = c("Hour", "Day", "Week", "Month")
        if (is.null(df)) return (NULL)
        df =  df %>% select(symbol, price, hour, day, week, month)
-       df$hour  = df$hour  / 100
-       df$day   = df$day   / 100
-       df$week  = df$week  / 100
-       df$month = df$month / 100
        df$symbol = YATAWEB$getCTCLabels(df$symbol)
 
-       dt = yataDT(df,types=list(prc=prc),colorize=prc)
+       dt = yataDT(df,opts=list(types=list(prc=prc),color=list(var=prc)))
        dt
     }
 
     moduleServer(id, function(input, output, session) {
-      message("Ejecutando server para Position")
+       YATAWEB$beg("Position Server")
        pnl = YATAWEB$getPanel(id)
-       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(id, pnlParent, session))
-       makeID = function(tag) { paste0("#", ns(tag)) }
-       updateBest = function() {
-           pnl$updateBest()
-           renderBest()
-       }
-                   
-       updateLeftSide = function() {
-          updNumericInput("numInterval", pnl$vars$interval)
+       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(session))
+       flags = reactiveValues(
+            position  = FALSE
+           ,best      = FALSE
+           ,history   = 15
+           ,refresh   = FALSE
+           ,plotsBest = FALSE
+           ,plotPos   = ""
+           ,table     = ""
+       )
+       initPage = function() {
+          renderUIPosition()    # Preparar tabla posiciones
+          updNumericInput("numInterval", pnl$cookies$interval)
           output$dtLast = updLabelDate({Sys.time()})
-          updNumericInput("numBestTop", pnl$vars$best$top)
-          updCombo("cboBestFrom", selected = pnl$vars$best$from)
-          updNumericInput("numInterval", value = pnl$vars$interval)
-          updNumericInput("numDays",     value = pnl$vars$history)
-          lapply(1:2, function(x) updCombo(paste0("cboPlot",x),choices=pnl$getPlots()
-                                                              ,selected=pnl$vars$layout[1,x]))
-          lapply(1:2, function(x) updCombo(paste0("cboData",x),choices=pnl$getTables()
-                                                              ,selected=pnl$vars$layout[2,x]))
-      }
+          isolate(updNumericInput("numBestTop", pnl$cookies$best$top))
+          updCombo("cboBestFrom", selected = pnl$cookies$best$from)
+          updNumericInput("numInterval", value = pnl$cookies$interval)
+          updNumericInput("numHistory",  value = pnl$cookies$history)
+
+#          pnl$monitors$render() 
+          # Este es el que tarda por que es Windows
+          df = pnl$data$dfGlobal
+          df = df[df$id != 0,]
+          if (nrow(df) > 0) for (row in 1:nrow(df)) getHistorical(df[row,"id"], df[row,"currency"])
+       }
+       ###########################################################
+       ### Reactives
+       ###########################################################
+       observeEvent(flags$position, ignoreInit = TRUE, {
+           pnl$cookies$position = flags$position
+           if (input$radPosition == "Cameras") {
+               shinyjs::hide("posGlobal")
+           } else {
+               shinyjs::show("posGlobal")
+               dt = preparePosition(pnl$data$dfGlobal)
+               output$tblPosGlobal  = yataDTRender({dt}, type="position")
+           }
+           cameras = pnl$data$position  
+           if (input$radPosition == "Global" || length(cameras) == 0) {
+               shinyjs::hide("posCameras")
+           } else {
+               shinyjs::show("posCameras")
+               lapply(names(pnl$data$position), function(camera) {
+                      sfx = titleCase(camera)
+                      dt = preparePosition(pnl$data$position[[camera]])
+                      lhs = paste0("output$tblPos", sfx)
+                      rhs = "yataDTRender({dt}, type='position')"
+                      eval(parse(text=paste0(lhs," = ", rhs)))
+               })
+           }
+       })       
+       observeEvent(flags$best, ignoreInit = TRUE, {
+          from = as.numeric(input$cboBestFrom)
+          if (is.na(from)) return() 
+          if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
+          pnl$cookies$best$from = from
+          pnl$cookies$best$top  = input$numBestTop
+          pnl$updateBest()
+          renderBest()
+       })
+       observeEvent(flags$refresh, { 
+            pnl$monitors$render() 
+            flags$position = isolate(!flags$position)
+            renderBest()
+       })
+       observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
+          if (is.na(flags$history)) return()
+          if (flags$history != pnl$cookies$history) {
+              pnl$cookies$history = flags$history
+          }
+       })
+       observeEvent(flags$table, ignoreInit = TRUE, {
+           if (flags$table == "best") {df = pnl$data$dfBest; row = input$tblBest_rows_selected  }
+           if (flags$table == "top")  {df = pnl$data$dfTop;  row = input$tblTop_rows_selected   }
+           if (flags$table == "fav")  {df = pnl$data$dfFav;  row = input$tblFav_rows_selected   }
+           sym = df[row,"symbol"]
+           df = pnl$getHistory(sym)
+           if (is.null(df)) {
+               getHistorical(df[row, "id"], sym, FALSE)
+           } else {
+               flags$plotsBest = isolate(!flags$plotsBest)
+           }       
+       })
+       observeEvent(flags$plotsBest, ignoreInit = TRUE, {
+           output$plotHist = updPlot(plot1, "plot12", plot1$getInfo())
+           if (flags$table == "best") {df = pnl$data$dfBest; row = input$tblBest_rows_selected  }
+           if (flags$table == "top")  {df = pnl$data$dfTop;  row = input$tblTop_rows_selected   }
+           if (flags$table == "fav")  {df = pnl$data$dfFav;  row = input$tblFav_rows_selected   }
+           sym = df[row,"symbol"]
+           if (is.null(pnl$data$lstHist[[sym]])) {
+               getHistory(df[row, "id"], sym)
+           } else {
+               flags$plotsBest = isolate(!flags$plotsBest)
+           }       
+       })
+       observeEvent(flags$plotPos, ignoreInit = TRUE, {
+           plot = pnl$plots[["plotHist"]]
+           name = flags$plotPos
+           if(!plot$hasSource(flags$plotPos)) {
+               output$plotHist = plot$addData(pnl$getHistory(name), name, "pepe")
+           }
+       })
+
+       ###########################################################
+       ### END Reactives
+       ###########################################################
+
+       makeID = function(tag) { paste0("#", ns(tag)) }
+       # updateBest = function() {
+       #     browser()
+       #     pnl$updateBest()
+       #     renderBest()
+       # }
+                   
       renderUIPosition = function() {
            cameraUI = function(camera) {
                suffix  = titleCase(camera)
@@ -344,19 +415,6 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #          ids = YATAWEB$getCTCID(ctc)
 #          lapply(ids, function(id) getHistorical(id, "Hist"))
 #       }
-      renderPosition = function() {
-          dt = preparePosition(pnl$data$dfGlobal)
-          output$tblPosGlobal  = yataDTRender({dt}, type="position")
-          
-          cameras = pnl$data$position  
-          if (length(cameras) == 0) return()
-          lapply(names(pnl$data$position), function(camera) {
-              sfx = titleCase(camera)
-              dt = preparePosition(pnl$data$position[[camera]])
-              lhs = paste0("output$tblPos", sfx)
-              rhs = "yataDTRender({dt}, type='position')"
-              eval(parse(text=paste0(lhs," = ", rhs)))
-          })
 
 #          output$tblPosGlobal  = yataDTRender({dt}, type="position")
 #         # No sabemos donde esta, asi que lo quitamos
@@ -401,10 +459,12 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 # #            insertUI(paste0("#", ns("posCameras")), where = "afterBegin", ui=divs,  immediate=TRUE)           
 # 
 # #           lapply(names(cameras), function(camera) cameraData(camera, cameras[[camera]]))
-      }
-       renderBest = function() {
+      
+      renderBest = function() {
+           YATAWEB$beg("renderBest")
           period = c("Hora", "Semana", "Dia", "Mes")
           lbl = period[as.integer(input$cboBestFrom)]
+
           output$lblBest = updLabelText(paste("Mejores", lbl))
           output$lblTop  = updLabelText(paste("Top:  Mejores", lbl))
           output$lblFav  = updLabelText(paste("Favoritos: Mejores", lbl))
@@ -415,28 +475,15 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
           dt3 = prepareBest(pnl$data$dfFav)
           if (!is.null(dt3)) output$tblFav = yataDTRender({dt3}, type="best")
 
+          YATAWEB$end("renderBest")
 
-# #         message("renderData ", object)
-#            if (object == "Position") {            # Position es especial
-#              message("Render Position")
-# #               renderPosition(row, col)
-#                return()
-#            }
-#            prfx = ifelse(row == 1, "plot", "table")
-#            eval(parse(text=paste0("output$", prfx, col, "=", prfx, object,"('", prfx, col, "')")))
        }
-#        renderPlot = function(type) {
-#            # Plots son fila 1
-#            if (pnl$layout[1,1] == type) output$plot1 = eval(parse(text=paste0("plot", type, "('plot1')")))
-#            if (pnl$layout[1,2] == type) output$plot2 = eval(parse(text=paste0("plot", type, "('plot2')")))
-#        }
        plotHist = function(uiPlot, info) {
            if (length(pnl$data$dfHist) == 0) return()
            lapply(names(pnl$data$dfHist), function(name) pnl$plots[["plotHist"]]$addData(pnl$data$dfHist[[name]], name))
-#            browser()
 #             pltHist = OBJPlot$new("pltHist", plot="Line", observer=ns("modebar")
 #                                   , data = pnl$data$dfHist, scale = "date")
-# browser()
+
           # df = NULL
           # if (length(pnl$data$dfHist) > 0) {
           #     df = pnl$data$dfHist[[1]][,c(1,8)]
@@ -471,76 +518,41 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #           updPlot(plt, info)
        }
        plotSession = function(uiPlot) {
-           pnl$plots[["plotSession"]]$addData(pnl$data$dfSession, "session")
+           pnl$plots[["plotSession"]]$addData(pnl$data$dfSession, "session", uiPlot)
 
 #           df = pnl$data$dfSession
 # #          if (!is.null(pnl$data$dfSession)) df = spread(df, symbol, price)
 #           info = pnl$getPlotInfo("plotSession", uiPlot)
 #           info$title = "Current Session"
 #           plt = yataPlot(info, pnl$data$dfSession)
-          updPlot(pnl$plots[["plotSession"]], uiPlot)
+#          updPlot(pnl$plots[["plotSession"]], uiPlot)
        }
        plotFav = function(uiPlot) {
        }
 
-      ######################################################
+      #####################################################
       ### REST                                          ###
       #####################################################
 
-       getHistorical = function(id) {
+       getHistorical = function(id, symbol, position = TRUE) {
            if (id == 0) return()
            to = Sys.Date()
-           from = to - as.difftime(pnl$vars$history, unit="days")
-           restdf("hist",id=id,from=from,to=to)  %>%
-              then( function(df) {
-                  if (nrow(df) > 0) {
-                      cols = colnames(df)
-                      pnl$data$dfHist[[cols[length(cols)]]] = df
-                  }
-                   },function(err)    {
-                      message("ha ido mal 3") ; message(err)
-                   })
-           #  df =  restdf("hist",id=id,from=from,to=to)
-           # pnl$updateHistorical(id, df, type)
-           # renderPlot(type)
-        }
-       getHistory = function(id) {
-           if (id == 0) return()
-           to = Sys.Date()
-           from = to - as.difftime(32, unit="days")
-           restdf("hist",id=id,from=from,to=to)  %>%
-              then( function(df) {
-                    if (nrow(df) > 0) {
-                        df = df[,c(1, ncol(df))]
-                        pnl$updateHistory(id, df, colnames(df)[2])
-                        renderPlot("plotSession")
-                    }
-                   },function(err)    {
-                      message("ha ido mal 3") ; message(err)
-                   })
-           # df =  restdf("hist",id=id,from=from,to=to)
-           # df = df[,c(1, ncol(df))]
-           # pnl$updateHistory(id, df, colnames(df)[2])
-        }
+           from = to - as.difftime(pnl$cookies$history, unit="days")
+           restdf("hist",id=id,from=from,to=to)  %>% then(
+               function(df) {
+                  pnl$loadHistory(id, symbol, df)
+                  if (position) flags$plotPos = isolate(symbol)
+               }, function(err) { })
+      } 
 
-# 
-#       if (pnl$isInvalid()) pnl$reset()
-#       
-#       #####################################################
-#       ### Observers                                     ###     
-#       #####################################################
-# 
-#       observeEvent(input$tblBest_rows_selected, {
-#           pnl$vars$rowBest = input$tblBest_rows_selected
-#           id = pnl$data$dfBest[input$tblBest_rows_selected, "id"]
-#           getHistorical(id, "Best")
-#       })
-#       observeEvent(input$tblTop_rows_selected, {
-#           pnl$vars$rowTop = input$tblTop_rows_selected
-#           id = pnl$data$dfTop[input$tblTop_rows_selected, "id"]
-#           getHistorical(id, "Top")
-#       })
-#        
+      #####################################################
+      ### Observers                                     ###
+      #####################################################
+
+      observeEvent(input$tblBest_rows_selected, { flags$table = isolate("best") })
+      observeEvent(input$tblTop_rows_selected,  { flags$table = isolate("top") })
+      observeEvent(input$tblFav_rows_selected,  { flags$table = isolate("fav") })
+
       observeEvent(input$modebar, {
           info = input$modebar
           pnl$vars$info[[info$render]] = info
@@ -582,11 +594,11 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
 #            }
 #        })
     observe({
-       invalidateLater(pnl$vars$interval * 60000)
-       if (pnl$vars$first != Inf) return()  # Se ha ejecutado la primera vez
-       output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
-       pnl$updateData()
-       renderPanel()
+       invalidateLater(pnl$cookies$interval * 60000)
+#       if (pnl$vars$first != Inf) return()  # Se ha ejecutado la primera vez
+     #  output$dtLast = renderText({format.POSIXct(Sys.time(), format="%H:%M:%S")})
+     #  pnl$updateData()
+     #  renderPanel()
          #    df = df[order(df$tms, decreasing=TRUE),]
          # # getBest(input$numBestTop, input$cboBestFrom, TRUE )
          # # getBest(input$numBestTop, input$cboBestFrom, FALSE )
@@ -607,58 +619,29 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE) {
      ### Panel Izquierdo
      #################################################
 
-      observeEvent(input$chkMonitors,{ shinyjs::toggle("monitor", anim=TRUE) }, ignoreInit = TRUE)
-      observeEvent(input$cboPlot1, { 
-        output$plot1 = eval(parse(text=paste0("plot", input$cboPlot1, "('plot1')")))
-      },ignoreNULL = TRUE, ignoreInit = TRUE)
-      observeEvent(input$cboPlot2, {
-        output$plot2 = eval(parse(text=paste0("plot", input$cboPlot2, "('plot2')")))
-      },ignoreNULL = TRUE, ignoreInit = TRUE)
-      observeEvent(input$cboData1, {
-        session$sendCustomMessage('yataShowBlock',list(ns=id,row=3,col=1,block=input$cboData1))
-      },ignoreNULL = TRUE, ignoreInit = TRUE)
-      observeEvent(input$cboData2, {
-        session$sendCustomMessage('yataShowBlock',list(ns=id,row=3,col=2,block=input$cboData2))
-      },ignoreNULL = TRUE, ignoreInit = TRUE)
-      observeEvent(input$cboBestFrom, { 
-          if (is.integer(input$cboBestFrom)) { # Evitar datos malos
-              pnl$vars$best$from = input$cboBestFrom
-              updateBest() 
-          }
-      },ignoreNULL = TRUE, ignoreInit = TRUE)
-      observeEvent(input$numBestTop, { 
-          if (is.integer(input$numBestTop)) { # Evitar datos malos
-              pnl$vars$best$top = input$numBestTop
-              updateBest() 
-          }
-      },ignoreNULL = TRUE, ignoreInit = TRUE)
+      observeEvent(input$radPosition, ignoreInit = TRUE, { flags$position = isolate(!flags$position) })
+      observeEvent(input$cboBestFrom, ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
+      observeEvent(input$numBestTop,  ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
+      observeEvent(input$numInterval, ignoreInit = TRUE, { pnl$cookies$interval = input$numInterval  })
+      observeEvent(input$numHistory,  ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
+      observeEvent(input$chkMonitors, ignoreInit = TRUE, { 
+        pnl$cookies$monitor = input$chkMonitors
+        shinyjs::toggle("monitor", anim=TRUE) 
+      })
 
-#
-#       observeEvent(input$btnLayoutOK, {
-#           pnl$vars$best$top  = input$numBestTop
-#           pnl$vars$best$from = input$cboBestFrom
-#           pnl$setInterval(input$numInterval)
-#           pnl$vars$history = input$numDays
-#           pnl$setCookies( best = pnl$vars$best, layout=pnl$layout
-#                          ,days=pnl$vars$history, interval = pnl$vars$interval)
-#           session$sendCustomMessage(type = 'closeLeftSide',message = "close")
-#       })
-#       observeEvent(input$btnLayoutKO, { 
-#           session$sendCustomMessage(type = 'closeLeftSide',message = "close")
-#           updateLeftSide() 
-#        })
-      
-        if (!pnl$loaded || pnl$isInvalid(pnl$id)) {
-            pnl$loadData()
-            renderUIPosition()
-            renderPosition()
-            pnl$monitors$render() 
-            lapply(pnl$data$dfGlobal$id, function(id) getHistorical(id))
-            updateLeftSide()
-            updateBest()
-            output$plot1 = eval(parse(text=paste0("plot", pnl$vars$layout[1,1], "('plot1')")))
-            output$plot2 = eval(parse(text=paste0("plot", pnl$vars$layout[1,2], "('plot2')")))
-         }       
-      
+      observeEvent(input$btnLayoutOK, {
+          pnl$setCookies()
+          session$sendCustomMessage(type = 'closeLeftSide',message = "close")
+      })
+      observeEvent(input$btnLayoutKO, { session$sendCustomMessage(type = 'closeLeftSide',message = "close") })
+
+      if (!pnl$loaded || pnl$isInvalid(pnl$id)) {
+          show_modal_spinner(spin="dots") # show the modal window
+          pnl$loadData()
+          initPage()
+          flags$refresh = isolate(!flags$refresh)
+          remove_modal_spinner()
+      }       
+      YATAWEB$end("Position Server")
    })
 }    

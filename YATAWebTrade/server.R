@@ -63,6 +63,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
+   YATAWEB$beg("Server")
    if (YATAWEB$inError) return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
    if (restCheck())     return (yataErrGeneral(0, YATAWEB$getMsg("ERR.REST.DOWN"),  input, output, session))
 
@@ -111,4 +112,5 @@ function(input, output, session) {
       cat("Shiny Session stopped\n")
       pnl$factory$finalize()
       })
+   YATAWEB$end("Server")
 }

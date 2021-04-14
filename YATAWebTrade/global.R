@@ -17,17 +17,18 @@ library(dplyr)
 # YATA
 suppressMessages(library(YATATools))
 suppressMessages(library(YATACore))
-suppressMessages(library(YATAWebCore))
+suppressMessages(library(YATAWebCore, warn.conflicts = FALSE))
 suppressMessages(library(YATADT))
 
 # Shiny
 library(shiny)
 library(shinyjs)
-library(shinydashboard)
-library(shinydashboardPlus)
-library(shinyWidgets)
+suppressMessages(library(shinydashboard,     warn.conflicts = FALSE))
+suppressMessages(library(shinydashboardPlus, warn.conflicts = FALSE))
+suppressMessages(library(shinyWidgets,       warn.conflicts = FALSE))
 library(bslib)
 library(shinycookie)
+library(shinybusy)
 
 # General
 library(data.table)

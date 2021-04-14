@@ -16,7 +16,9 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.LIMIT
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.CHANGE"         ,"XX", "XX"     , "Cambio a otra posicion"                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.FAIL"           ,"XX", "XX"     , "Operacion fallida"                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.UP"             ,"XX", "XX"     , "Tendencia al alza"                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.SUGGEST"        ,"XX", "XX"     , "Recomendado"                               );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.DOWN"           ,"XX", "XX"     , "Tendencia a la baja"                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.TOP"            ,"XX", "XX"     , "Lista de mejores"                          );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.ACCEPT"         ,"XX", "XX"     , "Operacion aceptada"                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.CANCEL"         ,"XX", "XX"     , "Operacion cancelada"                       );

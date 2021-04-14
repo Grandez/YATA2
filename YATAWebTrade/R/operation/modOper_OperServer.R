@@ -20,6 +20,7 @@ modOperOperServer = function(id, full, pnl, parent) {
          else {
              shinyjs::enable("btnOK")
          }
+         yataMsgReset(ns2("operMsg"))
       }
       resetValues = function() {
           updNumericInput("impAmount", value=0)

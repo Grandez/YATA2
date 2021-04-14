@@ -36,12 +36,32 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          private$hCam   = NULL
          factory$clear()
      }
+     ,log = function(tpl, ...) {
+       message(paste(as.integer(Sys.time()), "-", sprintf(tpl, ...)))
+     }
+     ,beg = function(name) {
+         if (logi > 10) return()
+         private$logs[logi] = as.integer(Sys.time())
+         private$logn[logi] = name
+         # if (!missing(fun))
+         message(sprintf("BEG - %d - %s", logs[logi], name))
+         private$logi = private$logi + 1
+     }
+     ,end = function(name) {
+       idx = which(logn == name)
+       if (length(idx) == 0) return()
+       private$logi = idx[length(idx)]
+       message(sprintf("END - %d - %d - %s", as.integer(Sys.time()), as.integer(Sys.time()) - logs[logi], name))
+       private$logn[logi] = ""
+       private$logi = private$logi - 1
+       if (logi == 0) private$logi = 1
+     }
      ,setSession = function(session) {
          self$session = session
          private$cookies = list()
-         # A veces hay YATA al final
-          data = parseQueryString(session$request$HTTP_COOKIE)
-         # if (length(data) > 0) private$cookies = fromJSON(data[[1]])
+         data = parseQueryString(session$request$HTTP_COOKIE)
+         if (length(data) > 0 && !is.null(data$YATA)) private$cookies = fromJSON(data$YATA)
+         invisible(self)
       }
      ,getPanel = function(name)  { private$panels$get(name) }
      ,addPanel = function(panel) {
@@ -106,6 +126,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,hID     = NULL
      ,hSym    = NULL
      ,hCam    = NULL
+     ,logsess = as.integer(Sys.time())
+     ,logs    = c(rep(0,10))
+     ,logn    = c(rep("", 10))
+     ,logi    = 1
      ,cookies = list()
      ,.getNameByID = function (id, type) {
          info = hID$get(id)
