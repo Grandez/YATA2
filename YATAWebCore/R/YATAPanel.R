@@ -20,19 +20,20 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         private$pnlDef$id = id
 
         session$sendCustomMessage("setPanel", private$pnlDef)
-
+        # Typos
         self$factory = YATAWEB$factory
         self$codes   = self$factory$codes
         self$parms   = self$factory$parms
         self$MSG     = self$factory$MSG
 #        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
         private$loadCookies()
+        private$root = private$getRoot()
         if (!missing(ns) && !is.null(self$cookies$layout)) {
             self$layout = OBJLayout$new(ns)
             self$layout$update(session, self$cookies$layout)
         }
     }
-    ,root      = function() { FALSE }
+    ,isRoot      = function() { FALSE }
     ,getParent = function(name) {
         pp = self$parent
         while (!is.null(pp)) {
@@ -40,15 +41,6 @@ YATAPanel = R6::R6Class("YATA.PANEL"
           pp = pp$parent
         }
         pp
-    }
-    ,getRoot = function() {
-        root = self
-        pp   = root$parent
-        while (!is.null(pp)) {
-          root = pp
-          pp = pp$parent
-        }
-        root
     }
     ,makeCombo = function(df) {
         data = as.list(df$id)
@@ -89,15 +81,32 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         if (!is.null(self$parent)) self$parent$reset(self$name)
         invisible(self)
     }
+    ##########################################################
+    ### Acceso a root
+    ##########################################################
+    ,getGlobalPosition = function(fiat=FALSE) { private$root$getGlobalPosition(fiat) }
+    ,getOpenCurrencies = function()           { private$root$getOpenCurrencies()     }
+    ,getCommarea       = function()           { private$root$getCommarea()           }
+    ,setCommarea       = function(data)       { private$root$setCommarea(data)       }
   )
   ,private = list(
        invalid = c("")
+      ,root   = NULL
       ,pnlDef = list(
          name="name"
          ,id=NULL
          ,leftSide=FALSE
          ,rightSide=FALSE
       )
+     ,getRoot = function() {
+         root = self
+         pp   = root$parent
+         while (!is.null(pp)) {
+                root = pp
+                pp = pp$parent
+         }
+         root
+      }
       ,loadCookies = function() {
           cookies = YATAWEB$getCookies(self$name)
           if (!is.null(cookies)) self$cookies = list.merge(self$cookies, cookies)

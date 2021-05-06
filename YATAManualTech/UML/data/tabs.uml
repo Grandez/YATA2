@@ -1,0 +1,6 @@
+@startsalt
+{+
+{/ X Tab 1| <b> X Tab 2 | X Tab 3 | X Tab 4 }
+{  Info about Tab 2 }
+}
+@endsalt

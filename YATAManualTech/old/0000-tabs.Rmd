@@ -1,0 +1,117 @@
+# Tabset dinamico
+
+## Caso de uso
+
+En determinadas ocasiones es necesario insertar y eliminar pestañas de un Tabset de manera dinámica en función de la interacción del usuario, esto se puede realizar mediante la familia de funciones: `insertTab, prependTab, appendTab, removeTab` siempre y cuando cada pestaña tenga su propia UI; es decir, siempre y cuando cada pestaña sea distinta.
+
+Cuando las pestañas contienen el mismo diseño, lógicamente con información diferente, este método ya no es valido por que se generarían identificadores de elementos duplicados salvo que dinamicamente generaramos las UI con identificadores únicos y su codigo asociado para manejarlo.
+
+Pongamos, por ejemplo, un sistema de gestión de vehículos: Tenemos una o varias pestañas que nos muestran cierta información, digamos que la primera pestaña muestra un cuadro de mando con información de todos los vehículos y que pinchando en cualquiera de ellos, se nos abre otra pestaña con información detallada del vehículo en cuestión.
+
+
+## Implementacion
+
+### UI y modulo asociado
+
+Empecemos primero por diseñar la UI y el módulo asociado, esto nos permitirá durante la fase de diseño y desarrollo centrarnos en la funcionalidad de la página
+
+### Pseudo TabPanel
+
+
+
+### Gestión del es
+Lo gestiona el objeto OBJLayout
+
+
+**IMPORTANTE**
+
+Si algo no tiene display, shiny no lo actualiza
+el contenedor lo ponemos como:
+style="visibility: hidden; opacity: 0; position: absolute; top: 0;"        
+
+
+En ciertos paneles puede ser interesante permitir que el usuario defina sus propios bloques y organizacion dentro de un conjunto **definido** de opciones.
+
+En estos casos la estructura del panel debe ser la siguiente:
+
+```
+left = tagList(
+    fluidRow(column(4, "bloque 1"),  column(8, yuiCombo(ns("cboBlk1"), choices=cbo, selected="block1")))
+   ,fluidRow(column(4, "bloque 2"),  column(8, yuiCombo(ns("cboBlk2"), choices=cbo, selected="block3")))
+   ,fluidRow(column(4, "bloque 3"),  column(8, yuiCombo(ns("cboBlk3"), choices=cbo, selected="block5")))
+)
+main = tagList(
+       fluidRow(id=ns("block_1"))
+      ,fluidRow(id=ns("block_2")
+          ,column(6, fluidRow(id=ns("block_2_1)))
+          ,column(6, fluidRow(id=ns("block_2_2)))
+      )
+      ,fluidRow(id=ns("block_3")
+          ,column(4, fluidRow(id=ns("block_3_1)))
+          ,column(4, fluidRow(id=ns("block_3_2)))
+          ,column(4, fluidRow(id=ns("block_3_3)))
+      )
+      ,hidden(tags$div(id=ns("blocks"),
+         tags$div(id=ns("block1"), h2("Bloque 1"))
+        ,tags$div(id=ns("block2"), h2("Bloque 2"))
+        ,tags$div(id=ns("block3"), h2("Bloque 3"))
+        ,tags$div(id=ns("block4"), h2("Bloque 4"))
+        ,tags$div(id=ns("block5"), h2("Bloque 5"))
+      ))
+)
+
+```
+
+En este ejemplo existen 3 bloques principales, identificados como `block_`__fila__
+
+- El primer bloque "block_1" ocupa todo el ancho, es decir, no tiene columnas
+- El segundo y tercer bloque tienen, respecitvamente dos y tres columnas
+
+Por ultimo, **debe existir un bloque oculto con id ns("blocks")** que es el que contiene cada uno de los posibles bloques de la interfaz
+
+En el panel de la izquierda se deben incluir los combos adecuados para cada uno de los posibles bloques con las diferentes opciones permitidas para cada uno de ellos y donde **la clave sea el id del bloque a mostrar**
+
+
+## Control de los bloques
+
+Mostrar y ocultar un bloque determinado se realiza a través de los eventos de selección de los combos enviando un mensaje al navegador.
+
+```
+observeEvent(input$cboBlockX, {
+  # row y col son los identifcadores de la fila y la columna del bloque.
+  # Si el bloque no tiene columnas, col es 0
+   session$sendCustomMessage('yataShowBlock',list(ns=id,row=row,col=col,block=input$cboBlkX))
+})
+```
+
+## javascript
+
+Para gestionar este proceso se necesita un mensaje especifico de Shiny
+
+1. Crear el handler en la pagina:
+`tags$script("Shiny.addCustomMessageHandler('yataShowBlock', function(data) { $.YATA.showBlock(data); })")`
+2. Enviar el mensaje como se indica anteriormente
+
+el codigo necesario esta en yataapp.js, y es el siguiente:
+
+```
+$.YATA.showBlock = function(data) {
+   var idParent    = data.ns + "-block_" + data.row;
+   if (data.col !== 0) idParent = idParent + "_" + data.col;
+   const parent = document.getElementById(idParent);
+   const child  = document.getElementById(data.ns + "-" + data.block);
+   const blocks = document.getElementById(data.ns + "-blocks");
+   var childs   = parent.children;
+   parent.appendChild(child);
+   for (var i = 0; i < childs.length - 1; i++) {
+        const hijo =  document.getElementById(childs[i].id);
+        blocks.appendChild(hijo);
+   }
+};
+```
+El proceso es el siguiente:
+
+1. Obtener el elemento con la fila y columna asociada
+2. Obtener el elemento a mostrar
+3. Mover el elemento a mostrar a su destino
+4. Mover los posibles hijos que existieran al contenedor: ns("blocks")

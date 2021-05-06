@@ -15,7 +15,6 @@ YATAREST = R6::R6Class("YATA.REST"
         factory = NULL
        ,initREST = function() {
          super$add_get("/alive", FUN = function(.req, .res) {
-             message("Alive")
              .res$set_status_code(200)
              .res$set_body("OK") })
          super$add_get("/best"   , best_handler)

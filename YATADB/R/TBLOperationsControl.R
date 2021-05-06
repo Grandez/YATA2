@@ -22,6 +22,7 @@ TBLOperControl   = R6::R6Class("TBL.OPER.CONTROL"
          ,priceIn   = "PRICE_IN"
          ,amountOut = "AMOUNT_OUT"
          ,priceOut  = "PRICE_OUT"
+         ,rank      = "RANK"
          ,alert     = "ALERT"
          ,dtAlert   = "TMS_ALERT"
        )

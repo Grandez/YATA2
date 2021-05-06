@@ -95,6 +95,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         cdg = codes
         eur = which(codes == "EUR")
         if (length(eur)) cdg = codes[-eur]
+        if (length(cdg) == 0) return(NULL)
         df = tblCurrencies$table(inValues=list(symbol=cdg))
         data = df$id
         names(data) = df$symbol

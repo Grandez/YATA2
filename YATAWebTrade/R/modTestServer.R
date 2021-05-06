@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modTestServer <- function(id, full, pnlParent, invalidate=FALSE) {
+modTestServer <- function(id, full, pnlParent, invalidate=FALSE, parent=NULL) {
    ns = NS(id)
    PNLTest = R6::R6Class("PNL.TEST"
       ,inherit = YATAPanel

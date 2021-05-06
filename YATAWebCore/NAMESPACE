@@ -19,6 +19,8 @@ import(shinyWidgets)
 import(bslib)
 import(shinycookie)
 
+import(reactable)
+
 # import(DT)
 
 # YATA
@@ -35,6 +37,6 @@ exportPattern("upd.*")
 exportPattern("plt*")
 exportPattern("prepare*")
 exportPattern("rest.*")
-exportPattern("BLK.*")
 exportPattern("OBJ.*")
+export(isPlot)
 export(PUT)

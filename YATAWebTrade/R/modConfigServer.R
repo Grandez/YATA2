@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modConfigServer <- function(id, full, pnlParent, invalidate=FALSE) {
+modConfigServer <- function(id, full, pnlParent, invalidate=FALSE, parent=NULL) {
    ns = NS(id)
    PNLCfg = R6::R6Class("PNL.CONFIG"
         ,inherit = YATAPanel

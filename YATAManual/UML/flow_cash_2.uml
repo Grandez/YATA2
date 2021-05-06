@@ -1,0 +1,26 @@
+@startuml
+left to right direction
+
+cloud EX {
+
+}
+
+node "Camera 1"  as C1{
+  cloud EUR
+  component CTC1
+  component CTC2
+  component CTCn
+}
+
+
+EX -[#green]-> EUR : Transfer
+EUR -[#green]-> CTC1
+EUR -[#green]-> CTC2
+EUR -[#green]-> CTCn
+
+CTC1 -[#red]-> EUR
+CTC2 -[#red]-> EUR
+CTCn -[#red]-> EUR
+
+EUR -[#red]-> EX : Reimburse
+@enduml

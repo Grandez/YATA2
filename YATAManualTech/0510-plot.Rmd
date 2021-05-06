@@ -1,0 +1,187 @@
+---
+title: "Plots"
+author: "Grandez"
+date: "2/4/2021"
+output: 
+   html_document:
+      number_sections: true
+---
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fontawesome)
+```
+
+<!--
+# Prueba
+# Just a few tests with `r fa("font-awesome-logo-full", fill = "forestgreen")`
+
+It works well in headings...
+
+# `r fa("r-project", fill = "steelblue")` H1 Heading
+
+## `r fa("r-project", fill = "steelblue")` H2 Heading
+
+### `r fa("r-project", fill = "steelblue")` H3 Heading
+
+#### `r fa("r-project", fill = "steelblue")` H4 Heading
+
+##### `r fa("r-project", fill = "steelblue")` H5 Heading
+
+-->
+
+# Intro
+
+De manera generica los graficos utilizados en el sistema de nutren de las siguientes fuentes de informacion:
+
+- Informacion de session; tms, Open,Close,High,Low
+- Informacion de precio:  tms, precio
+- Informacion de volumen: tms, volumen
+
+Y otras fuentes de informacion añadida:
+
+- Modelos estadisticos, BBand, AMM, etc.
+- Valores discretos: oepraciones, fechas, ..
+
+
++---------------+---------------+--------------------+
+| Right         | Left          | Centered           |
++==============:+:==============+:==================:+
+| Bananas       | $1.34         | built-in wrapper   |
++---------------+---------------+--------------------+
+
+
++--------------:+:--------------+:------------------:+
+| Right         | Left          | Centered           |
++---------------+---------------+--------------------+
+
+
+
+## General
+
+Un grafico siempre se genera sobre un componente **yuiPlot(id)** (por Yata User Interface Plot) el cual implementa dos elementos:
+
+- El plot en si mismo: plotlyOutput(id)
+- Un mensaje para los casos en los que no exista informacion bajo el id `id_nodata`
+
+Y se actualiza mediante la funcion **updPlot(plot, id)** que se encarga de seleccionar el elemento a mostrar y llamar a la funcion **renderPlotly**
+
+
+## Step by Step
+
+1. yataPlotBase(info) Obtengo un plot vacio con los botones en funcion de la fuente de datos
+2. yataPlotXXX(plot,df,name,cols)
+3. Dibujamos el 
+
+## Info
+
+Contiene metainformacion relativa al grafico. Se utiliza para transferir informacion entre el cliente y el servidor
+
+* type
+* observer
+* scale
+* datasource
+* datavalue
+* ui
+
+#### observer 
+El el identificador de shiny que recogera el evento del click en el modebar
+
+#### id 
+Identificador del plot
+
+#### datasource
+
+Identifica la fuente de información base sobre la que se esta trabajando.
+En función de esa información se determina que tipos de gráficos se pueden generar y por lo tanto mostrar el el `modebar`
+
+Por ejemplo, si la fuente de datos es "session" se puede mostrar un gráfico de velas pero tambien la linea del precio, si por el contrario la fuente de datos es "prices" no disponemos de informacion suficiente para mostrar un grafico de velas.
+
+- "session"
+- "value"
+
+#### datavalue 
+El tipo de informacion a procesar, actua como un selector de los datos y puede valer:
+
+- "Log"
+- "Variation"
+- "Value"
+
+#### ui
+El plot de shiny sobre el que hay que actuar, se utiliza cuando el grafico puede estar en diferentes objetos
+
+### XXXrender
+
+La funcion para generar el grafico
+
+#### plot
+El tipo de plot activo
+
+- "Line"
+- "Candlestick"
+- "Bar"
+- "Point"
+- "Marker"
+### type
+   El tipo de plot propuesto
+   
+# Metodos
+
+## yuiPlot - Definir el grafico
+
+Como "Yata User interface" define un plot en la parte Cliente
+   
+#### firma
+
+`yuiPlot(id)`
+   
+* id es el identificador del plot para Shiny
+   
+## updPlot - Actualizar el grafico
+   Refresca el grafico
+
+#### firma
+
+`updPlot(plot, info)`
+
+* plot: Un plot correcto
+* info: la metainformacion asociada con ese plot [Info]
+   
+uso: output$__plot_id__ = updPlot(plot,info)
+
+## yataPlotBase - Inicializacion de un grafico
+
+Crea un gráfico sin información con el objetivo de ir añadiendo graficos sobre el
+
+#### firma
+
+`yataPlotBase(id)`
+
+* id: Identificador interno del grafico, debe ser unico
+
+## yataPlotxxx - Graficos
+
+La familia de funciones yataPlotxxx añade uno mas graficos al plot
+Por definicion la primera columna de la fuente de datos define el eje X
+Por cada una de las demas columnas crea un grafico
+
+* **yataPlotLine**:  Gráfico de lineas **sin** marcadores
+* **yataPlotMarker**: Gráfico de lineas **con** marcadores
+* **yataPlotPoint**: Gráfico de marcadores
+* **yataPlotBar**: Gráfico de barras
+
+#### firma
+
+`yataPlot__xxx__(plot, df, info)`
+
+* plot: El objeto grafico sobre el que se esta trabajando
+* df: La fuente de datos
+* info: la metainformacion asociada con ese plot [Info]
+
+
+## yataPlotCandlestick
+  Caso especial
+
+## modebar
+
+TODO

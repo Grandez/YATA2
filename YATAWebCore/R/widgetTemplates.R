@@ -1,3 +1,6 @@
+yuiLoading = function() { show_modal_spinner(spin="dots") }
+yuiLoaded  = function() { remove_modal_spinner()          }
+
 yuiYesNo = function(id=ns("tag"), lblOK, lblKO){ # , cols=4, left=0) {
     # el tag es para crear el nombre completo
     toks = strsplit(id, "-")[[1]]

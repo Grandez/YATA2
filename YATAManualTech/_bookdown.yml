@@ -1,5 +1,6 @@
-book_filename: "YATATechManual"
+book_filename: "YATA Technical Manual"
 delete_merged_file: true
+output_dir: "output"
 language:
   ui:
-    chapter_name: "Chapter "
+    chapter_name: "Capitulo "

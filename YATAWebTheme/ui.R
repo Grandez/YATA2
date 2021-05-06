@@ -1,4 +1,5 @@
 YATAPage("Navbar!", id="mainMenu"
+   ,tabPanel("Pseudo Bar",     value="pnl",    YATAModule("pnl"))
    ,tabPanel("Panel 1",     value="pnl1",    YATAModule2("pnl1"))
    ,tabPanel("Plots",  value="plt",    YATAModule("plt"))
    ,tabPanel("Etiquetas",  value="label",    YATAModule("label"))

@@ -101,7 +101,6 @@ CREATE TABLE OPERATIONS  (
    ,ACTIVE       TINYINT     DEFAULT 1 -- Flag activa/inactiva
    ,STATUS       TINYINT     DEFAULT 0 -- Estado de la operacion
    ,PARENT       INT UNSIGNED      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado     
-   ,RANK         INT               DEFAULT 0
    ,TMS          TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,TMS_LAST     TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
@@ -123,6 +122,7 @@ CREATE TABLE OPERATIONS_CONTROL  (
    ,PRICE_IN     DOUBLE      NOT NULL -- Precio de la operacion   
    ,AMOUNT_OUT   DOUBLE       -- Cantidad a la salida
    ,PRICE_OUT    DOUBLE       -- Precio de salida
+   ,RANK         INT               DEFAULT 0   
    ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
    ,TMS_ALERT    DATE                -- Para chequear la operacion         
    ,PRIMARY KEY ( ID_OPER )

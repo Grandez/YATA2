@@ -28,6 +28,7 @@ yuiBtnIconCash     = function(title) {.btnIcon("violet"    , "wallet"           
 yuiBtnIconView     = function(title) {.btnIcon("mediumblue", "search-dollar"    ,ifelse(missing(title), "View"  ,title)) }
 yuiBtnIconActive   = function(title) {.btnIcon("limegreen" , "plus-circle"      ,ifelse(missing(title), "Activar"  ,title)) }
 yuiBtnIconInactive = function(title) {.btnIcon("maroon"    , "minus-circle"     ,ifelse(missing(title), "Desactivar"  ,title)) }
+yuiBtnIconBuy      = function(title) {.btnIcon("green"     , "shopping-cart"    ,ifelse(missing(title), "Buy",title)) }
 
 yuiTblButton = function(id, table, label, btn) {
    clk = paste0("onclick='Shiny.setInputValue(\"", id, "-btnTable", titleCase(table), "\","
@@ -35,9 +36,27 @@ yuiTblButton = function(id, table, label, btn) {
    data = as.character(btn)
    res = regexpr(">", data, fixed=TRUE)
    base = substr(data, 1, res[1] - 1)
-   paste(base, clk, substr(data, res[1], 10000L))
+   HTML(paste(base, clk, substr(data, res[1], 10000L)))
 }
 
+yuiCustomButton = function(btn, event, value) {
+   clk = paste0("onclick='Shiny.setInputValue(\"", event, "\","
+                                              ,"\"", value, "-__\")'")
+   data = as.character(btn)
+   res = regexpr(">", data, fixed=TRUE)
+   base = substr(data, 1, res[1] - 1)
+   htmltools::HTML(paste(base, clk, substr(data, res[1], 10000L)))
+}
+yuiCustomIcon = function(icon, event, value) {
+    browser()
+   clk = paste0("onclick='Shiny.setInputValue(\"", event, "\","
+                                              ,"\"", value, "\")'")
+   clk = "onclick=\"alert(\'Pulsado\')\""
+   data = as.character(icon)
+   res = regexpr(">", data, fixed=TRUE)
+   base = substr(data, 1, res[1] - 1)
+   htmltools::HTML(paste(base, clk, substr(data, res[1], 10000L)))
+}
 # Source: shinyWidgets
 # Function: actionBttn
 # Action: Removed match.arg color control

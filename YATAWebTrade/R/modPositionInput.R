@@ -40,13 +40,12 @@ modPosInput = function(id, title) {
             ,yuiPlot(ns("plotTop"))
             ,yuiPlot(ns("plotBest"))
             ,yuiPlot(ns("plotFav"))
-            ,tags$div(id=ns("blkBest"),style="width: 100%", yuiBox(ns("Best"), yuiLabelText(ns("lblBest")), yuiDataTable(ns("tblBest"))))
-            ,tags$div(id=ns("blkTop") ,style="width: 100%", yuiBox(ns("Top"),  yuiLabelText(ns("lblTop")),  yuiDataTable(ns("tblTop"))))
-            ,tags$div(id=ns("blkFav") ,style="width: 100%", yuiBox(ns("Fav"),  yuiLabelText(ns("lblFav")),  yuiDataTable(ns("tblFav"))))
+            ,tags$div(id=ns("blkBest"),style="width: 100%", yuiBox(ns("Best"), yuiLabelText(ns("lblBest")), yuiTable(ns("tblBest"))))
+            ,tags$div(id=ns("blkTop") ,style="width: 100%", yuiBox(ns("Top"),  yuiLabelText(ns("lblTop")),  yuiTable(ns("tblTop"))))
+            ,tags$div(id=ns("blkFav") ,style="width: 100%", yuiBox(ns("Fav"),  yuiLabelText(ns("lblFav")),  yuiTable(ns("tblFav"))))
             ,tags$div(id=ns("Position"), style="width: 100%;"
-                    ,hidden(tags$div(id=ns("posGlobal"), 
-                                     yuiBox(ns("PosGlobal"), "Posicion Global", yuiDataTable(ns("tblPosGlobal")))))
-                    ,hidden(tags$div(id=ns("PosCameras")))
+                     ,hidden(tags$div(id=ns("posGlobal"), yuiBox(ns("PosGlobal"), "Posicion Global", yuiTable(ns("tblPosGlobal")))))
+                     ,hidden(tags$div(id=ns("PosCameras")))
             )
     )
     main = tagList( fluidRow(id=ns("monitor")) # fluidRow(tags$div(id=ns("monitor"), class="yata_monitors"))

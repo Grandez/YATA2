@@ -13,7 +13,7 @@ rest = YATAREST$new()
 #request = Request$new(path = "/latest")
 #request = Request$new(path = "/best", parameters_query = list(top = 10))
 #request = Request$new(path = "/top", parameters_query = list(top = 10))
-request = Request$new(path = "/hist", parameters_query = list(id = 5225, from='2021-03-20', to='2021-04-09'))
+request = Request$new(path = "/hist", parameters_query = list(id = 1839, from='2021-04-23', to='2021-04-26'))
 response = rest$process_request(request)
 
 cat("Response status:", response$status, "\n")

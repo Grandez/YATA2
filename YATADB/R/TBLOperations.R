@@ -37,7 +37,6 @@ TBLOperations   = R6::R6Class("TBL.OPERATIONS"
              ,active   = "ACTIVE"
              ,status   = "STATUS"
              ,parent   = "PARENT"
-             ,rank     = "RANK"
              ,tms      = "TMS"
              ,tmsLast  = "TMS_LAST"
             )

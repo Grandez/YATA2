@@ -2,8 +2,9 @@
 
 modOperPosInput = function(id, title) {
     ns = NS(id)
-    noAccept = YATAWEB$getMsg("OPER.PEND.ACCEPT")
-    noExec   = YATAWEB$getMsg("OPER.PEND.EXECUTE")
+    noOpen   = YATAWEB$getMsg("OPER.OPEN.NONE")
+    noAccept = YATAWEB$getMsg("OPER.ACCEPT.NONE")
+    noExec   = YATAWEB$getMsg("OPER.EXECUTE.NONE")
     boxOpen  = YATAWEB$getMsg("BOX.OPER.OPEN")
     boxPend  = YATAWEB$getMsg("BOX.OPER.PEND")
     boxExec  = YATAWEB$getMsg("BOX.OPER.EXEC")
@@ -18,7 +19,11 @@ modOperPosInput = function(id, title) {
 #      fluidRow(id=ns("block_1")), fluidRow(id=ns("block_2"))
       #    ,yuiBlocks(ns("blocks")
       #     ,tags$div(id=ns("data"), style="width: 100%;"
-                   ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  yuiDataTable(ns("tblOpen"))))
+                   ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  
+                     # yuiDataTable(ns("tblOpen"))
+                            reactableOutput(ns("tblOpen"))
+                           ,hidden(tags$span(id=ns("noOpen"), noOpen))
+                   ))
                    ,hidden(fluidRow(id=ns("divPend")
                              ,column(6, yuiBox(ns("opPending"),  boxPend,
                                                 yuiDataTable(ns("tblPending"))

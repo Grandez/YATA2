@@ -24,6 +24,7 @@ TBLPosition = R6::R6Class("TBLPOSITION"
             if (available) df = df[df$available > 0,]
             df
         }
+        ,getCurrencyPosition = function(currency) { table(currency=currency) }
         ,getPosition = function(camera, currency) { table(camera= camera, currency=currency) }
         ,getCameras  = function() { uniques(c("camera")) }
      )

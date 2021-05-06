@@ -1,3 +1,33 @@
+.YATATabCreate = function(tabset, title, id) {
+    evt1  = paste0("Shiny.setInputValue('", tabset, "Close', '", id, "');")
+    evt2  = paste0("Shiny.setInputValue('", tabset, "Click', '", id, "');")
+        
+    tags$span(id = paste0(tabset, id), class="nav nav-tabs"
+              , tags$span(class="fas fa-times",onclick=evt1)
+              , tags$span(title, onclick=evt2))
+}
+YATATab = function(title, id) {
+   if (missing(id)) id = title
+   list(id=id, title=title) 
+}
+YATATabRemove = function(panel, item) {
+    browser()
+   stmt = paste0("const source = document.getElementById('", panel, "');\n")
+   stmt = paste0(stmt,"const target = document.getElementById('", panel, item, "');\n")
+   stmt = paste0(stmt,"source.removeChild(target);")
+   shinyjs::runjs(stmt)
+}
+YATATabAppend = function(panel, title, id) {
+    tab = YATATab(title, id)
+    span = .YATATabCreate(panel, tab$title, tab$id)
+    shiny::insertUI(paste0("#", panel), where="beforeEnd", span, immediate=TRUE)
+}
+
+YATATabPanel = function(id, ...) {
+    div = tags$div(id=id)
+    items = lapply(list(...), function(x) .YATATabCreate(id, x$title, x$id))
+    tagAppendChildren(div, tagList(items))
+}
 YATAModule2 = function(id, title="",mod=NULL, ...) {
 #    message("Ejecutando YATAModule para ", id)
     ns = NS(id)

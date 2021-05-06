@@ -10,9 +10,9 @@ library(utils)
 library(R6)
 library(tibble)
 library(rlist)
-library(plyr)
-library(tidyr)
-library(dplyr)
+suppressMessages(library(plyr,  warn.conflicts = FALSE))
+suppressMessages(library(tidyr, warn.conflicts = FALSE))
+suppressMessages(library(dplyr, warn.conflicts = FALSE))
 
 # YATA
 suppressMessages(library(YATATools))
@@ -33,16 +33,18 @@ library(shinybusy)
 # General
 library(data.table)
 
+library(reactable)
+
 # Plots
-library(ggplot2)
-library(gridExtra)
-library(plotly)
-library(RColorBrewer)
+suppressMessages(library(ggplot2,   warn.conflicts = FALSE))
+suppressMessages(library(gridExtra, warn.conflicts = FALSE))
+suppressMessages(library(plotly,    warn.conflicts = FALSE))
+#library(RColorBrewer)
 
 # Async
-suppressMessages(library(jsonlite))
-suppressMessages(library(promises))
-suppressMessages(library(future))
+suppressMessages(library(jsonlite, warn.conflicts = FALSE))
+suppressMessages(library(promises, warn.conflicts = FALSE))
+suppressMessages(library(future,   warn.conflicts = FALSE))
 
 options( warn = -1
         ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
@@ -77,4 +79,5 @@ panel = list(
     ,ana    = "ana"
     ,config = "config"
     ,log    = "log"
+    ,hist   = "hist"
 )

@@ -1,7 +1,4 @@
----
-title: "R Notebook"
-output: html_notebook
----
+# Tangente
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 

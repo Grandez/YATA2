@@ -30,7 +30,26 @@ modOperOperServer = function(id, full, pnl, parent) {
       # df = pnl$getCounters()
       # updCombo("cboCounter",    choices=pnl$makeCombo(df))
 
+      processCommarea = function(index) {
+          # 0 - Usa, 1 - Limpia
+          carea = pnl$getCommarea()
+          if (index == 0) {
+              op = 0
+              if (carea$action == "buy" ) op = 1
+              if (carea$action == "sell") op = 3
+              updNumericInput("impPrice", value=carea$data$price)
+              cant = 1000 / carea$data$price
+              rnd =  ifelse(carea$data$price > 1000, 3, 0)
+              updNumericInput("impAmount", value=round(cant, rnd))
+              if (op != 0) updCombo("cboOper", selected=op)
+          }
+          if (index == 1 && !is.null(carea$pending)) {
+              pnl$setCommarea(list())
+          }
+      }
       observeEvent(input$cboOper, {
+          YATAWEB$beg("cboOper")
+
          if (input$cboOper != pnl$codes$oper$sell) {
              data = pnl$makeCombo(pnl$getCounters())
          }
@@ -41,18 +60,26 @@ modOperOperServer = function(id, full, pnl, parent) {
              } else {
                  data=pnl$makeCombo(df)
              }
-         }     
-         updCombo("cboCounter", choices=data)
-         updCombo("cboReasons", choices = pnl$cboReasons(input$cboOper), selected=0)
+         }
+         carea = pnl$getCommarea()
+         selc = ifelse (is.null(carea$pending), NULL, carea$data$symbol) 
+         selr = ifelse (is.null(carea$pending), 0, 15) 
+         updCombo("cboCounter", choices=data, selected=selc)
+         updCombo("cboReasons", choices = pnl$cboReasons(input$cboOper), selected=selr)
          activeButtons()
+         processCommarea(1)
+         YATAWEB$end("cboOper")
       }, ignoreInit = TRUE)
 
       observeEvent(input$cboCounter, {
+          YATAWEB$beg("cboCounter")
           pnl$vars$inEvent = FALSE
           data = pnl$cboCamerasCounter(input$cboCounter)
           updCombo("cboCamera", choices=pnl$cboCamerasCounter(input$cboCounter))
+          YATAWEB$end("cboCounter")
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
+          YATAWEB$beg("cboCamera")
           pnl$vars$inEvent = FALSE
           dfPos = pnl$position$getCameraPosition(input$cboCamera, available = TRUE) 
           # SI es compra, necesito un fiat
@@ -62,16 +89,20 @@ modOperOperServer = function(id, full, pnl, parent) {
           pnl$cameras$select(input$cboCamera)
           fee = pnl$cameras$current$taker
           output$lblFee = updLabelPercentage(fee)
+          YATAWEB$end("cboCamera")
       },ignoreInit = TRUE)   
       observeEvent(input$cboBase, {
-          pnl$vars$inEvent = FALSE
+          YATAWEB$beg("cboBase")
+         pnl$vars$inEvent = FALSE
          pnl$vars$available = 0
          df = pnl$position$getPosition(input$cboCamera, input$cboBase) 
          if (nrow(df) != 0) pnl$vars$available = df[1,"available"]
          output$lblAvailable = updLabelNumber(pnl$vars$available)
          output$lblNew       = updLabelNumber(pnl$vars$available)
+         YATAWEB$end("cboBase")
       })
       observeEvent(input$impAmount | input$impPrice, {
+          YATAWEB$beg("cboImp")
           pnl$vars$inEvent = FALSE
           if (!is.na(input$impAmount) && !is.na(input$impPrice)) {
              if (input$impAmount != 0 && input$impPrice != 0) {
@@ -84,8 +115,10 @@ modOperOperServer = function(id, full, pnl, parent) {
                  output$lblNew     = updLabelNumber(pnl$vars$available - iTotal)
              } 
           }
+          YATAWEB$end("cboImp")
       },ignoreInit = TRUE, ignoreNULL = TRUE)
       observeEvent(input$operBtnOK, {
+          YATAWEB$beg("btnOK")
         # A veces se generan dos triggers (debe ser por los renderUI)
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
@@ -132,7 +165,14 @@ modOperOperServer = function(id, full, pnl, parent) {
              resetValues()
           }
       }, ignoreInit = TRUE)
-      observeEvent(input$operBtnKO, { resetValues() })
+      observeEvent(input$operBtnKO, { 
+          YATAWEB$beg("btnKO")
+          resetValues() })
+
+      carea = pnl$getCommarea()
+      if (!is.null(carea$action)) {
+          if (carea$action %in% c("buy", "sell")) processCommarea(0)
+      }
     })
 }
 

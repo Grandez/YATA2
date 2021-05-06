@@ -22,6 +22,14 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
         names(data) = df$code
         data
       }
+      ,getBlockAsMap = function(block) {
+          df = tblMsg$table(block = block)
+          map = HashMap$new()
+          if (nrow(df) > 0) {
+             lapply(1:nrow(df), function(row) map$put(df[row, "code"], df[row, "msg"]))
+          }
+          map
+      }
       ,title    = function(code)  { getMessage(paste0("TITLE.", code)) }
     )
     ,private = list(

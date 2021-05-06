@@ -3,6 +3,13 @@
 function setTile() {
 
 }
+function listenerTabClosable() {
+  var elements = document.getElementsByClassName("yata_tab_closable");
+  Array.from(elements).forEach(function(element) {
+      element.addEventListener('click', function (event) { yataTabClose(event) });
+    });
+}
+
 function listenerButtonInTable(mode) {
   // Aqui añade el listener a la clase de los botones
   var elements = document.getElementsByClassName("yataBtnClickable");
@@ -20,6 +27,15 @@ function listenerLayout() {
     });
 }
 
+function yataTableclick (rowInfo, colInfo, evt, tgt) {
+//    window.alert('Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id);
+                                   //if (colInfo.id !== 'details') { return }
+//                         window.alert('Details: row ' + rowInfo.index + 'col: ' + colInfo.id);
+     if (window.Shiny) {
+         Shiny.setInputValue(evt, { row: rowInfo.index + 1, colName: colInfo.id, target: tgt
+                                 }, { priority: 'event' });
+     }
+}
 function yatabtnClickable(event) {
   alert("Click en el menu " + event.target.id);
   /*
@@ -38,6 +54,7 @@ function yataMoveChildren(from, to) {
 }
 
 function yataUpdateLayout(data) {
+//JGG   alert("yataUpdataeLayout: \n" + data);
    let id = data[0];
    let tgt = data[1];
    let idParent = id.replace("cboLayout", "block");
@@ -70,13 +87,17 @@ function yataUpdateLayout(data) {
        parent.appendChild(child);
    }
    let nfo = id.split("_");
-
-   let evt = {"value": event.target.value, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
+//   let evt = {"value": "JGG", "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
+   let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
    Shiny.setInputValue(panel + "-layout", evt);
 }
 function yataLayoutChanged(event) {
    yataUpdateLayout([event.currentTarget.id, event.target.value]);
 }
+function yataTabClose(event) {
+    Shiny.setInputValue(event.id, { id: event.id}, { priority: 'event' });
+}
+
 /*
 
 */
@@ -124,6 +145,7 @@ $(function() {
     Shiny.addCustomMessageHandler('buttonInTable', listenerButtonInTable);
     Shiny.addCustomMessageHandler('setTitle', function(text) {document.title = "YATA - " + text;});
     listenerLayout();
+    listenerTabClosable();
     /*
         document.body.style.backgroundColor = color;
         document.body.innerText = color;

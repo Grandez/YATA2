@@ -1,0 +1,2 @@
+xcopy /E /H /I /C /D DiscoU F:\DiscoBackup
+xcopy /S /I /C /J /H /D MSI c:\MSI\MSI

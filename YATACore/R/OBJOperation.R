@@ -28,7 +28,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 db$commit()
                 self$current$idOper
             },error = function(cond) {
-                browser()
                 db$rollback()
                 message(cond)
                 0
@@ -187,14 +186,16 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
                 # Es un split
                 if(data$amount != current$amount) split = TRUE
+
                 stat = ifelse(split, codes$oper$split, codes$oper$close)
                 prtOper$update( list(active  = codes$flag$parent
                                ,status  = stat
                                ,reason  = data$reason
                                ,comment = data$comment
+                               ,priceOut  = current$price
+                               ,amountOut = current$amount
                                ,rank    = data$rank))
 
-                # Creamos el split
                 if (split) {
                     diff = current$amount - data$amount
                     select(current$id, create=TRUE)
@@ -325,6 +326,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             }
             df[order(df$id),c("id", "name")]
         }
+        ,getFlowsByCurrency = function (currency) {
+            tblFlows$table(currency = currency)
+        }
     )
     ,private = list(
         # Tablas asociadas
@@ -395,6 +399,17 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            objPos$updateBase   (current$camera, current$base,    current$amount, current$price, 0)
            objPos$updateCounter(current$camera, current$counter, current$amount, current$price, 0)
 
+           amount = current$amount
+           if (current$type == codes$oper$sell) {
+               if (amount > 0) amount = amount * -1
+               addFlow(codes$flow$output, current$counter, amount, current$price)
+               addFlow(codes$flow$input,  current$base,    current$amount * current$price * -1, current$price)
+           } else {
+               addFlow(codes$flow$input,  current$counter, current$amount, current$price)
+               addFlow(codes$flow$output, current$base,    current$amount * current$price * -1, current$price)
+           }
+
+           # addFlow(codes$flow$output, current$base, imp, 1)
            if (!is.null(current$idParent) && !is.na(current$idParent)) {
                select(idParent)
                current$flag = codes$flags$parent

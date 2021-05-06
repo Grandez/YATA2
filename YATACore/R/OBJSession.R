@@ -67,12 +67,12 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            dfp
        }
        ,updateLatest = function() {
-           res = ""
+           res = NULL
            if (difftime(Sys.time(), lastGet, units="mins") > 15) {
                df = provider$getLatest()
                df[,c("name", "slug")] = NULL
                private$dfLast = df
-               tryCatch(tblSession$update(df)
+               tryCatch({tblSession$update(df) ; res = df }
                        ,error = function(e) { stop(paste("Fallo en el update", e)) })
            }
            res

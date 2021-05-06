@@ -1,3 +1,5 @@
+# Panel Raiz
+# Mantiene la informacion de la session y de la posicion
 PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    ,inherit = YATAPanel
    ,cloneable  = FALSE
@@ -15,7 +17,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           self$providers  = self$factory$getObject(self$codes$object$providers)
           self$updateData(TRUE)
       }
-      ,root        = function() { TRUE }
+      ,isRoot      = function() { TRUE }
       ,invalidate  = function(panel) {
          private$invalid = c(private$invalid, panel)
          invisible(self)
@@ -26,33 +28,46 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,reset       = function(panel) {
           pos = which(private$invalid == panel)
-         if (length(pos) > 0) private$invalid = private$invalid[-pos]
-         invisible(self)
+          if (length(pos) > 0) private$invalid = private$invalid[-pos]
+          invisible(self)
       }
       ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
           df = self$position$getGlobalPosition()
           ids = YATAWEB$getCTCID(df$currency)
-          self$data$dfPosGlobal = inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")
-          
-          # df = self$providers$getLatests ("EUR", ctc)
-          # self$data$lstLast = list()
-          # if (nrow(df) > 0) {
-          #     for (row in 1:nrow(df)) {
-          #         self$data$lstLast[[df[row,"symbol"]]] = as.list(df[row,])
-          #     }
-          # }
-          # 
-          # if (init) {
-          #     self$data$dfSession = df
-          # } else {
-          #     self$data$dfSession = rbind(self$data$dfSession, df)
-          # }
+          if (!is.null(ids)) {
+              self$data$dfPosGlobal = inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")    
+          }
           invisible(self)
       }
-      ,getGlobalPosition = function() { self$data$dfPosGlobal }
+      #########################################################
+      ### Exported 
+      #########################################################
+      ,getGlobalPosition = function(fiat=FALSE) { 
+         if (fiat) return (self$data$dfPosGlobal)
+         df = self$data$dfPosGlobal
+         df[! df$currency %in% private$fiats,]
+      }
+      ,getOpenCurrencies = function() {
+         df = self$data$dfPosGlobal
+         df = df[!df$currency %in% private$fiats, c("currency", "id")]
+         labels = unlist(YATAWEB$getCTCLabels(df$currency))
+         df$label = labels[df$currency]
+         df
+      }
+      ,getCommarea       = function()     { private$commarea      }
+      ,setCommarea       = function(data) { 
+         tryCatch({
+         private$commarea = data   
+         }
+          , error = function(e) {
+            browser()
+         }   
+         )
+         
+         invisible(self)
+      }
       ,getDFSession      = function() { self$data$dfSession   } 
-#      #,getLatestSession  = function() { self$data$lstLast     }
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() { 
          df = self$data$dfSession
@@ -60,6 +75,10 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
          df = df[,c("symbol", "price","tms")]
          spread(df, symbol, price)
        }
+   )
+   ,private = list(
+      fiats = c("EUR", "USD")
+     ,commarea     = list()
    )
 )
 function(input, output, session) {
@@ -86,7 +105,7 @@ function(input, output, session) {
    # Vamos a usar req para evitar cargar todo
    # "test"
    observeEvent(input$mainMenu,{
-        eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl)")))
+        eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, parent=session)")))
     })
    observeEvent(input$btnKO, { closePanel() })
    observeEvent(input$btnDBChanged, { 
@@ -97,7 +116,7 @@ function(input, output, session) {
       }
       message(factory$getDBName())
       closePanel()
-      eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE)")))
+      eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
    })
    
    # En este observer, cargamos la posicion y las cotizaciones

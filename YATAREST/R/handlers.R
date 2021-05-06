@@ -25,16 +25,12 @@ hist_handler = function(.req, .res) {
        fact = YATACore::YATAFACTORY$new()
        sess = fact$getObject(fact$codes$object$session)
        df   = sess$getHistorical("EUR", id,from,to)
-#       cat(paste("hist OK id: ", id, "from: ", from, "to: ", to))
       .df_handler(df, .res)
     }, error = function(e) {
         message("HIST ERROR")
-        # cat(paste("hist KO id: ", id, "from: ", from, "to: ", to))
-        # cat(e)
-        # cat("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
       .res$set_status_code(500)
-      .res$set_content_type("application/json")
-      .res$set_body(jsonlite::toJSON(e))
+      .res$set_content_type("text/html")
+      .res$set_body("KO")
     }, finally =  {
         fact$clear()
         .res

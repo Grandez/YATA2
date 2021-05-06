@@ -171,13 +171,12 @@ yuiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
                                   ,onInitialize = I('function() { this.setValue(""); }')
                             ))
 }
-yuiSwitch = function(id, value=FALSE, onLbl="Yes", offLbl="No") {
-    switchInput( inputId = id
+yuiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
+    shinyWidgets::switchInput( inputId = id
                 ,onLabel = onLbl ,offLabel = offLbl
                 ,onStatus = "success" ,offStatus = "danger"
                 , value = value, width="auto")
 }
-
 yuiCheck = function(id, value=TRUE) {
   awesomeCheckbox(id, NULL, value = value)
 }
@@ -189,11 +188,11 @@ yuiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
     choice = c("")
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
-    selectInput(id,lbl,choice, size, selectize=FALSE,...)
+    selectInput(id,lbl,choice, size=size, selectize=FALSE,...)
 }
 
 updListBox = function(id, choices, selected=NULL, session=getDefaultReactiveDomain()) {
-    updateSelectInput(session, id, choices = c("base 1"=1, "base 2"=2, "base 3"=3), selected = selected)
+    updateSelectInput(session, id, choices = choices, selected = selected)
   #updateSelectInput(session, id, choices = as.list(choices), selected = selected)
 }
 
@@ -232,28 +231,6 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
 yuiRadio = function(id, label=NULL, choices, selected=NULL) {
    shinyWidgets::awesomeRadio(id,label,choices,selected,inline = TRUE,checkbox = TRUE)
 }
-
-
-
-
-# yuiPlot = function(id)   {
-#   cls  = "yata_plot_nodata"
-#   data = h3(style="padding-top: 16px", "No data selected")
-#   tagList( plotlyOutput(id)
-#           ,hidden(tags$div(id=paste0(id, "_nodata"), class=cls
-#             ,tags$img(src="yata/img/warning.png", width="48px", height="48px", style="margin-right: 32px")
-#             ,data))
-#           )
-# }
-# updPlot = function(plot, id) {
-#   if (is.null(plot)) {
-#       shinyjs::hide(id)
-#       shinyjs::show(paste0(id, "_nodata"))
-#       NULL
-#   } else {
-#       shinyjs::show(id)
-#       shinyjs::hide(paste0(id, "_nodata"))
-#      renderPlotly({plot}) # %>% event_register("plotly_legendclick")
-#   }
-#
-# }
+updRadio = function(id, selected=NULL) {
+   shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)
+}

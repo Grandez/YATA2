@@ -11,17 +11,35 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCameras = function() {
           df = prtPosition$getCameras()
+          df[df$balance != 0,]
           as.list(df[df$camera != "CASH",1])
        }
-       ,getGlobalPosition = function() {
+       ,getGlobalPosition = function(full=FALSE) {
           df = prtPosition$getGlobalPosition()
-          df[df$balance != 0,]
+          if (!full) df = df[df$balance >0,]
+          df
         }
        ,getPosition       = function(camera, currency) { prtPosition$getPosition(camera, currency) }
        ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
            df = prtPosition$getCameraPosition(camera, balance, available)
            df[df$balance != 0,]
        }
+      ,getCurrencyPosition = function(currency) { prtPosition$getCurrencyPosition(currency) }
+      ,getFiatPosition = function(fiat) {
+           oper = factory$getObject(codes$object$operation)
+           cIn  = oper$getOperations(base="EXT")
+           cOut = oper$getOperations(counter="EXT")
+           inv  = getGlobalPosition()
+           inv  = inv[inv$currency != fiat,]
+           list(total = sum(cIn$amount), reimb=sum(cOut$amount) * -1, invest=sum(inv$balance * inv$priceBuy))
+      }
+      ,getHistoryCurrencies = function() {
+         df = prtPosition$table()
+         df = df[!df$currency %in% c("EUR", "USD"),]
+         df = df %>% group_by(currency) %>% summarise(currency, min(since))
+         colnames(df) = c("symbol", "since")
+         df
+      }
       ,getRegularizations = function() { prtPosition$getRegularizations() }
       ,transfer = function(from, to, currency, amount) {
          if (from != "EXT") {

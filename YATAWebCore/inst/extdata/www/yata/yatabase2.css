@@ -641,3 +641,12 @@ navbar-static-top {
   display: flex;
   margin: auto;
 }
+
+.yata_tabset {
+  float: right;
+}
+
+.yata_tabset_item {
+  box-sizing: border-box;
+  cursor: pointer;
+}

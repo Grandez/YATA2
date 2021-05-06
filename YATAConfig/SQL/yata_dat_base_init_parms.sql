@@ -74,7 +74,7 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   
 -- ----------------------------------------------------
 -- Grupo 15 - Motivos
 --   Sub  0 - Comunes a todas
---   Sub  1 - Para compras
+--   Sub  1 - Para compras/posicion
 --   Sub  2 - Para ventas
 --   Sub  3 - Para tomar posicion
 --   Sub  4 - Para cerrar posicion
@@ -89,10 +89,11 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 99, 
                                                                          
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 11,    1, ''    ,  'UP'        );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 12,    1, ''    ,  'SUGGEST'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 13,    1, ''    ,  'TOP'       );
                                                                          
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  2, 21,    1, ''    ,  'DOWN'      );
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  3, 31,    1, ''    ,  'TOP'       );
+
                                                                          
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 41,    1, ''    , 'TARGET'     );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 42,    1, ''    , 'LIMIT'      );
