@@ -84,6 +84,21 @@ YATAPlot = R6::R6Class("YATA.PLOT"
        ,setType = function(type)   { private$info$type = type }
        ,setInfo = function(info)   { private$info = info      }
        ,getInfo = function(info)   { private$info             }
+       ,getSourceNames = function() { names(data) }
+       ,setSourceNames = function(sources) {
+          lapply(names(data), function(source)
+                              private$data[[source]]$visible = ifelse (source %in% source, TRUE, FALSE))
+          invisible(self)
+        }
+       ,getColumnNames = function(source) { colnames(data[[source]]$data)}
+       ,selectSource   = function(source, visible=TRUE) {
+           private$data[[source]]$visible = visible
+           invisible(self)
+       }
+       ,selectColumns  = function(source, columns) {
+         private$data[[source]]$columns = columns
+         invisible(self)
+       }
        ,setScale = function(scale) { private$scale = scale    }
        ,Bar = function(df, ...) {
          trace(df,"bar", mode="group", ...)
@@ -103,7 +118,11 @@ YATAPlot = R6::R6Class("YATA.PLOT"
           invisible(self)
        }
        ,Candlestick = function(df) {
-           candle(df)
+           if (private$current$visible) candle(df)
+           invisible(self)
+       }
+       ,Pie = function(df) {
+           if (private$current$visible) self$plot = plotly::add_pie(plot, labels=df[,1],values=~count)
            invisible(self)
         }
        ,hasData   = function()     { ifelse(length(private$data) == 0, FALSE, TRUE) }
@@ -172,6 +191,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
             ,ui         = ""
             ,changed    = FALSE
          )
+        ,current = NULL
         ,svg   = NULL
         ,scale = NULL
         ,title = NULL
@@ -188,12 +208,18 @@ YATAPlot = R6::R6Class("YATA.PLOT"
             plotly::layout(p, legend = list(orientation = 'h'))
         }
         ,trace = function(df, type, mode, name, ...) {
+            if (!is.null(private$current$visible) && !private$current$visible) return (self$plot)
             names = colnames(df)
             if (info$datavalue == "Variation") {
                 df = rollapply(df[,2:ncol(df)], 2, function(x) ((x[2] / x[1]) - 1) * 100, fill=0,align="right")
             }
             for (col in 2:ncol(df)) {
-               self$plot = plotly::add_trace(plot, x=df[,xAxis],y=df[,col],type=type, mode=mode, name=names[col], ...)
+              if (is.null(private$current$columns) || names[col] %in% private$current$columns) {
+                  self$plot = plotly::add_trace(plot, x=df[,xAxis],y=df[,col]
+                                                    , type=type, mode=mode
+                                                    , name=names[col]
+                                                    , ...)
+              }
             }
             self$plot
         }
@@ -234,6 +260,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
                colnames(df) = c("tms", names(data)[idx])
                df[,xAxis] = applyScale(df[,xAxis])
            }
+           private$current = dat
            eval(parse(text=paste0(info$type, "(df)")))
        }
        ,generatePlot = function(ui=NULL, info=NULL, type=NULL) {

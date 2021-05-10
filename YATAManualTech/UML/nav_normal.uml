@@ -1,0 +1,55 @@
+@startuml
+actor User
+
+User -[#black]> YATA: Access
+activate YATA
+
+box "TAB 1" 
+participant TAB_1
+end box
+
+box "TAB 2" 
+participant TAB_2
+participant tab_21
+participant tab_22
+end box
+
+== TAB 1 ACTIVE ==
+
+YATA -> TAB_1: << default >>
+activate TAB_1
+
+TAB_1 -[#green]->> User: <<page>>
+
+
+User -[#black]> YATA: Click TAB2
+
+deactivate TAB_1
+activate TAB_2
+
+== TAB 2 ACTIVE ==
+
+activate tab_21
+YATA -> TAB_2: Activate
+TAB_2 -> tab_21: <<activate>>
+tab_21 -[#green]->> User: <<page>>
+
+User -[#black]> YATA: Click tab_22
+deactivate tab_21
+activate tab_22
+TAB_2 -> tab_22: <<default>>
+tab_22 -[#green]->> User: <<page>>
+
+User -[#black]> YATA: Click TAB_1
+
+== TAB 1 ACTIVE ==
+
+deactivate tab_22
+deactivate TAB_2
+activate TAB_1
+YATA -> TAB_1: Activate
+
+TAB_1 -[#green]->> User: <<page>>
+
+...
+@enduml

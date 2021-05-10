@@ -110,30 +110,24 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE, parent=NULL) {
        ###########################################################
 
        observeEvent(flags$commarea, ignoreInit = TRUE, {
+           browser()
            carea = pnl$getCommarea()
            carea$pending = FALSE
            pnl$setCommarea(carea)
-           if (carea$action == "buy") {
-#               if (input$pnlOpType == ns("oper")) updateTabsetPanel(session, "pnlOpType", selected=NULL)
-               updateTabsetPanel(session, "pnlOpType", selected=ns("oper"))
-           }
        })       
         
         observeEvent(input$pnlOpType, { 
-           carea = pnl$getCommarea()
-           if (!is.null(carea$action) && carea$pending) {
-               if (carea$action == "buy") {
-                   flags$commarea = isolate(!flags$commarea)
-                   return()
-               }
-           }
-            # Genera dos clicks en el updateTabset
-            if (pnl$vars$panel == input$pnlOpType) return()
-           
-           pnl$vars$panel = input$pnlOpType 
            act = yataActiveNS(input$pnlOpType)
            module = paste0("modOper", titleCase(act),"Server")
-           eval(parse(text=paste0(module, "(act, pnl$vars$panel, pnl,parent=session)")))
+           carea = pnl$getCommarea()
+
+           if (is.null(carea$pending) || !carea$pending) {
+               eval(parse(text=paste0(module, "(act, input$pnlOpType, pnl,parent=session)")))
+           } else {
+               carea$pending = FALSE
+               pnl$setCommarea(carea)
+               updateTabsetPanel(session, "pnlOpType", selected=ns("dummy"))
+           }
         })
     })
     YATAWEB$end("modOperServer")

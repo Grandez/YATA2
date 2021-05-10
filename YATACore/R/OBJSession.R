@@ -21,7 +21,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,setInterval   = function(interval) { private$interval = interval }
        ,getBest       = function(top=10, from=7, group=0) {
             session = tblSession$getLatest()
-            if (nrow(session) == 0) session = updateLatest()
+            if (nrow(session) == 0) session = updateLatest(TRUE)
             session = session[session$volume > 10,] # Solo los que se mueven
             getBestDF(session, top, from, group)
        }
@@ -44,7 +44,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
         ,getLatest = function(currencies) {
             df = private$dfLast
 #            df = tblSession$getLatest()
-            if (nrow(df) == 0) df = updateLatest()
+            if (nrow(df) == 0) df = updateLatest(TRUE)
             if (!missing(currencies)) df = df[df$symbol %in% currencies,]
             df
         }
@@ -66,9 +66,9 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            }
            dfp
        }
-       ,updateLatest = function() {
+       ,updateLatest = function(force=FALSE) {
            res = NULL
-           if (difftime(Sys.time(), lastGet, units="mins") > 15) {
+           if (force || difftime(Sys.time(), lastGet, units="mins") > 15) {
                df = provider$getLatest()
                df[,c("name", "slug")] = NULL
                private$dfLast = df

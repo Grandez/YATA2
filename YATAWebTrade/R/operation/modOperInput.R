@@ -8,6 +8,7 @@ modOperInput = function(id, title) {
 #         ,tabPanel("Historia",    value=ns("hist"),   YATAModule(ns("hist")))
          ,tabPanel("cerrada",            value=ns("detail"),   tags$div(id=ns("detail"), YATAModule(ns("detail"))))
 #         ,tabPanel("Detalle",     value=ns("detail"), YATAModule(ns("detail")))
+         ,tabPanel("",  value=ns("dummy"),"")
       )
 
     )

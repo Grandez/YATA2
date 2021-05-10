@@ -1,10 +1,11 @@
 yuiDataTable = function(id) { DT::dataTableOutput(id) }
 
-yuiTable = function(id) { reactableOutput(id) }
-updTable         = function(data) { renderReactable({ .updTable(data, NULL)       })}
-updTableSingle   = function(data) { renderReactable({ .updTable(data, "single")   })}
-updTableMultiple = function(data) { renderReactable({ .updTable(data, "multiple") })}
-updTbl           = function(data) { .updTable(data, "multiple") }
+yuiTable          = function(id)   { reactableOutput(id) }
+updTable          = function(data) { renderReactable({ .updTable(data, NULL)       })}
+updTableSingle    = function(data) { renderReactable({ .updTable(data, "single")   })}
+updTableMultiple  = function(data) { renderReactable({ .updTable(data, "multiple") })}
+updTbl            = function(data) { .updTable(data, "multiple") }
+updTableSelection = function(table, sel) { updateReactable(table, selected = sel) }
 .updTable = function(data, selection) {
    click = NULL
    .makeScript = function(info) {
@@ -12,7 +13,7 @@ updTbl           = function(data) { .updTable(data, "multiple") }
        tgt = info$event
        if (!is.null(info$target)) tgt = info$target
        click = paste0("function(rowInfo, colInfo) {"
-                      ,"window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.row, null, 2));"
+#                      ,"window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.row, null, 2));"
                       ,"yataTableclick (rowInfo, colInfo, '", info$event, "', '", tgt, "');"
                       ,"}")
 
@@ -33,7 +34,8 @@ updTbl           = function(data) { .updTable(data, "multiple") }
     if (!is.null(info$buttons) && length(info$buttons) > 0) {
         buttons = lapply(info$buttons, function(btn) {
                          do.call(colDef, list( name = "", sortable = FALSE
-                                              ,style=list(`text-align` = "right")
+                                              ,width = 48
+                                              ,style=list(`text-align` = "center")
                                               ,cell = function() btn))
         })
         if (is.null(names(info$buttons))) {

@@ -225,6 +225,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            to = Sys.Date()
            from = since - as.difftime(7, unit="days")
 #           YATAWEB$log("hist: %d - %s - %s", id,from,to)
+           df = restdfsync("hist",id=id,from=from,to=to)
            renderPlot(restdfsync("hist",id=id,from=from,to=to), symbol)
            # restdf("hist",id=id,from=from,to=to) %>%
            #        then( renderPlot(df)

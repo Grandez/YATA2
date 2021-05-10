@@ -18,34 +18,15 @@ modHistSummServer = function(id, full, pnlParent, parent) {
                self$data$texts = list()
            }
            ,loadData = function() {
+               
               df   = self$position$getGlobalPosition(TRUE)
               self$data$dfGlobal = df[df$currency != "EUR",]
+              
+              df = self$operations$getOperations()
+              df = df[df$camera != "XFER",]
+              self$data$dfOper = df
+              
            }
-         ,prepareClosed = function() {
-             df = private$prepare(self$data$dfClosed)
-             df[,c("status", "parent")] = list(NULL)    
-             # dfOut = self$data$dfSell[,c("parent", "amount", "price")]
-             # colnames(dfOut) = c("id","amountOut", "priceOut")
-             # 
-             # df = inner_join(df, dfOut, by="id")
-             # df$amountOut = abs(df$amountOut)
-             df = df[,c("camera", "counter", "amountIn", "priceIn", "amount", "price", "amountOut", "priceOut")]
-             df$revenue = (df$priceOut / df$price) - 1
-             df$profit = df$amountOut * (df$priceOut - df$price)
-             
-             
-#             df = df[,c()]
-             df
-             
-         }
-         ,prepareExec = function(input) {
-             df = self$data$dfExec
-             if (!input$chkCancelled) df = df[df$status != self$codes$status$cancelled,]
-             if (!input$chkCancelled) df = df[df$status != self$codes$status$rejected, ]
-             if (!input$chkSon)    df = df[df$parent != 0, ]
-             df = private$prepare(df)
-             df[,-1]
-         }
      )
       ,private = list(
           prepare = function(df) {
@@ -66,17 +47,32 @@ modHistSummServer = function(id, full, pnlParent, parent) {
       flags = reactiveValues(
           refresh = FALSE
       )
-      
+      prepareRevenue = function() {
+          df = pnl$data$dfOper
+          df = df[,c("type", "camera","base", "counter", "amount", "price", "tms")]
+          df$tms = as.Date(df$tms)
+          df = df %>% arrange(tms, type)
+          list(df=df)
+      }
+      renderPie = function() {
+         #JGG Ajustar LABEL.RANK.X
+          df = pnl$data$dfOper %>% group_by(rank) %>% summarize(count = n())
+          plt = plotly::plot_ly()
+          plt = plt %>% add_pie(data=df, labels=~rank, values=~count)
+           output$plotRank = plotly::renderPlotly({plt})
+      }
+      renderRevenue = function() {
+          data = prepareRevenue()
+          output$tblRevenue = updTable(data)
+      }
        ###########################################################
        ### Reactives
        ###########################################################
 
        observeEvent(flags$refresh, ignoreInit = TRUE, {
-           browser()
            YATAWEB$beg("flags$refresh")
            df = pnl$data$dfGlobal
            dfs = (df$priceSell / df$priceBuy) - 1
-           browser()
            YATAWEB$end("flags$refresh")
        })       
       refresh = function() {
@@ -87,6 +83,8 @@ modHistSummServer = function(id, full, pnlParent, parent) {
            output$plotRevenue = plot$render()
            # El otro grafico
            # Por cada dia, el saldo en eur, el valor, y el resultado
+           renderPie()
+           renderRevenue()
            YATAWEB$end("flags$refresh")
           
       }
@@ -103,9 +101,9 @@ modHistSummServer = function(id, full, pnlParent, parent) {
 #       )))      
 # 
       if (!pnl$loaded) {
-          browser()
           pnl$loadData()
           flags$refresh = isolate(!flags$refresh)
+          
           refresh()
           pnl$loaded = TRUE
       }

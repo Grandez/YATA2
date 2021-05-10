@@ -21,7 +21,7 @@ modOperPosInput = function(id, title) {
       #     ,tags$div(id=ns("data"), style="width: 100%;"
                    ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  
                      # yuiDataTable(ns("tblOpen"))
-                            reactableOutput(ns("tblOpen"))
+                            yuiTable(ns("tblOpen"))
                            ,hidden(tags$span(id=ns("noOpen"), noOpen))
                    ))
                    ,hidden(fluidRow(id=ns("divPend")

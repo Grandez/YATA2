@@ -41,7 +41,10 @@ modOperOperServer = function(id, full, pnl, parent) {
               cant = 1000 / carea$data$price
               rnd =  ifelse(carea$data$price > 1000, 3, 0)
               updNumericInput("impAmount", value=round(cant, rnd))
-              if (op != 0) updCombo("cboOper", selected=op)
+              if (op != 0) {
+                 updCombo("cboOper", selected=op)
+                 updCombo("cboCounter", choices=data, selected=selc)
+              }
           }
           if (index == 1 && !is.null(carea$pending)) {
               pnl$setCommarea(list())
@@ -49,7 +52,6 @@ modOperOperServer = function(id, full, pnl, parent) {
       }
       observeEvent(input$cboOper, {
           YATAWEB$beg("cboOper")
-
          if (input$cboOper != pnl$codes$oper$sell) {
              data = pnl$makeCombo(pnl$getCounters())
          }
@@ -82,9 +84,7 @@ modOperOperServer = function(id, full, pnl, parent) {
           YATAWEB$beg("cboCamera")
           pnl$vars$inEvent = FALSE
           dfPos = pnl$position$getCameraPosition(input$cboCamera, available = TRUE) 
-          # SI es compra, necesito un fiat
-          # Si es venta, no es fiat
-#          data = pnl$cboCurrency(input$cboCamera, TRUE)
+          # SI es compra, necesito un fiat,  Si es venta, no es fiat
           updCombo("cboBase", choices=pnl$cboCurrency(input$cboCamera, TRUE))
           pnl$cameras$select(input$cboCamera)
           fee = pnl$cameras$current$taker

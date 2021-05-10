@@ -38,6 +38,12 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.PLOT.M
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.PLOT.AUX"      ,"XX", "XX"     , "Aux  Plot"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.OPER.SHOW"     ,"XX", "XX"     , "Show operations"                              );
 
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.0"        ,"XX", "XX"     , "Fallida"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.1"        ,"XX", "XX"     , "Mala"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.2"        ,"XX", "XX"     , "Neutra"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.3"        ,"XX", "XX"     , "Buena"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.4"        ,"XX", "XX"     , "Exito"                                        );
+
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "OPER.MAKE.OPER"      ,"XX", "XX"     , "Posicion abierta. Pendiente aceptacion"       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "OPER.MAKE.BUY"       ,"XX", "XX"     , "Compra registrada. Pendiente aceptacion"      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "OPER.MAKE.SELL"      ,"XX", "XX"     , "Venta registrada. Pendiente aceptacion"       );
@@ -66,7 +72,8 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.RE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.SUBTOTAL"   ,"XX", "XX"     , "Subtotal"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.INVEST"     ,"XX", "XX"     , "Invertido"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.AVAILABLE"  ,"XX", "XX"     , "Disponible"                                   );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.VALUE"      ,"XX", "XX"     , "Value"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.VALUE"      ,"XX", "XX"     , "Valor"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.FIAT.ACT"        ,"XX", "XX"     , "Posicion"                                     );
 
 -- 1 = Operaciones
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1,  "1"        ,"XX", "XX"     , "Posicion"        );

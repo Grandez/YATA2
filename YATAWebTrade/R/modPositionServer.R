@@ -104,6 +104,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
            if (is.null(df)) return()
            df = cbind(df, day=0, week=0, month=0)
            self$data$dfGlobal = df
+           self$vars$selected[["PosGlobal"]] = df$currency
            cameras = self$position$getCameras()
            self$data$position = lapply(cameras,
                      function(camera) {df = self$position$getCameraPosition(camera)
@@ -162,7 +163,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
 #       YATAWEB$beg("Position Server")
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(session))
-       
+
        flags = reactiveValues(
             position  = FALSE
            ,best      = FALSE
@@ -172,6 +173,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
            ,plotsBest = FALSE
            ,plotPos   = FALSE
            ,table     = FALSE
+           ,tablePos  = FALSE
            ,tab       = FALSE
        )
        initPage = function() {
@@ -214,6 +216,9 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
                data = preparePosition(pnl$data$dfGlobal, "PosGlobal")
                if (!is.null(data$df)) {
                    output$tblPosGlobal = updTableMultiple(data)
+                   sel = c(which(data$df$currency %in% pnl$vars$selected[["PosGlobal"]]))
+                   updTableSelection("tblPosGlobal", sel)
+                   #updateReactable("tblPosGlobal", selected = sel)
                }
            }
            cameras = pnl$data$position  
@@ -292,6 +297,36 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
                flags$plotsBest = isolate(!flags$plotsBest)
            }       
        })
+       observeEvent(flags$tablePos, ignoreInit = TRUE, {
+           table = "PosGlobal"
+           row   = pnl$vars$table$row
+           df    = pnl$data$dfGlobal
+
+           # Update table
+           symbol = df[row,"currency"]
+           id     = df[row,"id"]
+           sel = pnl$vars$selected[[table]]
+           if (!is.null(sel)) {
+               idx = which(sel == symbol)
+               if (length(idx) > 0) sel = sel[-idx]
+               else                 sel = c(sel, symbol)
+           } else {
+               sel = c(symbol)
+           }
+           pnl$vars$selected[[table]] = sel               
+           updTableSelection(paste0("tbl", table),c(which(df$currency %in% sel)))
+
+           # Update plot
+           plot = pnl$plots[["plotSession"]]
+           data = plot$getSourceNames()
+           names = plot$getColumnNames(data)
+           plot$selectColumns(data, pnl$vars$selected[["PosGlobal"]])
+           renderPlotSession()
+           plot = pnl$plots[["plotHist"]]
+           plot$setSourceNames(pnl$vars$selected[["PosGlobal"]])
+           output$plotHist = plot$render()
+       })
+       
        observeEvent(flags$tab, ignoreInit = TRUE, {
            table = pnl$vars$table$target
            row   = pnl$vars$table$row
@@ -333,9 +368,10 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
            if(!plot$hasSource(flags$plotPos)) {
                df = pnl$getHistory(name)
                if (!is.null(df)) {
-                   output$plotHist = plot$addData(df, name, "pepe")$render("plotHist")    
+                   plot$addData(df, name, "pepe")
                }
            }
+           output$plotHist = plot$render("plotHist")    
            YATAWEB$end("plotPos")
        })
 
@@ -392,11 +428,12 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
           YATAWEB$end("renderBest")
        }
        renderPlotSession = function(uiPlot) {
-          if (pnl$vars$sessionChanged) {
+#          if (pnl$vars$sessionChanged) {
               plot = pnl$plots[["plotSession"]]
+              plot$setType("Line")
               plot$setData(pnl$data$dfSession)
               output$plotSession = plot$render()
-          }
+#          }
        }
        
       #####################################################
@@ -433,7 +470,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
       observeEvent(input$tablePos, {
            pnl$vars$table = input$tablePos
            if (!startsWith(input$tablePos$colName, "Button")) {
-               flags$table = isolate(!flags$table)
+               flags$tablePos = isolate(!flags$tablePos)
            } else {
                flags$tab = isolate(!flags$tab)
            }

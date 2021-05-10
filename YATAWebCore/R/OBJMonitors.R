@@ -19,31 +19,27 @@ OBJMonitors = R6::R6Class("YATA.WEB.MONITORS"
           initMonitors()
      }
      ,render = function(size=2) {
-       mons = tags$div(class="yata_monitors")
-       mons = tagAppendChildren(mons, lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size)))
-       eur = tags$div(class="yata_tbl_monitor_fiat", tablePosition())
-
-#       ui = lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size))
-
-       insertUI( selector = idDiv, immediate=TRUE, where = "beforeEnd",ui=tagList(mons, eur))
-        # lapply(monitors$keys(), function(x) insertUI( selector = idDiv, immediate=TRUE
-        #                                    ,where = "beforeEnd"
-        #                                    ,ui=tagList(renderMonitor(monitors$get(x), size))))
-       #,tags$div(tablePosition()))
+        mons = tags$div(class="yata_monitors")
+        mons = tagAppendChildren(mons, lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size)))
+        eur = tags$div(class="yata_tbl_monitor_fiat", tablePosition())
+        insertUI( selector = idDiv, immediate=TRUE, where = "beforeEnd",ui=tagList(mons, eur))
         update(TRUE)
      }
      ,update = function(first=FALSE) {
          ctc = monitors$keys()
          private$last = sess$getLatest(ctc)
          updateData = function(sym) {
-            lst = as.list(private$last[private$last$symbol == sym,])
-            mon  = monitors$get(sym)
-            updateMonitor(mon, lst)
-            mon = list.merge(mon, lst)
-            monitors$put(sym, mon)
+             if (nrow(private$last[private$last$symbol == sym,]) == 1) {
+                 last = as.list(private$last[private$last$symbol == sym,])
+                  mon  = monitors$get(sym)
+                  updateMonitor(mon, last)
+                  mon = list.merge(mon, last)
+                  monitors$put(sym, mon)
+             }
          }
          lapply(ctc, function(sym) updateData(sym))
          data = pos$getFiatPosition("EUR")
+         data$invest = round(data$invest)
          updateFiat(data)
 
      }
@@ -161,8 +157,13 @@ OBJMonitors = R6::R6Class("YATA.WEB.MONITORS"
            )
            ,tags$tr(
               tags$td(class=clsLbl, msg$get("MON.FIAT.VALUE"))
-             ,tags$td(class=clsData, id=paste0(base,"VALUE"))
+             ,tags$td(class=clsData, id=paste0(base,"value"))
            )
+           ,tags$tr(
+              tags$td(class=clsLbl, msg$get("MON.FIAT.ACT"))
+             ,tags$td(class=clsData, id=paste0(base,"act"))
+           )
+
           # ,tags$tr(
           #     tags$td(style="padding-bottom: 6px;", class="yata_cell_ctc", substr(data$name, 1, 12))
           #    ,tags$td(colspan="2", class="yata_cell_data yata_cell_group", style="padding-bottom: 6px;", id=paste0(idMon,"_last"))
