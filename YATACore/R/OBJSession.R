@@ -81,7 +81,6 @@ OBJSession = R6::R6Class("OBJ.SESSION"
                df = inner_join(df, df2, by="id")
                df$symbol = df$symbol.y
                df = df[,-ncol(df)]
-               browser()
                tryCatch({tblSession$update(df) ; res = df }
                        ,error = function(e) { stop(paste("Fallo en el update", e)) })
           }

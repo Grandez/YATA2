@@ -128,6 +128,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
        ,hasData   = function()     { ifelse(length(private$data) == 0, FALSE, TRUE) }
        ,hasSource = function(name) { !is.null(data[[name]]) }
        ,setData   = function(df, name, add=FALSE)   {
+           if (is.null(df)) return (invisible(self))
            dftype = "Value"
            if (missing(name)) name = paste0("data", length(private$data))
            if (ncol(df) > 3 && sum(colnames(df) %in% c("high", "low", "open", "close")) > 0) {
@@ -145,6 +146,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            invisible(self)
        }
        ,addData = function(df, name, ui) {
+          if (is.null(df)) return(invisible(self))
            dftype = "Value"
            private$info$datasource = "value"
            if (missing(name)) name = paste0("data", length(private$data))
