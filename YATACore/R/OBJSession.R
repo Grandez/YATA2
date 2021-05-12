@@ -10,13 +10,13 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            super$initialize(factory)
            name = "session"
            #JGG Especial
-           private$provider        = factory$getProvider("MKTCAP", "MarketCap")
+           private$provider      = factory$getProvider("MKTCAP", "MarketCap")
            private$tblSession    = factory$getTable(codes$tables$Session)
            private$tblCurrencies = factory$getTable(codes$tables$Currencies)
-           private$tblExch    = factory$getTable(codes$tables$Exchanges)
-           private$lastGet    = tblSession$getLastUpdate()
-           private$interval   = 15
-           private$dfLast     = tblSession$getLatest()
+           private$tblExch       = factory$getTable(codes$tables$Exchanges)
+           private$lastGet       = as.integer(tblSession$getLastUpdate())
+           private$interval      = 15
+           private$dfLast        = tblSession$getLatest()
        }
        ,setInterval   = function(interval) { private$interval = interval }
        ,getBest       = function(top=10, from=7, group=0) {
@@ -68,13 +68,23 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        }
        ,updateLatest = function(force=FALSE) {
            res = NULL
-           if (force || difftime(Sys.time(), lastGet, units="mins") > 15) {
+           if (force || (as.integer(Sys.time()) - lastGet) > 900) {
+               # Puede haber nombre duplicados
                df = provider$getLatest()
                df[,c("name", "slug")] = NULL
                private$dfLast = df
+               df1 = df[,c("id", "symbol")]
+               ctc = tblCurrencies$table()
+               df2 = ctc[,c("id", "symbol")]
+               dfs = inner_join(df1, df2, by="id")
+               df2 = dfs[,c(1,3)]
+               df = inner_join(df, df2, by="id")
+               df$symbol = df$symbol.y
+               df = df[,-ncol(df)]
+               browser()
                tryCatch({tblSession$update(df) ; res = df }
                        ,error = function(e) { stop(paste("Fallo en el update", e)) })
-           }
+          }
            res
         }
     )

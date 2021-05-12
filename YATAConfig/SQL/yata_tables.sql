@@ -175,6 +175,8 @@ CREATE TABLE FLOWS  (
 -- );
 -- 
 
+-- SYMBOL puede estar repetido
+-- Se debe machear contra currencies
 DROP TABLE  IF EXISTS SESSION;
 CREATE TABLE SESSION  (
     ID        INTEGER       NOT NULL
@@ -195,7 +197,7 @@ CREATE TABLE SESSION  (
    ,TURNOVER  DOUBLE
    ,TMS       TIMESTAMP     NOT NULL
    ,PRIMARY KEY (ID, TMS)
-   ,UNIQUE  KEY (SYMBOL, TMS)
+--   ,UNIQUE  KEY (SYMBOL, TMS)
    ,INDEX       (SYMBOL)
 );
 

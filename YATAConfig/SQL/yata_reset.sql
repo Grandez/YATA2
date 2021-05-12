@@ -5,6 +5,7 @@
    use YATABase;
    source yata_tables_base.sql;
    source yata_dat_base_init.sql;
+   source currencies.sql;
    commit;
 
 -- -------------------------------------------------------------------

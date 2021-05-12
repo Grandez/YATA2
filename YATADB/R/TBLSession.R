@@ -13,8 +13,10 @@ TBLSession = R6::R6Class("TBL.SESSION"
           }
           ,getLastUpdate = function() {
               df = queryRaw("SELECT TMS FROM SESSION_CTRL")
-              if (nrow(df) == 0) df = sql("SELECT MAX(TMS) AS TMS")
-              if (nrow(df) == 0) return(as.POSIXct(0, origin="1970-01-01"))
+              if (nrow(df) == 0) {
+                  df = sql("SELECT MAX(TMS) AS TMS")
+                  if (is.na(df)) return(as.POSIXct(0, origin="1970-01-01"))
+              }
               df[1,1]
            }
           ,getLatest     = function() {
