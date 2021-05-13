@@ -29,7 +29,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
              self$monitors = OBJMonitors$new(ns("monitor"), self, YATAWEB)
              if (!is.null(self$data$dfGlobal)) {
                  ctc = self$data$dfGlobal$currency
-                 self$data$dfSession = self$session$getPrices(ctc)
+                 self$data$dfSession = self$session$getSessionPrices(ctc)
                  self$vars$sessionChanged = TRUE
              }
              
@@ -42,7 +42,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
              self$vars$sessionChanged = FALSE
              lastr = nrow(self$data$dfSession)
              lastc = ncol(self$data$dfSession)
-             dfLast = self$session$getPrices(self$data$dfGlobal$currency)
+             dfLast = self$session$getSessionPrices(self$data$dfGlobal$currency)
              if (is.null(self$data$dfSession) || nrow(self$data$dfSession) == 0) {
                  self$data$dfSession = dfLast
                  self$vars$sessionChanged = ifelse(is.null(dfLast), FALSE, TRUE)
@@ -316,11 +316,11 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
            pnl$vars$selected[[table]] = sel               
            updTableSelection(paste0("tbl", table),c(which(df$currency %in% sel)))
 
-           # Update plot
+           # Update plots
            plot = pnl$plots[["plotSession"]]
            data = plot$getSourceNames()
            names = plot$getColumnNames(data)
-           plot$selectColumns(data, pnl$vars$selected[["PosGlobal"]])
+           plot$selectColumns("session", pnl$vars$selected[["PosGlobal"]])
            renderPlotSession()
            plot = pnl$plots[["plotHist"]]
            plot$setSourceNames(pnl$vars$selected[["PosGlobal"]])
@@ -412,7 +412,7 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
       }
        renderBestTables = function() {
           YATAWEB$beg("renderBest")
-          period = c("Hora", "Semana", "Dia", "Mes")
+          period = c("Hora", "Dia", "Semana", "Mes")
           lbl = period[as.integer(input$cboBestFrom)]
 
           output$lblBest = updLabelText(paste("Mejores", lbl))
@@ -430,8 +430,8 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
        renderPlotSession = function(uiPlot) {
 #          if (pnl$vars$sessionChanged) {
               plot = pnl$plots[["plotSession"]]
-              plot$setType("Line")
-              plot$setData(pnl$data$dfSession)
+              plot$setType("Marker")
+              plot$setData(pnl$data$dfSession, "session", TRUE)
               output$plotSession = plot$render()
 #          }
        }
@@ -511,10 +511,15 @@ modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
      ### Timers                                        ###
      #####################################################
 
-     if (!pnl$loaded || pnl$isInvalid(pnl$id)) {
+     carea = pnl$getCommarea()  
+     if (!pnl$loaded || carea$position) {
           yuiLoading()
           pnl$loadData()
           initPage()
+          if (carea$position) {
+              carea$position = FALSE
+              pnl$setCommarea(carea)
+          }
           yuiLoaded()
      }       
 

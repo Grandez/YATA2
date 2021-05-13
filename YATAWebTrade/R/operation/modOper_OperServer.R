@@ -27,6 +27,57 @@ modOperOperServer = function(id, full, pnl, parent) {
           updNumericInput("impPrice" , value=0)
           updTextArea("comment", "")
       }
+      updateCboCounter = function() {
+         pnl$vars$reloadCounter = FALSE 
+         if (input$cboOper != pnl$codes$oper$sell) {
+             data = pnl$makeCombo(pnl$getCounters())
+             tmp = pnl$vars$counter
+             if (is.null(tmp) || tmp == "sell") pnl$vars$reloadCounter = TRUE
+             pnl$vars$counter = "buy"
+         }
+         else {
+             df = pnl$getCurrenciesSell()
+             if (nrow(df) == 0) {
+                 data = c("No hay posiciones"="")
+             } else {
+                 data=pnl$makeCombo(df)
+             }
+             tmp = pnl$vars$counter
+             if (is.null(tmp) || tmp == "buy") pnl$vars$reloadCounter = TRUE
+             pnl$vars$counter = "sell"
+         }
+         carea = pnl$getCommarea()
+         selc = NULL
+         selr = 0
+         if (!is.null(carea$pending)) {
+             selc = carea$data$symbol
+             selr = 15
+         }
+         if (pnl$vars$reloadCounter) {
+             updCombo("cboCounter", choices=data, selected=selc)    
+         } else {
+             updCombo("cboCounter", selected=selc)
+         }
+         
+         updCombo("cboReasons", choices = pnl$cboReasons(input$cboOper), selected=selr)
+         activeButtons()
+         processCommarea(1)
+          
+      }
+      updateSummary = function() {
+         output$lblAvailable = updLabelNumber(round(pnl$vars$available)) 
+         if (is.na(input$impAmount) || is.na(input$impPrice)) return()
+         imp  = input$impAmount * input$impPrice
+         iFee = imp * fee / 100
+         iTotal = imp + iFee
+         output$lblImp     = updLabelNumber(round(imp))
+         output$lblFee     = updLabelNumber(iFee)
+         output$lblTotBase = updLabelNumber(round(iTotal))
+         output$lblFeeImp  = updLabelNumber(0)
+         output$lblGas     = updLabelNumber(0)
+         output$lblTotCounter   = updLabelNumber(input$impAmount)
+         output$lblNewAvailable = updLabelNumber(round(pnl$vars$available - iTotal))
+      }
       # df = pnl$getCounters()
       # updCombo("cboCounter",    choices=pnl$makeCombo(df))
 
@@ -43,7 +94,7 @@ modOperOperServer = function(id, full, pnl, parent) {
               updNumericInput("impAmount", value=round(cant, rnd))
               if (op != 0) {
                  updCombo("cboOper", selected=op)
-                 updCombo("cboCounter", choices=data, selected=selc)
+                  updateCboCounter()
               }
           }
           if (index == 1 && !is.null(carea$pending)) {
@@ -52,24 +103,7 @@ modOperOperServer = function(id, full, pnl, parent) {
       }
       observeEvent(input$cboOper, {
           YATAWEB$beg("cboOper")
-         if (input$cboOper != pnl$codes$oper$sell) {
-             data = pnl$makeCombo(pnl$getCounters())
-         }
-         else {
-             df = pnl$getCurrenciesSell()
-             if (nrow(df) == 0) {
-                 data = c("No hay posiciones"="")
-             } else {
-                 data=pnl$makeCombo(df)
-             }
-         }
-         carea = pnl$getCommarea()
-         selc = ifelse (is.null(carea$pending), NULL, carea$data$symbol) 
-         selr = ifelse (is.null(carea$pending), 0, 15) 
-         updCombo("cboCounter", choices=data, selected=selc)
-         updCombo("cboReasons", choices = pnl$cboReasons(input$cboOper), selected=selr)
-         activeButtons()
-         processCommarea(1)
+          updateCboCounter()
          YATAWEB$end("cboOper")
       }, ignoreInit = TRUE)
 
@@ -92,29 +126,18 @@ modOperOperServer = function(id, full, pnl, parent) {
           YATAWEB$end("cboCamera")
       },ignoreInit = TRUE)   
       observeEvent(input$cboBase, {
-          YATAWEB$beg("cboBase")
+         YATAWEB$beg("cboBase")
          pnl$vars$inEvent = FALSE
          pnl$vars$available = 0
-         df = pnl$position$getPosition(input$cboCamera, input$cboBase) 
+         df = pnl$position$getPosition(input$cboCamera, input$cboBase)
          if (nrow(df) != 0) pnl$vars$available = df[1,"available"]
-         output$lblAvailable = updLabelNumber(pnl$vars$available)
-         output$lblNew       = updLabelNumber(pnl$vars$available)
+         updateSummary()
          YATAWEB$end("cboBase")
       })
       observeEvent(input$impAmount | input$impPrice, {
           YATAWEB$beg("cboImp")
           pnl$vars$inEvent = FALSE
-          if (!is.na(input$impAmount) && !is.na(input$impPrice)) {
-             if (input$impAmount != 0 && input$impPrice != 0) {
-                 imp  = input$impAmount * input$impPrice
-                 iFee = imp * fee / 100
-                 iTotal = imp + iFee
-                 output$lblImp     = updLabelNumber(imp)
-                 output$lblFeeImp  = updLabelNumber(iFee)
-                 output$lblTotBase = updLabelNumber(iTotal)
-                 output$lblNew     = updLabelNumber(pnl$vars$available - iTotal)
-             } 
-          }
+          updateSummary()
           YATAWEB$end("cboImp")
       },ignoreInit = TRUE, ignoreNULL = TRUE)
       observeEvent(input$operBtnOK, {
@@ -162,6 +185,10 @@ modOperOperServer = function(id, full, pnl, parent) {
              pnl$valid = FALSE
              msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
              yataMsgSuccess(ns2("operMsg"), pnl$MSG$get(msgKey))
+             carea = pnl$getCommarea()
+             carea$position = TRUE
+             pnl$setCommarea(carea)
+
              resetValues()
           }
       }, ignoreInit = TRUE)

@@ -37,12 +37,14 @@ modOperOperInput = function(id, title="") {
         ,yuiColumn(3
             , fluidRow(h2("Resumen"))
             ,fluidRow(tags$table(
-                 tags$tr(tags$td("Disponible"),   tags$td(yuiLabelNumeric(ns("lblAvailable"))), tags$td(yuiLabelNumeric(ns("lblNew"))))
-                ,tags$tr(tags$td("Importe",       tags$td("")                                 , tags$td(yuiLabelNumeric(ns("lblImp"))))
-                ,tags$tr(tags$td("Comision"),     tags$td( yuiLabelNumeric(ns("lblFee")))     , tags$td(yuiLabelNumeric(ns("lblFeeImp"))))
-                ,tags$tr(tags$td("Gas"),          tags$td( yuiLabelNumeric(ns("lblGas")))     , tags$td(yuiLabelNumeric(ns("lblGasImp"))))
-                ,tags$tr(tags$td("Total Base"),   tags$td(""))                                , tags$td(yuiLabelNumeric(ns("lblTotBase"))))
-                ,tags$tr(tags$td("Total Counter"),tags$td(""))                                , tags$td(yuiLabelNumeric(ns("lblTotCounter"))))
+                 tags$tr(tags$td("Disponible"),   tags$td(yuiLabelNumeric(ns("lblAvailable"))))
+                ,tags$tr(tags$td("Importe"),      tags$td(yuiLabelNumeric(ns("lblImp"))))
+                ,tags$tr(tags$td("Comision"),     tags$td(yuiLabelNumeric(ns("lblFeeImp"))))
+                ,tags$tr(tags$td("Gas"),          tags$td(yuiLabelNumeric(ns("lblGas"))))
+                ,tags$tr(tags$td("Total Base"),   tags$td(yuiLabelNumeric(ns("lblTotBase"))))
+                ,tags$tr(tags$td("Total Counter"),tags$td(yuiLabelNumeric(ns("lblTotCounter"))))
+                ,tags$tr(tags$td("Disponibe")    ,tags$td(yuiLabelNumeric(ns("lblNewAvailable"))))
+                )
            )
 
             )

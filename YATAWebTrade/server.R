@@ -57,16 +57,9 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,getCommarea       = function()     { private$commarea      }
       ,setCommarea       = function(data) { 
-         tryCatch({
-         private$commarea = data   
-         }
-          , error = function(e) {
-            browser()
-         }   
-         )
-         
-         invisible(self)
-      }
+          private$commarea = data  
+          invisible(self)
+       }
       ,getDFSession      = function() { self$data$dfSession   } 
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() { 
@@ -78,7 +71,9 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
    ,private = list(
       fiats = c("EUR", "USD")
-     ,commarea     = list()
+     ,commarea     = list(
+        position = FALSE
+     )
    )
 )
 function(input, output, session) {

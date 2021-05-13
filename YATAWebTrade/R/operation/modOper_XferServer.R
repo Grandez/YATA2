@@ -1,5 +1,6 @@
 modOperXferServer = function(id, full, pnl, parent) {
    ns = NS(id)
+   ns2 = NS(full)
    moduleServer(id, function(input, output, session) {
        validate = function() {
           res = FALSE
@@ -22,16 +23,17 @@ modOperXferServer = function(id, full, pnl, parent) {
               updCombo("cboCurrency", choices=pnl$cboCurrency(input$cboFrom, available=TRUE))
          }
        }, ignoreInit = TRUE)
-       observeEvent(input$btnKO, { output$msg = renderText({""}); reset() })
-       observeEvent(input$btnOK, {
+       observeEvent(input$operBtnKO, { 
+          output$msg = renderText({""}); reset() })
+       observeEvent(input$operBtnOK, {
           if (validate()) return()
           res = pnl$operation(type = pnl$codes$oper$xfer, from=input$cboFrom, to=input$cboTo
                                                         , amount=input$impAmount
                                                         , currency=input$cboCurrency)
           if (res) output$msg = updMessageKO(full, YATAWEB$MSG$get("XFER.KO"))
           if (!res) {
-              output$msg = updMessageOK(full, YATAWEB$MSG$get("XFER.OK"))
-              reset()
+              yataMsgSuccess(ns2("operMsg"), pnl$MSG$get("XFER.OK"))
+             reset()
           }
       })
   })

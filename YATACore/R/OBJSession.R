@@ -66,6 +66,11 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            }
            dfp
        }
+       ,getSessionPrices = function(currencies) {
+           df = getPrices(currencies)
+           df[df$tms > as.POSIXct(Sys.Date()),]
+       }
+
        ,updateLatest = function(force=FALSE) {
            res = NULL
            if (force || (as.integer(Sys.time()) - lastGet) > 900) {

@@ -86,8 +86,8 @@ YATAPlot = R6::R6Class("YATA.PLOT"
        ,getInfo = function(info)   { private$info             }
        ,getSourceNames = function() { names(data) }
        ,setSourceNames = function(sources) {
-          lapply(names(data), function(source)
-                              private$data[[source]]$visible = ifelse (source %in% source, TRUE, FALSE))
+          lapply(names(data), function(src)
+                              private$data[[src]]$visible = ifelse (src %in% sources, TRUE, FALSE))
           invisible(self)
         }
        ,getColumnNames = function(source) { colnames(data[[source]]$data)}
@@ -96,7 +96,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            invisible(self)
        }
        ,selectColumns  = function(source, columns) {
-         private$data[[source]]$columns = columns
+         if (!is.null(private$data[[source]])) private$data[[source]]$columns = columns
          invisible(self)
        }
        ,setScale = function(scale) { private$scale = scale    }
@@ -136,7 +136,11 @@ YATAPlot = R6::R6Class("YATA.PLOT"
                    private$info$datasource = "session"
            }
            if (add) {
-               private$data[[name]] = list(source=dftype, data=df)
+               if (is.null(private$data[[name]])) {
+                   private$data[[name]] = list(source=dftype, data=df)
+               } else {
+                   private$data[[name]]$data = df
+               }
            }
            else     {
                private$data = list(list(source=dftype, data=df))
