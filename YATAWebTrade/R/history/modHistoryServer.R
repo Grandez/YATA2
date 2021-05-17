@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modHistServer <- function(id, full, pnlParent, invalidate=FALSE, parent=NULL) {
+modHistServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLHist = R6::R6Class("PNL.HISTORY"
       ,inherit = YATAPanel

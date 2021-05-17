@@ -24,8 +24,15 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.ACCEP
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.CANCEL"         ,"XX", "XX"     , "Operacion cancelada"                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "REASON.REJECT"         ,"XX", "XX"     , "Operacion rechazada"                       );
 
+-- -------------------------------------------------------------------------------------------------------
+-- Titulos de ventanas, cajas, titulos en si
+-- -------------------------------------------------------------------------------------------------------
+
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.CURRENCIES"     ,"XX", "XX"     , "Monedas"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.PLOTS"          ,"XX", "XX"     , "Graficos"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.TITLE"          ,"XX", "XX"     , "Titulo"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.SUMMARY"        ,"XX", "XX"     , "Resumen"                                     );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.DETAIL"         ,"XX", "XX"     , "Detail"                                      );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.XFER"           ,"XX", "XX"     , "Transferir entre cuentas"                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.OPER.ACCEPT"    ,"XX", "XX"     , "Aceptar Operación"                           );
@@ -37,6 +44,11 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.OPER.C
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.PLOT.MAIN"     ,"XX", "XX"     , "Main Plot"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.PLOT.AUX"      ,"XX", "XX"     , "Aux  Plot"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.OPER.SHOW"     ,"XX", "XX"     , "Show operations"                              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.BTN.OK"        ,"XX", "XX"     , "Aceptar"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.BTN.KO"        ,"XX", "XX"     , "Cancelar"                                     );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LABEL.BTN.APPLY"     ,"XX", "XX"     , "Aplicar"                                      );
+
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "SUBT.APPLY"           ,"XX", "XX"     , "Aplica"                                       );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.0"        ,"XX", "XX"     , "Fallida"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 51, "LABEL.RANK.1"        ,"XX", "XX"     , "Mala"                                         );

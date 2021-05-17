@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modPosServer <- function(id, full, pnlParent, invalidate=FALSE,parent=NULL) {
+modPosServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLPos = R6::R6Class("PNL.OPER"
       ,inherit = YATAPanel

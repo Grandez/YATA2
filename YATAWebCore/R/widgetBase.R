@@ -7,7 +7,6 @@ yuiLayout = function(id, choices, selected=NULL) {
 yuiRow = function(id=NULL, style=NULL, class=NULL, ...) {
   if (!is.null(id)) res = shiny::fluidRow(id=id,...)
   else              res = shiny::fluidRow(...)
-  browser()
   res
 }
 yuiColumn = function(width, ...) {
@@ -156,7 +155,7 @@ yuiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
     choice = c("")
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
-    selectInput(id, lbl, choice, selected,width="auto", selectize=FALSE)
+    selectInput(id, lbl, choice, selected=selected,width="auto", selectize=FALSE)
 }
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
@@ -166,7 +165,7 @@ yuiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
     choice = c("")
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
-    selectizeInput(id,lbl,choice,
+    selectizeInput(id,lbl,choice,selected=selected,
                    options = list( placeholder = text
                                   ,onInitialize = I('function() { this.setValue(""); }')
                             ))

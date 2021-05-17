@@ -73,14 +73,16 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
 
           # Si amount es positivo es compra, si no venta
           if (amount < 0) {
-              pSell = (current$sell * current$priceSell) - (amount * price)
-              pSell = pSell / (current$sell - amount)
-              prtPosition$set(priceSell = pSell, sell = current$sell - amount)
+              current$priceSell = (current$sell * current$priceSell) - (amount * price)
+              current$priceSell = current$priceSell / (current$sell - amount)
+              current$sell = current$sell - amount
+              prtPosition$set(priceSell = current$priceSell, sell = current$sell)
           }
           if (amount > 0) {
-              pBuy = (current$buy * current$priceBuy) + (amount * price)
-              pBuy = pBuy / (current$buy + amount)
-              prtPosition$set(priceBuy = pBuy, buy = current$buy + amount)
+              current$priceBuy = (current$buy * current$priceBuy) + (amount * price)
+              current$priceBuy = current$priceBuy / (current$buy + amount)
+              current$buy = current$buy + amount
+              prtPosition$set(priceBuy = current$priceBuy, buy = current$buy)
           }
 
           if (amount != 0 && current$buy != current$sell) {

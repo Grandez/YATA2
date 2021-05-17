@@ -12,4 +12,5 @@ export(YATACODES)
 export(YATAFACTORY)
 exportPattern("YATA.*")
 exportPattern("OBJ.*")
+export(YATADEF)
 

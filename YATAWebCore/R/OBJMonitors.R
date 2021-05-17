@@ -98,8 +98,10 @@ OBJMonitors = R6::R6Class("YATA.WEB.MONITORS"
          tags$table(class="yata_tbl_monitor"
            ,tags$tr(
               tags$td(rowspan="6", class="yata_cell_icon",
-                     img(src=paste0("icons/", data$id, ".png"),width="60px", height="60px",
-                     onerror="this.onerror=null;this.src='icons2/YATA.png';"))
+                     img( src=paste0("icons/", data$id, ".png")
+                         ,width  = YATAWEBDEF$iconSize
+                         ,height = YATAWEBDEF$iconSize,
+                     onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$icon, ";")))
              ,tags$td(class=clsLbl, msg$get("MON.CTC.COST"))
              ,tags$td(class=clsData,  id=paste0(idMon,"_cost_delta"))
            )
@@ -134,8 +136,8 @@ OBJMonitors = R6::R6Class("YATA.WEB.MONITORS"
          tags$table(class="yata_tbl_monitor"
            ,tags$tr(
               tags$td(rowspan="6", class="yata_cell_icon",
-                     img(src="icons/euro03.png",width="60px", height="60px",
-                     onerror="this.onerror=null;this.src='icons2/YATA.png';"))
+                     img(src=YATAWEBDEF$iconMain,width=YATAWEBDEF$iconSize, height=YATAWEBDEF$iconSize,
+                     onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$iconDef, ";")))
              ,tags$td(class=clsLbl, msg$get("MON.FIAT.TOTAL"))
              ,tags$td(class=clsData,  id=paste0(base,"total"))
            )

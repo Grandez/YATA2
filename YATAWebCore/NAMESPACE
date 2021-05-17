@@ -20,7 +20,7 @@ import(bslib)
 import(shinycookie)
 
 import(reactable)
-
+import(markdown)
 # import(DT)
 
 # YATA
@@ -38,5 +38,7 @@ exportPattern("plt*")
 exportPattern("prepare*")
 exportPattern("rest.*")
 exportPattern("OBJ.*")
+exportPattern("rmd.*")
 export(isPlot)
 export(PUT)
+export(YATAWEBDEF)

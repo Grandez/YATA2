@@ -211,6 +211,19 @@ CREATE TABLE SESSION_CTRL  (
    ,PRIMARY KEY (TMS)
 );
 
+DROP TABLE  IF EXISTS BLOG;
+CREATE TABLE BLOG  (
+    ID_BLOG      INT UNSIGNED     NOT NULL -- Identificador de la entrada
+   ,TMS          TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP -- Fecha de entrada           
+   ,TYPE         TINYINT      DEFAULT 0 -- Tipo de entrada   
+   ,TARGET       VARCHAR(32)  
+   ,TITLE        VARCHAR(255)  
+   ,SUMMARY      TEXT
+   ,DATA         TEXT 
+   ,PRIMARY KEY ( ID_BLOG )
+);
+
+
 DROP TABLE IF EXISTS PROFILE;
 CREATE TABLE PROFILE (
     SESSION BIGINT

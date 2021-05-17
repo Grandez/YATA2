@@ -36,6 +36,14 @@ html, body {
   justify-content: space-around;
 }
 
+.yata_row {
+  padding-top: 12px;
+display: flex;
+flex-wrap: nowrap;
+margin-right: 6px;
+margin-left: 6px;
+margin-bottom: 6px;
+}
 .yata_container {
   height: 100%;
   display: flex;
@@ -66,26 +74,10 @@ html, body {
     bottom: 0;
     width: 100%;
   */
-  height: 40px;
+  height: 32px;
   color: white;
 }
 
-/*
-.wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.header, .footer {
-  background: silver;
-}
-.content {
-  flex: 1;
-  overflow: auto;
-  background: pink;
-}
-
-*/
 /*********************************/
 /* Principal                     */
 /*********************************/
@@ -203,7 +195,7 @@ body {
   overflow: auto;
   margin-bottom: 20px;
   /* Cuadra con footer */
-  padding-bottom: 40px;
+  padding-bottom: 32px;
 }
 
 #yataContentRight {
@@ -648,4 +640,40 @@ navbar-static-top {
 .yata_tabset_item {
   box-sizing: border-box;
   cursor: pointer;
+}
+
+/*********************************/
+/* Post                          */
+/*********************************/
+
+.yata_post {
+  border-bottom: 1px solid #d2d6de;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  color: #666;
+}
+
+.yata_post .yata_post_item {
+   margin-bottom: 15px;
+}
+
+.yata_post .yata_post_title {
+   font-size: 16px;
+   font-weight: 600;
+   display: block;
+   margin-left: 50px;
+}
+
+.yata_post .yata_post_date {
+    color: #999;
+    font-size: 13px;
+    margin-left: 50px;
+}
+
+.yata_post .yata_post_icon {
+    float: left;
+}
+
+.yata_post .yata_post_button {
+   float: right;
 }

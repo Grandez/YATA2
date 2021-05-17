@@ -1,4 +1,4 @@
-modOperServer <- function(id, full, pnlParent, invalidate=FALSE, parent=NULL) {
+modOperServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLOper = R6::R6Class("PNL.OPER"
         ,inherit    = YATAPanel
@@ -110,7 +110,6 @@ modOperServer <- function(id, full, pnlParent, invalidate=FALSE, parent=NULL) {
        ###########################################################
 
        observeEvent(flags$commarea, ignoreInit = TRUE, {
-           browser()
            carea = pnl$getCommarea()
            carea$pending = FALSE
            pnl$setCommarea(carea)

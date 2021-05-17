@@ -18,12 +18,9 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
         ,select = function(...) {
             tblCurrencies$select(...)
             self$current = tblCurrencies$current
+            invisible(self)
         }
         ,getCurrencyName       = function(code, full = TRUE) {
-            # if (code == "EUR") {
-            #     if (full) return ("EUR - Euro")
-            #     return ("EUR")
-            # }
             data = select(id = code)
             ifelse (full, paste0(data$id, " - ", data$name), data$id)
         }
@@ -52,11 +49,6 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             df  = tblExchanges$uniques(c("camera"), symbol=currency)
             tblCameras$table(inValues=list(id=df$camera))
         }
-        # ,getNames = function(codes, full = FALSE) {
-        #     df = tblCurrencies$table(inValues=list(id=codes))
-        #     if (full) df$name = paste(df$id, df$name, sep = " - ")
-        #     df
-        # }
         ,addBulk = function(data) { tblCurrencies$bulkAdd(data)}
     )
     ,private = list(

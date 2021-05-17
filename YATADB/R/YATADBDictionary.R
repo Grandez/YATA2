@@ -14,6 +14,7 @@ DBDict = list(
         ,OperLog      = "OPERATIONS_LOG"
         ,Flows        = "FLOWS"
         ,Session      = "SESSION"
+        ,Blog         = "BLOG"
     )
     ,baseTables = list(
          Cameras      = "CAMERAS"
@@ -45,4 +46,11 @@ DBDict = list(
       ,off = 0
       ,parent = 2
     )
+  ,blog = list(
+      gral = 0
+      ,all  = 1
+      ,note = 2
+      ,currency = 10
+      ,oper = 11
+  )
 )

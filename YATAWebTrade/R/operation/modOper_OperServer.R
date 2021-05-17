@@ -149,6 +149,7 @@ modOperOperServer = function(id, full, pnl, parent) {
              return()
          }
          if (validate()) return()
+
          data = list()
          data$type     = input$cboOper
          data$camera   = input$cboCamera
@@ -178,6 +179,7 @@ modOperOperServer = function(id, full, pnl, parent) {
              data$comment = cmt
              data$idLog   = getID()
          }     
+
          res = pnl$operation(data)
          if (res) {
              yataMsgErr(ns2("msg"), pnl$MSG$get("OPER.MAKE.ERR"))

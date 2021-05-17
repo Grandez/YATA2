@@ -17,9 +17,13 @@ yuiYesNo = function(id=ns("tag"), lblOK, lblKO){ # , cols=4, left=0) {
               )
     tagList(tags$div(class="container-fluid", divMsg), tags$div(class="container-fluid", divBtns))
 }
+yuiButtons = function(...) { tags$div(class="yata_flex_row", ...) }
 yuiRank = function(id,lbl=NULL) { sliderInput(id, lbl, min=-2,max=2,step=1,value=0, ticks=FALSE) }
 
 yuiFlex = function(...) { tags$div(class="yata_flex_row", ...) }
+# yuiRow  = function(...) {
+#   tags$div(class="yata_row", ...)
+# }
 yuiDiv = function(..., id, class) {
     browser()
    cls = ifelse(missing(class), "row", class)
@@ -31,19 +35,52 @@ yuiDiv = function(..., id, class) {
    }
    res
 }
-# yuiLayout = function(id, rows) {
-#   makerow = function(row, cols) {
-#     td1 = NULL
-#     td2 = NULL
-#     if (cols == 1 ) {
-#         td1 = tags$td(colspan="2", yuiCombo(paste0(id, row, 0)))
-#     } else {
-#         td1 = tags$td(class="yata_layout_left", yuiCombo(paste0(id, row, 1)))
-#         td2 = tags$td(yuiCombo(paste0(id, row, 2)))
-#     }
-#     tags$tr(class="yata_layout_row", td1, td2)
-#   }
-#   names(rows) = seq(1,length(rows))
-#   trs = lapply(names(rows), function(row) makerow(row, rows[row]))
-#   tagList(yuiTitle(5, "Layout"), tags$table(class="yata_layout_table", trs))
-# }
+
+# userPost <- function(..., id = NULL, image, author,
+#                      description = NULL, collapsible = TRUE,
+#                      collapsed = FALSE) {
+
+yuiPost = function(data, nchars=255) {
+    collapsed = TRUE
+   cl <- "collapse"
+   id <- paste0("post-", data$id)
+
+   if (!isTRUE(collapsed)) cl <- paste0(cl, " in")
+   if (collapsed) collapsed <- "false" else collapsed <- "true"
+
+   text = data$data
+   if (nchar(text) > nchars) {
+      text = paste(substr(text,1, nchars), "\n...")
+   }
+   btnExpand =  shiny::tags$button(
+            class = "pull-right btn btn-default btn-xs yata_post_button",
+            `data-toggle` = "collapse",
+            `data-target` = paste0("#", id),
+            `aria-expanded` = collapsed,
+            type = "button",
+            shiny::tags$i(class = "fa fa-pencil")
+          )
+
+   btnEdit = shiny::tags$button(
+            class = "pull-right btn btn-default btn-xs yata_post_button",
+            `data-toggle` = "collapse",
+            `data-target` = paste0("#", id),
+            `aria-expanded` = collapsed,
+            type = "button",
+            shiny::tags$i(class = "fa fa-eye")
+          )
+
+  shiny::tags$div(
+     class = "yata_post",
+
+     shiny::tags$div(
+        class = "yata_post_item",
+        shiny::img( class = "img-circle img-bordered-sm yata_post_icon", src = data$ico
+                   ,width=YATAWEBDEF$iconSizeMedium, height=YATAWEBDEF$iconSizeMedium),
+      shiny::tags$span(class = "yata_post_title", data$title, btnEdit, btnExpand),
+      shiny::tags$span(class = "yata_post_date", data$tms)
+    ),
+    shiny::tags$p(class = cl,id = id,`aria-expanded` = collapsed, rmdRender(text))
+  )
+
+}

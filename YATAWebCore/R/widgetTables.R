@@ -257,7 +257,7 @@ updTableBest = function(df) {
     for (idx in 1:ncol(df)) {
          item = list()
          if ( "type_percentage" %in% class(df[,idx])) {
-              item$format = colFormat(percent=TRUE, separators = TRUE, digits=3,locales = "es-ES")
+              item$format = colFormat(percent=TRUE, separators = TRUE, digits=YATAWEBDEF$scale,locales = "es-ES")
               item$style = function(value) {
                    if (value > 0) color = "#008000" else if (value < 0) color = "#e00000"  else color <- "#777"
                    bold = ifelse (abs(value) > 0.02, "bold", "normal")

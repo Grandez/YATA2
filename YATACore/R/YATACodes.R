@@ -11,6 +11,7 @@ YATACODES = R6::R6Class("YATA.CODES"
      ,currencies = "Currencies"
      ,providers  = "Providers"
      ,session    = "Session"
+     ,blog       = "Blog"
      ,SVG        = "SVG"
     )
     ,tables = list(
@@ -29,6 +30,7 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,Parameters   = "Parameters"
         ,Messages     = "Messages"
         ,Session      = "Session"
+        ,Blog         = "Blog"
     )
     ,flag = list(inactive=0, active=1, parent=2)
     ,oper = list( oper=1, buy=2, sell=3, xfer=4, split=5, net=6, reg=10, close=16)
