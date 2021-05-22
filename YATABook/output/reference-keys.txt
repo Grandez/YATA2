@@ -1,0 +1,13 @@
+prerequisites
+web
+technical-decissions
+about
+bloque-de-decisiones-una
+shiny
+web-componentes
+paquetes-shiny
+shiny-1
+componentes-web-widgets
+caso-de-uso
+decisión
+wrappers

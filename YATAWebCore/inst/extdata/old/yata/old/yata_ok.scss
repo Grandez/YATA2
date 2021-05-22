@@ -1,0 +1,339 @@
+$font-stack:    Helvetica, sans-serif;
+
+$height-header: 48px;
+$height-footer: 20px;
+
+$color-value-pos: green;
+$color-value-neg: crimson;
+
+$color-error:   red;
+$color-info:    black;
+$color-warning: yellow;
+$color-success: ForestGreen;
+
+$primary:   #007bff;
+$secondary: #6c757d;
+$success:   #28a745;
+$info:      #17a2b8;
+$warning:   #ffc107;
+$danger:    #dc3545;
+$light:     #f8f9fa;
+$dark:      #343a40;
+
+$leftside-size: 230px;
+
+@mixin center($property) {
+  -ms-transform:     translateY($property);
+  -webkit-transform: translateY($property);
+  -moz-transform:    translateY($property);
+  -o-transform:      translateY($property);
+  transform:         translateY($property);
+}
+
+yata-primary   { background-color: #007bff; }
+yata-secondary { background-color: #6c757d; }
+yata-success   { background-color: #28a745; }
+yata-info      { background-color: #17a2b8; }
+yata-warning   { background-color: #ffc107; }
+yata-danger    { background-color: #dc3545; }
+yata-light     { background-color: #f8f9fa; }
+yata-dark      { background-color: #343a40; }
+
+/***********************************/
+/* Pagina principal                */
+/***********************************/
+
+#yataHeader {
+   position: absolute;
+   top:    0;
+   left:   0;
+   width: 100%;
+   height: $height-header;
+   background-color: black;
+   color: white;
+}
+
+#yataContent {
+   position: absolute;
+   top:    $height-header;
+   left:   0;
+   width: 100%;
+   height: 100%;
+   overflow: auto;
+   margin-bottom: $height-footer;
+}
+#yataFooter {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    height: $height-footer;
+    color: white;
+}
+
+/*********************************/
+/* Navegacion                    */
+/*********************************/
+
+.yata-logo {
+    min-width: 64px;
+}
+
+yataForm {
+    td {
+        form-group {
+            margin-bottom: 4px;
+        }
+        form-control {
+            padding: 6px;
+            line-height: 1;
+        }
+    }
+}
+
+#yataMenu {
+  list-style: inline;
+}
+#yataLeftSide {
+  width: 200px;
+  height: 100%;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.yataCollapsed {
+  display: none;
+  transition: 0.5s;
+}
+
+.yataExpanded {
+  transition: 0.5s;
+}
+
+.yataLogo {
+   width: 128px;
+   height: 128px;
+}
+
+.yataTitle {
+   text-align: center;
+   font-family: 'Source Sans Pro',sans-serif;
+   font-size: 30px;
+   margin-top: 20px;
+   margin-bottom: 10px;
+   font-weight: 500;
+   line-height: 1.1;
+   color: inherit;
+}
+
+/*********************************/
+/* Paneles                       */
+/*********************************/
+
+.yataPanelForm {
+    position: absolute;
+    top:       0;
+    left:      0;
+    width:   100%;
+    height:  100%;
+    z-index: 100;
+    background-color: RGBA(169, 169, 169, 0.8);
+}
+.yataPanelErr {
+    z-index: 900;
+    background-color: darkgrey;
+    opacity: 0.75;
+}
+
+.yata-form-center {
+  margin: 0;
+  position: absolute;
+  background-color: RGBA(255, 255, 255,1);
+  border: 1px solid navy;
+  padding: 32px 12px 32px 12px;
+  top: 25%;
+  left: 25%;
+  @include center(-25%);
+}
+
+.yata-row-buttons {
+  display: block;
+  text-align: center;
+  padding: 6px;
+}
+
+/*********************************/
+/* Paneles laterales             */
+/*********************************/
+
+.yata-left-sidebar {
+/*
+  padding-top: 50px;
+  min-height: 100%;
+
+  z-index: 810;
+*/
+  width: $leftside-sizes;
+  -webkit-transition: -webkit-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  -moz-transition: -moz-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  -o-transition: -o-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+.yata-leftside-collapse {
+    -webkit-transform: translate(-$leftside-size, 0);
+    -moz-transform:    translate(-$leftside-size, 0);
+    -ms-transform:     translate(-$leftside-size, 0);
+    -o-transform:      translate(-$leftside-size, 0);
+    transform:         translate(-$leftside-size, 0);
+}
+.yata-leftside-open {
+    -webkit-transform: translate(0, 0);
+    -moz-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+
+
+
+/*********************************/
+/* Monitor                       */
+/*********************************/
+
+.yataTblMonitor {
+    border: 1px solid blue;
+    border-spacing: 0;
+    line-height: 10px;
+}
+
+.yataTblMonitor p {
+    margin: 0;
+}
+
+.yataTblMonitorCTC {
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+}
+#yataModal {
+   position: absolute;
+   left: 0;
+   top:  0;
+   width: 100%;
+	 height: 100%;
+	 background-color: gray;
+	 opacity: 0.75;
+   z-index: 100;
+   display: none;
+}
+#yataModalContent {
+	 background-color: white;
+	 margin: auto;
+}
+
+.yataCentered {
+  margin: 0 auto;
+}
+.yataForm {
+    width: 100%;
+}
+
+.yataDown {
+    color: Crimson;
+    font-size: 150%;
+}
+.yataUp {
+    color: ForestGreen;
+    font-size: 150%;
+}
+
+/* Monedas */
+.yataDeltaNone {
+    font-weight: bold;
+    text-align: right;
+    margin: 0;
+}
+.yataDeltaUp {
+    color: ForestGreen;
+    font-weight: bold;
+    text-align: right;
+}
+.yataDeltaDown {
+    color: Crimson;
+    font-weight: bold;
+    text-align: right;
+}
+
+.yataCellIcon {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.yataCellLabel {
+    text-align: left;
+    padding: 0 1em 0 1em;
+    margin: 0;
+}
+.yataCellData {
+    text-align: left;
+    padding: 0 1em 0 1em;
+    margin: 0;
+}
+.yataCellCTC {
+    text-align: center;
+    padding: 0 1em 0 1em;
+    margin: 0;
+    font-weight: bold;
+}
+
+#sessionLastUpdate {
+    float: right;
+    font-size: 0.8em;
+}
+
+.yataMonitors {
+    padding-bottom: 1em;
+    font-size: 1.25em;
+}
+
+.yataMsg {
+    font-weight: bold;
+}
+.yataMsgerror   { color: $color-error;   }
+.yataMsginfo    { color: $color-info;    }
+.yataMsgwarning { color: $color-warning; }
+.yataMsgsuccess { color: $color-success; }
+
+.yataBtnIcon {
+    color: white;
+}
+
+
+.yata_center {
+    margin: auto;
+}
+
+/*********************************/
+/* Textos y etiquetas            */
+/*********************************/
+
+.yata_txt_bold {
+    font-weight: bold;
+}
+
+.yata_num {
+    float: right;
+}
+.yata_num_bold {
+    font-weight: bold;
+}
+
+.yata_num_pos {
+    color: $color-value-pos;
+}
+
+.yata_num_neg {
+    color: $color-value-neg;
+}

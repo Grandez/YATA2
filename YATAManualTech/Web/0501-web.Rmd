@@ -1,0 +1,40 @@
+# WEB
+
+En esta seccion estan las cosas que se deberian implementar, mejorar, etc.
+Cuando alguna de ellas se realice, normalment pasara al apartado de decisiones
+
+##### ("../images/webpackages.png") 
+
+## Tablas de Datos
+
+La clase base deberia incoprorar metodos para inserta y actualizar datos
+Para el Update por ejemplo
+update(list(campos), list(where))
+
+## Arquitectura
+
+La aplicacion Web esta basada en modulos y sub modulos
+
+## Nomenclatura
+
+prefijos:
+
++---------+-----------------------------------------------------------------+
+| Prefijo |  Descripcion  |
++------+-----------------------------------------------------------------+
+| mod  |  Indica que es una pagina de un panel |
+| frm  |  Indica que es un formulario que se mostrara dentro de un panel |
++------+-----------------------------------------------------------------+
+
++---------+-----------------------------------------------------------------+
+| Sufijo  |  Descripcion  |
++---------+-----------------------------------------------------------------+
+| Input   |  Contiene la interfaz de usuario |
+| Server  |  Contiene el codigo asociado |
++---------+-----------------------------------------------------------------+
+
+Los modulos, formularios, etc. **se ejecutan de manera dinamica**  por lo que si no se sigue la nomenclatura el sistema fallará.
+
+
+## Creacion de componentes
+

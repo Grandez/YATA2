@@ -33,7 +33,7 @@
          shiny::tags$span(class="navbar-brand yata_brand", textOutput("appTitle", inline=TRUE)),
          # Embed hidden icon so that we get the font-awesome dependency
          shiny::tags$span(shiny::icon("bars"), style = "display:none;"),
-         shiny::tags$a(href = "#",  id="leftButton", # Sidebar toggle button
+         shiny::tags$a(href = "#",  id="left_side", # Sidebar toggle button
                 class = "sidebar-toggle",
                 `data-toggle` = "yataoffcanvas", # esto es para detectarlo en javascript
                  role = "button"

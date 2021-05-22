@@ -137,7 +137,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
    )
    
    moduleServer(id, function(input, output, session) {
-     YATAWEB$beg("modOper_Pos")
+      YATAWEB$beg("modOper_Pos")
       pnl = YATAWEB$getPanel(full)
       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnlParent, session))
 
@@ -224,16 +224,15 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            if (id == 0) return()
            to = Sys.Date()
            from = since - as.difftime(7, unit="days")
-#           YATAWEB$log("hist: %d - %s - %s", id,from,to)
-           df = restdfsync("hist",id=id,from=from,to=to)
-           renderPlot(restdfsync("hist",id=id,from=from,to=to), symbol)
-           # restdf("hist",id=id,from=from,to=to) %>%
-           #        then( renderPlot(df)
-           #             ,function(err)    {
-           #                YATAWEB$log("hist resp: %d - %s - %s", id,from,to)
-           #                browser()
-           #                message("ha ido mal 3") ; message(err)
-           #            })
+
+           restdf("hist",id=id,from=from,to=to) %>%
+                  then ( function(df) {
+                         if (is.data.frame(df)) renderPlot(df, symbol)
+                         }, function(err)    {
+                          YATAWEB$log("hist resp: %d - %s - %s", id,from,to)
+                          browser()
+                          message("ha ido mal 3") ; message(err)
+                      })
         }
       
       renderOpen = function(table) {

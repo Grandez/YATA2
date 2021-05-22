@@ -35,12 +35,12 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
          }    
         )
        ,private = list(
-         
-       ) 
+          definition = list(id = "",left = -1, right=-1)
+        )
    ) 
     moduleServer(id, function(input, output, session) {
-        YATAWEB$beg("modBlog")
-
+        YATAWEB$beg("Blog Server")
+     
        reset = function() {
           output$msg = renderText({""})
           updTextArea(ns("title"), "")
@@ -126,6 +126,7 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
             #browser()
         })
     })
+    YATAWEB$end("Blog Server")
 }    
 # 
 # box(

@@ -31,7 +31,6 @@ OBJLayout = R6::R6Class("YATA.WEB.LAYOUT"
      ,config = NULL
      ,layout = NULL
      ,makeConfig = function(ns, layout, options, values, top) {
-
          opts = c("Hide"="none")
          if (!missing(options)) opts = options
          tbl = tags$table(class="yata_layout_table")

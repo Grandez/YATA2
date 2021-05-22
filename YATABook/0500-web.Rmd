@@ -1,0 +1,8 @@
+# Web
+
+```{r, echo=FALSE}
+files = list.files("web", "*.Rmd", full.names=TRUE)
+```
+
+```{r,child=files}
+```

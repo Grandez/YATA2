@@ -1,4 +1,9 @@
 prerequisites
-algoritmos-1
-pestañas-dinamicas
+technical-decissions
+componentes-web-widgets
+caso-de-uso
+decisión
+wrappers
+about
+bloque-de-decisiones-una
 yatadb

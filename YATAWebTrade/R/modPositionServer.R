@@ -160,7 +160,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       data
     }
     moduleServer(id, function(input, output, session) {
-#       YATAWEB$beg("Position Server")
+       YATAWEB$beg("Position Server")
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(session))
 
@@ -200,6 +200,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           }
           YATAWEB$end("initPage")
        }
+       
        ###########################################################
        ### Reactives
        ###########################################################
@@ -448,10 +449,13 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            to = Sys.Date()
            from = to - as.difftime(pnl$cookies$history, unit="days")
            restdf("hist",id=id,from=from,to=to)  %>% then(
-                  function(df) {
-                     pnl$loadHistory(id, symbol, df)
-                     if (is.null(plot))  flags$plotPos = isolate(symbol)
-                     if (!is.null(plot)) flags$plotsBest = isolate(!flags$plotsBest)
+                function(df) {
+#           df = restdfSync("hist",id=id,from=from,to=to)
+                    if (is.data.frame(df)) {
+                        pnl$loadHistory(id, symbol, df)
+                        if (is.null(plot))  flags$plotPos = isolate(symbol)
+                        if (!is.null(plot)) flags$plotsBest = isolate(!flags$plotsBest)
+                    }
                   }, function(err) { })
       } 
 
@@ -491,7 +495,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       observeEvent(input$numBestTop,  ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
       observeEvent(input$numInterval, ignoreInit = TRUE, { 
           if (is.numeric(input$numInterval)) {
-          pnl$cookies$interval = input$numInterval              
+              pnl$cookies$interval = input$numInterval              
           }
       })
       observeEvent(input$numHistory,  ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
@@ -507,29 +511,29 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
          session$sendCustomMessage(type = 'closeLeftSide',message = "close") 
       })
 
-     #####################################################
-     ### Timers                                        ###
-     #####################################################
 
      carea = pnl$getCommarea()  
      if (!pnl$loaded || carea$position) {
           yuiLoading()
           pnl$loadData()
-          initPage()
-          if (carea$position) {
-              carea$position = FALSE
-              pnl$setCommarea(carea)
-          }
+          if (!carea$position) initPage()
+          pnl$setCommareaItems(position=FALSE)
           yuiLoaded()
      }       
-
-     # Despues de cargar SIEMPRE      
+     
+     flags$refresh = isolate(!flags$refresh)
+     
+     #####################################################
+     ### Timers                                        ###
+     ###  Despues de cargar SIEMPRE      
+     #####################################################
+     
      observe({
        invalidateLater(pnl$cookies$interval * 60000)
        flags$update = isolate(!flags$update)   
      })
 
       
-      # YATAWEB$end("Position Server")
+    YATAWEB$end("Position Server")
    })
 }    

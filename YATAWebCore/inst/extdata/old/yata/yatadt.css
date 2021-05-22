@@ -1,0 +1,138 @@
+/* MONITORES y DATATABLE         */
+/*********************************/
+/* Monitor                       */
+/*********************************/
+
+.yata_monitors {
+    padding-bottom: 1em;
+    font-size: 1.25em;
+    display: flex;
+    flex-direction: row;
+    padding-top: 12px;
+}
+/*
+.yata-ranks {
+    padding-bottom: 1em;
+    font-size: 1.25em;
+    float: right;
+    display: flex;
+}
+*/
+.yata_monitor_container {
+    padding-right: 6px;
+}
+.yata_tbl_monitor {
+    border: 1px solid blue;
+    border-spacing: 0;
+    line-height: 14px;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+.yata_tbl_monitor_fiat {
+    margin-left: auto;
+    padding-bottom: 1em;
+    font-size: 1.25em;
+    padding-top: 12px;
+}
+
+.yata_cell_icon {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.yata_cell_label {
+    text-align: left;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+}
+.yata_cell_data {
+    text-align: right;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    vertical-align: middle;
+    min-width: 5em;
+    font-weight: bold;
+}
+.yata_cell_data_up   { color: green; }
+.yata_cell_data_down { color: red;   }
+
+.yata_cell_ctc {
+    text-align: center;
+    padding: 2px 0.5em 0 0.5em;
+    margin: 0;
+    font-weight: bold;
+}
+
+.yata_cell_group {
+    padding-top: 6px;
+    vertical-align: middle;
+}
+
+.yataIconDelta {
+    display: flex;
+}
+
+table.dataTable.yata-table thead th,
+table.dataTable.yata-table thead td {
+    padding: 0px;
+}
+
+table.dataTable.yata-table tbody td {
+    padding: 0px;
+    line-height: 1;
+}
+
+table.dataTable.yata-table tbody odd {
+    background-color: lightyellow;
+}
+
+.yata_dt_header_false {
+    border: none !important;
+}
+
+.yata_dt_header {
+    border-bottom-style: solid !important;
+    border-bottom-color: navy  !important;
+    text-align: center;
+}
+
+/*
+.yataTblMonitor tr {
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitor tr td {
+    margin: 0;
+    padding: 0;
+}
+
+.yataTblMonitorCTC {
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+}
+*/
+
+.yata_layout_table {
+    border: 1px solid navy;
+    border-collapse: collapse;
+    margin: 6px;
+    width: 95%;
+}
+.yata_layout_row {
+    border-bottom: 1px solid navy;
+    border-collapse: collapse;
+}
+.yata_layout_left {
+    border-right: 1px solid navy;
+    border-collapse: collapse;
+}
+
+.rt-tr-striped {
+  background-color: lightyellow;
+}
+
+.rt-compact .rt-td {
+  padding: 0;
+}

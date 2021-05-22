@@ -1,0 +1,37 @@
+## Paquetes Shiny 
+
+Antes de hablar de _Shiny_ y de sus características debemos detenernos brevemente en comprender que es una página Web.
+
+De manera general, y esto aplica a todas las páginas y aplicaciones Web, independientemente del lenguaje utilizado para su generación, una página Web está formada por:
+
+1. Una definición de la página, su estructura y componentes de acuerdo con un lenguaje de marcado: **HTML** o **XHTML**, el cual define los objetos soportados y sus atributos y propiedades.
+2. Una definición de estilos que definen como se muestran cada uno de los componentes en función, normalmente, de los diseñadores, el sistema sobre el que se muestra la página y los atributos de este.
+3. Un lenguaje de programación: **javascript**, para enriquecer la página con cierto nivel de dinamismo e interacción con el usuario.
+
+XXX Ampliar esto para indicar que a partir de esta base se pueden construir widgets y casi cualquier cosa XXX
+
+### Shiny
+
+_Shiny_ está basado en _Boostrap_, un _front-end_ que ya ofrece _out-of-the-box_ muchos componentes o _widgets_ ya preparados para la creación de la página web.
+
+y ofrece una funcionalidad "suficiente" para la mayoria de las páginas Web dinámicas. 
+
+Sobre _Shiny_ se han construido una multitud de paquetes que permiten un _look and feel_ mas sofisticado. El problema viene cuando se empiezan a mezclar dos o mas de esos paquetes, por ejemplo, shinydashboardplus y shinywidgets, el primero depende de shinydashboard con lo que tenemos tres paquetes cargados con su correspondientes estilos y codigo javascript, lo cual, dependiendo de la calidad y del estilo de cada paquete puede dar lugar a conflictos de nombres, reduccion de funcionalidad, etc.
+
+Por otro lado, cada pagina Web la podemos ver como un conjunto de widgets mas o menos complejos
+
+
+El sistema utiliza el siguiente criterio:
+
+- Todos los componentes Web estan encapsulados en una parte de diseño y otro de servidor para interactuar con el
+- Los componentes de diseño se denominan yui_Nombre_
+- Los componentes de servidor se denominan upd_Nombre_
+
+De esta manera, se encapsulan los componentes de los diferentes paquetes y solo existe un punto de cambio para cada widget.
+Por ejemplo, hemos elegido utilizar los botones de shinyBS, que usan la funcion bsButton y en los parametros se configura el estilo, tamaño, etc.
+
+Primero creamos un widget yuiButton que encapsula a bsButton.
+Creamos un conjunto de _wrappers_ yuiButtonXXX que introducen ciertos parametros por defecto
+Cada uno de estos _wrappers_ invoca en ultima instancia a yuiButton que hace la llamada a bsButton.
+
+Si deseamos cambiar los botones de bsButton por otro estilo, basta con modificar la funcion **yuiButton**

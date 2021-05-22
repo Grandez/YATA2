@@ -3,7 +3,7 @@
 En esta seccion estan las cosas que se deberian implementar, mejorar, etc.
 Cuando alguna de ellas se realice, normalment pasara al apartado de decisiones
 
-`r knitr::include_graphics("images/webpackages.png") `
+("../images/webpackages.png") 
 
 ## Tablas de Datos
 

@@ -17,9 +17,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,initialize = function(id, parent, session, ns) {
         self$name         = id
         self$parent       = parent
-        private$pnlDef$id = id
 
-        session$sendCustomMessage("setPanel", private$pnlDef)
         # Typos
         self$factory = YATAWEB$factory
         self$codes   = self$factory$codes
@@ -81,23 +79,33 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         if (!is.null(self$parent)) self$parent$reset(self$name)
         invisible(self)
     }
+    ,getDef = function() {
+        def = private$definition
+        if (is.null(def)) def = list(id=self$name, left=-1, right=-1)
+        def
+     }
     ##########################################################
     ### Acceso a root
     ##########################################################
     ,getGlobalPosition = function(fiat=FALSE) { private$root$getGlobalPosition(fiat) }
     ,getOpenCurrencies = function()           { private$root$getOpenCurrencies()     }
     ,getCommarea       = function()           { private$root$getCommarea()           }
-    ,setCommarea       = function(data)       { private$root$setCommarea(data)       }
+    ,setCommarea       = function(data)       {
+        private$root$setCommarea(data)
+        invisible(self)
+     }
+    ,setCommareaItems  = function(...)        {
+        private$root$setCommareaItems(...)
+        invisible (self)
+     }
+    ,setCommareaItem  = function(item, default=NULL)  {
+        private$root$setCommareaItem(item, default)
+        invisible(self)
+      }
   )
   ,private = list(
        invalid = c("")
       ,root   = NULL
-      ,pnlDef = list(
-         name="name"
-         ,id=NULL
-         ,leftSide=FALSE
-         ,rightSide=FALSE
-      )
      ,getRoot = function() {
          root = self
          pp   = root$parent

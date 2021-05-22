@@ -2,6 +2,7 @@ modOperXferServer = function(id, full, pnl, parent) {
    ns = NS(id)
    ns2 = NS(full)
    moduleServer(id, function(input, output, session) {
+      browser()
        validate = function() {
           res = FALSE
           if (input$impAmount <= 0) { res = TRUE; yataMsgError(ns2("msg"),"La cantidad debe ser positiva") }

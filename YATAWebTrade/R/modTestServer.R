@@ -10,8 +10,13 @@ modTestServer <- function(id, full, pnlParent, parent=NULL) {
       ,public = list(
           initialize    = function(id, pnlParent, session) {
              super$initialize(id, pnlParent, session)
-         }
+             private$definition$id = id
+          }
+      )   
+      ,private = list(
+         definition = list(id = "",left = 0, right=0)
       )
+      
    )
     moduleServer(id, function(input, output, session) {
        message("Ejecutando server para Test")

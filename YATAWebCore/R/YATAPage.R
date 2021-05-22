@@ -15,6 +15,13 @@ YATAPage =  function(title = NULL,id = NULL,
                      #,tabs = NULL
                      ) {
 
+    makeMessageHandler = function(name, funcName) {
+       if (missing(funcName)) funcName = name
+       scr = "Shiny.addCustomMessageHandler('yata"
+       scr = paste0(scr, titleCase(name), "', function(data) {")
+       scr = paste0(scr, YATAWEBDEF$jsapp, ".", funcName, "(data); })")
+       scr
+    }
 
   # alias title so we can avoid conflicts w/ title in withTags
   pageTitle <- title
@@ -72,44 +79,56 @@ YATAPage =  function(title = NULL,id = NULL,
                                           ,tags$span(class="yata_text_err", textOutput("yata_main_text_err"))))))
   )
 
-  container   = tags$div(id="yata_container", class="yata_container", page, shinyjs::hidden(mainFormErr))
+   container   = tags$div(id="yata_container", class="yata_container", page, shinyjs::hidden(mainFormErr))
 
-  jsCode <- "shinyjs.yataUpdateLayout = function(id, tgt) {yataUpdateLayout(id, tgt);}"
+   srcUpdLayout = paste0("function(id, tgt) { yataUpdateLayout(id, tgt);}")
+   jsUpdLayout  = paste("shinyjs.yataUpdateLayout = ", srcUpdLayout)
+   srcAddPage   = paste0("function(data) { ", YATAWEBDEF$jsapp, ".", YATAMSG$addPage, "(data); }")
+   jsAddPage    = paste("shinyjs.yataAddPage =", srcAddPage)
+   srcSetPage   = paste0("function(data) { ", YATAWEBDEF$jsapp, ".", YATAMSG$setPage, "(data); }")
+   jsSetPage    = paste("shinyjs.yataSetPage =", srcSetPage)
 
    bspage =   shiny::bootstrapPage(
          useShinyjs()
         ,tags$head(
               tags$link  (rel="stylesheet", type="text/css", href="yata/yatabootstrap.css")
              ,tags$link  (rel="stylesheet", type="text/css", href="yata/yatabase2.css")
-             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yatadt.css")
-             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yataAdminLTE.css")
-             ,tags$script(src="yata/yata.js")
+             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata_reactable.css")
+             ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata_adminlte.css")
+
              ,tags$script(src="yata/yataapp.js")
-             ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
-             ,tags$script("Shiny.addCustomMessageHandler('yataShowBlock', function(data) { $.YATA.showBlock(data); })")
-             ,tags$script("Shiny.addCustomMessageHandler('yataMovePanel', function(data) { $.YATA.movePanel(data); })")
-             ,tags$script('Shiny.addCustomMessageHandler("closeLeftSide",
-                           function(message) { $("[data-toggle=\'yataoffcanvas\']").trigger("click");});')
+             ,tags$script(makeMessageHandler(YATAMSG$setPanel))
+             ,tags$script(makeMessageHandler(YATAMSG$showBlock))
+             ,tags$script(makeMessageHandler(YATAMSG$movePanel))
+
+             # ,tags$script("Shiny.addCustomMessageHandler('setPanel', function(data) { $.YATA.yataSetPanel(data); })")
+             # ,tags$script("Shiny.addCustomMessageHandler('yataShowBlock', function(data) { $.YATA.showBlock(data); })")
+             # ,tags$script("Shiny.addCustomMessageHandler('yataMovePanel', function(data) { $.YATA.movePanel(data); })")
+             #X ,tags$script('Shiny.addCustomMessageHandler("closeLeftSide",
+             #X               function(message) { $("[data-toggle=\'yataoffcanvas\']").trigger("click");});')
              ,initShinyCookie("YATA")
-             ,extendShinyjs(text = jsCode, functions = c("yataUpdateLayout"))
+             ,extendShinyjs(text = jsUpdLayout, functions = c("yataUpdateLayout"))
+             ,extendShinyjs(text = jsAddPage,   functions = c("yataAddPage"))
+             ,extendShinyjs(text = jsSetPage,   functions = c("yataSetPage"))
         )
         ,container
-        ,tags$script('
-                                var dimension = [0, 0];
-                                $(document).on("shiny:connected", function(e) {
-                                    dimension[0] = window.innerWidth;
-                                    dimension[1] = window.innerHeight;
-                                    Shiny.onInputChange("dimension", dimension);
-                                });
-                                $(window).resize(function(e) {
-                                    dimension[0] = window.innerWidth;
-                                    dimension[1] = window.innerHeight;
-                                    Shiny.onInputChange("dimension", dimension);
-                                });
-                            ')
-      ,theme = theme, lang="es" # ) # end boostrappage
+        # ,tags$script('
+        #                         var dimension = [0, 0];
+        #                         $(document).on("shiny:connected", function(e) {
+        #                             dimension[0] = window.innerWidth;
+        #                             dimension[1] = window.innerHeight;
+        #                             Shiny.onInputChange("dimension", dimension);
+        #                         });
+        #                         $(window).resize(function(e) {
+        #                             dimension[0] = window.innerWidth;
+        #                             dimension[1] = window.innerHeight;
+        #                             Shiny.onInputChange("dimension", dimension);
+        #                         });
+        #                     ')
+      ,theme = theme, lang=YATAWEBDEF$lang # ) # end boostrappage
 
    )
+
    yataDeps(shiny::tags$body(bspage),md = FALSE)
 
 }

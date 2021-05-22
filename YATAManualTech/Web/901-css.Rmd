@@ -1,0 +1,16 @@
+## CSS
+
+XXX
+
+### Modulos
+
+yataAdminLTE.css esta sobreescrito
+
+### CSS/Javascript
+
+Estas clases se usan en el código javascript:
+
+- **yata_leftside_open**
+- **yata_leftside_closed**
+- **yata_side_closed**  Gestiona la visibilidad del indicador de panel lateral
+- **yata_side_noside**  Gestiona la visibilidad del indicador de panel lateral

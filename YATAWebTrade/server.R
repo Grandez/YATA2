@@ -59,7 +59,16 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,setCommarea       = function(data) { 
           private$commarea = data  
           invisible(self)
-       }
+      }
+      ,setCommareaItems  = function(...) {
+         private$commarea = list.merge(private$commarea, list(...))
+      }
+      ,getCommareaItem  = function(item, default=NULL) {
+         val = private$commarea[[item]]
+         if (is.null(val)) val = default
+         val
+      }
+      
       ,getDFSession      = function() { self$data$dfSession   } 
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() { 

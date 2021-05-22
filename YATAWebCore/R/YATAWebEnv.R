@@ -63,10 +63,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          if (length(data) > 0 && !is.null(data$YATA)) private$cookies = fromJSON(data$YATA)
          invisible(self)
       }
-     ,getPanel = function(name)  { private$panels$get(name) }
+     ,getPanel = function(name, loading=FALSE)  {
+         if (loading) message(paste("Carga panel ", name))
+         shinyjs::js$yataSetPage(list(name=name))
+         private$panels$get(name)
+      }
      ,addPanel = function(panel) {
        private$panels$put(panel$name, panel)
-       invisible(panel)
+       # Notificamos a js que cargue la pagina
+       shinyjs::js$yataAddPage(panel$getDef())
+       self$getPanel(panel$name, loading=TRUE)
      }
     ,getMsg      = function(code, ...) { MSG$get(code, ...) }
     ,getCookies  = function(id) { private$cookies[[id]] }

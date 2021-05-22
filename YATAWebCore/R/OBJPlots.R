@@ -71,7 +71,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            render(ui,info,type)
         }
        ,render = function(ui=NULL, info=NULL, type=NULL) {
-           private$generatePlot(ui, info, type)
+           if (!private$generatePlot(ui, info, type)) return (NULL)
            plotly::renderPlotly({plot}) # %>% event_register("plotly_legendclick")
        }
        ,calcType = function(type) {
@@ -270,6 +270,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            eval(parse(text=paste0(info$type, "(df)")))
        }
        ,generatePlot = function(ui=NULL, info=NULL, type=NULL) {
+           private$generated = FALSE
            self$plot = private$base()
            if (!is.null(info)) private$info = list.merge(private$info, info)
            if (!is.null(type)) private$info$type = calcType(type)
@@ -279,9 +280,9 @@ YATAPlot = R6::R6Class("YATA.PLOT"
                buttons = getSVGGroup()
                if (!is.null(buttons))       self$plot = plotly::config(plot, modeBarButtonsToAdd = buttons)
                if (!is.null(private$title)) self$plot = plotly::layout(plot, title = private$title)
+               private$generated = TRUE
            }
-           private$generated = TRUE
-
+           private$generated
        }
        ######################################################################
        ### MODEBAR                                                        ###

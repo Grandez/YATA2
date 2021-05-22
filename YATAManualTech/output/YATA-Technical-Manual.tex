@@ -36,8 +36,8 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={A Minimal Book Example},
-  pdfauthor={Yihui Xie},
+  pdftitle={Yet Another Trading Algorithm},
+  pdfauthor={Grandez},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
@@ -108,9 +108,16 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 
-\title{A Minimal Book Example}
-\author{Yihui Xie}
-\date{2021-04-27}
+\title{Yet Another Trading Algorithm}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Technical Manual}
+\author{Grandez}
+\date{2021-05-21}
 
 \begin{document}
 \maketitle
@@ -128,27 +135,85 @@
 \KeywordTok{library}\NormalTok{(abind)}
 \KeywordTok{library}\NormalTok{(png)}
 \KeywordTok{library}\NormalTok{(grid)}
+\KeywordTok{library}\NormalTok{(fontawesome)}
 
 \CommentTok{# or the development version}
 \CommentTok{# devtools::install_github("rstudio/bookdown")}
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{algoritmos}{%
-\chapter*{Algoritmos}\label{algoritmos}}
-\addcontentsline{toc}{chapter}{Algoritmos}
+\hypertarget{introduccion}{%
+\chapter*{Introduccion}\label{introduccion}}
+\addcontentsline{toc}{chapter}{Introduccion}
 
-\hypertarget{algoritmos-1}{%
-\chapter{Algoritmos}\label{algoritmos-1}}
+XXX Aqui la introduccion
 
-\hypertarget{pestauxf1as-dinamicas}{%
-\section{Pestañas dinamicas}\label{pestauxf1as-dinamicas}}
+\hypertarget{technical-decissions}{%
+\chapter{Technical Decissions}\label{technical-decissions}}
 
-En condiciones clasicas, cuando tenemos la pagina estructurada en pestañas, cada vez que se selecciona una se muestra su información asociada, y \textbf{siempre hay una y solo una pestaña activa}.
+\hypertarget{componentes-web-widgets}{%
+\section{\texorpdfstring{Componentes Web (\emph{widgets})}{Componentes Web (widgets)}}\label{componentes-web-widgets}}
 
-Cuando tenemos pestañas que se insertan y se eliminan de forma dinámica, el sistema cambia:
+Como ya se ha indicado, las páginas Web están basadas en Shiny el cual aparte de definir de manera unívoca el método de programación (basado en los conceptos \emph{reactive} y \emph{bindings}) ofrece un conjunto de \emph{widgets} ya diseñados y listos para usar.
 
-\includegraphics[width=3.35in]{UML/img/tabs}
+Sobre Shiny se utilizan diferentes paquetes que lo enriquecen de alguna u otra manera, evitando tener que diseñar widgets que ya han sido diseñados y probados, con la limitación de tener que adscribirse a su nomenclatura e implementación.
+
+Normalmente estos paquetes o bien sobrecargan las funciones nativas de Shiny o, lo mas común, utilizan algun criterio de nomenclatura que no colisione con Shiny; por ejemplo, Shiny ofrece una función ``alert'' y el paquete ``\emph{shinywidgets}'' ofrece la misma funcionalidad con una versión con mas opciones que denomina ``shinyAlert''.
+
+\hypertarget{caso-de-uso}{%
+\subsection{Caso de uso}\label{caso-de-uso}}
+
+A lo largo del ciclo de vida del sistema es posible que alguno de los paquetes utilizados dejen de existir o de estar soportados, o que se liberen otros paquetes con otras funcionalidades o mejoras.
+
+Por ejemplo, supongamos:
+
+Primero; que disponemos de un paquete que implementa un UI mas atractivo para los botones que el actual, el nuevo paquete denomina a los botones \texttt{prettyButtonxxx} y los actuales se denominan \texttt{simpleButton}
+
+Segundo; que aunque no teníamos las herramientas, por cuestiones de diseño y programación contemplamos diferentes botones, digamos uno para aceptar una operación y otro para anularla. Como no tenemos las herramientas los dos son iguales, pero de manera proactiva hemos creado dos funciones: \texttt{btnOK} y \texttt{btnOK}
+
+En el primer caso, para implementar el nuevo paquete deberíamos analizar todo el sistema en busca de las funciones \texttt{simpleButton}, cambiarlos por el equivalente \texttt{prettyButton} y posiblemente ajustar los parámetros de llamada. Lo cual, según el paquete a integrar podría ser, aparte de arriesgado y costoso, directamente inviable.
+
+Por otro lado, fijémenos en el segundo caso, en este no estamos invocando directamente a \texttt{simpleButton} si no a una función propia que actualmente son iguales, por lo que para cambiar el comportamiento de, digamos \texttt{btnKO} solo deberiamos modificar una función y estaría disponible para todo el sistema.
+
+\hypertarget{decisiuxf3n}{%
+\subsection{Decisión}\label{decisiuxf3n}}
+
+El enfoque utilizado para solventar este problema es el descrito en el ejemplo anterior.
+
+En lugar de invocar directamente a los widgets de Shiny o del resto de paquetes, \textbf{todos y cada uno de ellos} están encapsulados en funciones propias del sistema, de manera que la dependencia de este con los paquetes solo existen en un módulo determinado.
+
+El criterio utilizado es el siguiente:
+
+\begin{itemize}
+\tightlist
+\item
+  Los componentes de diseño se denominan \texttt{yuiCamelCaseName}
+\item
+  Los componentes de servidor se denominan \texttt{updCamelCaseName}
+\end{itemize}
+
+Donde, la función \emph{yui} encapsula el widget asociado y la función \emph{upd} gestiona la interacción con ese componente.
+
+De manera habitual, pero no en todos los casos, el nombre del par de funciones se corresponderá con su correspondiente widget o de la funcionalidad que implementa; por ejemplo, si tenemos un boton generico, se llamará \texttt{yuiButton} aunque podemos tener otros mas botones mas especificos como \texttt{yuiButtonOK} o \texttt{yuiButtonKO}
+
+\hypertarget{wrappers}{%
+\subsection{Wrappers}\label{wrappers}}
+
+qa1
+
+\hypertarget{about}{%
+\section{About}\label{about}}
+
+En esta sección se detallan algunas de las decisiones de diseño, técnicas, etc. que se han tomado, asi como el porqué y sus alternativas.
+
+El objetivo es mantener la trazabilidad y ofrecer un mejor conocimiento del sistema, evitando ``repensar'' de manera repetida la solución a ciertos problemas.
+
+Por facilidad, cada decisión va en su propio archivo
+
+\hypertarget{bloque-de-decisiones-una}{%
+\section{Bloque de decisiones una}\label{bloque-de-decisiones-una}}
+
+Aqui se indican las decisiones que se han tomado y por que
 
 \hypertarget{yatadb}{%
 \section{YATADB}\label{yatadb}}

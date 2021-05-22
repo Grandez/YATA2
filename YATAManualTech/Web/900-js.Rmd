@@ -1,0 +1,34 @@
+## Javascript
+
+Tenemos varios tipo de código javascript:
+
+- Código que se debe ejecutar al cargar la pagina
+- Propio para el funcionamiento de la pagina
+- Mensajes personalizados para la comunicación shiny/web
+- Mensajes para enviar notificaciones al servidor
+- Funciones que resultan "natural" que estén integradas con shiny
+
+
+### yata.js
+
+Este módulo tiene por función ejecutarse cada vez que se carga la página.
+Su función es inicializar el entorno y se debe ejecutar cuando la página está cargada; dicho de otro modo, el código debe incluirse al final de la pagina
+
+**importante** es donde debe instanciarse el objeto YATAApp como YATA
+
+### YATAApp.js
+
+Este módulo define la clase `YATAApp` que contiene el código específico de la aplicación.
+Para evitar problemas de nombres, todo nuestro código se encapsula en esta clase y se instancia con el nombre fijo **YATA**
+
+En caso de necesitar utilizar otro nombre, por el motivo que sea, es necesario:
+
+1. Modificar el modulo `yata.js` instanciando la clase con el objeto deseado
+2. Modificar la constante `YATAWEBDEF$jsapp` con el nuevo valor
+3. Regenerar los paquetes: `YATAWebCore`
+
+### extendShinyjs
+
+Esta función permite integrar nuestras propias funciones javascript en el objeto `js` de shiny.
+
+La información de uso esta disponible en [extendShinyjs](https://www.rdocumentation.org/packages/shinyjs/versions/2.0.0/topics/extendShinyjs)

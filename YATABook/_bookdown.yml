@@ -1,0 +1,4 @@
+book_filename: "YATABook"
+delete_merged_file: true
+output_dir: "output"
+

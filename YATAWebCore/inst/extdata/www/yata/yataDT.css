@@ -114,25 +114,3 @@ table.dataTable.yata-table tbody odd {
 }
 */
 
-.yata_layout_table {
-    border: 1px solid navy;
-    border-collapse: collapse;
-    margin: 6px;
-    width: 95%;
-}
-.yata_layout_row {
-    border-bottom: 1px solid navy;
-    border-collapse: collapse;
-}
-.yata_layout_left {
-    border-right: 1px solid navy;
-    border-collapse: collapse;
-}
-
-.rt-tr-striped {
-  background-color: lightyellow;
-}
-
-.rt-compact .rt-td {
-  padding: 0;
-}
