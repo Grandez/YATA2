@@ -10,14 +10,7 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
       ,public = list(
           position    = NULL
          ,operation   = NULL
-         ,cameras     = NULL
-         ,session     = NULL
-         ,monitors    = NULL
-         ,active      = NULL
-         ,data        = NULL
-         ,act         = NULL
          ,plotChanged = 0
-         ,tab = "" 
          ,initialize    = function(session) {
              private$defaultValues()
              super$initialize(id, pnlParent, session, ns)
@@ -25,20 +18,12 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
              self$operation = self$factory$getObject(self$codes$object$operation)
              private$initPanel()
          }
-         ,ctcLoaded = function(id) { ifelse(is.null(private$tabs[[id]]), FALSE, TRUE) } 
-         ,ctcLoad   = function(df) {
-             symbol = self$active
-             df$tms = as.Date(df$tms)
-             dfs = self$data$dfSymbols[self$data$dfSymbols$symbol == symbol,]
-             flows = self$operation$getFlowsByCurrency(symbol)
-             private$tabs[[symbol]] = list(symbol=symbol, id=dfs$id, label=dfs$label, active=TRUE
-                                          , df=df, flows=flows
-                                          , plotTypes = list("session", "", "volume", "")
-                                          , plots     = list("session", "", "volume", "")
-                                      )
-             self$act = private$tabs[[symbol]]
-         }
-         ,stackAdd = function(symbol) {
+         ,ctcLoaded = function(symbol) { 
+             res = symbol %in% self$vars$tabs 
+             if (!res) self$vars$tabs = c(self$vars$tabs, symbol)
+             res
+          }
+         ,stackAdd  = function(symbol) {
              self$active = symbol
              private$stack = c(private$stack, symbol)
          }
@@ -47,7 +32,7 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
              private$stack = private$stack[-idx]
          }
          ,stackTop = function() { private$stack[length(private$stack)]}
-         ,updateActive = function()   { private$tabs[[self$active]] = self$act }
+#         ,updateActive = function()   { private$tabs[[self$active]] = self$act }
          ,getHistory = function(symbol) { self$act$lstHist[[symbol]]$df   }
          ,getPlotInfo = function(idPlot, uiPlot) {
              # Un mismo plot puede estar en los dos con info diferente
@@ -75,9 +60,9 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
          }
     )
     ,private = list(
-         tabs = list()
-        ,stack = c("summ")
+         stack = c("summ")
         ,defaultValues = function() {
+            self$vars$tabs = NULL
              # self$cookies$interval = 15
              # self$cookies$best = list(top = 10, from = 2)
              # self$cookies$history = 15
@@ -102,12 +87,11 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
           df$since = as.Date(df$since) - as.difftime(7, unit="days")
           self$data$dfSymbols = df
           
-          info = list()
           invisible(self)
        }
-       )
-    )
-    moduleServer(id, function(input, output, session) {
+     )
+   )
+   moduleServer(id, function(input, output, session) {
        YATAWEB$beg("History Server")
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHist$new(session))
@@ -117,82 +101,83 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
           ,plots    = 0
         )
         initPage = function() {
+           yuiLoading()
            choices        = pnl$data$dfSymbols$symbol
            names(choices) = pnl$data$dfSymbols$label
            updListBox("lstCurrencies", choices = choices)
+           yuiLoaded()
         }
        updateLeftPanel = function() {
-           browser
+           browser()
        }
        ###########################################################
        ### Reactives
        ###########################################################
         observeEvent(flags$currency, ignoreInit = TRUE, {
-            pnl$stackAdd(flags$currency)
-            if (!pnl$ctcLoaded(pnl$active)) YATATabAppend(ns("tab"), pnl$active, pnl$active)
-            updateTabsetPanel(session, inputId="tabsHist", selected="dummy")
-            updateTabsetPanel(session, inputId="tabsHist", selected="detail")
-            updateLeftPanel()
+#            pnl$stackAdd(flags$currency)
+            pnl$vars$active = flags$currency
+            pnl$setCommareaItem("detail", flags$currency)
+            if (!pnl$ctcLoaded(flags$currency)) YATATabAppend(ns("tabDetail"), flags$currency)
+            
+            updateTabsetPanel(session, inputId="tabHist", selected=ns("dummy"))
+            updateTabsetPanel(session, inputId="tabHist", selected=ns("detail"))
+#            updateLeftPanel()
         })
         observeEvent(flags$plots, ignoreInit = TRUE, {
-            if (is.null(pnl$active)) return()
-            if (flags$plots == 1) pnl$act$plotTypes[[1]] = input$cboPlot_1_1
-            if (flags$plots == 2) pnl$act$plotTypes[[2]] = input$cboPlot_1_2
-            if (flags$plots == 3) pnl$act$plotTypes[[3]] = input$cboPlot_2_1
-            if (flags$plots == 4) pnl$act$plotTypes[[4]] = input$cboPlot_2_2
-            pnl$plotChanged = flags$plots
-            #modHistDetailServer(pnl$active, full, pnl,parent=session)
-            updateTabsetPanel(session, inputId="tabsHist", selected="dummy")
-            updateTabsetPanel(session, inputId="tabsHist", selected="detail")
+           if (is.null(pnl$active)) return()
+           if (flags$plots == 1) pnl$act$plotTypes[[1]] = input$cboPlot_1_1
+           if (flags$plots == 2) pnl$act$plotTypes[[2]] = input$cboPlot_1_2
+           if (flags$plots == 3) pnl$act$plotTypes[[3]] = input$cboPlot_2_1
+           if (flags$plots == 4) pnl$act$plotTypes[[4]] = input$cboPlot_2_2
+           pnl$plotChanged = flags$plots
+           #modHistDetailServer(pnl$active, full, pnl,parent=session)
+           updateTabsetPanel(session, inputId="tabHist", selected=ns("dummy"))
+           updateTabsetPanel(session, inputId="tabHist", selected=ns("detail"))
         })
 
        ###########################################################
        ### END Reactives
        ###########################################################
-      # updCombo("cboPlot_1_1", selected=pnl$act$plots[[1]])
-      # updCombo("cboPlot_1_2", selected=pnl$act$plots[[2]])
-      # updCombo("cboPlot_2_1", selected=pnl$act$plots[[3]])
-      # updCombo("cboPlot_2_2", selected=pnl$act$plots[[4]])
-
-
 
       #####################################################
       ### Observers                                     ###
       #####################################################
 
-      observeEvent(input$tabClick, {
-        browser()
-          if (input$tabClick != pnl$active) flags$currency = isolate(input$tabClick)
-      })
-      observeEvent(input$tabClose, {
-          YATATabRemove(ns("tab"), input$tabClose)
-          pnl$stackRemove(input$tabClose)
-          if (pnl$active == input$tabClose) flags$currency = isolate(pnl$stackTop())
-      })
       
-      observeEvent(input$tabsHist, {
-         if (input$tabsHist == "dummy") return()
-         act = input$tabsHist
-         if (act != "detail") pnl$active = NULL
+      observeEvent(input$tabHist, {
+         act = yataActiveNS(input$tabHist)
          module = paste0("modHist", titleCase(act),"Server")
-         eval(parse(text=paste0(module, "(act, full, pnl, parent=session)")))
+
+         if (act == "dummy") return()
+         if (act != "detail") pnl$vars$active = NULL
+         eval(parse(text=paste0(module, "(act, input$tabHist, pnl, parent=session)")))
       })
       observeEvent(input$btnClose, {
          browser()
       })
 
       #################################################
+      ### Navegacion dinamica
+      #################################################
+      
+      observeEvent(input$tabDetail_click, {
+          if (input$tabDetail_click != pnl$vars$active) 
+              flags$currency = isolate(input$tabDetail_click)
+      })
+      observeEvent(input$tabDetail_close, {
+          YATATabRemove(ns("tabDetail"), input$tabDetail_close)
+          pnl$stackRemove(input$tabdetail_close)
+          if (pnl$active == input$tabdetail_close) flags$currency = isolate(pnl$stackTop())
+      })
+
+      if (!pnl$loaded || pnl$isInvalid(pnl$id)) initPage()
+
+      #################################################
       ### Panel Izquierdo
       ### Es comun para todos
       #################################################
 
-     observeEvent(input$lstCurrencies, ignoreInit = TRUE, { flags$currency = isolate(input$lstCurrencies) })
-        
-      if (!pnl$loaded || pnl$isInvalid(pnl$id)) {
-          yuiLoading()
-          initPage()
-          yuiLoaded()
-      }
+      observeEvent(input$lstCurrencies, ignoreInit = TRUE, { flags$currency = isolate(input$lstCurrencies) })
       
       observeEvent(input$cboPlot_1_1, ignoreInit = TRUE, { flags$plots = isolate(1) })
       observeEvent(input$cboPlot_1_2, ignoreInit = TRUE, { flags$plots = isolate(2) })

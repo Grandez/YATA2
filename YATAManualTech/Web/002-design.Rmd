@@ -1,0 +1,21 @@
+## Diseño de paginas (layout)
+
+Los bloques que conforman la aplicación Web se asocian con el menú de navegación principal, a su vez, cada bloque puede tener subbloques los cuales se asocian con un menú "superior" secundario el cual, opcionalmente también podría tener otro subbloque al margen de la usabilidad de la usabilidad de esta navegación
+
+Si lo asimilamos a objetos, la estructura es:
+
+XXXX Aqui ponemos la imagen design,uml
+
+Nótese que tanto el contenedor como la pagina puede tener información especifica en los paneles laterales, entendemos que en estos casos el panel lateral del contenedor contiene información que afecta a todas las paginas mientras que los paneles laterales de las páginas contienen información propia de las mismas.
+
+Para gestionar esto, el diseño de la página a nivel contenedor es:
+```
+prfx-container
+   prfx-container-left
+   prfx-container-main
+   prfx-container-right
+```
+
+Donde `prfx` es el id del panel
+
+Para evitar abstracciones y complejidades innecesarias, asumiremos que en tiempo de diseño se conoce si una determinada pagina puede tener un panel lateral con uno o dos componentes, el del "padre" y el propio.

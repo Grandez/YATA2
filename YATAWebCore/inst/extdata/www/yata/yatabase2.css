@@ -638,10 +638,21 @@ navbar-static-top {
 }
 
 .yata_tabset_item {
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   cursor: pointer;
+  padding: 6px;
 }
 
+.yata_tabset_item_close {
+  padding: 6px;
+  padding-left: 6px;
+  color: red;
+}
+/*
+.yata_tabset_item_label {
+  padding-left: 8px;
+}
+*/
 /*********************************/
 /* Post                          */
 /*********************************/

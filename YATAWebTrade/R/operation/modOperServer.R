@@ -27,6 +27,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                self$vars$inEvent = FALSE
                self$vars$panel = ""
                private$opers   = HashMap$new()
+               private$definition = list(id=id, left=0, right=0)
            }
            ,getOper = function (id)        { private$opers$get(id)       }
            ,setOper = function (id, oper)  { 
@@ -93,6 +94,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
        ,private = list(
             opIdx    = list() # Contiene los id de las operaciones
            ,opers    = NULL
+           ,definition = list(id="", left=0, right=0)
        )
     )
     moduleServer(id, function(input, output, session) {

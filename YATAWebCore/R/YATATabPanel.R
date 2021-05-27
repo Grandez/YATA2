@@ -1,9 +1,9 @@
 .YATATabCreate = function(tabset, title, id) {
-    evt1  = paste0("Shiny.setInputValue('", tabset, "Close', '", id, "');")
-    evt2  = paste0("Shiny.setInputValue('", tabset, "Click', '", id, "');")
+    evt1  = paste0("Shiny.setInputValue('", tabset, "_close', '", id, "');")
+    evt2  = paste0("Shiny.setInputValue('", tabset, "_click', '", id, "');")
 
     tags$span(id = paste0(tabset, id), class="yata_tabset_item"
-              , tags$span(class="fas fa-times",onclick=evt1)
+              , tags$span(class="fas fa-times yata_tabset_item_close",onclick=evt1)
               , tags$span(title, onclick=evt2))
 }
 YATATab = function(title, id) {
@@ -16,7 +16,8 @@ YATATabRemove = function(panel, item) {
    stmt = paste0(stmt,"source.removeChild(target);")
    shinyjs::runjs(stmt)
 }
-YATATabAppend = function(panel, title, id) {
+YATATabAppend = function(panel, id,  title) {
+    if (missing(title)) title = id
     tab = YATATab(title, id)
     span = .YATATabCreate(panel, tab$title, tab$id)
     shiny::insertUI(paste0("#", panel), where="beforeEnd", span, immediate=TRUE)

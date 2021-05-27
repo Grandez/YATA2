@@ -1,0 +1,202 @@
+---
+title: "Lineas de tendencia"
+author: "Grandez"
+date: "26/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(zoo)
+
+knitr::opts_chunk$set(echo = FALSE, comment=NA, message=FALSE, warning = FALSE)
+seqGeom <- function(from,ratio,length.out,begin=1) {
+   end=length.out - begin
+   begin=begin-1
+   from*(1+ratio)**(begin:end)
+}
+
+```
+
+```{r functions}
+
+makePlot = function(df, title) {
+   p = ggplot(data=df, show_legend=FALSE) + theme_bw() +
+       theme(plot.title = element_text(hjust = 0.5)) +
+       xlab("") + ylab("") +
+       geom_point(aes(x=x,y=y))
+   if (!missing(title)) p = p + ggtitle(title)
+   p
+}
+addSmooth = function(plot, df) {
+   #eq = lm_eqn(df)
+   posy = df[nrow(df) - 3, 2]
+   p = plot + geom_smooth(aes(x=x,y=y), method="lm") +
+              geom_text(x = 10, y=posy, label = lm_eqn(df), parse = TRUE)
+#                    geom_text(label = "data", parse = TRUE)
+   p
+}
+# Obtiene la ecuacion de lm en modo texto
+lm_eqn <- function(df){
+    m <- lm(y ~ x, df);
+    eq <- substitute(italic(y) == a + b %.% italic(x),
+         list(a = format(unname(coef(m)[1]), digits = 2),
+              b = format(unname(coef(m)[2]), digits = 2)
+             #,r2 = format(summary(m)$r.squared, digits = 3)
+            ))
+    as.character(as.expression(eq));
+}
+lm2parms = function(lm, scale=2) {
+   lst = list(round(lm$coefficients[1], 2), round(lm$coefficients[2], 2))
+   names(lst) = c("alpha", "beta")
+   lst
+}
+```
+## Introducción
+
+Dado un conjunto de cotizaciones, tipícamente se acostumbra a trazar una linea que o bien una máximos o mínimos locales para identificar las resistencias y los soportes, o bien modele las cotizaciones en si mediante algún modelo de regresión linear.
+
+Con el angulo de la recta respecto al eje de abcisas nos da cierta información acerca de la tendencia y fuerza de ese valor bursatil
+
+```{r}
+size=50
+d1 = data.frame(x=seq(1,size), y=seq(from=1000, by=100, length.out=size))
+d2 = data.frame(x=seq(1,size), y=seqGeom(from=1000, ratio=.1, length.out=size))
+d2$y = round(d2$y, 0)
+
+```
+
+
+Veamos estos dos ejemplos
+
+```{r, fig.show="hold", out.width="50%"}
+
+makePlot(d1, "Linear growth")
+makePlot(d2, "Percentage growth")
+```
+
+**¿Cual de las dos opciones es mejor?**
+
+_Pista_: El primer gráfico crece de manera constante y el segundo logaritmicamente (10%). Asumiendo que cada intervalo en X es un dia, si a partir de hoy, ultimo dato del gráfico, invirtiéramos 10.000 um. en cada una de ellas el resultado 10 días sería:
+
+Opción 1: 11.000 -  1.000 um. de beneficio
+
+Opción 2: 23.580 - 13.850 um. de beneficio
+
+### Escalas y tamaños
+
+El primer error a la hora de comparar estos gráficos, son las escalas utilizadas y los tamaños de los gráficos, la escala influye por que si no son equivalentes **no son comparables**.
+
+Si observamos el eje de ordenadas, en el primer gráfico el rango va de 0 a 5000, mientras que en el segundo va de 0 a 10000; es decir, el doble de variación/incremento aunque el tamaños de los gráficos son equivalentes.
+
+
+Veamos que ocurre si los unificamos integrando las dos series en el mismo gráfico:
+
+```{r}
+
+makePlot(d1, "Linear growth") + 
+         geom_point(data=d2, aes(x=x,y=y,colour="blue")) +
+         guides(color=FALSE)
+
+```
+
+Aquí la sensación parece que al inicio de la serie es mas rentable la primera opción y después es significativamente mejor la segunda.
+
+**El problema del tamaño de los gráficos es que produce distorsión en la relación entre los ejes**
+
+
+### Lineas de tendencia
+
+Agreguemos ahora las lineas que nos indican la tendencia, expresados como la ecuación de la recta: $y = \alpha + \beta x$ donde $\beta$ se suele conocer como _pendiente_ de la recta
+
+```{r, message=FALSE, fig.show="hold", out.width="50%"}
+addSmooth(makePlot(d1, "Linear growth"),d1)
+addSmooth(makePlot(d2, "Percentage growth"), d2)
+```
+
+
+Aparentemente no existe gran diferencia en la pendiente, aunque la segunda opción se muestra favorable
+
+- 100 para el primer gráfico
+- 167 para el segundo
+
+**¿Donde están los errores en este análisis?**
+
+1. Estamos considerando valores de manera lineal
+2. Estamos considerando $\beta = tg(\alpha)$ donde $\alpha$ representa un ángulo
+3. Los ejes no pertenecen al mismo conjunto (o mas correctamente espacio vectorial)
+
+Vayamos por partes:
+
+### Valores o variaciones
+
+Supongamos, siguiendo con nuestros ejemplos, que tenemos dos opciones:
+
+1. Invierto 1.000 um. y al día siguiente recupero 1.050 um
+2. Invierto   100 um. y al día siguiente recupero   110 um 
+
+Evidentemente, el primer caso es mejor, puesto que un día gano 50 um. frente a 10 de la opción 2 (no estamos considerando los riesgos ni el importe inicial). La realidad:
+
+$$
+\begin{aligned}
+opcion 1 &= (\frac{1050}{1000} - 1) * \frac{1}{100} &= 5\% \\
+opcion 2 &= (\frac{110}{100} - 1) * \frac{1}{100} &= 10\%
+\end{aligned}
+$$
+Con lo que la opción 2 es el **doble de rentable** que la opción 1.
+
+**Para evaluar la evolución de una cotización usamos __siempre__ la variación, no los valores**
+
+Ajustemos los datos de los ejemplos según estos criterios:
+
+```{r, message=FALSE, fig.show="hold", out.width="50%"}
+
+d1$y1 = rollapply(d1$y, width=2, function(x) x[2]/x[1]-1, fill=NA, align="right")
+d2$y1 = rollapply(d2$y, width=2, function(x) x[2]/x[1]-1, fill=NA, align="right")
+d2$y1 = d2$y1 * 100
+d1$y1 = d1$y1 * 100
+
+df1 = d1[,c("x","y1")]
+df2 = d2[,c("x","y1")]
+colnames(df1) = c("x","y")
+colnames(df2) = c("x","y")
+makePlot(df1, "Linear growth")
+makePlot(df2, "Percentage growth")
+addSmooth(makePlot(df1, "Linear growth"),df1)
+addSmooth(makePlot(df2, "Percentage growth"), df2)
+
+```
+ 
+Aqui ya tenemos algo de información util.
+
+Si miramos el segundo gráfico, observamos que la linea de regresión es practicamente horizontal (las variaciones son debidas a los redondeos que hemos aplicado) mientras que en la primera el peso de cada día afecta negativamente.
+
+Con esta información podemos asumir ya cierta información acerca de la evolución de la cotización; mas concretamente en el primer grupo parece que la previsión de ganacias cada vez es menor puesto que $\beta$ es negativo mientras que la segunda opción muestra una evolución mas estable $\beta$ es practicamente cero con lo que podemos asumir que la ganancia esperada en esta opción será $\alpha$
+
+### Ejemplo
+
+Supongamos que nos encontramos en el día 20 y abrimos una operación a 10 días.
+Según los datos anteriores tenemos (redondeando:
+
+
+```{r}
+lm1 = lm2parms(lm(y ~ x, df1))
+lm2 = lm2parms(lm(y ~ x, df2))
+```
+
+$$
+\begin{aligned}
+   y_1 &= `r lm1$alpha` + `r lm1$beta` . x_1 \\
+   y_2 &= `r lm2$alpha` + `r lm2$beta` . x_2
+\end{aligned}
+$$
+
+luego la esperanza de beneficio es
+
+
+\begin{aligned}
+   y_1 &= `r lm1$alpha` + `r lm1$beta` . x_1 \\
+   y_2 &= `r lm2$alpha` + `r lm2$beta` . x_2
+\end{aligned}
+
+

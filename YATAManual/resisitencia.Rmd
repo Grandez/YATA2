@@ -1,0 +1,50 @@
+# Soportes, resistencias
+
+## Definicion
+
+## Proceso
+
+Vamos a ir sucesivamente encontrando los bloques en los que los datos suben o bajan en base a segmentos
+
+1. Logicamente, el primer segmento va de (x_0,y_0) a (x_1, y_1)
+
+$$
+
+\frac{x - x_1}{x_2-x_1} = \frac{y - y_1}{y_2 - y_1}
+$$
+
+(x -x1) * yr = (y - y1) *xr
+x*yr - x1*yr = y*xr - y1*xr
+y*xr = x *yr - x1*yr + y1*xr
+
+-x1*yr + y1*xr = B
+yr = A
+y*xr = Ax + B
+y = (A/xr)x + B/xr
+
+Traslacion: restamos B/Xr a todos los puntos
+
+El angulo es
+
+$$
+ cos \alpha = \frac {u * v}{|u||v|}
+$$
+
+
+Digamos que si la 
+entonces tenemos alpha acos( cosa)
+acos(0.5) * 180 / pi
+[1] 60
+> 
+x = r cos a
+y = r sen a
+
+0.01411945 = sen/cos
+
+sen2 + cos2 = 1
+0,0001 = sen2/cos2
+cos2 * 0,001 + cos2 = 1
+
+cos (60) = 0.5 = pi / 3
+
+1 / 2 = 180 / 3

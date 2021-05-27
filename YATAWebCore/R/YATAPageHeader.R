@@ -31,8 +31,7 @@
          tags$div(style="float: left;",
 
          shiny::tags$span(class="navbar-brand yata_brand", textOutput("appTitle", inline=TRUE)),
-         # Embed hidden icon so that we get the font-awesome dependency
-         shiny::tags$span(shiny::icon("bars"), style = "display:none;"),
+         shiny::tags$span(shiny::icon("bars"), style = "display:none;"),   # para la dependencia
          shiny::tags$a(href = "#",  id="left_side", # Sidebar toggle button
                 class = "sidebar-toggle",
                 `data-toggle` = "yataoffcanvas", # esto es para detectarlo en javascript
@@ -51,7 +50,16 @@
                                         shiny::tags$li(shiny::tags$a(href = "#",
                                                       `data-toggle` = "control-sidebar",controlbarIcon))
                         )
-         )
+                        ,shiny::tags$a(href = "#",  id="right_side", class = "sidebar-toggle",
+                                       `data-toggle` = "yataoffcanvas", role = "button"
+                                       ,shiny::tags$span( id="right_side_closed"
+                                                         ,class="yata_side_open"
+                                                         ,shiny::icon("gear fa-lg", style="padding-top: 12px"))
+                                       ,shiny::tags$span( id="right_side_open", class="yata_side_closed"
+                                                         ,shiny::icon("cogs fa-lg", style= "padding-top: 12px"))
+                        )
+                        ,shiny::tags$a(shiny::icon("info fa-lg", style="padding-top: 12px"))
+                      )
      )
 }
 

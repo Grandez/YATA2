@@ -2,6 +2,30 @@
 
 <!--chapter:end:001-shiny.Rmd-->
 
+## Diseño de paginas (layout)
+
+Los bloques que conforman la aplicación Web se asocian con el menú de navegación principal, a su vez, cada bloque puede tener subbloques los cuales se asocian con un menú "superior" secundario el cual, opcionalmente también podría tener otro subbloque al margen de la usabilidad de la usabilidad de esta navegación
+
+Si lo asimilamos a objetos, la estructura es:
+
+XXXX Aqui ponemos la imagen design,uml
+
+Nótese que tanto el contenedor como la pagina puede tener información especifica en los paneles laterales, entendemos que en estos casos el panel lateral del contenedor contiene información que afecta a todas las paginas mientras que los paneles laterales de las páginas contienen información propia de las mismas.
+
+Para gestionar esto, el diseño de la página a nivel contenedor es:
+```
+prfx-container
+   prfx-container-left
+   prfx-container-main
+   prfx-container-right
+```
+
+Donde `prfx` es el id del panel
+
+Para evitar abstracciones y complejidades innecesarias, asumiremos que en tiempo de diseño se conoce si una determinada pagina puede tener un panel lateral con uno o dos componentes, el del "padre" y el propio.
+
+<!--chapter:end:002-design.Rmd-->
+
 ## Paquetes Shiny 
 
 Antes de hablar de _Shiny_ y de sus características debemos detenernos brevemente en comprender que es una página Web.
@@ -47,7 +71,7 @@ Si deseamos cambiar los botones de bsButton por otro estilo, basta con modificar
 En esta seccion estan las cosas que se deberian implementar, mejorar, etc.
 Cuando alguna de ellas se realice, normalment pasara al apartado de decisiones
 
-r knitr::include_graphics("../images/webpackages.png") 
+("../images/webpackages.png") 
 
 ## Tablas de Datos
 
@@ -90,7 +114,7 @@ Los modulos, formularios, etc. **se ejecutan de manera dinamica**  por lo que si
 En esta seccion estan las cosas que se deberian implementar, mejorar, etc.
 Cuando alguna de ellas se realice, normalment pasara al apartado de decisiones
 
-`r knitr::include_graphics("images/webpackages.png") `
+##### ("../images/webpackages.png") 
 
 ## Tablas de Datos
 
@@ -179,7 +203,8 @@ Estas clases se usan en el código javascript:
 
 - **yata_leftside_open**
 - **yata_leftside_closed**
-- **yata_side_closed**
+- **yata_side_closed**  Gestiona la visibilidad del indicador de panel lateral
+- **yata_side_noside**  Gestiona la visibilidad del indicador de panel lateral
 
 <!--chapter:end:901-css.Rmd-->
 

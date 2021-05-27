@@ -1,7 +1,7 @@
 modHistSummServer = function(id, full, pnlParent, parent) {
    ns = NS(id)
    ns2 = NS(full)
-   PNLHist = R6::R6Class("PNL.HIST"
+   PNLHistSumm = R6::R6Class("PNL.HIST.SUMM"
         ,inherit    = YATAPanel
         ,cloneable  = FALSE
         ,lock_class = TRUE
@@ -41,8 +41,9 @@ modHistSummServer = function(id, full, pnlParent, parent) {
    )
    moduleServer(id, function(input, output, session) {
       YATAWEB$beg("modHist_Summary")
+
       pnl = YATAWEB$getPanel(id)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHist$new(id, pnlParent, session))
+      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHistSumm$new(full, pnlParent, session))
 
       flags = reactiveValues(
           refresh = FALSE

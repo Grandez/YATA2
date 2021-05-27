@@ -60,9 +60,8 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           private$commarea = data  
           invisible(self)
       }
-      ,setCommareaItems  = function(...) {
-         private$commarea = list.merge(private$commarea, list(...))
-      }
+      ,setCommareaItem  = function(name, value) { private$commarea[[name]] = value }
+      ,setCommareaItems = function(...)         { private$commarea = list.merge(private$commarea, list(...)) }
       ,getCommareaItem  = function(item, default=NULL) {
          val = private$commarea[[item]]
          if (is.null(val)) val = default

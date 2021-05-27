@@ -24,18 +24,14 @@ modHistInput = function(id, title) {
       ,fluidRow(column(4, lblOper),  column(8, style="text-align: right;", yuiCheck(ns("detail-chkOper"))))
     )
 
-pnl =            tabsetPanel(id=ns("tabsHist")
-         ,tabPanel("Summary",   value="summ",    YATAModule(ns("summ")))
-         ,tabPanel("",   value="detail",    YATAModule(ns("detail")))
-         ,tabPanel("",   value="dummy",     "")
-      )
-#pnl2 = YATATabPanel(ns("tab"),YATATab("tab 1", "tab1"), YATATab("tab 2", "tab2"), YATATab("tab 3", "tab3"))
-pnl2 = YATATabPanel(ns("tab"))
+    pnl1 = tabsetPanel( id=ns("tabHist")
+                      ,tabPanel("Summary",   value=ns("summ"),    YATAModule(ns("summ")))
+                      ,tabPanel("",   value=ns("detail"),    YATAModule(ns("detail")))
+                      ,tabPanel("",   value=ns("dummy"),     "")
+          )
+    pnl2 = YATATabPanel(ns("tabDetail"))
 # pnl$children[[1]] = tagAppendChild(pnl$children[[1]], pnl2)
     
-    main = tagList(YATATabsetPanel(pnl, pnl2)
-#      ,YATATabPanel(ns("tab"),YATATab("tab 1", "tab1"), YATATab("tab 2", "tab2"), YATATab("tab 3", "tab3"))
-
-    )
+    main = tagList(YATATabsetPanel(pnl1, pnl2))
     list(left=left, main=main, right=NULL)           
 }

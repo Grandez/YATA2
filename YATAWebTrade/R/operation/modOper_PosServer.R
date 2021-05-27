@@ -142,7 +142,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnlParent, session))
 
        flags = reactiveValues(
-            opClose   = 0
+            opClose   = FALSE
+           ,opView    = FALSE
            ,best      = FALSE
            ,history   = 15
            ,refresh   = FALSE
@@ -186,17 +187,19 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           pnl$data$type = pnl$codes$oper$close
           pnl$vars$nextAction = pnl$codes$status$closed
           pnl$data$reasons = pnl$cboReasons(DBParms$reasons$close)
-          pnl$data$act     = pnl$data$tblOpen[flags$opClose, "act"]
-#          pnl$action       = "close"
+          pnl$data$act     = pnl$data$tblOpen[pnl$vars$row, "act"]
           data = yuiFormUI(ns2("form"), "OperClose", data=pnl$data)
           output$form = renderUI({data})
           formChangeInit()
        })
+       observeEvent(flags$opView, ignoreInit = TRUE, {
+           browser()
+       })
       
       observeEvent(input$tableOpen, {
           if (!str_starts(input$tableOpen$colName, "btn")) return()
-          row = pnl$selectOperation(input$tableOpen$row, pnl$codes$status$executed)
-          if (input$tableOpen$colName == "btnClose") flags$opClose = isolate(row)
+          pnl$vars$row = pnl$selectOperation(input$tableOpen$row, pnl$codes$status$executed)
+          if (input$tableOpen$colName == "btnClose") flags$opClose = isolate(!flags$opClose)
           if (input$tableOpen$colName == "btnView")  flags$opView  = isolate(!flags$opView)
       })
 
@@ -336,56 +339,6 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           pnl$parent$valid = TRUE
       }
 
-#       loadPosition   = function() { 
-#          df = pnl$operations$getOpen()
-#          if (nrow(df) > 0) {
-#              pnl$data$dfOpen = df
-#              dfo   = prepareOpen(df, pnl)
-#              dfi = df[,c("counter", "tms")]
-# 
-# #             shinyjs::toggle(ns("opOpen"))
-#              table = "open"
-#              btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
-#                       ,yuiTblButton(full, table, "View", yuiBtnIconView())
-#              )
-#              dfb = yataDTButtons(dfo, btns)
-#              types = list(dat = c("deadline"), prc = c("var"))
-# 
-#              output$tblOpen = yataDFOutput(dfb, types=types,colorize=c("var"), type="operation")  # yataDFOutput({df}, type='operation')
-#              for (row in 1:nrow(dfi)) getHistorical(dfi[row,1], dfi[row,2])
-#              
-#       # types = list(dat = c("since"), prc = c("day", "week", "month"))
-#       # df =  df %>% select(currency,balance, priceBuy, priceSell, price, day, week, month, since)
-#       # df$since = as.Date(df$since)
-#       # colnames(df) = c("currency", "balance", "cost", "return", "net", "day", "week", "month", "since")
-#       # yataDT(df,types=types,colorize=c("day", "week", "month"))
-#       # 
-#       #              
-#          }
-#          
-#          df = pnl$operations$getPending()
-#          if (nrow(df) > 0) {
-#              shinyjs::toggle(ns("opPending"))
-#              table = "pending"
-#              btns = c(  yuiTblButton(full, table, "Accept",   yuiBtnIconOK())
-#                        ,yuiTblButton(full, table, "Rejected", yuiBtnIconRefuse())
-#                        ,yuiTblButton(full, table, "Cancel",   yuiBtnIconDel())
-#              )
-#              df = yataDTButtons(df, btns)
-#              output$tblPending = yataDFOutput({df}, type='operation')
-#          }
-# 
-#          df = pnl$operations$getAccepted()
-#          if (nrow(df) > 0) {
-#              shinyjs::toggle(ns("opAccepted"))
-#              table = "accepted"
-#              btns = c(yuiTblButton(full, table, "Executed", yuiBtnIconCloud("Executed")))
-#              df = yataDTButtons(df, btns)
-#              output$tblAccepted = yataDFOutput({df}, type='operation')
-#          }
-# 
-#          pnl$valid = TRUE
-#       }
       formChangeInit = function() {
          title = ""
          if (pnl$vars$nextAction == pnl$codes$status$accepted) title = YATAWEB$MSG$title("OPER.ACCEPT")
@@ -407,24 +360,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          }
                   
       }
-# output$click <- renderPrint({
-#     event_data("plotly_legendclick")
-#   })
-
-  # output$doubleclick <- renderPrint({
-  #   event_data("plotly_legenddoubleclick")
-  # })      
-  #     observe({
-  #         browser()
-  #         res = event_data("plotly_legendclick")
-  #         browser()
-  #     })
-  #     observe({
-  #         browser()
-  #         res = event_data("plotly_afterplot")
-  #         browser()
-  #     })
       observeEvent(input$btnTablePending, {
+          browser()
           YATAWEB$beg("Table Pending")
           pnl$selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
@@ -450,6 +387,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           YATAWEB$end("Table Pending")
       }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableAccepted, {
+           browser()
           YATAWEB$beg("Table Accepted")
           pnl$selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
           pnl$vars$nextAction = pnl$codes$status$executed
@@ -458,26 +396,6 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           formChangeInit()
           YATAWEB$end("Table Accepted")
        }, ignoreInit = TRUE, ignoreNULL = TRUE)
-       observeEvent(input$btnTableOpen, {
-          row = pnl$selectOperation(input$btnTableOpen, pnl$codes$status$executed)
-          if (pnl$action == "close") {
-              pnl$data$type = pnl$codes$oper$close
-              pnl$vars$nextAction = pnl$codes$status$closed
-              pnl$data$reasons = pnl$cboReasons(DBParms$reasons$close)
-              pnl$data$act     = pnl$data$tblOpen[row, "act"]
-              data = yuiFormUI(ns2("form"), "OperClose", data=pnl$data)
-              output$form = renderUI({data})
-              formChangeInit()
-          }
-          if (pnl$action == "view") {
-              lbl = paste(pnl$data$base, pnl$data$counter, sep="/")
-              id = paste(ns2("detail"), pnl$data$id, sep="_")
-              insertTab( "pnlOpType",tabPanel(lbl,value=id, YATAModule("oper-detail",lbl, mod="OperDetail"))
-                        ,"oper-hist", position="after", select=TRUE, session=parent)
-          }
-          
-       }, ignoreInit = TRUE, ignoreNULL = TRUE)
-
        observeEvent(input$btnTable, {
          browser()
           # me devuelve: tabla - operacion - fila

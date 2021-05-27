@@ -118,7 +118,13 @@ YATAPlot = R6::R6Class("YATA.PLOT"
           invisible(self)
        }
        ,Candlestick = function(df) {
-           if (private$current$visible) candle(df)
+           #JGG revisar, privatae$current es null
+           if (is.null(private$current)) {
+               candle(df)
+           } else {
+             if (private$current$visible) candle(df)
+           }
+
            invisible(self)
        }
        ,Pie = function(df) {
@@ -137,7 +143,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            }
            if (add) {
                if (is.null(private$data[[name]])) {
-                   private$data[[name]] = list(source=dftype, data=df)
+                   private$data[[name]] = list(source=dftype, data=df, visible=TRUE)
                } else {
                    private$data[[name]]$data = df
                }
@@ -165,7 +171,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
          #     self$plot = private$base()
          #     private$generated = FALSE
          # }
-         private$data[[name]] = list(source=dftype, data=df)
+         private$data[[name]] = list(source=dftype, data=df, visible=TRUE)
          # if (!generated) {
          #     render(ui, NULL, info$type)
          # } else {

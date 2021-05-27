@@ -14,6 +14,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,vars       = list()  # Variables temporales con memoria
     ,cookies    = list() # Variables con estado
     ,layout     = NULL
+    ,print      = function() { message(paste("Panel object for", self$name)) }
     ,initialize = function(id, parent, session, ns) {
         self$name         = id
         self$parent       = parent
@@ -93,14 +94,17 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,setCommarea       = function(data)       {
         private$root$setCommarea(data)
         invisible(self)
+    }
+    ,setCommareaItem   = function(name, value) {
+        private$root$setCommareaItem(name, value)
+        invisible (self)
      }
     ,setCommareaItems  = function(...)        {
         private$root$setCommareaItems(...)
         invisible (self)
      }
-    ,setCommareaItem  = function(item, default=NULL)  {
-        private$root$setCommareaItem(item, default)
-        invisible(self)
+    ,getCommareaItem  = function(item, default=NULL)  {
+        private$root$getCommareaItem(item, default)
       }
   )
   ,private = list(

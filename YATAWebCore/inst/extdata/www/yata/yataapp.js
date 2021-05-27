@@ -48,12 +48,14 @@ $.yata = {
   }
    ,sidebarLeft: function(evt) {
        // Icono del panel lateral clickado
-       let page = evt.data.yata.page;
+       let page = evt.data.yata.page.id;
 
        // Se ha activado la pagina antes de insertarla
        if (this.page.left === undefined) this.page = this.panels.get(page);
        if (page === null) return;
-
+       // Cuando son hijos
+       page = page.split('-');
+       page = page[0];
        let id = "#" + page + "-container_left";
        if ($(id).hasClass('yata_leftside_closed')) {
            $(id).removeClass('yata_leftside_closed').trigger('expanded.pushMenu');
@@ -283,6 +285,23 @@ function yataMovePanel(data) {
    target.appendChild(source);
 }
 
+// ////////////////////////////////////////
+//  Eventos Shiny
+ // ////////////////////////////////////////
+
+function yataTableclick (rowInfo, colInfo, evt, tgt) {
+  //CHECKED
+  // Botones en reactable
+
+//    window.alert('Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id//);
+                                   //if (colInfo.id !== 'details') { return }
+//                         window.alert('Details: row ' + rowInfo.index + 'col: ' + colInfo.id);
+//     if (window.Shiny) {
+         Shiny.setInputValue(evt, { row: rowInfo.index + 1, colName: colInfo.id, target: tgt
+                                 }, { priority: 'event' });
+//     }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 function setTile() {
 alert("setTile");
@@ -314,16 +333,6 @@ function listenerLayout() {
     });
 }
 
-function yataTableclick (rowInfo, colInfo, evt, tgt) {
-  alert("yatashiny yataTableclick");
-//    window.alert('Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id//);
-                                   //if (colInfo.id !== 'details') { return }
-//                         window.alert('Details: row ' + rowInfo.index + 'col: ' + colInfo.id);
-     if (window.Shiny) {
-         Shiny.setInputValue(evt, { row: rowInfo.index + 1, colName: colInfo.id, target: tgt
-                                 }, { priority: 'event' });
-     }
-}
 function yatabtnClickable(event) {
   alert("yatashiny yatabtnClickable");
   alert("Click en el menu " + event.target.id);
