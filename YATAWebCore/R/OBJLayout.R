@@ -4,8 +4,10 @@ OBJLayout = R6::R6Class("YATA.WEB.LAYOUT"
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,public = list(
-      initialize = function(ns, layout, options, values=NULL, top=NULL) {
+      initialize = function(ns, layout, options, values=NULL, top=NULL,full=TRUE) {
          if (!missing(ns)) private$ns = ns
+         # full indica si se hace la gestion completa o solo se notifica
+         private$full = full
          if (!missing(layout)) {
               private$layout = layout
               makeConfig(ns, layout, options, values, top)
@@ -13,7 +15,10 @@ OBJLayout = R6::R6Class("YATA.WEB.LAYOUT"
           }
       }
      ,getConfig = function()    { private$config  }
-     ,getBody   = function(...) { makeLayout(...) }
+     ,getBody   = function(...) {
+       private$full = TRUE
+       makeLayout(...)
+      }
      ,update    = function(session, layout, ns) {
          if (missing(ns)) ns = private$ns
          for (r in 1:nrow(layout)) {
@@ -30,6 +35,11 @@ OBJLayout = R6::R6Class("YATA.WEB.LAYOUT"
       ns     = NULL
      ,config = NULL
      ,layout = NULL
+     ,full   = FALSE # si TRUE gestiona todo, si false notifica
+    ,yuiLayout = function(id, choices, selected=NULL) {
+       cls = ifelse(full, "yata_layout", "yata_layout_notify")
+       yataSelectInput(id, label=NULL, choices=choices, selected = selected, width="auto", class=cls)
+    }
      ,makeConfig = function(ns, layout, options, values, top) {
          opts = c("Hide"="none")
          if (!missing(options)) opts = options

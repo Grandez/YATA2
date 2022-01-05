@@ -1,6 +1,7 @@
+unloadNamespace("YATAWebWidgets")
 unloadNamespace("YATAWebCore")
 unloadNamespace("YATACore")
-unloadNamespace("YATADT")
+# unloadNamespace("YATADT")
 unloadNamespace("YATAProviders")
 unloadNamespace("YATADB")
 unloadNamespace("YATATools")
@@ -15,10 +16,11 @@ suppressMessages(library(tidyr, warn.conflicts = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE))
 
 # YATA
-suppressMessages(library(YATATools))
-suppressMessages(library(YATACore))
-suppressMessages(library(YATAWebCore, warn.conflicts = FALSE))
-suppressMessages(library(YATADT))
+suppressMessages(library(YATATools,      warn.conflicts = FALSE))
+suppressMessages(library(YATACore,       warn.conflicts = FALSE))
+suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
+suppressMessages(library(YATAWebWidgets, warn.conflicts = FALSE))
+# suppressMessages(library(YATADT))
 
 # Shiny
 library(shiny)
@@ -31,7 +33,7 @@ library(shinycookie)
 library(shinybusy)
 
 # General
-library(data.table)
+# library(data.table)
 
 library(reactable)
 

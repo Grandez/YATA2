@@ -177,7 +177,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          resp = httr::content(page, type="application/json")
          if (http_error(page)) {
             msg = paste("ERROR EN EL GET: ", resp[[1]]$error_code, "message: ", resp[[1]]$error_message)
-            stop(msg)
+            message(msg)
+            return (NULL)
          }
 
          body = resp[[2]]
@@ -190,9 +191,12 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          df = t(df1)
          row.names(df) = NULL
          df = as.data.frame(df)
+         if (nrow(df) == 0) return (NULL)
          # La ultima columna es el timestamp
          df1 = df[,1:ncol(df) - 1]
-         df1 = as.data.frame(sapply(df1,as.numeric))
+         # sapply falla cuando es uno
+         # df1 = as.data.frame(sapply(df1,as.numeric))
+         for (col in 1:ncol(df1)) df1[,col] = as.numeric(df1[,col])
          tms = anytime::anytime(df[,ncol(df)])
          cbind(tms=tms,df1)
       }

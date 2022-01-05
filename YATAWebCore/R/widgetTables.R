@@ -1,4 +1,4 @@
-yuiDataTable = function(id) { DT::dataTableOutput(id) }
+# yuiDataTable = function(id) { DT::dataTableOutput(id) }
 
 yuiTable          = function(id)   { reactableOutput(id) }
 updTable          = function(data) { renderReactable({ .updTable(data, NULL)       })}

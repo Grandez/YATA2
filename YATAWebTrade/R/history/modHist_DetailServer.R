@@ -21,6 +21,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
              super$initialize(full, pnlParent, session, ns)
              self$position  = self$factory$getObject(self$codes$object$position)
              self$operation = self$factory$getObject(self$codes$object$operation)
+             private$definition$id = full
              private$initPanel()
          }
          ,ctcLoaded = function(symbol) { ifelse(is.null(private$tabs[[symbol]]), FALSE, TRUE) } 
@@ -57,7 +58,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
              info = self$vars$info$uiPlot$idPlot
              if (is.null(info)) {
                  info = list()
-                 info$observer = ns("modebar")
+                 info$observer = ns2("modebar")
                  info$id   = ns(idPlot)
                  info$ui   = uiPlot
                  info$render = idPlot
@@ -80,6 +81,14 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
     ,private = list(
          tabs = list()     # Datos de detail
         ,stack = c("summ")
+      ,definition = list(
+         id    = ""
+        ,left  = -1
+        ,right = -1
+        ,son   = NULL
+        ,submodule = TRUE
+      )
+
         ,defaultValues = function() {
              # self$cookies$interval = 15
              # self$cookies$best = list(top = 10, from = 2)
@@ -91,10 +100,11 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
            self$data$dfSymbols = pnlParent$data$dfSymbols
            invisible(self)
        }
-       )
-    )
+     )
+  )
    
    moduleServer(id, function(input, output, session) {
+     browser()
       YATAWEB$beg("modHist_Detail")
        pnl = YATAWEB$getPanel(full)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHistDetail$new(session))
@@ -117,11 +127,12 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
          if (tgt == 0) tgt = index
          df = pnl$act$df
          type = pnl$act$plotTypes[[tgt]]
+
          if (type == "")        pnl$act$plots[[tgt]] = ""
-         if (type == "session") pnl$act$plots[[tgt]] = YATAPlot$new("prueba", type="Candlestick", data=df)
-         if (type == "volume")  pnl$act$plots[[tgt]] = YATAPlot$new("prueba", type="Bar", data=df[,c("tms", "volume")])
-         if (type == "cap")     pnl$act$plots[[tgt]] = YATAPlot$new("prueba", type="Bar", data=df[,c("tms", "market_cap")])
-         if (type == "price")   pnl$act$plots[[tgt]] = YATAPlot$new("prueba", type="Line",data=df) 
+         if (type == "session") pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Candlestick", data=df)
+         if (type == "volume")  pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Bar", data=df[,c("tms", "volume")])
+         if (type == "cap")     pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Bar", data=df[,c("tms", "market_cap")])
+         if (type == "price")   pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Line",data=df) 
       }
       makeSubPlots = function(p1, p2, rows = TRUE) {
          plots = pnl$act$plots
@@ -168,7 +179,12 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       ### Reactives                                     ###
       #####################################################
       observeEvent(flags$loaded, ignoreInit = TRUE, { 
-         if (!is.data.frame(pnl$vars$df)) return()
+          browser()
+         if (!is.data.frame(pnl$vars$df)) {
+             showNotification("Error de datos", duration = NULL)
+             yuiLoaded()
+             return()
+         }
          pnl$ctcLoad()
          flags$refresh = isolate(!flags$refresh)
       })
@@ -190,11 +206,13 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       #####################################################
 
       getHistorical = function() {
+        browser()
           symbol = pnl$vars$active
           dfs = pnl$data$dfSymbols 
           df = dfs[dfs$symbol == symbol,]
           restdf("hist",id=df$id,from=df$since,to=Sys.Date())  %>% then (
                  function(df) { 
+                     browser()
                     pnl$vars$df = df
                     flags$loaded = isolate(!flags$loaded)
                  }, function(err) { }
@@ -216,7 +234,12 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       #####################################################
       ### Observers                                     ###
       #####################################################
+      observeEvent(input$cboLayout, ignoreInit = TRUE, {
+          # value, row, col
+         browser()
+      })
 
+      
       observeEvent(input$chkOper, ignoreInit = TRUE, {
          data = pnl$getActive()
          if (input$chkOper && is.null(data$flows)) {
@@ -230,6 +253,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       })
       
       observeEvent(input$modebar, {
+         browser()
           info = input$modebar
           if (!as.logical(info$tagvalue)) info$type = info$tag
           output$plot = pnl$plot$render(info = info)

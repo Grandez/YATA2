@@ -27,7 +27,6 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                self$vars$inEvent = FALSE
                self$vars$panel = ""
                private$opers   = HashMap$new()
-               private$definition = list(id=id, left=0, right=0)
            }
            ,getOper = function (id)        { private$opers$get(id)       }
            ,setOper = function (id, oper)  { 
@@ -94,18 +93,17 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
        ,private = list(
             opIdx    = list() # Contiene los id de las operaciones
            ,opers    = NULL
-           ,definition = list(id="", left=0, right=0)
-       )
-    )
+           ,definition = list(id = "", left=0, right=0, son=NULL, submodule=FALSE)
+        )
+   )   
     moduleServer(id, function(input, output, session) {
         YATAWEB$beg("modOperServer")
-
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         
         flags = reactiveValues(
             commarea  = FALSE
-       )
+        )
 
        ###########################################################
        ### Reactives
@@ -118,6 +116,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
        })       
         
         observeEvent(input$pnlOpType, { 
+            browser()
            act = yataActiveNS(input$pnlOpType)
            module = paste0("modOper", titleCase(act),"Server")
            carea = pnl$getCommarea()

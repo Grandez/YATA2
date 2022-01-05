@@ -91,6 +91,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
         ,tables = c( "Position"    = "Position", "Best"              = "Best"
                     ,"Best of Top" = "Top"     , "Best of favorites" = "Fav"
          )
+        ,definition = list(id = "", left=-1, right=0, son=NULL, submodule=FALSE)
         ,defaultValues = function() {
              self$cookies$interval = 15
              self$cookies$best = list(top = 10, from = 2)
@@ -160,7 +161,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       data
     }
     moduleServer(id, function(input, output, session) {
-       YATAWEB$beg("Position Server")
+       #YATAWEB$beg("Position Server")
        pnl = YATAWEB$getPanel(id)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(session))
 
@@ -177,7 +178,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            ,tab       = FALSE
        )
        initPage = function() {
-          YATAWEB$beg("initPage")
+          #YATAWEB$beg("initPage")
           renderUIPosition()    # Preparar tabla posiciones
           updNumericInput("numInterval", pnl$cookies$interval)
           output$dtLast = updLabelDate({Sys.time()})
@@ -198,7 +199,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
               dat = paste(df[,"currency"], df[,"id"], sep="-")
               lapply(dat, function(x) getHistorical(x))
           }
-          YATAWEB$end("initPage")
+          #YATAWEB$end("initPage")
        }
        
        ###########################################################
@@ -206,7 +207,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ###########################################################
 
        observeEvent(flags$position, ignoreInit = TRUE, {
-           YATAWEB$beg("flags$position")
+           #YATAWEB$beg("flags$position")
            if (is.null(pnl$data$dfGlobal)) return()
            pnl$cookies$position = flags$position
           if (input$radPosition == "Cameras") {
@@ -235,10 +236,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                       }
                })
            }
-           YATAWEB$end("flags$position")
+           #YATAWEB$end("flags$position")
        })       
        observeEvent(flags$best, ignoreInit = TRUE, {
-           YATAWEB$beg("flags$best")
+           #YATAWEB$beg("flags$best")
           from = as.numeric(input$cboBestFrom)
           if (is.na(from)) return() 
           if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
@@ -246,31 +247,32 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           pnl$cookies$best$top  = input$numBestTop
           pnl$updateBest()
           renderBestTables()
-          YATAWEB$end("flags$best")
+          #YATAWEB$end("flags$best")
        })
        observeEvent(flags$refresh, ignoreInit = TRUE, { 
-          YATAWEB$beg("refresh")
+          #YATAWEB$beg("refresh")
           pnl$monitors$update() 
           flags$position = isolate(!flags$position)
           renderBestTables()
           renderPlotSession()
-          YATAWEB$end("refresh")
+          #YATAWEB$end("refresh")
        })
        observeEvent(flags$update, ignoreInit = TRUE, { 
-          YATAWEB$beg("update")
+          #YATAWEB$beg("update")
           pnl$updateData()
           flags$refresh = isolate(!flags$refresh)
-          YATAWEB$end("update")
+          #YATAWEB$end("update")
        })
        observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
-           YATAWEB$beg("history")
+           #YATAWEB$beg("history")
           if (is.na(flags$history)) return()
           if (flags$history != pnl$cookies$history) {
               pnl$cookies$history = flags$history
           }
-           YATAWEB$end("history")
+           #YATAWEB$end("history")
        })
        observeEvent(flags$table, ignoreInit = TRUE, {
+           browser()
            table = pnl$vars$table$target
            row   = pnl$vars$table$row
            df    = pnl$getDFTable(table)
@@ -345,9 +347,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
        observeEvent(flags$plotsBest, ignoreInit = TRUE, {
-           YATAWEB$beg("plotsBest")
+         browser()
+           #YATAWEB$beg("plotsBest")
            table = pnl$vars$table
-           plot = pnl$getPlot(paste0("plot", table$table))
+           plot = pnl$getPlot(paste0("plot", table$target))
            sym = table$symbol
            plotted = plot$hasSource(sym)
            if (!plotted) {
@@ -356,13 +359,13 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            } else {
                plot$removeData(sym)
            }
-           if (table$table == "Best") output$plotBest = plot$render()
-           if (table$table == "Top")  output$plotTop  = plot$render()
-           if (table$table == "Fav")  output$plotFav  = plot$render()
-           YATAWEB$end("plotsBest")
+           if (table$target == "Best") output$plotBest = plot$render()
+           if (table$target == "Top")  output$plotTop  = plot$render()
+           if (table$target == "Fav")  output$plotFav  = plot$render()
+           #YATAWEB$end("plotsBest")
        })
        observeEvent(flags$plotPos, ignoreInit = TRUE, {
-           YATAWEB$beg("plotPos")
+           #YATAWEB$beg("plotPos")
            plot = pnl$plots[["plotHist"]]
            plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
            name = flags$plotPos
@@ -373,7 +376,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                }
            }
            output$plotHist = plot$render("plotHist")    
-           YATAWEB$end("plotPos")
+           #YATAWEB$end("plotPos")
        })
 
        ###########################################################
@@ -381,7 +384,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ###########################################################
 
        renderUIPosition = function() {
-           YATAWEB$beg("renderUIPosition")
+           #YATAWEB$beg("renderUIPosition")
           cameraUI = function(camera) {
              suffix  = titleCase(camera)
              cam     = pnl$cameras$getCameraName(camera)
@@ -402,17 +405,17 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                   nstable = paste0("tblPos", suffix)
                   divCam = tags$div( id=paste0("divPos", suffix)
                                     ,yuiBoxClosable( ns(nstable), paste("Posicion", cam)
-                                    ,yuiDataTable(ns(nstable))
+                                    ,yuiTable(ns(nstable))
                                    )
                             )
                   cameras = tagAppendChild(cameras, divCam)
              }
           }
           insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)           
-          YATAWEB$end("renderUIPosition")
+          #YATAWEB$end("renderUIPosition")
       }
        renderBestTables = function() {
-          YATAWEB$beg("renderBest")
+          #YATAWEB$beg("renderBest")
           period = c("Hora", "Dia", "Semana", "Mes")
           lbl = period[as.integer(input$cboBestFrom)]
 
@@ -426,7 +429,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           if (!is.null(data2$df)) output$tblTop = updTableMultiple(data2)
           data3 = prepareBest(pnl$data$dfFav, "Fav")
           if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
-          YATAWEB$end("renderBest")
+          #YATAWEB$end("renderBest")
        }
        renderPlotSession = function(uiPlot) {
 #          if (pnl$vars$sessionChanged) {
@@ -464,6 +467,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       #####################################################
 
       observeEvent(input$tableBest, ignoreInit = TRUE, {
+          browser()
            pnl$vars$table = input$tableBest
            if (!startsWith(input$tableBest$colName, "Button")) {
                flags$table = isolate(!flags$table)
@@ -472,6 +476,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
       observeEvent(input$tablePos, {
+          browser()
            pnl$vars$table = input$tablePos
            if (!startsWith(input$tablePos$colName, "Button")) {
                flags$tablePos = isolate(!flags$tablePos)
@@ -534,6 +539,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
      })
 
       
-    YATAWEB$end("Position Server")
+    #YATAWEB$end("Position Server")
    })
 }    

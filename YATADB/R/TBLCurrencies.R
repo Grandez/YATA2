@@ -46,6 +46,10 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
               ,icon     = "ICON"
               ,cameras  = "CAMERAS"
               ,tms      = "TMS"
+              ,from     = "BEG"
+              ,to       = "END"
+              ,beg      = "CREATED"
+              ,active   = "ACTIVE"
           )
          ,hMap = NULL
          ,getData = function(codes, all) {

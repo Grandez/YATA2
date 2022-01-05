@@ -1,0 +1,112 @@
+---
+title: "Installation"
+author: "Grandez"
+date: "18/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Hyper-V
+
+Instalamos la maquina con HYper-V manager
+Cambiar la definicion de la pantalla
+
+    Open grub settings: nano /etc/default/grub
+    Search next line: GRUB_CMDLINE_LINUX_DEFAULT and add video=hyperv_fb:1920×1080, where 1920×1080 – resoluton we need. We get: GRUB_CMDLINE_LINUX_DEFAULT=”quiet splash video=hyperv_fb:1920×1080″
+    Apply new settings by running the command update-grub
+    Reboot system
+
+sudo nano /etc/default/grub
+sudo update-grub
+sudo reboot
+
+Crear las carpetas compartidas
+
+En windows:
+
+Carpeta a compartir
+Compartir como nombre_recurso, el recurso sera //NombreMaquina/NombreRecurso
+
+En Ubuntu
+
+$ sudo apt install cifs-utils
+Crear el directorio
+$ mkdir /win/wsl
+
+Montar el recurso
+sudo mount.cifs //Damien/WSL /win/wsl -o user=Javier
+
+Ejecutar el script
+Crear la ubicacion de la libreria en profile.d creamos R.sh
+
+
+
+En R
+
+sudo su - -c "R -e \"install.packages('shiny', repos='https://cran.rstudio.com/')\""
+
+sudo apt-get install gdebi-core
+wget https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.16.958-amd64.deb
+sudo gdebi shiny-server-1.5.16.958-amd64.deb
+
+## Windows Subsytem Linux (Ubuntu)
+
+1. Descargar Ubuntu desde Store
+2. sudo passwd para cambiar la password de root
+3. actualizar paquetes
+
+Ejecutar el script
+
+```
+sudo apt     -y install net-tools
+sudo apt-get -y install dialog
+sudo apt-get -y install libxml2-dev          
+sudo apt-get -y install libfontconfig1-dev   
+sudo apt-get -y install libudunits2-dev    
+sudo apt-get -y install libcurl4-openssl-dev
+sudo apt-get -y install libxt-dev        Para R
+
+sudo apt-get -y install libcairo2-dev
+sudo apt     -y install mariadb-server
+sudo apt-get -y install libmariadb-dev-compat
+sudo apt-get -y install libmariadbclient-dev
+sudo apt-get -y install libssl-dev
+sudo apt install -y libcurl4-openssl-dev
+
+sudo add-apt-repository ppa:webupd8team/sublime-text-3
+
+# Para R
+
+sudo apt install -y dirmngr gnupg apt-transport-https ca-certificates software-properties-common
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+sudo apt -y  install build-essential
+sudo apt-get update
+
+
+```
+
+establecer la libreria
+
+ln -s /mnt/c/...... wsl
+
+crear la libreria
+en profile.d creamos R.sh
+export R_LIBS_SITE=/mnt/wsl/...
+
+instalar shiny con dependencias
+fallara cairo
+
+
+sudo apt-get install gdebi-core
+wget https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.16.958-amd64.deb
+sudo gdebi shiny-server-1.5.16.958-amd64.deb
+
+## route port 80 to 3838
+
+
+
+

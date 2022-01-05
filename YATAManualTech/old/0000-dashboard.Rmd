@@ -3,6 +3,12 @@
 Permite definir la configuracion de la pagina de acuerdo con un conjunto de opciones
 
 Lo gestiona el objeto OBJLayout
+OBJLayout tiene dos comportamientos:
+
+si full=TRUE defecto, gestiona completamente la interfaz
+si full=FALSE  solo notifica a la pagina
+
+esto se hace mediante dos listeners, uno mira la clase yata_layout y otro yata_layout_notify
 
 
 **IMPORTANTE**

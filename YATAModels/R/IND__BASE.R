@@ -19,7 +19,15 @@ IND__BASE <- R6::R6Class("IND__BASE",
         ,df      = data.frame()
         ,blocks   = 1  # bitmask xx
         ,indNames = c("ID_IND","FLG_SCOPE","FLG_TERM","NAME","TYPE","VALUE","DESCR")
-        ,initialize = function(parms=NULL)  { private$parameters = c(private$parameters, parms) }
+        ,initialize = function(...)  {
+            args = list(...)
+            if (is.list(args[[1]])) {
+                initArgs(args[[1]])
+                if (length(args) > 1) initArgs(args[[2:length(args)]])
+            } else {
+                initArgs(args)
+            }
+        }
         ,hasData         = function()       { FALSE }
         ,getParameters   = function()       { private$parameters }
         ,getTarget       = function()       { self$target }
@@ -137,6 +145,11 @@ IND__BASE <- R6::R6Class("IND__BASE",
         ,calculated = 0  # En shiny es posible que se llame varias veces
         ,data = NULL
 
+       ,initArgs = function(args) {
+            if (!is.null(args$name))   self$name   = args$name
+            if (!is.null(args$symbol)) self$symbol = args$symbol
+            if (!is.null(args$parms))  self$parms  = args$parms
+         }
         ,getColPosition = function(data) {
             name  = toupper(self$target$getName())
             ucols = toupper(colnames(data))

@@ -151,9 +151,15 @@ YATATable <- R6::R6Class("YATA.TABLE"
       }
       ,query   = function(sql, ...) {
          # Query personalizada
-         filter = mountWhere(list(...))
          setColNames(db$query(paste(sql, filter$sql), params=filter$values))
       }
+      ,query2   = function(sql, ...) {
+         # Query personalizada
+         filter = mountWhere(...)
+         df = db$query(paste("SELECT ", sql, "FROM ", tblName, filter$sql), params=filter$values)
+         setColNames(df)
+      }
+
       ,table   = function(..., inValues=NULL, includeKeys = TRUE) {
           # Recupera los datos de la tabla completa en funcion de los parms
          filter = mountWhere(..., inValues=inValues)

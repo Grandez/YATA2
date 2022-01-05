@@ -368,7 +368,7 @@ body {
   width: 380px;
 }
 
-.yata_leftside_closed {
+.yata_side_closed {
   display: none;
 }
 
@@ -612,6 +612,9 @@ navbar-static-top {
   padding: 8px;
 }
 
+.active > a {
+  color: gray;
+}
 .yata_side_none {
   visibility: hidden;
 }

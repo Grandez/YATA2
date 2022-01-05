@@ -1,0 +1,54 @@
+---
+title: "Double-Exponential Moving Average (DEMA)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Weigthed Moving Average (WMA)
+
+A weighted average is an average that has multiplying factors to give different weights to data at different positions in the sample window. Mathematically, the moving average is the convolution of the datum points with a fixed weighting function. One application is removing pixelisation from a digital graphical image.[citation needed]
+
+In technical analysis of financial data, a weighted moving average (WMA) has the specific meaning of weights that decrease in arithmetical progression.[4] In an n-day WMA the latest day has weight n, the second latest n − 1, etc., down to one.
+
+$$
+\begin{aligned}
+    WMA_M = \frac{np_M + (n−1) p_{M−1} + ⋯ + 2p_{(M−n+2)} + p_{(M−n+1)}} {n + ( n − 1 ) + ⋯ + 2 + 1} 
+\end{aligned}
+$$
+
+The denominator is a triangle number equal to $\frac{n(n+1)}{2}$.
+
+In the more general case the denominator will always be the sum of the individual weights. 
+
+
+When calculating the WMA across successive values, the difference between the numerators of $WMA_{M+1}$ and ${WMA_M}$ is $np_{M+1} − p_M − ⋅⋅⋅ − p_{M−n+1}$. 
+
+If we denote the sum $p_M + ⋅⋅⋅ + p_{M−n+1}$ by $Total_M$, then
+
+$$
+\begin{aligned}
+    Total_{M + 1} &= Total_M + p_{M + 1} − p_{M−n+1} \\
+    Numerator_{M+1} &= Numerator_M + np_{M+1} − Total_M \\
+    WMA_{M+1} &= \frac{Numerator_{M+1}}{n + (n − 1) + ⋯ + 2 + 1}
+\end{aligned}
+$$
+
+
+
+$$
+ZLEMA(data, window = 10, ratio = NULL, ...)
+$$
+## Parametros
+
+__window__
+
+The Window Size is nothing but the look back period.
+
+
+__ratio__
+
+A smoothing/decay ratio. ratio overrides wilder in EMA, and provides additional smoothing in VMA.
+

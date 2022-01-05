@@ -1,0 +1,53 @@
+---
+title: "Arnaud Legoux Moving Average (ALMA)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Arnaud Legoux Moving Average (ALMA)
+
+[comment]: # (This actually is the most platform independent comment)
+
+Media Móvil Ponderada con retraso regulado usando una curva de distribución normal (o Gaussiana)
+ como función de ponderación de coeficientes.
+
+Esta Media Móvil utiliza una curva de distribución Normal (Gaussiana) que puede ser puesta
+por el parámetro Offset de 0 a 1.
+
+Este parámetro permite regular la suavidad y la alta sensibilidad de la Media Móvil.
+Sigma es otro parámetro que es responsable de la forma de los coeficientes de la curva.
+
+## Formula
+
+$$\frac{1}{NORM} = \sum_{i=1}^{n}p(i){e}\frac{(i-offset)^2}{\sigma^2}$$
+
+
+## Parametros
+
+__n__
+
+The Window Size is nothing but the look back period and this forms the basis of your ALMA settings.
+
+You can use the ALMA window size to any value that you like, although it is best to stick with the well followed parameters such as 200, 100, 50, 20, 30 and so on based on the time frame of your choosing.
+
+__offset__
+
+The offset value is used to tweak the ALMA to be more inclined towards responsiveness or smoothness.
+
+The offset can be set in decimals between 0 and 1.
+
+A setting of 0.99 makes the ALMA extremely responsive, while a value of 0.01 makes it very smooth.
+
+__sigma__
+
+The sigma setting is a parameter used for the filter.
+
+A setting of 6 makes the filter rather large while a smaller sigma setting makes it more focused.
+
+According to Mr. Legoux, a sigma value of 6 is said to offer good performance.
+
+
+

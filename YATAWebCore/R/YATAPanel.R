@@ -18,7 +18,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,initialize = function(id, parent, session, ns) {
         self$name         = id
         self$parent       = parent
-
+        if (!is.null(private$definition)) private$definition$id = id
         # Typos
         self$factory = YATAWEB$factory
         self$codes   = self$factory$codes
@@ -26,7 +26,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         self$MSG     = self$factory$MSG
 #        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
         private$loadCookies()
-        private$root = private$getRoot()
+        private$root = self$getRoot()
         if (!missing(ns) && !is.null(self$cookies$layout)) {
             self$layout = OBJLayout$new(ns)
             self$layout$update(session, self$cookies$layout)
@@ -41,6 +41,15 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         }
         pp
     }
+     ,getRoot = function() {
+         root = self
+         pp   = root$parent
+         while (!is.null(pp)) {
+                root = pp
+                pp = pp$parent
+         }
+         root
+      }
     ,makeCombo = function(df) {
         data = as.list(df$id)
         names(data) = df$name
@@ -81,9 +90,9 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         invisible(self)
     }
     ,getDef = function() {
-        def = private$definition
-        if (is.null(def)) def = list(id=self$name, left=-1, right=-1)
-        def
+       if (is.null(private$definition))
+           return (list(id=self$name, left=-1, right=-1, son=NULL, submodule=FALSE))
+        private$definition
      }
     ##########################################################
     ### Acceso a root
@@ -110,15 +119,6 @@ YATAPanel = R6::R6Class("YATA.PANEL"
   ,private = list(
        invalid = c("")
       ,root   = NULL
-     ,getRoot = function() {
-         root = self
-         pp   = root$parent
-         while (!is.null(pp)) {
-                root = pp
-                pp = pp$parent
-         }
-         root
-      }
       ,loadCookies = function() {
           cookies = YATAWEB$getCookies(self$name)
           if (!is.null(cookies)) self$cookies = list.merge(self$cookies, cookies)

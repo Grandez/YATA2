@@ -24,6 +24,7 @@ DBDict = list(
         ,Providers    = "PROVIDERS"
         ,Path         = "PATH"
         ,Messages     = "MESSAGES"
+        ,History      = "HISTORY"
     )
     ,fields = list(
          active    = "ACTIVE"
@@ -52,5 +53,10 @@ DBDict = list(
       ,note = 2
       ,currency = 10
       ,oper = 11
+  )
+  ,messages = list(
+      oper    =  1
+     ,monitor = 10
+     ,plots   = 11
   )
 )

@@ -16,10 +16,15 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           txt = getMessage(code)
           sprintf(txt, ...)
       }
-      ,getBlock = function(block) {
+      ,getBlock = function(block, inverted=FALSE) {
         df = tblMsg$table(block = block)
-        data = df$msg
-        names(data) = df$code
+        if (inverted) {
+            data = df$code
+            names(data) = df$msg
+        } else {
+            data = df$msg
+            names(data) = df$code
+        }
         data
       }
       ,getBlockAsMap = function(block) {

@@ -3,12 +3,18 @@ restCheck = function() {
    url = paste0(url,"alive")
    tryCatch({httr::http_error(httr::GET(url))}, error = function(e) TRUE)
 }
-PUT   = function(endpoint, ...) {
+PUT   = function(endpoint, ...) { # PUT No devuelve datos
    url = "http://127.0.0.1:9090/"
    url = paste0(url, endpoint)
-   message("GET: ", url)
    future({ httr::GET(url, query = args2list(...)) })
 }
+PUTSync = function(endpoint, ...) {
+   url = "http://127.0.0.1:9090/"
+   url = paste0(url, endpoint)
+   httr::GET(url, query = args2list(...))
+}
+GETDF = function (endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
+
 restdf      = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
 restdfSync  = function(endpoint, ...) {          .restDfBody(endpoint, ...)   }
 .restDfBody = function(endpoint, ...) {

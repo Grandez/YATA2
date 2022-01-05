@@ -15,6 +15,9 @@ yataMessage = function(id, msg, type) {
 yataAlertPanelUI = function(id) {
     bsModal(id, "Error grave", NULL, size = "large", h2("Error que te cagas"))
 }
+yataNotify = function(txt) {
+    showNotification(txt, duration = NULL)
+}
 # yataAlertPanelServer = function(id, session) {
 #     browser()
 #     toggleModal(session, id)

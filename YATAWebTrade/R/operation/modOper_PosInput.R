@@ -26,12 +26,12 @@ modOperPosInput = function(id, title) {
                    ))
                    ,hidden(fluidRow(id=ns("divPend")
                              ,column(6, yuiBox(ns("opPending"),  boxPend,
-                                                yuiDataTable(ns("tblPending"))
+                                                yuiTable(ns("tblPending"))
                                                ,hidden(tags$span(id=ns("noPending"), noAccept))
                                         )
                                     )
                              ,column(6, yuiBox( ns("opAccepted"), boxExec
-                                               ,yuiDataTable(ns("tblAccepted"))
+                                               ,yuiTable(ns("tblAccepted"))
                                                ,hidden(tags$span(id=ns("noAccepted"), noExec))
                                         )
                               )

@@ -20,7 +20,7 @@ hist_handler = function(.req, .res) {
     id   = .req$parameters_query[["id"]]
     from = .req$parameters_query[["from"]]
     to   = .req$parameters_query[["to"]]
-    cat(paste("hist    id: ", id, "from: ", from, "to: ", to, "\n"))
+#    cat(paste("hist    id: ", id, "from: ", from, "to: ", to, "\n"))
     tryCatch({
        fact = YATACore::YATAFACTORY$new()
        sess = fact$getObject(fact$codes$object$session)
@@ -46,6 +46,7 @@ latest_handler = function(.req, .res) {
 update_handler = function(.req, .res) {
     message(Sys.time(), "update Called")
     tryCatch({
+        browser()
        fact = YATACore::YATAFACTORY$new()
        sess = fact$getObject(fact$codes$object$session)
        sess$updateLatest()

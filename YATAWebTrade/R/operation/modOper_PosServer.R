@@ -133,6 +133,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
      )
       ,private = list(
           selected = NULL
+        ,definition = list(id = "", left=0, right=0, son=NULL, submodule=TRUE)
       )
    )
    

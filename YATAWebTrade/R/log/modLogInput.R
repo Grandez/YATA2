@@ -19,8 +19,8 @@ modLogInput = function(id, title="") {
       ,yuiBtnOK(ns("btnFilter"),lblFilter)
     )
     main = tagList(
-        yuiBox(ns("item"),""
-              ,yuiRow( yuiColumn(2, h4(lblApply))
+        yuiBox(ns("item"),"", tags$br()
+              ,fluidRow( yuiColumn(2, h4(lblApply))
                         ,yuiColumn(2, yuiCombo( ns("cboApply"),choices=targets,selected="oper"))
                         ,yuiColumn(1)
                         ,yuiColumn(1,h4("Item"))

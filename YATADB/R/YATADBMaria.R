@@ -7,7 +7,6 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
         connRead   = NULL   # Conexion para leer datos
        ,connTran   = NULL   # Conexion para actualizar datos
        ,initialize = function(data) {
-#          message("Creando conexion a MariaDB")
            private$dbInfo = data
            self$engine    = dbInfo$engine
            self$name      = dbInfo$name
@@ -16,21 +15,24 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
        }
       ,finalize = function() {
           if (!is.null(connTran)) {
-#             message("Cerrando conexion transaccional")
               commit()
               disconnect(connTran)
           }
           if (!is.null(connRead)) {
-#             message("Cerrando conexion lectura")
              disconnect(connRead)
           }
        }
       ,print      = function() {
           db = ifelse(is.null(self$connRead), "No Connection", paste0(dbInfo$name, " (", dbInfo$dbname, ")"))
           message(db, ": MariaDB Database")
-       }
+      }
+      ,isValid = function(conn) { RMariaDB::dbIsValid(conn) }
+      ,restoreConnection = function(conn) {
+         if (isValid(conn)) return (conn)
+         disconnect(conn)
+         connect()
+      }
       ,connect    = function ()     {
-#          message("Abriendo conexion")
           tryCatch({conn = RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
                                                ,username = dbInfo$user
                                                ,password = dbInfo$password
@@ -38,20 +40,20 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                                                ,port     = dbInfo$port
                                                ,dbname   = dbInfo$dbname
                     )
-#                    private$addConn(conn)
           },error = function(cond) {
-              browser()
-              yataError("Error de conexion", cond, "SQL", "connect") })
+              yataErrorSQL("Connection error", origin=cond, action="connect") })
       }
       ,disconnect = function(conn) {
-#          message("Cerrando conexion")
-          tryCatch({ RMariaDB::dbDisconnect(conn) }, error = function(cond) {
-              message("ERROR en disconnect")
-             browser()
-              cat(cond)
-          })
+          if (isValid(conn))  {
+              tryCatch({ RMariaDB::dbDisconnect(conn) }
+                        ,error = function(cond) {
+                              message("ERROR en disconnect")
+                      })
+          }
+          invisible(self)
       }
       ,begin      = function() {
+          if (!isValid(connTran)) self$connTran = restoreConnection(connTran)
           if (!private$trx) RMariaDB::dbBegin   (connTran)
           private$trx = TRUE
           invisible(connTran)
@@ -70,11 +72,8 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           if (!is.null(params)) names(params) = NULL
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, param=params) }
                     ,error = function (cond) {
-                       cat("ERROR EN QUERY\n")
-                       cat(cond)
-                        browser()
-                        #yataError("Error SQL", cond, "SQL", "Query", cause=qry)
-                       })
+                       yataErrorSQL("QUERY Error", origin=cond, action="query")
+                    })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
           # isolated crea una transaccion para esa query
@@ -84,28 +83,20 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
            tryCatch({res = RMariaDB::dbExecute(getConn(isolated), qry, params=params)
                      if (isolated) commit()
                     },warning = function(cond) {
-#                        browser()
-                       #  rollback();
-                       #  yataWarning("Warning SQL", cond, "SQL", "Execute", cause=qry)
                        if (isolated) rollback()
-                       stop(paste("WARNING en EXECUTE:", cond))
+                       yataErrorSQL("WARNING en EXECUTE", origin=cond, action="execute")
                     },error = function (cond) {
-#                        browser()
-                       #  rollback()
- #                       yataError("Error SQL", cond, "SQL", "Execute", cause=qry)
                        if (isolated) rollback()
-                                              cat("ERROR EN EXECUTE\n")
-                       cat(cond)
-
-#                       stop(paste("ERROR en EXECUTE:", cond))
-
+                       yataErrorSQL("SQL ERROR", origin=cond, action="execute")
                     })
       }
       ,write      = function(table, data, append=TRUE, isolated=FALSE) {
          over = ifelse(append, FALSE, TRUE)
-         tryCatch({ res = RMariaDB::dbWriteTable(getConn(isolated), table, data, append=append, overwrite=over)
+         tryCatch({ conn = getConn(isolated)
+                    res = RMariaDB::dbWriteTable(conn, table, data, append=append, overwrite=over)
                     if (isolated) commit()
                   },warning = function(cond) {
+                     browser()
 #                       yataWarning("Warning SQL", cond, "SQL", "WriteTable", cause=tab#le)
                      stop(paste("Aviso en DB Write: ", cond))
                   },error   = function(cond) {
@@ -141,10 +132,13 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
       ,trx       = FALSE
       ,getConn   = function(isolated=FALSE) {
          if (isolated) return (begin())
-         if (private$trx)
+         if (private$trx) {
+             self$connTran = restoreConnection(connTran)
              connTran
-         else
+         } else {
+             self$connRead = restoreConnection(connRead)
              connRead
+         }
       }
    )
 )

@@ -80,9 +80,10 @@ YATAPage =  function(title = NULL,id = NULL,
   )
 
    container   = tags$div(id="yata_container", class="yata_container", page, shinyjs::hidden(mainFormErr))
-
    srcUpdLayout = paste0("function(id, tgt) { yataUpdateLayout(id, tgt);}")
    jsUpdLayout  = paste("shinyjs.yataUpdateLayout = ", srcUpdLayout)
+   # srcUpdLayout = paste0("function(id, tgt) {", YATAWEBDEF$jsapp, ".", YATAMSG$updateLayout, "(id, tgt);}")
+   # jsUpdLayout  = paste("shinyjs.yataUpdateLayout = ", srcUpdLayout)
    srcAddPage   = paste0("function(data) { ", YATAWEBDEF$jsapp, ".", YATAMSG$addPage, "(data); }")
    jsAddPage    = paste("shinyjs.yataAddPage =", srcAddPage)
    srcSetPage   = paste0("function(data) { ", YATAWEBDEF$jsapp, ".", YATAMSG$setPage, "(data); }")
@@ -97,7 +98,7 @@ YATAPage =  function(title = NULL,id = NULL,
              ,tags$link  (rel="stylesheet", type="text/css", href="yata/yata_adminlte.css")
 
              ,tags$script(src="yata/yataapp.js")
-             ,tags$script(makeMessageHandler(YATAMSG$setPanel))
+             ,tags$script(makeMessageHandler(YATAMSG$setPage))
              ,tags$script(makeMessageHandler(YATAMSG$showBlock))
              ,tags$script(makeMessageHandler(YATAMSG$movePanel))
 

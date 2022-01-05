@@ -125,7 +125,6 @@ function(input, output, session) {
    # En este observer, cargamos la posicion y las cotizaciones
     observe({
        message("SERVER Update")
-#       pnl$updateData()
        PUT("update")
        invalidateLater(pnl$interval * 60000)       
     })

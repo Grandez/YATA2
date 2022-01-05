@@ -1,0 +1,62 @@
+---
+title: "Double-Exponential Moving Average (DEMA)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Elastic Volume Weighted Moving Average (EVWMA)
+
+The elastic volume weighted moving average is a technical indicator used, like all moving averages, to determine the nature of the market and to generate signals. It can also be used as a trigger line. EVWMA has the specificity that it is both symbol-independent and time-frame independent.
+This is made by introducing what is called the volume period, i.e. the simple moving average of the volume multiplied by a coefficient. EVWMA can be viewed as an approximation of the average price paid per share.
+
+EVWMA interpretation is similar to all moving averages types. When prices jump up crossing their EVWMA from below, this is a sign for an up-trend, and a buy signal is generated; when they go down crossing their EVWMA from above, this a sign for a down-trend, and a sell signal is generated.
+Divergence between the EVWMA and the prices is a strong signal for either an overbought or an oversold market which forecasts a near end of the trend.
+
+The elastic volume weighted moving average function you can get here is named 'elastic_volume_wma', and it takes 2 parameters as arguments. The first one is the time period of the simple moving average of the volume; the second is the coefficient by which this SMA will be multiplied to get the volume period.
+
+In addition to the mean, we may also be interested in the variance and in the standard deviation to evaluate the statistical significance of a deviation from the mean.
+
+EWMVar can be computed easily along with the moving average. 
+
+The starting values are:
+$$
+\begin{aligned}
+   EMA_1 = x_1$ \\
+   EMVar_1 = 0  \\
+\end{aligned}
+$$
+
+And we then compute the subsequent values using:[14]
+
+$$
+\begin{aligned}
+
+δ = x_i − EMA_{i − 1} \\
+EMA_i = EMA_{i−1} + α ⋅ δ \\
+EMVar_i = ( 1 − α ) ⋅ ( EMVar_{i−1} + α ⋅ δ^2 ) \\
+\end{aligned}
+$$
+
+
+From this, the exponentially weighted moving standard deviation can be computed as $EWSD_i = \sqrt{EMVar_i}$ 
+We can then use the standard score to normalize data with respect to the moving average and variance. This algorithm is based on Welford's algorithm for computing the variance. 
+
+Function used in system is:
+
+$$
+ZLEMA(data, window = 10, ratio = NULL, ...)
+$$
+## Parametros
+
+__window__
+
+The Window Size is nothing but the look back period.
+
+
+__ratio__
+
+A smoothing/decay ratio. ratio overrides wilder in EMA, and provides additional smoothing in VMA.
+

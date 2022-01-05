@@ -1,0 +1,51 @@
+## Tamaños
+
+## Datos de session
+
+La tabla history tiene
+
+1. sizeof(date) = 4
+2. Varchar(20) = 4 + 20 = 24
+3. 6 dobles
+
+Luego, para szDbl = 8
+
+
+```{r}
+ szDbl = 8
+```
+
+cada registro ocupa `4 + 24 + (6 * szDbl)`
+
+y el volumen de la tabla es:
+
+$$
+    Vol = num_monedas * num_dias * `4 + 24 + (6 * szDbl)`
+$$
+
+Para 2000 monedas, cinco años:
+
+Mas la cabecera de pagina por el numero de paginas
+Mas 32K
+
+Para un tamaño de pagina de 32K
+cada pagina contiene unos 400 registros
+como tenemos 2000 * 365 * 5 registros
+
+tenemos 9125 paginas
+a 4k por cada una
+
+o sea unos 35 Mb
+
+O sea:
+
+el tamaño no es preocupante
+
+```{r}
+
+```
+A diferencia de los estilos actuales que tienden a poner el menú en un panel lateral con un icono en la parte superior, podemos tener dos paneles laterales, a la izquierda y a la derecha.
+
+Particularmente, estoy en contra del icono de barritas por que considero que si algo cambia el estado de la pagina debe indicarlo, por lo que prefiero utilizar un simbolo **">"** para indicar que se realiza una acción (algo que irá de izquierda a derecha) y **"<"** para indicar como se puede deshacer la acción.
+
+Este comportamiento lo logramos de la siguiente manera:

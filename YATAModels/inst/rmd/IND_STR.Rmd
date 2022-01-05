@@ -1,0 +1,91 @@
+---
+title: "Strengh"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Strengh (STR)
+
+Es un indicador simple que intenta medir la tendencia y la fuerza con la que esta está ocurriendo en base a hacer una comparación rápida de 4 puntos, el actual y tres anteriores.
+
+La idea se basa en obtener 3 rectas y comparar el peso mediante "la pendiente" de las mismas 
+
+## Método
+
+1. Asumamos que los puntos se identifican como X_0 (el actual) y x_1,x_2,x_3 los otros tres puntos por orden de proximidad a x_0
+2. Obtenemos las ecuaciones de las rectas:
+
+
+$$
+\begin{aligned}
+ r_1 \equiv \frac{x - x_0}{x_0 - x_1} =\frac{y - y_0}{y_1 - y_0} \equiv y_1 = \alpha_1 + \beta_1x \\
+ r_2 \equiv \frac{x - x_0}{x_0 - x_2} =\frac{y - y_0}{y_2 - y_0} \equiv y_2 = \alpha_2 + \beta_2x \\
+ r_3 \equiv \frac{x - x_0}{x_0 - x_3} =\frac{y - y_0}{y_3 - y_0} \equiv y_3 = \alpha_3 + \beta_3x \\
+\end{aligned} 
+$$
+
+3. Comparamos $\beta_i$ considerandolo como el peso de cada recta dentro del mismo conjunto de valores. Obteniendo la siguiente tabla de verdad:
+
+$$
+\begin{aligned}
+\beta_3 \leq \beta_2 \leq \beta_1
+\end{aligned} 
+$$
+
+
+
+$$
+\begin{bmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{bmatrix}
+$$
+
+
+|$P$|$Q$||($P$|$\rightarrow$|$Q$)|$\vee$|$\neg$|$P$||
+|-
+|T|T|||||||||||||||||||
+|T|F|||||||||||||||||||
+|F|T|||||||||||||||||||
+|F|F|||||||||||||||||||
+
+
+$$
+\begin{aligned}
+ TP=\frac{high + low + close}{3} \\
+ MidBand=SMA(TP) \\
+ UpperBand = MidBand + \sigma(TP)Factor \\
+ LowerBand = MidBand - \sigma(TP)Factor
+\end{aligned}
+$$
+
+## Parametros
+
+__n__
+
+The Window Size is nothing but the look back period and this forms the basis of your ALMA settings.
+
+
+__Factor__
+
+The number of standard deviations to use
+
+
+$$
+\[
+  \text{Mat}_{\varphi\text{ to }M} = \kbordermatrix{
+    & c_1 & c_2 & c_3 & c_4 & c_5 \\
+    r_1 & 1 & 1 & 1 & 1 & 1 \\
+    r_2 & 0 & 1 & 0 & 0 & 1 \\
+    r_3 & 0 & 0 & 1 & 0 & 1 \\
+    r_4 & 0 & 0 & 0 & 1 & 1 \\
+    r_5 & 0 & 0 & 0 & 0 & 1
+  }
+\]
+$$
+
+
+ppppp

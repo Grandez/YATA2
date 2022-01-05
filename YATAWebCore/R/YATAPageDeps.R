@@ -1,6 +1,5 @@
 # Copiado de dashboard plus para modificar el estilo adminlte
 # Add dashboard dependencies to a tag object
-# Add dashboard dependencies to a tag object
 yataDeps <- function(tag, md, options = NULL) {
 
   # always use minified files (https://www.minifier.org)

@@ -198,9 +198,9 @@ YATAPlot = R6::R6Class("YATA.PLOT"
          info = list(
              datavalue  = "Value"
             ,datasource = "price"
-            ,observer   = "modebar"
-            ,type       = "Line"
-            ,ui         = ""
+            ,observer   = "modebar"    # Nombre del evento
+            ,type       = "Line"       # Tipo de plot
+            ,ui         = ""           # Nombre contenedor UI
             ,changed    = FALSE
          )
         ,current = NULL
@@ -217,7 +217,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
             #  src = ifelse(is.missing(id), "A", info$plotly)
             p = plot_ly(source=id)
             p = config(p)
-            plotly::layout(p, legend = list(orientation = 'h'))
+            plotly::layout(p, autosize=TRUE, width=NULL, legend = list(orientation = 'h'))
         }
         ,trace = function(df, type, mode, name, ...) {
             if (!is.null(private$current$visible) && !private$current$visible) return (self$plot)

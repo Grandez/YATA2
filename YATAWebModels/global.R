@@ -1,42 +1,83 @@
+unloadNamespace("YATAWebCore")
+unloadNamespace("YATACore")
+# unloadNamespace("YATADT")
+unloadNamespace("YATAProviders")
+unloadNamespace("YATADB")
+unloadNamespace("YATATools")
+
+# Core
+library(utils)
+library(R6)
+# library(tibble)
+# library(rlist)
+# suppressMessages(library(plyr,  warn.conflicts = FALSE))
+# suppressMessages(library(tidyr, warn.conflicts = FALSE))
+# suppressMessages(library(dplyr, warn.conflicts = FALSE))
+suppressMessages(library(zoo, warn.conflicts = FALSE))
+# YATA
+suppressMessages(library(YATATools,   warn.conflicts = FALSE))
+suppressMessages(library(YATAWebCore, warn.conflicts = FALSE))
+# suppressMessages(library(YATADT))
+
+# Shiny
 library(shiny)
-library(ggplot2)
+library(shinyjs)
+library(shinyBS)
+suppressMessages(library(shinydashboard,     warn.conflicts = FALSE))
+suppressMessages(library(shinydashboardPlus, warn.conflicts = FALSE))
+suppressMessages(library(shinyWidgets,       warn.conflicts = FALSE))
+# library(bslib)
+# library(shinycookie)
+# library(shinybusy)
 
-library(randomizeR)
+# General
+# library(data.table)
 
-Plot = R6::R6Class("MODPLOT"
-  ,cloneable  = FALSE
-  ,lock_class = TRUE
-  ,portable   = FALSE
-  ,public = list(
-     plot = NULL
-    ,alfa = NULL
-    ,beta = 0
-    ,df   = NULL
-    ,tg   = 0
-    ,initialize = function(df, plot, eq) {
-       self$plot = plot
-       self$df = df
-       self$alfa = eq$a
-       self$beta = eq$b
-    }
-    ,getEquation = function() {
-        sprintf(paste0("$$y = ", alfa, "x + ", beta, "$$"))
-     }
-  )
+library(reactable)
 
-  )
-Models = R6::R6Class("YATA.PANEL"
-  ,cloneable  = FALSE
-  ,lock_class = TRUE
-  ,public = list(
-     df       = NULL
-    ,dfw      = NULL
-    ,plots = list(NULL)
-    ,equs  = list(NULL)
-    ,step = 0
-    ,color = NULL
-    ,numplots = 6
-  )
-)
+# Plots
+# suppressMessages(library(ggplot2,   warn.conflicts = FALSE))
+# suppressMessages(library(gridExtra, warn.conflicts = FALSE))
+suppressMessages(library(plotly,    warn.conflicts = FALSE))
+#library(RColorBrewer)
 
-model = Models$new()
+# Async
+# suppressMessages(library(jsonlite, warn.conflicts = FALSE))
+# suppressMessages(library(promises, warn.conflicts = FALSE))
+# suppressMessages(library(future,   warn.conflicts = FALSE))
+#
+# options( warn = -1
+#         ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
+#         ,java.parameters = "-Xmx2048m"
+#           # ,shiny.reactlog=TRUE
+#           # ,shiny.trace=TRUE
+# )
+
+
+# plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
+
+######################################
+### Carga de fuentes
+### En R busca subdirectorios
+#####################################
+
+files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
+sapply(files,source)
+
+YATAWEB = YATAWebEnv$new()
+
+# if (Sys.info()[["sysname"]] == "Windows") {
+#    future::plan(strategy="sequential")
+# } else {
+#   future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
+#                     tweak(multisession, workers = 4)))
+# }
+
+# panel = list(
+#      pos    = "pos"
+#     ,oper   = "oper"
+#     ,ana    = "ana"
+#     ,config = "config"
+#     ,log    = "log"
+#     ,hist   = "hist"
+# )

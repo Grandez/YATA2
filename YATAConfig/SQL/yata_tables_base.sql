@@ -21,11 +21,14 @@ ENGINE=InnoDB
 DROP TABLE  IF EXISTS CURRENCIES CASCADE;
 CREATE TABLE CURRENCIES  (
     ID       INTEGER      DEFAULT 0
-   ,NAME     VARCHAR(64)  NOT NULL           -- Clearing Name
-   ,SYMBOL   VARCHAR(20)  NOT NULL -- Moneda   
+   ,NAME     VARCHAR(64)  NOT NULL        -- Clearing Name
+   ,SYMBOL   VARCHAR(20)  NOT NULL        -- Moneda   
    ,SLUG     VARCHAR(64)   
-   ,RANK     INTEGER      DEFAULT 99999
+   ,RANK     INTEGER      DEFAULT 99999   
    ,DECIMALS TINYINT      DEFAULT 6
+   ,BEG      DATE                         -- First record
+   ,END      DATE                         -- Last record
+   ,CREATED  TINYINT      DEFAULT 0       -- Since mark the beginning of CTC?    
    ,ICON     VARCHAR(255)    
    ,CAMERAS  TIMESTAMP
    ,TMS      TIMESTAMP DEFAULT   CURRENT_TIMESTAMP
@@ -109,3 +112,15 @@ CREATE TABLE MESSAGES  (
    ,PRIMARY KEY ( BLOCK, CODE, LANG, REGION ) 
 );
 
+DROP TABLE  IF EXISTS HISTORY CASCADE;
+CREATE TABLE HISTORY  (
+    TMS      DATE        NOT NULL -- Moneda   
+   ,SYMBOL   VARCHAR(20)  NOT NULL -- Moneda   
+   ,OPEN     DOUBLE   
+   ,CLOSE    DOUBLE
+   ,HIGH     DOUBLE
+   ,LOW      DOUBLE
+   ,VOLUME   DOUBLE
+   ,MKTCAP   DOUBLE
+   ,PRIMARY KEY ( SYMBOL, TMS DESC )
+);

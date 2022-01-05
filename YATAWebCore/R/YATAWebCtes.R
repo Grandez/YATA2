@@ -17,9 +17,10 @@ YATAWEBDEF = list (
 
 # Mensajes de comunicacion Shiny/page
 YATAMSG = list(
-    showBlock ="showBlock"
+    showBlock = "showBlock"
    ,movePanel = "movePanel"
    ,addPage   = "addPage"
    ,setPage   = "setPage"
+   ,updateLayout = "shinyUpdateLayout"
 
 )

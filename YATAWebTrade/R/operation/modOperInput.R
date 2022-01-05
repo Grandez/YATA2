@@ -7,7 +7,7 @@ modOperInput = function(id, title) {
          ,tabPanel("Transferir",  value=ns("xfer"),   YATAModule(ns("xfer")))
          ,tabPanel("cerrada",            value=ns("detail"),   tags$div(id=ns("detail"), YATAModule(ns("detail"))))
          # ,tabPanel("",   value="detail",    YATAModule(ns("detail")))
-         # ,tabPanel("",   value="dummy",     "")
+         ,tabPanel("",   value=ns("dummy"),     "")
       )
 
     )
