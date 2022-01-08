@@ -2,96 +2,231 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
   ,portable   = FALSE
   ,cloneable  = FALSE
   ,lock_class = TRUE
+  ,inherit    = WDGBase
+  ,active = list(
+      event  = function(value) private$accesor(private$.event, value)
+     ,target = function(value) private$accessor(private$.target, value)
+   )
   ,public = list(
-    initialize = function(table=NULL, columns=NULL) {
-       if (!is.null((table))) attrTable = list.merge(attrTable, table)
-    }
+     initialize = function(table=NULL, columns=NULL) {
+        if (!is.null((table))) {
+            private$attrTable = list.merge(attrTable, table)
+            extractExtraAttributes()
+        }
+     }
     ,setTableOptions = function(...) {
-       args = args2list(...)
-       attrTable = list.merge(attrTable, argslist(...))
-    }
-    ,setColDef = function(...) {
-      # Establece los datos de una columna
+        args = args2list(...)
+        if (!is.null(args$replace) && args$replace) {
+          private$attrTable = args
+        } else {
+          private$attrTable = list.merge(attrTable, args)
+        }
+        extractExtraAttributes()
+     }
+    ,setColumnOptions = function(colName, ...) {
+        args = args2list(...)
+        if (is.null(private$coldDefs[[colName]])) { # Does not exist
+            if (is.null(args$replace) || args$replace == FALSE) {
+                colDef = private$attrColDef
+            } else {
+              colDef = list()
+            }
+        } else {
+          if (!is.null(args$replace) && args$replace) {
+             colDef = list()
+          }
+        }
+        colDef    = list.merge(colDef, args)
+        colDef    = setColumnAlign(colDef)
+        colDef$id = colName
 
-    }
+        private$attrCols[[colName]] = colDef
+     }
     ,setColumnsDef = function(...) {
       # Establece los datos de columnas como named list
-
     }
     ,render = function(data) {
-       lst = list(data=data)
-       do.call(reactable::reactable, list.merge(lst, attrTable))
-    #    df = data
-    #       reactable(df, striped = TRUE, compact=TRUE
-    #                               , pagination=FALSE
-    #                               , selection = selection
-    #                               , wrap = FALSE
-    #                               , onClick = JS(click)
-    #                               , columns = cols
-    # )
-
+        browser()
+        private$dfWork = data
+        private$attrTable$columns  = prepareData(data)
+        lstAttr = list.clean((attrTable)) # remove NULLS
+        obj = do.call(reactable::reactable, list.merge(list(data=private$dfWork), lstAttr))
+        reactable::renderReactable({obj})
     }
   )
   ,private = list(
        # Atributos de tabla
        attrTable = list(
-           bordered = FALSE # Add borders around the table and every cell?
-          ,borderless = FALSE # Remove inner borders from table?
-          ,class = NULL       # Additional CSS classes to apply to the table.
-          ,columns = NULL      # Named list of column definitions
-          ,columnGroups = NULL # List of column group definitions (ColGroup)
-         ,compact = FALSE     # Make tables more compact?
-         ,defaultColDef = NULL # Default column definition used by every column
-         ,defaultColGroup = NULL # efault column group definition used by every column group
-
-         ,defaultExpanded = FALSE # Expand all rows by default?
-         ,defaultPageSize = 10
-         ,defaultSelected = NULL  # A numeric vector of default selected row indices
-         ,defaultSortOrder = 'asc' # Default sort order asc/desc
-         ,defaultSorted = NULL     # vector of column names to sort or named list
-         ,details = NULL           # Additional content to display when expanding a row.
-         ,elementId = NULL        # Element ID for the widget.
-         ,filterable = FALSE  # Enable column filtering?
-         ,fullWidth = TRUE    # Stretch the table to fill the full width of its container?
-         ,groupBy = NULL      # Character vector of column names to group by
-         ,height = 'auto'     # Height of the table in pixels
-         ,highlight = FALSE   # Highlight table rows on hover?
-         ,language = getOption('reactable.language')  # Language specified by reactableLang()
-         ,minRows = 1         # Minimum number of rows to show per page
-         ,pageSizeOptions = c(10, 25, 50, 100) # Page size options for the table
-     #    ,paginateSubRows = FALSE # When rows are grouped, paginate sub rows?
-         ,pagination = TRUE   # Enable pagination?
-         ,paginationType = 'numbers' # numbers/jump/simple
-         ,onClick = NULL   # Action to take when clicking a cell. expand/select/JS()
-         ,outlined = FALSE  # Add borders around the table?
-         ,resizable = FALSE   # Enable column resizing?
-         ,rownames = NULL     # Show row names?
-         ,rowClass = NULL     # Additional CSS classes to apply to rows, string/JS(row info, table state)/R(row number)
-         ,rowStyle = NULL     # Inline styles to apply to rows.
-         ,searchable = FALSE  # Enable global table searching?
-         ,selection = NULL   # Enable row selection? multiple/single
-         ,showPageInfo = TRUE    # Show page info?
-         ,showPageSizeOptions = FALSE   # Show page size options?
-         ,showPagination = NULL
-         ,showSortIcon = TRUE    # Show a sort icon when sorting columns?
-         ,showSortable = FALSE   # Show an indicator on sortable columns?
-
-         ,sortable = TRUE   # Enable sorting?
-         ,striped = FALSE     # Add zebra-striping to table rows?
-         ,style = NULL      # Inline styles to apply to the table. A named list or character string
-         ,theme = getOption('reactable.theme') # Theme for the table, specified by reactableTheme() or a function
-         ,width = 'auto'  # Width of the table in pixels
-         ,wrap = TRUE     # Enable text wrapping?
-
-
-
-
-
-
-
-
+           bordered            = FALSE     # Add borders around the table and every cell?
+          ,borderless          = FALSE     # Remove inner borders from table?
+          ,class               = NULL      # Additional CSS classes to apply to the table.
+          ,columns             = NULL      # Named list of column definitions
+          ,columnGroups        = NULL      # List of column group definitions (ColGroup)
+          ,compact             = TRUE      # Make tables more compact?
+          ,defaultColDef       = NULL      # Default column definition used by every column
+          ,defaultColGroup     = NULL      # Default column group definition used by every column group
+          ,defaultExpanded     = FALSE     # Expand all rows by default?
+          ,defaultPageSize     = 10
+          ,defaultSelected     = NULL      # A numeric vector of default selected row indices
+          ,defaultSortOrder    = 'asc'     # Default sort order asc/desc
+          ,defaultSorted       = NULL      # vector of column names to sort or named list
+          ,details             = NULL      # Additional content to display when expanding a row.
+          ,elementId           = NULL      # Element ID for the widget.
+          ,filterable          = FALSE     # Enable column filtering?
+          ,fullWidth           = TRUE      # Stretch the table to fill the full width of its container?
+          ,groupBy             = NULL      # Character vector of column names to group by
+          ,height              = 'auto'    # Height of the table in pixels
+          ,highlight           = FALSE     # Highlight table rows on hover?
+          ,language            = getOption('reactable.language')  # Language specified by reactableLang()
+          ,minRows             = 1         # Minimum number of rows to show per page
+          ,pageSizeOptions     = c(10, 25, 50, 100) # Page size options for the table
+          ,pagination          = TRUE      # Enable pagination?
+          ,paginationType      = 'numbers' # numbers/jump/simple
+          ,onClick             = NULL      # Action to take when clicking a cell. expand/select/JS()
+          ,outlined            = FALSE     # Add borders around the table?
+          ,resizable           = FALSE     # Enable column resizing?
+          ,rownames            = NULL      # Show row names?
+          ,rowClass            = NULL      # Additional CSS classes to apply to rows, string/JS(row info, table state)/R(row number)
+          ,rowStyle            = NULL      # Inline styles to apply to rows.
+          ,searchable          = FALSE     # Enable global table searching?
+          ,selection           = NULL      # Enable row selection? multiple/single
+          ,showPageInfo        = TRUE      # Show page info?
+          ,showPageSizeOptions = FALSE     # Show page size options?
+          ,showPagination      = NULL
+          ,showSortIcon        = TRUE      # Show a sort icon when sorting columns?
+          ,showSortable        = FALSE     # Show an indicator on sortable columns?
+          ,sortable            = TRUE      # Enable sorting?
+          ,striped             = TRUE      # Add zebra-striping to table rows?
+          ,style               = NULL      # Inline styles to apply to the table. A named list or character string
+          ,theme               = getOption('reactable.theme') # Theme for the table, specified by reactableTheme() or a function
+          ,width               = 'auto'    # Width of the table in pixels
+          ,wrap                = TRUE      # Enable text wrapping?
        )
+      ,attrTheme = list(
+            color                  = NULL    # Default text color.
+           ,backgroundColor        = NULL    # Default background color.
+           ,borderColor            = NULL    # Default border color.
+           ,borderWidth            = NULL    # Default border width.
+           ,stripedColor           = NULL    # Default row stripe color.
+           ,highlightColor         = NULL    # Default row highlight color.
+           ,cellPadding            = NULL    # Default cell padding.
+           ,style                  = NULL    # Additional CSS for the table.
+           ,tableStyle             = NULL    # Additional CSS for the table element (excludes the pagination bar and search input).
+           ,headerStyle            = NULL    # Additional CSS for header cells.
+           ,groupHeaderStyle       = NULL    # Additional CSS for group header cells.
+           ,tableBodyStyle         = NULL    # Additional CSS for the table body element.
+           ,rowGroupStyle          = NULL    # Additional CSS for row groups.
+           ,rowStyle               = NULL    # Additional CSS for rows.
+           ,rowStripedStyle        = NULL    # Additional CSS for striped rows.
+           ,rowHighlightStyle      = NULL    # Additional CSS for highlighted rows.
+           ,rowSelectedStyle       = NULL    # Additional CSS for selected rows.
+           ,cellStyle              = NULL    # Additional CSS for cells.
+           ,footerStyle            = NULL    # Additional CSS for footer cells.
+           ,inputStyle             = NULL    # Additional CSS for inputs.
+           ,filterInputStyle       = NULL    # Additional CSS for filter inputs.
+           ,searchInputStyle       = NULL    # Additional CSS for the search input.
+           ,selectStyle            = NULL    # Additional CSS for table select controls.
+           ,paginationStyle        = NULL    # Additional CSS for the pagination bar.
+           ,pageButtonStyle        = NULL    # Additional CSS for page buttons
+           ,pageButtonHoverStyle   = NULL    # page buttons with hover
+           ,pageButtonActiveStyle  = NULL    # or active states
+           ,pageButtonCurrentStyle = NULL    # and the current page button.
+      )
+      ,attrColDef = list(
+           name             = NULL     # Column header name.
+          ,aggregate        = NULL     # Aggregate function. a built-in function or JS(). mean,sum,max,min,median,count,unique,frequency. To enable row grouping, use the groupBy argument in reactable().
+          ,sortable         = NULL     # Enable sorting? Overrides the table option.
+          ,resizable        = NULL     # Enable column resizing? Overrides the table option.
+          ,filterable       = NULL     # Enable column filtering? Overrides the table option.
+          ,show             = TRUE     # Show the column?
+          ,defaultSortOrder = NULL     # Default sort order. Either "asc" for ascending order or "desc" for descending order. Overrides the table option.
+          ,sortNALast       = FALSE    # Always sort missing values (NA or NaN) last?
+          ,format           = NULL     # Column formatting options. A colFormat() object to format all cells, or a named list of colFormat() objects to format standard cells ("cell") and aggregated cells ("aggregated") separately.
+          ,cell             = NULL     # Custom cell renderer. An R function that takes the cell value, row index, and column name as arguments, or a JS() function that takes a cell info object and table state object as arguments.
+          ,grouped          = NULL     # Custom grouped cell renderer. A JS() function that takes a cell info object and table state object as arguments.
+          ,aggregated       = NULL     # Custom aggregated cell renderer. A JS() function that takes a cell info object and table state object as arguments.
+          ,header           = NULL     # Custom header renderer. An R function that takes the header value and column name as arguments, or a JS() function that takes a column info object and table state object as arguments.
+          ,footer           = NULL     # Footer content or render function. Render functions can be an R function that takes two arguments, the column values and column name, or a JS() function that takes a column info object and table state object as arguments.
+          ,details          = NULL     # Additional content to display when expanding a row. An R function that takes a row index argument, or a JS() function that takes a row info object and table state object as arguments. Cannot be used on a groupBy column.
+          ,html             = FALSE    # Render content as HTML? Raw HTML strings are escaped by default.
+          ,na               = ""       # String to display for missing values (i.e. NA or NaN). By default, missing values are displayed as blank cells.
+#          ,rowHeader        = FALSE    # Mark up cells in this column as row headers? Set this to TRUE to help users navigate the table using assistive technologies. When cells are marked up as row headers, assistive technologies will read them aloud while navigating through cells in the table.
+          ,minWidth         = 100      # Minimum width of the column in pixels. Defaults to 100.
+          ,maxWidth         = NULL     # Maximum width of the column in pixels.
+          ,width            = NULL     # Fixed width of the column in pixels. Overrides minWidth and maxWidth.
+          ,align            = NULL     # Horizontal alignment. left/right/center
+          ,vAlign           = NULL     # Vertical alignment of content in data cells. One of "top" (the default), "center", "bottom".
+          ,headerVAlign     = NULL     # Vertical alignment of content in header cells. One of "top" (the default), "center", "bottom".
+          ,sticky           = NULL     # Make the column sticky when scrolling horizontally? Either "left" or "right" to make the column stick to the left or right side.
+          ,class            = NULL     # Additional CSS classes to apply to cells. Can also be an R function that takes the cell value, row index, and column name as arguments, or a JS() function that takes a row info object, column info object, and table state object as arguments.
+          ,style            = NULL     # Inline styles to apply to cells. A named list or character string. Can also be an R function that takes the cell value and row index as arguments, or a JS() function that takes a row info object, column info object, and table state object as arguments.
+          ,headerClass      = NULL     # Additional CSS classes to apply to the header.
+          ,headerStyle      = NULL     # Inline styles to apply to the header. A named list or character string.
+          ,footerClass      = NULL     # Additional CSS classes to apply to the footer.
+          ,footerStyle      = NULL     # Inline styles to apply to the footer. A named list or character string.
+      )
+      ,.event    = NULL   # Event to trigger and send to shiny
+      ,.target   = NULL   # Target of event
+      ,colNames  = "asis" # Column names: asis, title, upper, lower, ...
+      ,dfWork    = NULL
+      ,attrCols  = list() # Full list of attributes
+      ,colDefs   = NULL   # Column attributes for reactable
+      ,extractExtraAttributes = function () {
+        # Remove private attributes. That is attr which is not part of reactable
+        extractEvent()
+        if (!is.null(attrTable$colNames)) {
+            private$colNames = attrTable$colNames
+            private$attrTable$colNames = NULL
+        }
+        # Other attributes not matching call to reactable
+        private$attrTable$replace = NULL
+      }
+      ,extractEvent = function() {
+          if (!is.null(attrTable$event))  private$.event  = attrTable$event
+          if (!is.null(attrTable$target)) private$.target = attrTable$target
+          if (!is.null(.event) && is.null(.target)) private$.target = .event
 
+          click = paste0(       "function(row, col) { ")
+          click = paste0(click, "  window.alert('Clickado');")
+          click = paste0(click, "  if (window.Shiny) {")
+          click = paste0(click, "      Shiny.setInputValue('", .event, "',")
+          click = paste0(click, "            {row: row.index + 1, colName: col.id, target: '", .target, "'});")
+          click = paste0(click, "  }")
+          click = paste0(click, "}")
+
+          private$attrTable$onClick = JS(click)
+          private$attrTable$event   = NULL
+          private$attrTable$target  = NULL
+      }
+      ,prepareData = function (data) {
+
+
+         cols = lapply(attrCols, function(col) prepareColumn(col))
+         lapply(cols, function(item) do.call(colDef, item))
+#         private$attrTable$columns = lapply(attrCols, function(col) prepareColumn(col))
+
+         # if (.colNames == "asis")
+         # if (private$colNames == "title") colnames(data) = titleCase(colnames(data))
+         # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
+         # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
+         # browser()
+#         private$dfWork
+      }
+      ,prepareColumn = function(attr) {
+          browser()
+         if (!is.null(attr$scale)) private$dfWork[,attr$id] = round(private$dfWork[,attr$id], digits=attr$scale)
+         attr$id      = NULL
+         attr$replace = NULL
+         attr$scale   = NULL
+         attr$type    = NULL
+         list.clean(attr)
+      }
+      ,setColumnAlign = function (colDef) {
+         if (is.null(colDef$type)) return (colDef)
+         if (colDef$type == "date") colDef$align = "right"
+         if (colDef$type == "time") colDef$align = "right"
+         colDef
+      }
   )
 )
 WDGTableSimple = R6::R6Class("YATA.WEB.TABLE"
@@ -116,8 +251,6 @@ WDGTableMultiple = R6::R6Class("YATA.WEB.TABLE"
        super$initialize(table=table, columns=columns)
        attrTable$selection = 'multiple'
     }
-    ,setEvent = function(evt) { }
-    ,setTarget = function(tgt) { }
    )
 )
 # buttons = list(Button_buy=yuiBtnIconBuy("Comprar"))
@@ -126,21 +259,75 @@ WDGTableButtoned = R6::R6Class("YATA.WEB.TABLE"
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,inherit    = WDGTable
-  ,active = list(
-     event = NULL
-    ,target = NULL
-  )
   ,public = list(
-    initialize = function(table=NULL, columns=NULL, event=NULL, target=NULL,...) {
+    initialize = function(table=NULL, columns=NULL, ...) {
        super$initialize(table=table, columns=columns)
        attrTable$selection = 'multiple'
+       private$.createButtons(args2list(...))
+    }
+    ,render = function(data) {
+       df  = .appendButtons(data)
+       super$render(df)
     }
    )
+
   ,private = list(
-      .event  = NULL
-     ,.target = NULL
+      .buttons = NULL
+     ,.createButtons = function(btns) {
+          private$.buttons = lapply(btns, function(btn) {
+                                   do.call(colDef, list( name = "", sortable = FALSE
+                                                ,width = 48
+                                                ,style=list(`text-align` = "center")
+                                                ,cell = function() btn))
+                    })
+         if (is.null(names(btns))) {
+            btnNames = c(paste0("Button", seq(1, length(btns))))
+        } else {
+            btnNames = names(btns)
+        }
+        names(private$.buttons) = btnNames
+     }
+    ,.appendButtons = function(df) {
+        dfNames = colnames(df)
+        for (i in 1:length(.buttons)) df = cbind(df, NA)
+        colnames(df) = c(dfNames, names(.buttons))
+        if (is.null(attrTable$columns))
+            private$attrTable$columns = .buttons
+        else
+            private$attrTable$columns = list.merge(attrTable$columns,.buttons)
+        df
+    }
   )
 )
+
+    #   # Botones
+    # if (!is.null(info$buttons) && length(info$buttons) > 0) {
+    #     buttons = lapply(info$buttons, function(btn) {
+    #                      do.call(colDef, list( name = "", sortable = FALSE
+    #                                           ,width = 48
+    #                                           ,style=list(`text-align` = "center")
+    #                                           ,cell = function() btn))
+    #     })
+    #     if (is.null(names(info$buttons))) {
+    #         btnNames = c(paste0("Button", seq(1, length(info$buttons))))
+    #     } else {
+    #         btnNames = names(info$buttons)
+    #     }
+    #     names(buttons) = btnNames
+    #     dfNames = colnames(df)
+    #     for (i in 1:length(buttons)) df = cbind(df, NA)
+    #
+    #     colnames(df) = c(dfNames, btnNames)
+    # }
+    # if (length(cols) >  0 && length(buttons) > 0) cols = list.merge(cols, buttons)
+    # if (length(cols) == 0 && length(buttons) > 0) cols = buttons
+    # reactable(df, striped = TRUE, compact=TRUE
+    #                               , pagination=FALSE
+    #                               , selection = selection
+    #                               , wrap = FALSE
+    #                               , onClick = JS(click)
+    #                               , columns = cols
+    # )
 
 # function yataTableclick (rowInfo, colInfo, evt, tgt) {
 #   //CHECKED

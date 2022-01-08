@@ -32,10 +32,25 @@ modTableServer <- function(id, full, pnlParent, invalidate=FALSE) {
    # }
    moduleServer(id, function(input, output, session) {
       df = makeDF()
-      browser()
-      tbl = WDGTable$new()
+            # data$info=list( event=ns("tableBest"), target=table
+            #          ,types=list(pvl = c("Hour", "Day", "Week", "Month"), imp=c("Price"))
+            #          ,buttons = list(Button_buy=yuiBtnIconBuy("Comprar"))
+            #         )
+
+       lstTable = list(event=ns("table01"), target="tabla01", colNames="title")
+       tbl = WDGTableButtoned$new(table=lstTable,
+                                  Button_buy=yuiBtnIconBuy("Comprar"))
+       tbl$setColumnOptions("porcentaje", scale=3, name="otro")
+       tbl$setColumnOptions("dates", type="date")
+#       tbl = WDGTable$new()
+       #tbl = WDGTableSimple$new(table=list(event=ns("table01"), target="tabla01"))
+      
       #tableDef = createTableDef(df, types="ispdmh", titles="xxxxu", colors="xxod")
       #output$tbl01 = updTable(df, tableDef)
       output$tbl01 = tbl$render(df)
+      
+      observeEvent(input$table01, ignoreInit = TRUE, {
+           browser()
+      })
   })
 }    

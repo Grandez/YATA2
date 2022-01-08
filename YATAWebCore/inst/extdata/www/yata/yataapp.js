@@ -280,13 +280,13 @@ function yataTableclick (rowInfo, colInfo, evt, tgt) {
   //CHECKED
   // Botones en reactable
 
-//    window.alert('Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id//);
+    window.alert('YATATableClick Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id//);
                                    //if (colInfo.id !== 'details') { return }
 //                         window.alert('Details: row ' + rowInfo.index + 'col: ' + colInfo.id);
-//     if (window.Shiny) {
+     if (window.Shiny) {
          Shiny.setInputValue(evt, { row: rowInfo.index + 1, colName: colInfo.id, target: tgt
                                  }, { priority: 'event' });
-//     }
+     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
