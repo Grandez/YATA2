@@ -46,9 +46,15 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
       # Establece los datos de columnas como named list
     }
     ,render = function(data) {
-        browser()
         private$dfWork = data
-        private$attrTable$columns  = prepareData(data)
+        colDefs = prepareData(data)
+        if (length(colDefs) > 0) {
+            if (length(attrTable$columns) > 0) {
+                private$attrTable$columns  = list.merge(colDefs, private$attrTable$columns)
+            } else {
+                private$attrTable$columns  = colDefs
+            }
+        }
         lstAttr = list.clean((attrTable)) # remove NULLS
         obj = do.call(reactable::reactable, list.merge(list(data=private$dfWork), lstAttr))
         reactable::renderReactable({obj})
@@ -76,11 +82,11 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
           ,fullWidth           = TRUE      # Stretch the table to fill the full width of its container?
           ,groupBy             = NULL      # Character vector of column names to group by
           ,height              = 'auto'    # Height of the table in pixels
-          ,highlight           = FALSE     # Highlight table rows on hover?
+          ,highlight           = TRUE      # Highlight table rows on hover?
           ,language            = getOption('reactable.language')  # Language specified by reactableLang()
           ,minRows             = 1         # Minimum number of rows to show per page
           ,pageSizeOptions     = c(10, 25, 50, 100) # Page size options for the table
-          ,pagination          = TRUE      # Enable pagination?
+          ,pagination          = FALSE      # Enable pagination?
           ,paginationType      = 'numbers' # numbers/jump/simple
           ,onClick             = NULL      # Action to take when clicking a cell. expand/select/JS()
           ,outlined            = FALSE     # Add borders around the table?
@@ -199,27 +205,28 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
           private$attrTable$target  = NULL
       }
       ,prepareData = function (data) {
-
-
-         cols = lapply(attrCols, function(col) prepareColumn(col))
-         lapply(cols, function(item) do.call(colDef, item))
+          setColumnHeader(data)
+          private$attrCols = lapply(attrCols, function(col) prepareColumn(col))
+          lapply(attrCols, function(item) do.call(colDef, item))
 #         private$attrTable$columns = lapply(attrCols, function(col) prepareColumn(col))
 
-         # if (.colNames == "asis")
-         # if (private$colNames == "title") colnames(data) = titleCase(colnames(data))
-         # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
-         # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
-         # browser()
-#         private$dfWork
       }
       ,prepareColumn = function(attr) {
-          browser()
          if (!is.null(attr$scale)) private$dfWork[,attr$id] = round(private$dfWork[,attr$id], digits=attr$scale)
          attr$id      = NULL
          attr$replace = NULL
          attr$scale   = NULL
          attr$type    = NULL
          list.clean(attr)
+      }
+      ,setColumnHeader = function(data) {
+           if (is.null(colNames) || colNames == "asis") return
+         # if (private$colNames == "title") colnames(data) = titleCase(colnames(data))
+         # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
+         # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
+         # browser()
+#         private$dfWork
+
       }
       ,setColumnAlign = function (colDef) {
          if (is.null(colDef$type)) return (colDef)
