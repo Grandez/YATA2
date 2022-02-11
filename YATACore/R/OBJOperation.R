@@ -379,9 +379,30 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            }
            objPos$transfer(current$from, current$to, current$currency, current$amount)
        }
+       ,addNoTran   = function(type, ...) {
+            # Se llama desde add y desde close
+            # Genera una operacion, devuelve el id
+            # Si hay error devuelve TRUE
+            self$current        = args2list(...)
+            self$current$type   = type
+            self$current$id     = YATATools::getID()
+            self$current$idOper = self$current$id
+            # if (type %in% c(codes$oper$sell, codes$oper$close)) {
+            #     self$current$amount = current$amount * -1
+            # }
+                if (type == codes$oper$xfer)  operXfer()
+                if (type == codes$oper$oper)  operOper2()
+                if (type == codes$oper$buy)   operOper2()
+                if (type == codes$oper$sell)  operOper2()
+#                if (type == codes$oper$close) operClose()
+#                if (type == codes$oper$split) {}
+                if (type == codes$oper$net)  {}
+                self$current$idOper
+       }
        ,operOper2     = function() {
            # Temporal. No genera flujos y la ejecuta
            # Abre una operacion de compra o venta
+           objPos$updatePositions   (current)
            self$current$active = ifelse (current$type == codes$oper$oper
                                                        , codes$flag$active
                                                        , codes$flag$inactive)
@@ -392,12 +413,25 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            self$current$dtAlert = Sys.Date() + lubridate::days(days)
            self$current$alert   = codes$flag$active
 
-           self$current$amountIn = self$current$amount
+           amount = ifelse(current$base == "EUR", current$amount, current$value)
+           self$current$amountIn = amount
            self$current$priceIn  = self$current$price
+           #JGG Temporal mientras no procesemos el flujo de request/accept/execute
+           self$current$amountOut = amount
+           self$current$priceOut  = self$current$price
 
+           self$current$prcTaxes   = 0
+           if (current$type == codes$oper$sell) {
+               res = calculateExpense()
+               self$current$expense = res$expense
+               self$current$alive   = res$alive
+               self$current$profit = self$current$amount - self$current$expense
+           }
            prtOper$add(current)
-           objPos$updateBase   (current$camera, current$base,    current$amount, current$price, 0)
-           objPos$updateCounter(current$camera, current$counter, current$amount, current$price, 0)
+
+           #objPos$update   (current$camera, current$counter,  current$amount, current$price, 0)
+           # objPos$updateBase   (current$camera, current$base,    current$amount, current$price, 0)
+           # objPos$updateCounter(current$camera, current$counter, current$amount, current$price, 0)
 
            amount = current$amount
            if (current$type == codes$oper$sell) {
@@ -493,27 +527,58 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 #            private$tblOperControl = factory$getTable(codes$tables$OperControl)
 #            private$tblOperLog     = factory$getTable(codes$tables$OperLog)
        }
-       ,addNoTran   = function(type, ...) {
-            # Se llama desde add y desde close
-            # Genera una operacion, devuelve el id
-            # Si hay error devuelve TRUE
-            self$current        = args2list(...)
-            self$current$type   = type
-            self$current$id     = YATATools::getID()
-            self$current$idOper = self$current$id
-            if (type %in% c(codes$oper$sell, codes$oper$close)) {
-                self$current$amount = current$amount * -1
-            }
-                if (type == codes$oper$xfer)  operXfer()
-                if (type == codes$oper$oper)  operOper2()
-                if (type == codes$oper$buy)   operOper2()
-                if (type == codes$oper$sell)  operOper2()
-#                if (type == codes$oper$close) operClose()
-#                if (type == codes$oper$split) {}
-                if (type == codes$oper$net)  {}
-                self$current$idOper
-        }
+       ,calculateExpense = function() {
+           # Calcula el coste de la operaciones de compra asociadas a la venta
+           # Funciona como una cola LIFO
+           # Si hay compras en medio, se añaden a sell y se quitan despues
+
+           value = 0
+           pend = current$amount
+           sell = 0
+           df1 = prtOper$get(camera=current$camera, base=current$base,    counter=current$counter)
+           df2 = prtOper$get(camera=current$camera, base=current$counter, counter=current$base)
+           df = rbind(df1, df2)
+           # Los id son tms luego ordenamos descendente
+           df = df[order(df$id, decreasing=TRUE),]
+
+           nrow = 0
+           while ( pend > 0) {
+               nrow = nrow + 1
+               # Esto no puede ocurrir
+               if (nrow > nrow(df)) { nrow = nrow -1; break }
+
+               if (df[nrow,"type"] != codes$oper$sell && df[nrow,"type"] != codes$oper$buy) {
+                   next
+               }
+               if (df[nrow,"type"] == codes$oper$sell) {
+                   sell = sell + df[nrow,"value"]
+                   next
+               }
+               sell = sell - df[nrow,"amount"]
+               if (sell >= 0) next   # Pendiente procesar esa compra
+               value = value - (sell * df[nrow, "priceOut"])
+               pend = pend + sell
+               sell = 0
+           }
+
+           diff = difftime(Sys.time(), df[nrow, "tms"], unit="days")
+           diff = as.integer(round(diff, digits=0))
+           list(expense=value, alive=diff)
+       }
 
     )
 )
 
+# Algo de venta
+# Select operations hasta la ultima regularizacion
+# Ordenar al reves
+# Crear estructura
+# Mientras pendiente no sea cero
+#    si compra
+#       apply = min(0, pend - inc)
+#       pend = pend - apply
+#       expense = expense * (compra + precio)
+#    si venta
+#       inc = inc + venta
+#    si otro
+#       seguir

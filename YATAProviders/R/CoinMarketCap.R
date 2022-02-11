@@ -32,6 +32,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
        }
       ,getLatest = function(start=1, max=1000) {
+         browser()
           limit = 1000 # Max items per connection
           max = start + max
           dfl = NULL

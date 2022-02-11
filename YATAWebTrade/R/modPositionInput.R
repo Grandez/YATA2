@@ -10,9 +10,7 @@ modPosInput = function(id, title) {
     mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", yuiCheck(ns("chkMonitors"))))
 
    objLayout = OBJLayout$new(ns, c(2,2), blocks, values=vals, top = mon)
-#   left = tagList( objLayout$getConfig())
-    
-    left = tagList(
+   left = tagList(
          fluidRow(column(4, "Updated:"),column(8, yuiLabelDate(ns("dtLast"))))
         ,objLayout$getConfig()
         ,fluidRow(column(4, "Interval"),column(8, yuiNumericInput(ns("numInterval"))))
@@ -48,8 +46,7 @@ modPosInput = function(id, title) {
                      ,hidden(tags$div(id=ns("PosCameras")))
             )
     )
-    main = tagList( fluidRow(id=ns("monitor")) # fluidRow(tags$div(id=ns("monitor"), class="yata_monitors"))
-                   ,objLayout$getBody(blocks)
-    )
+    main = tagList( fluidRow(id=ns("monitor")), objLayout$getBody(blocks))
+    
     list(left=left, main=main, right=NULL)           
 }

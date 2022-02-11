@@ -26,7 +26,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$vars$sessionChanged = FALSE
              private$loadPosition()
            
-             self$monitors = OBJMonitors$new(ns("monitor"), self, YATAWEB)
+             self$monitors = WDGMonitor$new(ns("monitor"), self, YATAWEB)
              if (!is.null(self$data$dfGlobal)) {
                  ctc = self$data$dfGlobal$currency
                  self$data$dfSession = self$session$getSessionPrices(ctc)

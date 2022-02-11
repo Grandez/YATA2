@@ -180,6 +180,9 @@ YATATable <- R6::R6Class("YATA.TABLE"
       }
       ,add     = function(data, isolated=FALSE) {
           if (missing(data)) data = self$current
+          if (is.data.frame(data)) {
+             data = as.list.data.frame(data)
+          }
           fields = rlist::list.clean(private$fields[names(data)])
           values = rlist::list.clean(data[names(fields)])
           names(values) = private$fields[names(values)]

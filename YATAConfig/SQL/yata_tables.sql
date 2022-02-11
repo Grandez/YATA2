@@ -10,39 +10,27 @@
 
 DROP TABLE  IF EXISTS POSITION CASCADE;
 CREATE TABLE POSITION  (
-    CAMERA      VARCHAR(10) NOT NULL -- Codigo de camara
-   ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
-   ,BALANCE     DOUBLE      DEFAULT 0.0 -- Saldo real 
-   ,AVAILABLE   DOUBLE      DEFAULT 0.0 -- Saldo disponible
-   ,PRICE       DOUBLE      DEFAULT 1.0   -- Precio neto de venta   
-   ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
-   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido   
-   ,PRICEBUY    DOUBLE      DEFAULT 1.0 -- Comprado
-   ,PRICESELL   DOUBLE      DEFAULT 1.0 -- Vendido   
-   ,SINCE       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
-   ,LAST        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
-                            ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
+    CAMERA      VARCHAR(10) NOT NULL     -- Codigo de camara
+   ,CURRENCY    VARCHAR(10) NOT NULL     -- Moneda
+   ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
+   ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
+   ,BUY_HIGH    DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
+   ,BUY_LOW     DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
+   ,BUY_LAST    DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
+   ,BUY_NET     DOUBLE      DEFAULT 0.0  -- Precio medio de compra
+   ,SELL_HIGH   DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
+   ,SELL_LOW    DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
+   ,SELL_LAST   DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
+   ,SELL_NET    DOUBLE      DEFAULT 0.0  -- Precio medio de compra   
+   ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
+   ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
+   ,VALUE       DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
+   ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
+   ,SINCE       TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
+   ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
+                            ON UPDATE CURRENT_TIMESTAMP  -- Ultima actualizacion
    ,CC          VARCHAR(512)        -- Codigo de cuenta
    ,PRIMARY KEY ( CAMERA, CURRENCY )
-);
-
--- Contiene el registro de regularizacion
--- Para el calculo de los precios de coste y netos
-DROP TABLE  IF EXISTS REGULARIZATION CASCADE;
-CREATE TABLE REGULARIZATION  (
-    CAMERA      VARCHAR(10) NOT NULL -- Codigo de camara
-   ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
-   ,BALANCE     DOUBLE      DEFAULT 0.0 -- Saldo real 
-   ,AVAILABLE   DOUBLE      DEFAULT 0.0 -- Saldo disponible
-   ,PRICE       DOUBLE      DEFAULT 1.0   -- Precio neto de venta   
-   ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
-   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido   
-   ,PRICEBUY    DOUBLE      DEFAULT 1.0 -- Comprado
-   ,PRICESELL   DOUBLE      DEFAULT 1.0 -- Vendido   
-   ,SINCE       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP    
-   ,LAST        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
-                            ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
-   ,PRIMARY KEY ( CAMERA, CURRENCY, LAST DESC )
 );
 
 -- Tabla de Cuentas/Camara historica
@@ -52,18 +40,57 @@ CREATE TABLE REGULARIZATION  (
 DROP TABLE  IF EXISTS HIST_POSITION CASCADE;
 CREATE TABLE HIST_POSITION  (
     DATE_POS    DATE        NOT NULL
-   ,CAMERA      VARCHAR(10) NOT NULL -- Codigo de camara
-   ,CURRENCY    VARCHAR(10) NOT NULL -- Moneda
-   ,BALANCE     DOUBLE      NOT NULL -- Saldo real 
-   ,AVAILABLE   DOUBLE      NOT NULL -- Saldo disponible
-   ,BUY         DOUBLE      DEFAULT 0.0 -- Comprado
-   ,SELL        DOUBLE      DEFAULT 0.0 -- Vendido      
-   ,COST        DOUBLE      DEFAULT 1   -- Precio medio de compra
-   ,NET         DOUBLE      DEFAULT 1   -- Precio neto de venta
-   ,TMS         TIMESTAMP   DEFAULT CURRENT_TIMESTAMP 
-                            ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
+   ,CAMERA      VARCHAR(10) NOT NULL     -- Codigo de camara
+   ,CURRENCY    VARCHAR(10) NOT NULL     -- Moneda
+   ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
+   ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
+   ,BUY_HIGH    DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
+   ,BUY_LOW     DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
+   ,BUY_LAST    DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
+   ,BUY_NET     DOUBLE      DEFAULT 0.0  -- Precio medio de compra
+   ,SELL_HIGH   DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
+   ,SELL_LOW    DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
+   ,SELL_LAST   DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
+   ,SELL_NET    DOUBLE      DEFAULT 0.0  -- Precio medio de compra   
+   ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
+   ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
+   ,VALUE       DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
+   ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
+   ,SINCE       TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
+   ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
+   ,CC          VARCHAR(512)        -- Codigo de cuenta
    ,PRIMARY KEY ( DATE_POS DESC, CAMERA, CURRENCY )
 );
+
+-- Contiene el registro de regularizacion
+-- Igual que la tabla POSITION pero indexada por LAST
+-- Para el calculo de los precios de coste y netos
+DROP TABLE  IF EXISTS REGULARIZATION CASCADE;
+CREATE TABLE REGULARIZATION  (
+    CAMERA      VARCHAR(10) NOT NULL     -- Codigo de camara
+   ,CURRENCY    VARCHAR(10) NOT NULL     -- Moneda
+   ,DATE_REG    DATE        NOT NULL     -- Fecha de regularizacion
+   ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
+   ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
+   ,BUY_HIGH    DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
+   ,BUY_LOW     DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
+   ,BUY_LAST    DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
+   ,BUY_NET     DOUBLE      DEFAULT 0.0  -- Precio medio de compra
+   ,SELL_HIGH   DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
+   ,SELL_LOW    DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
+   ,SELL_LAST   DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
+   ,SELL_NET    DOUBLE      DEFAULT 0.0  -- Precio medio de compra   
+   ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
+   ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
+   ,VALUE       DOUBLE      DEFAULT 1.0  -- Valor neutro (punto en el que el beneficio es cero)
+   ,SINCE       TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
+   ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
+                            ON UPDATE CURRENT_TIMESTAMP  -- Ultima actualizacion
+   ,CC          VARCHAR(512)        -- Codigo de cuenta
+
+   ,PRIMARY KEY ( CAMERA, CURRENCY, DATE_REG DESC )
+);
+
 
 -- ------------------------------------------------------------------
 -- Operaciones
@@ -92,16 +119,17 @@ CREATE TABLE HIST_POSITION  (
 DROP TABLE  IF EXISTS OPERATIONS;
 CREATE TABLE OPERATIONS  (
     ID_OPER      INT UNSIGNED      NOT NULL -- Identificador de la operacion
-   ,TYPE         TINYINT     NOT NULL -- Compra o Venta    
-   ,CAMERA       VARCHAR(10) NOT NULL -- Clearing House
-   ,BASE         VARCHAR(10) NOT NULL -- From currency
-   ,COUNTER      VARCHAR(10) NOT NULL -- To currency
-   ,AMOUNT       DOUBLE      NOT NULL -- Cantidad propuesta
-   ,PRICE        DOUBLE      NOT NULL -- Precio de la operacion
+   ,TYPE         TINYINT     NOT NULL  -- Compra o Venta    
+   ,CAMERA       VARCHAR(10) NOT NULL  -- Clearing House
+   ,BASE         VARCHAR(10) NOT NULL  -- From currency
+   ,COUNTER      VARCHAR(10) NOT NULL  -- To currency
+   ,VALUE        DOUBLE      DEFAULT 0 -- Coste de la operacion
+   ,AMOUNT       DOUBLE      NOT NULL  -- Cantidad propuesta que entra
+   ,PRICE        DOUBLE      NOT NULL  -- Precio unitario
    ,ACTIVE       TINYINT     DEFAULT 1 -- Flag activa/inactiva
    ,STATUS       TINYINT     DEFAULT 0 -- Estado de la operacion
    ,PARENT       INT UNSIGNED      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado     
-   ,TMS          TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
+   ,TMS          TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,TMS_LAST     TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
    ,PRIMARY KEY ( ID_OPER )
@@ -118,13 +146,16 @@ CREATE TABLE OPERATIONS_CONTROL  (
    ,STOP         DOUBLE                  -- Stop
    ,LIMITE       DOUBLE                  -- Limit
    ,DEADLINE     INTEGER   DEFAULT 0     -- Plazo en dias
-   ,AMOUNT_IN    DOUBLE      NOT NULL -- Cantidad propuesta
-   ,PRICE_IN     DOUBLE      NOT NULL -- Precio de la operacion   
-   ,AMOUNT_OUT   DOUBLE       -- Cantidad a la salida
-   ,PRICE_OUT    DOUBLE       -- Precio de salida
-   ,RANK         INT               DEFAULT 0   
-   ,ALERT        TINYINT     DEFAULT 0 -- Flag de alerta pendiente
-   ,TMS_ALERT    DATE                -- Para chequear la operacion         
+   ,AMOUNT_IN    DOUBLE    NOT NULL      -- Cantidad propuesta
+   ,PRICE_IN     DOUBLE    NOT NULL      -- Precio de la operacion   
+   ,AMOUNT_OUT   DOUBLE    DEFAULT 0.0   -- Cantidad ejecutada
+   ,PRICE_OUT    DOUBLE    DEFAULT 0.0   -- Precio ejecutado
+   ,EXPENSE      DOUBLE    DEFAULT 0     -- Solo ventas. Coste de compra por operaciones
+   ,PROFIT       DOUBLE    DEFAULT 0     -- Resultado de la operacion
+   ,ALIVE        INTEGER   DEFAULT 0     -- Duracion de la operacion desde la primera compra
+   ,RANK         INT       DEFAULT 0   
+   ,ALERT        TINYINT   DEFAULT 0     -- Flag de alerta pendiente
+   ,TMS_ALERT    DATE                    -- Para chequear la operacion         
    ,PRIMARY KEY ( ID_OPER )
 );
 

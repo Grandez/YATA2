@@ -1,10 +1,9 @@
-unloadNamespace("YATAWebWidgets")
 unloadNamespace("YATAWebCore")
-unloadNamespace("YATACore")
+#unloadNamespace("YATACore")
 # unloadNamespace("YATADT")
-unloadNamespace("YATAProviders")
-unloadNamespace("YATADB")
-unloadNamespace("YATATools")
+# unloadNamespace("YATAProviders")
+# unloadNamespace("YATADB")
+# unloadNamespace("YATATools")
 
 # Core
 library(utils)

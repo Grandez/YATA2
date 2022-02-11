@@ -1,0 +1,201 @@
+# Operaciones
+
+Tenemos los siguientes tipos de operaciones:
+
+- Transferencias entre camaras
+- Compras 
+- Ventas
+- Neteos
+- Splits
+- Regularizaciones
+- Cierres
+
+## Ciclo de vida
+
+De manera general cualquier operacion tiene el siguiente ciclo de vida:
+
+1. Registro: Se registra la operacion en la camara
+2. Aceptacion: La camara acepta la operacion
+3. Ejecucion: Se ejecuta la operacion en el sistema
+
+### Registro
+
+Cuando generamos una operacion, basicamente ponemos una orden de compra/venta en la camara.
+Se producen las siguientes acciones:
+
+- Establecemos un precio deseado de compra/venta
+- Grabamos el registro de la operacion en una camara concreta
+- Actualizamos el disponible de la posicion si se trata de una compra
+
+### Aceptacion
+
+Cuando la camara acepta la operacion:
+
+- Puede o no cambiarse 
+- Se actualiza la cantidad si procede
+- Si es una compra
+   - Se actualiza el saldo y el disponible de la posicion
+   - Se genera el flujo asociado
+   - Se genera el flujo de comision de la camara (en la moneda xxx)
+- Si es una venta
+   - Se cambia el estado de la operacion
+
+### Ejecucion
+
+Puede o no cambiarse el importe
+
+- Se actualiza el estado de la operacion
+- Se genera el flujo correspodiente a la tasa (fee)
+- Se actualiza la posicion de la moneda con la tasa
+- Si es una venta:
+
+
+## Codigos
+
+** Tipo de operacion **
+
+| Code | Type           |
+|------|----------------|
+|  1   | Operacion      |
+|  2   | Compra         |
+|  3   | Venta          |
+|  4   | Transferencia  |
+|  5   | Split          |
+|  6   | Neteo          |
+| 10   | Regularizacion |
+| 16   | Cierre         |
+
+** Tipo de flujo **
+
+| Code | Type           |
+|------|----------------|
+|  0   | Pendiente      |
+| 20   | Entrada        |
+| 21   | regInput ?     |
+| 30   | output         |
+| 32   | regOutput ?    |
+| 40   | Transferencia  |
+| 41   | XFer IN        |
+| 42   | XFer OUT       |
+| 52   | Fee            |
+| 54   | Gas            |
+
+** Estado **
+
+| Code | Type           |
+|------|----------------|
+|  0   | Pendiente      |
+|  1   | Aceptada       |
+|  2   | Ejecutada      |
+|  4   | Cancelada      |
+|  8   | Rechazada      |
+| 16   | Cerrada        |
+| 32   | Split          |
+| 64   | Neteo          |
+
+
+## Operaciones de compra/venta
+
+Es una operacion en la que se Compra/Vende una cierta cantidad de una moneda a un cierto precio de otra
+
+Formalmente podemos ver la operacion como lo siguiente:
+
+| Base | Counter | Valor | Cantidad |
+
+Donde:
+
+- *Valor* es el numero de um que necesitamos de Base
+- *Cantidad* es el numero de um que obtenemos de Counter
+
+Es decir, si tenemos las posiciones:
+
+| Camara | Posicion |
+|--------|----------|
+| CTC1   |    10000 |
+| CTC2   |        0 |
+
+Y queremos comprar 10 CTC2 a 100 CTC1 cada una, la operacion es:
+
+| Campo    | Valor |
+|----------|-------|
+| Base     | CTC1  |
+| Counter  | CTC2  |
+| Valor    | 1000  |
+| Cantidad |   10  |
+
+Y la operacion se registra en posicion como:
+
+CTC1 = CTC1 - Valor
+CTC2 = CTC2 + Cantidad
+
+Quedando la posicion:
+
+| Camara | Posicion |
+|--------|----------|
+| CTC1   |     9000 |
+| CTC2   |       10 |
+
+Notese que de esta forma, una compra de CTC2 con CTC1 se marca como CTC1/CTC2 y una venta de CTC2 en CTC1 se marca CTC2/CTC1
+
+Pero siguiendo con el ejemplo anterior, si ahora queremos vender las 10 CTC2 al mismo precio, la operacion deberia registrarse como:
+
+| Campo    | Valor |
+|----------|-------|
+| Base     | CTC2  |
+| Counter  | CTC1  |
+| Valor    |   10  |
+| Cantidad | 1000  |
+
+Este metodo simplifica la gestion y unifica los criterios del flujo de capitales, siempre sale de Base y va a Counter, pero oculta el precio unitario, el cual siempre es Valor/Cantidad. En el primer caso es facil:  1000 / 10 = 100; pero los datos nunca suelen ser tan redondos, y en el segundo caso 10 / 100 = 0,01 que ya no es un valor trivial.
+
+Por ello incluimos el concepto precio unitario, de manera que la operacion se registra como:
+
+| Campo    | Buy   |    | Sell |
+|----------|-------|----|------|
+| Base     | CTC1  |    | CTC2 |
+| Counter  | CTC2  |    | CTC1 |
+| Valor    | 1000  |    |   10 |
+| Cantidad |   10  |    | 1000 |
+| Precio   |  100  |    |  100 |
+
+Donde ya resulta trivial establecer la relacion entre Valor y Cantidad
+
+
+## Ventas
+
+La venta la consideramos como un cierre de posicion.
+Suponiendo una secuencia de tomar posicion y cerrar posicion, se considera como una cola LIFO
+
+En la venta nos interesa saber, el resultado economico y la duracion
+
+Supongamos:
+
+1. +10/100
+2. -05/125
+3. +10/100
+4. -05/150
+5. +10/150
+
+Si ahora vendemos 20 (No puede ser mayor que el disponible por que esta controlado)
+El algoritmo es:
+
+Struct:
+Pend
+Inc
+Coste
+Uds
+
+| Step | Found | Pend | Inc | Coste | Uds
+|------|-------|------|------|------|------|
+| 0    | 0     | 20   | 0    | 0    | 0    |
+| 1    | 10     | 10   | 0    | 10 * 150 | 10 |
+| 2    |  -5   | 10    | 5    | 1500 | 10 |
+| 3    | 10    | 5     | 0    | 1500 + (5 * 100) | 15 |
+| 4    | -5    | 5     | 5    | 2000 | 15 |
+| 5    | +10   | 0     | 0    | 2000 + (5 * 100) | 20 | 
+
+Y hemos llegado a cero
+
+Uds no es necesario, es la venta
+
+| 

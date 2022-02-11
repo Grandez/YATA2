@@ -16,6 +16,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            private$tblExch       = factory$getTable(codes$tables$Exchanges)
            private$lastGet       = as.integer(tblSession$getLastUpdate())
            private$interval      = 15
+           browser()
            private$dfLast        = tblSession$getLatest()
        }
        ,setInterval   = function(interval) { private$interval = interval }
@@ -43,7 +44,6 @@ OBJSession = R6::R6Class("OBJ.SESSION"
         }
         ,getLatest = function(currencies) {
             df = private$dfLast
-#            df = tblSession$getLatest()
             if (nrow(df) == 0) df = updateLatest(TRUE)
             if (!missing(currencies)) df = df[df$symbol %in% currencies,]
             df
@@ -72,6 +72,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        }
 
        ,updateLatest = function(force=FALSE) {
+           browser()
            res = NULL
            if (force || (as.integer(Sys.time()) - lastGet) > 900) {
                # Puede haber nombre duplicados

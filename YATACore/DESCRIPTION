@@ -1,7 +1,7 @@
 Package: YATACore
 Type: Package
 Title: Core de YATA
-Version: 0.1.0
+Version: 1.1.0
 Author: Javier Gonzalez
 Maintainer: javier gonzalez<javier.gonzalez.grandez@gmail.com>
 Description: More about what it does (maybe more than one line)

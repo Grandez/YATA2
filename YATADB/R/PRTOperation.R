@@ -12,8 +12,6 @@ PRTOperations = R6::R6Class("PART.OPERATION"
         ,add = function(lstData) {
             info = splitFields(lstData)
             super$add(info$oper)
-            info$ctrl$amountIn = info$oper$amount
-            info$ctrl$priceIn  = info$oper$price
             tblOperControl$add(info$ctrl)
             tblOperLog$add(info$log)
         }

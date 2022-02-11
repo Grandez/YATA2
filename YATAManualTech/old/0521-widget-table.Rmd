@@ -1,6 +1,6 @@
 ## Tablas
 
-La version actual esta basada en el paquete **reactableE**
+La version actual esta basada en el paquete **reactable**
 
 https://glin.github.io/reactable/
 
@@ -9,7 +9,7 @@ El modulo es: **widgetTable.R**
 yuiTable: UI Object
 
 
-Dado el gran numero de opciones:
+Dado el gran numero de opciones, parece mas razonable crear un sistema de objetos que mantenga la configuracion y que permita la reutilizacion:
 
 1. Creamos una definicion de tabla que sea reutilizable: createTableDef
 2. Creamos diferentes funciones para diferentes tipos de tabla
@@ -47,20 +47,3 @@ event
 #   x/sp placeholder
 #   defecto title case
 
-Por otro lado, cada pagina Web la podemos ver como un conjunto de widgets mas o menos complejos
-
-
-El sistema utiliza el siguiente criterio:
-
-- Todos los componentes Web estan encapsulados en una parte de diseño y otro de servidor para interactuar con el
-- Los componentes de diseño se denominan yui_Nombre_
-- Los componentes de servidor se denominan upd_Nombre_
-
-De esta manera, se encapsulan los componentes de los diferentes paquetes y solo existe un punto de cambio para cada widget.
-Por ejemplo, hemos elegido utilizar los botones de shinyBS, que usan la funcion bsButton y en los parametros se configura el estilo, tamaño, etc.
-
-Primero creamos un widget yuiButton que encapsula a bsButton.
-Creamos un conjunto de _wrappers_ yuiButtonXXX que introducen ciertos parametros por defecto
-Cada uno de estos _wrappers_ invoca en ultima instancia a yuiButton que hace la llamada a bsButton.
-
-Si deseamos cambiar los botones de bsButton por otro estilo, basta con modificar la funcion **yuiButton**

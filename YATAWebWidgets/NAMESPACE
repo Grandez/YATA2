@@ -3,4 +3,5 @@ import(rlist)
 import(YATATools)
 
 exportPattern("yui.*")
-exportPattern("WDG*")
+exportPattern("upd.*")
+exportPattern("WDG.*")

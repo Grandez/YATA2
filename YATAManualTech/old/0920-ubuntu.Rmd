@@ -1,0 +1,15 @@
+## Ubuntu
+
+Manual de instalacion Ubuntu 20.04
+
+
+### Start
+
+Creamos la maquina con el sistema operativo
+Configurar la red
+Instalamos o verificamos que estan instalados los siguientes paquetes:
+
+apt-get install net-tools
+apt-get install openssh-server
+apt install vsftpd
+apt-get install dialog

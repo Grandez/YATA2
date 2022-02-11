@@ -58,7 +58,7 @@ OBJLayout = R6::R6Class("YATA.WEB.LAYOUT"
               }
               iVal = iVal + 1
               tbl = htmltools::tagAppendChild(tbl, tr)
-        }
+         }
         private$config = tagList(yuiTitle(5, "Layout"), top, tbl, htmltools::hr())
      }
      ,makeLayout = function(...) {

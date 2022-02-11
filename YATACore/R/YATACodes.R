@@ -50,6 +50,7 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,rejected  =  8  # No aceptada o no cumplio los parametros
         ,closed    = 16  # Finalizada
         ,split     = 32  # Se ha spliteado
+        ,net       = 64  # Se ha neteado
     )
     ,default = list(
       interval = 15

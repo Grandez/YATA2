@@ -11,7 +11,8 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,parms  = NULL
       ,MSG    = NULL  # Like WEB
       # Ponemos init y clear para manejar fuera de initialize y finalize
-      ,initialize = function() { init(FALSE) }
+      # auto se usa para el CI
+      ,initialize = function(auto=TRUE) { init(auto, FALSE) }
       ,finalize   = function() { clear()     }
       ,clear     = function(){
          if (!is.null(DBFactory))   DBFactory$finalize()
@@ -30,7 +31,8 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,getDB     = function()                    { DBFactory$getDB()       }
       ,getDBBase = function()                    { DBFactory$getDBBase()   }
       ,setDB     = function(connData)            {
-         DBFactory$setDB(connData)
+         connInfo = list.merge(cfg$sgdb, connData)
+         DBFactory$setDB(connInfo)
          invisible(self)
        }
       ,changeDB  = function(id) {
@@ -75,7 +77,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
          ProvFactory$setCloseTime      (parms$getCloseTime())
          ProvFactory$setBaseCurrency   (parms$getBaseCurrency())
       }
-      ,init      = function(clean=TRUE){
+      ,init      = function(auto, clean=TRUE){
           if (clean) clear()
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
@@ -90,10 +92,12 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           self$parms  = OBJParms$new   (private$DBFactory)
           self$MSG    = OBJMessages$new(self$codes, private$DBFactory)
 
-          if (parms$autoConnect()) {
-              setDB(parms$lastOpen())
-          } else {
-              setDB(parms$defaultDB())
+          if (auto) {
+              if (parms$autoConnect()) {
+                  setDB(parms$lastOpen())
+              } else {
+                  setDB(parms$defaultDB())
+              }
           }
       }
 

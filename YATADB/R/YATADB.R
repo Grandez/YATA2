@@ -48,7 +48,10 @@ YATA.DB <- R6::R6Class("YATA.DB"
      ,disconnect = function ()     { message("This method is virtual") }
      ,metadata   = function(table) { message("This method is virtual") }
 
-     ,SQLTran    = function()      { message("This method is virtual") }
+#     ,SQLTran    = function()     { message("This method is virtual") }
+     ,begin      = function()     { stop("This method is virtual")    }
+     ,commit     = function()     { stop("This method is virtual")    }
+     ,rollback   = function()     { stop("This method is virtual")    }
      ,execute    = function(qry, params=NULL, isolated=F) { message("This method is virtual") }
      ,query      = function(qry, params=NULL, isolated=F) { message("This method is virtual") }
      ,load       = function(table, isolated=F)            { message("This method is virtual") }
