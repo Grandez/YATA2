@@ -6,9 +6,12 @@ unloadNamespace("YATADB")
 unloadNamespace("YATATools")
 
 library(YATACore)
+browser()
+DBCI=list(name="CI", dbname="YATACI")
+Factory <<- YATACore::YATAFACTORY$new(auto=FALSE)
+Codes   <<- YATACore::YATACODES$new()
+Factory$setDB(DBCI)
 
-YATACodes   <<- YATACore::YATACODES$new()
-YATAFactory <<- YATACore::YATAFACTORY$new()
 
 initDB = function() {
     parms = YATAFactory$getParms()

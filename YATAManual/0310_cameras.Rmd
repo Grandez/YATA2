@@ -1,0 +1,35 @@
+# Camaras y Wallets
+
+TODO
+
+Transferencias por precio neto
+
+
+En cada camara en la que es posible trabajar, normalmente hay que tener una cuenta. La camara almacena el codigo de cuenta y sus passwords asociadas.
+
+Por otro lado tenemos, o es recomendable tenerlos, "Wallets" independientes de las camaras.
+
+Por ultimo, trabajemos en las ctc que trabajemos y con los wallets que trabajemos, el fin ultimo es incrementar nuestro capital en nuestra moneda fiduciaria, es decir, en nuestra cuenta de inversion.
+
+Todo esto nos da la siguiente estructura:
+
+1. Una Cuenta de inversion (ROOT)
+2. De esa cuenta transferimos o recibimos a nuestros Wallets (Podemos verlos como camaras privadas)
+3. Y de esos Wallets a las Camaras publicas o a la inversa
+
+## Ejemplo
+
+- Disponemos de una cuenta de inversion en determinado banco (ROOT)
+- Manejamos tres Wallets (Esto hace que es caso de fallo o problema en uno, no perdemos todo)
+    - Uno de operacion intradia o corto plazo
+    - Uno de operaciones de riesgo
+    - Uno de inversiones a largo plazo
+- Trabajamos con n camaras de criptomonedas, posiblemente con diferentes usuarios y cuentas en funcion del objetivo.
+
+El proceso seria:
+
+1. En uno de los sistemas que no requieren autentificacion, transferimos de ROOT a nuestro Wallet deseado
+2. De ese Wallet transferimos a la camara deseada y la cuenta deseada
+3. Tras operar, regularizamos (recogemos beneficios o asumimos perdidas) al Wallet original
+4. Cuando sea necesario, de ese Wallet transferimos a la cuenta ROOT
+

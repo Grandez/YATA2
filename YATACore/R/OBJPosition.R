@@ -7,7 +7,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
         print           = function() { message("Position")}
        ,initialize      = function(factory) {
            super$initialize(factory)
-           private$prtPosition = factory$getTable(codes$tables$Position)
+           private$prtPosition = factory$getTable(codes$tables$position)
        }
        ,getCameras = function() {
           df = prtPosition$getCameras()

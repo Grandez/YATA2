@@ -98,19 +98,6 @@ CREATE TABLE REGULARIZATION  (
 --    Un registro padre
 --    Un conjunto de flujos
 --
--- En un split cerramos la operacion y creamos dos nuevas
--- la primera se vende completa
--- Cuando vendemos mas de la compra, buscamos hacia atras
--- Es decir:
---  Op 1 - Compro 1000  a 100
---  Op 2 - Compro 1000  a  50
---  Op 3 - Vendo 1500
---         Calcular el valor en base al split
---            100 * 100 + 500 * 50
---         Op 1 - Se cierra como vendida
---         Op 2 - Se splitea
---                op 4 - 500 y cerrada padre 2  hija de Op 3
---                op 5 - 500 y abierta padre 2 
 -- ------------------------------------------------------------------
 
 -- En principio las operaciones deben empezar en una compra
@@ -171,6 +158,19 @@ CREATE TABLE OPERATIONS_LOG  (
 
    ,COMMENT         TEXT 
    ,PRIMARY KEY ( ID_OPER, ID_LOG )
+);
+
+-- Tabla de transferencias entre camaras
+-- Genera un flujo en una camara y otro en otro
+DROP TABLE  IF EXISTS TRANSFERS;
+CREATE TABLE TRANSFERS  (
+    ID_XFER      INT UNSIGNED  NOT NULL -- Identificador de la operacion
+   ,CAMERA_OUT   VARCHAR(10)   NOT NULL  -- Clearing from
+   ,CAMERA_IN    VARCHAR(10)   NOT NULL  -- Clearing to
+   ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
+   ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
+   ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
+   ,PRIMARY KEY ( ID_XFER )
 );
 
 -- Flujos
@@ -270,4 +270,7 @@ CREATE TABLE PROFILE (
    ,LEVEL9  BIGINT
    ,ELAPSED BIGINT
    ,NAME    VARCHAR(64)
-)
+);
+
+INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "EUR", 10000, 10000);
+COMMIT;

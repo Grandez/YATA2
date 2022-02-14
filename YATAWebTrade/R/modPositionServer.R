@@ -250,6 +250,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           #YATAWEB$end("flags$best")
        })
        observeEvent(flags$refresh, ignoreInit = TRUE, { 
+           browser()
           #YATAWEB$beg("refresh")
           pnl$monitors$update() 
           flags$position = isolate(!flags$position)
@@ -519,6 +520,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
 
      carea = pnl$getCommarea()  
      if (!pnl$loaded || carea$position) {
+       browser()
           yuiLoading()
           pnl$loadData()
           if (!carea$position) initPage()

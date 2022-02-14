@@ -6,10 +6,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
     ,public = list(
         initialize = function(factory) {
             super$initialize(factory)
-            private$prtOper        = factory$getTable(codes$tables$Operations)
-            private$tblFlows       = factory$getTable(codes$tables$Flows)
-            # private$tblOperControl = factory$getTable(codes$tables$OperControl)
-            # private$tblOperLog     = factory$getTable(codes$tables$OperLog)
+            private$prtOper        = factory$getTable(codes$tables$operations)
+            private$tblFlows       = factory$getTable(codes$tables$flows)
             private$objPos         = factory$getObject(codes$object$position)
         }
         ##############################
@@ -24,9 +22,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ,add   = function(type, ...) {
             tryCatch({
                 db$begin()
-                addNoTran(type, ...)
+                idOper = addNoTran(type, ...)
                 db$commit()
-                self$current$idOper
+                idOper
             },error = function(cond) {
                 db$rollback()
                 message(cond)
@@ -350,34 +348,63 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            tblFlows$add(data)
        }
        ,operXfer     = function() {
-           self$current$camera  = "XFER"
-           self$current$base    = self$current$from
-           self$current$counter = self$current$to
-           self$current$price   = 1
-           self$current$active  = codes$flag$inactive
-           self$current$status  = codes$status$executed
+           # TRansfiere entre dos camaras
+           # Genera:
+           # 1. Registro de transferencia
+           # 2. Operaciones de transferencia en las dos camaras
+           # 3. Flujos asociados a la transferencia
+           tblXfer = factory$getTable(codes$tables$transfer)
+           idXfer = YATATools::getID()
+           xfer = list(
+               id        = idXfer
+              ,cameraIn  = current$from
+              ,cameraOut = current$to
+              ,currency  = current$currency
+              ,amount    = current$amount
+              ,price     = current$price
+           )
+           tblXfer$add(xfer)
 
-           # 1 - Grabar la operacion
-           # 2 - Grabar los flujos
-           # 3 - Actualizar posiciones
-           prtOper$add(current)
+           idOut = YATATools::getID()
+           idIn  = YATATools::getID()
+           data = list(
+                id      = idOut
+               ,camera  = current$from
+               ,base    = current$currency
+               ,counter = current$currency
+               ,value   = current$amount
+               ,amount  = current$amount
+               ,price   = current$price
+               ,parent  = idXfer
+               ,active  = codes$flag$inactive
+               ,status  = codes$status$executed
+               ,type    = codes$oper$xfer
+           )
+           prtOper$add(data)
 
-           self$current$base    = self$current$currency
-           self$current$counter = self$current$currency
+           data$id     = idIn
+           data$camera = current$to
+           prtOper$add(data)
 
-           # Descontar de la fuente si no es externa
-           if (current$from != "EXT") {
-               amount = current$amount * -1
-               self$current$camera = current$from
-               addFlow (codes$flow$xferOut, current$base, amount, 1)
-           }
+           # Flujos
 
-           # regularizar el destino si no es externo
-           if (current$to != "EXT") {
-               self$current$camera = current$to
-               addFlow (codes$flow$xferIn,  current$counter, current$amount, 1)
-           }
+           flow = list(
+                idOper   = idOut
+               ,idFlow   = YATATools::getID()
+               ,type     = codes$flow$xferOut
+               ,currency = current$currency
+               ,amount   = current$amount * -1
+               ,price    = current$price
+           )
+           tblFlows$add(flow)
+
+           flow$idOper = idIn
+           flow$type   = codes$flow$xferIn
+           tblFlows$add(flow)
+
+           # Posiciones
            objPos$transfer(current$from, current$to, current$currency, current$amount)
+           idXfer
        }
        ,addNoTran   = function(type, ...) {
             # Se llama desde add y desde close
@@ -390,14 +417,14 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             # if (type %in% c(codes$oper$sell, codes$oper$close)) {
             #     self$current$amount = current$amount * -1
             # }
-                if (type == codes$oper$xfer)  operXfer()
-                if (type == codes$oper$oper)  operOper2()
-                if (type == codes$oper$buy)   operOper2()
-                if (type == codes$oper$sell)  operOper2()
-#                if (type == codes$oper$close) operClose()
-#                if (type == codes$oper$split) {}
-                if (type == codes$oper$net)  {}
-                self$current$idOper
+            if (type == codes$oper$xfer)  operXfer()
+            if (type == codes$oper$oper)  operOper2()
+            if (type == codes$oper$buy)   operOper2()
+            if (type == codes$oper$sell)  operOper2()
+#            if (type == codes$oper$close) operClose()
+#            if (type == codes$oper$split) {}
+            if (type == codes$oper$net)  {}
+            self$current$idOper
        }
        ,operOper2     = function() {
            # Temporal. No genera flujos y la ejecuta
@@ -521,12 +548,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
        #      })
        #
        # }
-       ,createTables = function() {
-            private$prtOper        = factory$getTable(codes$tables$Operations)
-            private$tblFlows       = factory$getTable(codes$tables$Flows)
-#            private$tblOperControl = factory$getTable(codes$tables$OperControl)
-#            private$tblOperLog     = factory$getTable(codes$tables$OperLog)
-       }
        ,calculateExpense = function() {
            # Calcula el coste de la operaciones de compra asociadas a la venta
            # Funciona como una cola LIFO

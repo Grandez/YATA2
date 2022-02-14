@@ -116,7 +116,6 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
        })       
         
         observeEvent(input$pnlOpType, { 
-            browser()
            act = yataActiveNS(input$pnlOpType)
            module = paste0("modOper", titleCase(act),"Server")
            carea = pnl$getCommarea()

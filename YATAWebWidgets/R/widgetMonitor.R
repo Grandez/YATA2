@@ -72,14 +72,12 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
               }
               private$monitors$put(sym, mon)
           }
-          browser()
           df  = pnl$getGlobalPosition()
           ctc = unique(c(df$currency, "BTC", "ETH"))
           if (length(ctc) > 6) ctc = ctc[1:6]
 
           private$session = pnl$factory$getObject("Session")
           private$pos     = pnl$factory$getObject("Position")
-          browser()
           dfs             = session$getLatest(ctc)
           names           = YATAWEB$getCTCLabels(ctc, type="name")
           lapply(ctc, function(sym) createMonitor(sym, df, dfs, names))

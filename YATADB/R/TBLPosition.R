@@ -11,10 +11,10 @@ TBLPosition = R6::R6Class("TBLPOSITION"
             browser()
         }
         ,getGlobalPosition = function() {
-            #JGG Tabla cambiada
             stmt = paste("SELECT  CURRENCY, SUM(BALANCE) AS BALANCE, SUM(AVAILABLE) AS AVAILABLE"
-                               ,",AVG(BUY) AS BUY, AVG(SELL) AS SELL, AVG(PRICE) AS PRICE"
-                               ,",AVG(PRICEBUY) AS PRICEBUY, AVG(PRICESELL) AS PRICESELL"
+                               ,",SUM(BUY) AS BUY, SUM(SELL) AS SELL, AVG(VALUE) AS VALUE"
+                               ,",AVG(BUY_NET) AS BUY_NET, AVG(SELL_NET) AS SELL_NET"
+                               ,",AVG(PROFIT) AS PROFIT"
                                ,",MIN(SINCE) AS SINCE, MAX(LAST) AS LAST")
             group = c("CURRENCY")
             sql(stmt, group=group)

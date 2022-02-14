@@ -5,7 +5,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
     ,public = list(
         print          = function() { message("Locale Messages")}
        ,initialize     = function(codes, dbf) {
-           private$tblMsg = dbf$getTable(codes$tables$Messages)
+           private$tblMsg = dbf$getTable(codes$tables$messages)
            private$db     = dbf$getDBBase()
        }
        ,setLang = function(lang, region) {

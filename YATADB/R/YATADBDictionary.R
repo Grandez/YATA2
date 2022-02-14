@@ -2,8 +2,8 @@
 # Contiene los codigos que se usan en la BBDD
 DBDict = list(
     parts  = list(
-      Position     = "POSITION"
-     ,Operations   = "OPERATIONS"
+#      Position     = "POSITION"
+      Operations   = "OPERATIONS"
     )
     ,tables = list(
          Position     = "POSITION"
@@ -15,6 +15,7 @@ DBDict = list(
         ,Flows        = "FLOWS"
         ,Session      = "SESSION"
         ,Blog         = "BLOG"
+        ,Transfers    = "TRANSFERS"
     )
     ,baseTables = list(
          Cameras      = "CAMERAS"
