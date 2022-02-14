@@ -151,44 +151,34 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
     if (rc) return (TRUE)
     cls$ok()
     FALSE
-
-
-    # .oper_case("Registrando compra 1 ")
-    # data = list(type = YATA)
-    # .tst_oper_add(db, data)
-    #
-    # # Check data
-    # position = Fact$getObject((YATACodes$object$position))
-    # df = position$getPosition(camera="CAM01", currency="EUR")
-    # .oper_check_row(df, list(balance = 9000, available=9000))
-    #
-    # df = position$getPosition(camera="CAM01", currency="BTC")
-    # checks = list(balance = 10, available=10, buyHigh=100, buyLow=100,buyLast=100, buyNet=100
-    #                                         , sellHigh=0, sellLow=0,sellLast=0, sellNet=0
-    #                                         , buy = 10, sell = 0, value = 100)
-    # .oper_check_row(df, checks)
-    #
-    # .oper_case("- OK\n")
 }
-.tst_oper_buy_02 = function(db) {
-    .oper_case("Registrando compra 2 ")
-    data = list(type = YATACodes$oper$buy, value = 2000, amount   = 10, price    = 200)
-    .tst_oper_add(db, data)
+.oper_buy_02 = function(cls) {
+    cls$out("Buying 10 BTC at 200")
+    idOper = cls$add(type=Codes$oper$buy, value = 2000, amount = 10, price = 200)
 
-    # Check data
-    position = Fact$getObject((YATACodes$object$position))
-    df = position$getPosition(camera="CAM01", currency="EUR")
+    rc = tryCatch({
+           rows = list(
+                        list(table=Tables$position,   rows = 2)
+                       ,list(table=Tables$operControl,rows = 2)
+                       ,list(table=Tables$operLog    ,rows = 2)
+                       ,list(table=Tables$operations, rows = 2)
+                       ,list(table=Tables$flows,      rows = 4)
+                      )
+        checkNumRows(rows)
+        values = list(balance=20, available=20,buyNet=150,buyHigh=200,buyLow=100,buy=20,sell=0, value=150)
+        checkRowValues(Tables$position, list(camera="YATA", currency="BTC"), values)
+        values = list(balance=7000, available=7000, buyNet=0, sellHigh=2000,sellLow=1000,sellNet=1, buy=0, sell=3000)
+        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
+        values = list(amount=10, value=2000,price=200)
+        checkRowValues(Tables$operations, list(id=idOper), values)
+        FALSE
+    }, error = function(e) { TRUE })
 
-    .oper_check_row(df, list(balance = 7000, available=7000))
-
-    df = position$getPosition(camera="CAM01", currency="BTC")
-    checks = list(balance = 20, available=20, buyHigh=200, buyLow=100,buyLast=200, buyNet=150
-                                            , sellHigh=0, sellLow=0,sellLast=0, sellNet=0
-                                            , buy = 20, sell = 0, value = 150)
-    .oper_check_row(df, checks)
-
-    .oper_case("- OK\n")
+    if (rc) return (TRUE)
+    cls$ok()
+    FALSE
 }
+
 .tst_oper_sell_01 = function(db) {
     .oper_case("Registrando venta 1 ")
     data = list( type = YATACodes$oper$sell
@@ -245,7 +235,8 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
 
 
 testOperations = function(mode) {
-    Cls = TSTOperation$new(mode)
-    .oper_buy_01(Cls)
-    Cls = NULL
+    cls = TSTOperation$new(mode)
+    .oper_buy_01(cls)
+    .oper_buy_02(cls)
+    cls = NULL
 }
