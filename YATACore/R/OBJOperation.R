@@ -353,15 +353,20 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # 1. Registro de transferencia
            # 2. Operaciones de transferencia en las dos camaras
            # 3. Flujos asociados a la transferencia
+
+           objPos$getPosition(camera=current$from, currency=current$currency)
+           value = objPos$current$value
+
+           tblPos  = factory$getTable(codes$tables$transfer)
            tblXfer = factory$getTable(codes$tables$transfer)
            idXfer = YATATools::getID()
            xfer = list(
                id        = idXfer
-              ,cameraIn  = current$from
-              ,cameraOut = current$to
+              ,cameraIn  = current$to
+              ,cameraOut = current$from
               ,currency  = current$currency
               ,amount    = current$amount
-              ,price     = current$price
+              ,value     = value
            )
            tblXfer$add(xfer)
 
@@ -374,7 +379,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                ,counter = current$currency
                ,value   = current$amount
                ,amount  = current$amount
-               ,price   = current$price
+               ,price   = value
                ,parent  = idXfer
                ,active  = codes$flag$inactive
                ,status  = codes$status$executed
@@ -386,6 +391,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            data$camera = current$to
            prtOper$add(data)
 
+           # Posiciones
+           objPos$transfer(current$from, current$to, current$currency, current$amount, value)
+
            # Flujos
 
            flow = list(
@@ -394,17 +402,16 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                ,type     = codes$flow$xferOut
                ,currency = current$currency
                ,amount   = current$amount * -1
-               ,price    = current$price
+               ,price    = value
            )
            tblFlows$add(flow)
 
            flow$idOper = idIn
            flow$type   = codes$flow$xferIn
+           flow$amount  = current$amount
            tblFlows$add(flow)
 
-           # Posiciones
-           objPos$transfer(current$from, current$to, current$currency, current$amount)
-           idXfer
+           self$current$idOper = idXfer
        }
        ,addNoTran   = function(type, ...) {
             # Se llama desde add y desde close
@@ -427,9 +434,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             self$current$idOper
        }
        ,operOper2     = function() {
-           # Temporal. No genera flujos y la ejecuta
-           # Abre una operacion de compra o venta
            objPos$updatePositions   (current)
+
            self$current$active = ifelse (current$type == codes$oper$oper
                                                        , codes$flag$active
                                                        , codes$flag$inactive)
@@ -456,21 +462,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            }
            prtOper$add(current)
 
-           #objPos$update   (current$camera, current$counter,  current$amount, current$price, 0)
-           # objPos$updateBase   (current$camera, current$base,    current$amount, current$price, 0)
-           # objPos$updateCounter(current$camera, current$counter, current$amount, current$price, 0)
+           addFlow(codes$flow$output,  current$base,    current$value * -1, current$price)
+           addFlow(codes$flow$input,   current$counter, current$amount,     current$price)
 
-           amount = current$amount
-           if (current$type == codes$oper$sell) {
-               if (amount > 0) amount = amount * -1
-               addFlow(codes$flow$output, current$counter, amount, current$price)
-               addFlow(codes$flow$input,  current$base,    current$amount * current$price * -1, current$price)
-           } else {
-               addFlow(codes$flow$input,  current$counter, current$amount, current$price)
-               addFlow(codes$flow$output, current$base,    current$amount * current$price * -1, current$price)
-           }
-
-           # addFlow(codes$flow$output, current$base, imp, 1)
            if (!is.null(current$idParent) && !is.na(current$idParent)) {
                select(idParent)
                current$flag = codes$flags$parent
@@ -554,13 +548,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # Si hay compras en medio, se añaden a sell y se quitan despues
 
            value = 0
-           pend = current$amount
-           sell = 0
-           df1 = prtOper$get(camera=current$camera, base=current$base,    counter=current$counter)
-           df2 = prtOper$get(camera=current$camera, base=current$counter, counter=current$base)
-           df = rbind(df1, df2)
+           pend  = current$amount
+           sell  = 0
+           df1   = prtOper$get(camera=current$camera, base=current$base,    counter=current$counter)
+           df2   = prtOper$get(camera=current$camera, base=current$counter, counter=current$base)
+           df    = rbind(df1, df2)
            # Los id son tms luego ordenamos descendente
-           df = df[order(df$id, decreasing=TRUE),]
+           df    = df[order(df$id, decreasing=TRUE),]
 
            nrow = 0
            while ( pend > 0) {

@@ -7,10 +7,11 @@ TBLPosition = R6::R6Class("TBLPOSITION"
          initialize = function(name, db=NULL) {
              super$initialize(name, fields=private$fields,key=key, db=db)
          }
-        ,updateOper = function(camera, currency, amount, price, taxes) {
-            browser()
-        }
+        # ,updateOper = function(camera, currency, amount, price, taxes) {
+        #     browser()
+        # }
         ,getGlobalPosition = function() {
+            self$current = NULL
             stmt = paste("SELECT  CURRENCY, SUM(BALANCE) AS BALANCE, SUM(AVAILABLE) AS AVAILABLE"
                                ,",SUM(BUY) AS BUY, SUM(SELL) AS SELL, AVG(VALUE) AS VALUE"
                                ,",AVG(BUY_NET) AS BUY_NET, AVG(SELL_NET) AS SELL_NET"
@@ -23,10 +24,14 @@ TBLPosition = R6::R6Class("TBLPOSITION"
             df = table(camera=camera)
             if (balance)   df = df[df$balance   > 0,]
             if (available) df = df[df$available > 0,]
+            browser()
+            self$current = list(df)
             df
         }
         ,getCurrencyPosition = function(currency) { table(currency=currency) }
-        ,getPosition = function(camera, currency) { table(camera= camera, currency=currency) }
+        ,getPosition = function(camera, currency) {
+            table(camera=camera, currency=currency)
+         }
         ,getCameras  = function() { uniques(c("camera")) }
      )
      ,private = list (

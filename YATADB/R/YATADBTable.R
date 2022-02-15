@@ -24,7 +24,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
    ,public = list(
        name      = NULL
       ,dfCurrent = NULL   # Selected data
-      ,current   = list()   # Registro activo
+      ,current   = NULL   # Registro activo
       ,metadata  = NULL
       ,err       = NULL
       ,initialize  = function(name, fields, key=c("id"), db=NULL)    {
@@ -90,27 +90,19 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,getField = function(name)         { self$current[[name]] }
       ,addField = function(name, value)  { self$current[[name]] = self$current[[name]] + value }
       ,select   = function(..., create=FALSE)  {
-         private$.selected = FALSE
          # selecciona un registro o conjunto, segun los parametros (solo equal)
-         # almacena el resultado en dfCurrent y el primero en current
-         # .selected me dice donde esta: 0 - No esta,
-         self$current = list()
+         self$current = NULL
          filter = mountWhere(...)
          sql = paste("SELECT * FROM ", tblName, filter$sql)
          df = db$query(sql, filter$values)
-         if (nrow(df) == 0) {
-            if (create) {
-                self$add(list(...))
-                df = db$query(sql, filter$values)
-            }
-            else {
-               private$.selected = FALSE
-               return (FALSE)
-            }
+
+         if (nrow(df) == 0 && !create) return (FALSE)
+         if (nrow(df) == 0 &&  create) {
+             self$add(list(...))
+             df = db$query(sql, filter$values)
          }
          self$dfCurrent    = setColNames(df)
          self$current      = as.list(self$dfCurrent[1,])
-         private$.selected = nrow(self$dfCurrent)
          TRUE
       }
       ,delete   = function(...)  {
@@ -167,6 +159,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
          df = db$query(sql, params=filter$values)
          df = setColNames(df)
          if (!includeKeys) df = df[,-getKeys(...)]
+         self$current = NULL
+         if (nrow(df) < 2) self$current = as.list(df)
          df
       }
       ,uniques = function(fields, ...) {

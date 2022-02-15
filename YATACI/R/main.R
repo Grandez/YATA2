@@ -25,6 +25,6 @@
 # Errors es el numero de errores a soportar. 0 - Todos
 start = function(mode="console", errors=0) {
     CI <<- YATACI$new(mode, errors)
-    # testTransfers(mode)
+    testTransfers(mode)
     testOperations(mode)
 }

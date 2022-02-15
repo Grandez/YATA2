@@ -35,31 +35,42 @@ YATACIBase = R6::R6Class("YATA.CI.BASE"
       ,finalize   = function() {
           message("Deleting YATACI")
       }
-      ,out = function(fmt, ...) { cat(sprintf(fmt, ...)) }
-      ,err = function(fmt, ...) {
+      ,lbl = function(fmt, ...)  { cat(line(fmt, ...)) }
+      ,out  = function(fmt, ...) { cat(line(fmt, ...)) }
+      ,err  = function(fmt, ...) {
           sink(stderr())
-          cat(red(sprintf(fmt, ...)))
+          cat(red(line(fmt, ...)))
           sink()
       }
-      ,outfmt = function(attr, fmt, ...) { cat(attr(sprintf(fmt, ...))) }
+      ,outfmt = function(attr, fmt, ...) { cat(attr(line(fmt, ...))) }
       ,errfmt = function(attr, fmt, ...) {
           sink(stderr())
-          cat(attr(sprintf(fmt, ...)))
+          cat(attr(line(fmt, ...)))
           sink()
       }
       ,logical = function(object, expected, result) {
          txt = paste0("ERROR in ", object, ". Expected: ", expected, "- Found: ", result)
          err(txt)
       }
-      ,ok = function() { out(bold("\tOK\n")) }
-      ,ko = function() { out(bold $ red("\tKO\n")) }
+      ,ok = function() { outfmt(bold,"\tOK\n") }
+      ,ko = function() { outfmt(bold $ red,"\tKO\n") }
       ,msgBlock = function(txt) {
           cat(txt)
           # write(txt, stdout())
       }
    )
    ,private = list(
-
+      length = 50
+      ,line = function(fmt, ...) {
+          txt = sprintf(fmt, ...)
+          endl = (substr(txt,nchar(txt),nchar(txt)) == "\n")
+          size = length - nchar(txt)
+          if (size > 0 && endl == FALSE) {
+             # size = nchar(txt) - length
+             txt = paste(txt, sprintf("%*s", size, " "))
+          }
+          txt
+       }
   )
 )
 

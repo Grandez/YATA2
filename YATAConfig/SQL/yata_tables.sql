@@ -169,6 +169,7 @@ CREATE TABLE TRANSFERS  (
    ,CAMERA_IN    VARCHAR(10)   NOT NULL  -- Clearing to
    ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
+   ,VALUE        DOUBLE        NOT NULL  -- Valor
    ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,PRIMARY KEY ( ID_XFER )
 );

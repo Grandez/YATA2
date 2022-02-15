@@ -16,7 +16,6 @@ TBLTransfers = R6::R6Class("TBL.XFER"
               ,currency  = "CURRENCY"
               ,amount    = "AMOUNT"
               ,value     = "VALUE"
-              ,price     = "PRICE"
               ,tms       = "TMS"
           )
      )
