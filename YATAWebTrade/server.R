@@ -1,18 +1,19 @@
 # Panel Raiz
 # Mantiene la informacion de la session y de la posicion
 PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
-   ,inherit = YATAPanel
+   ,inherit    = YATAPanel
+   ,portable   = TRUE
    ,cloneable  = FALSE
    ,lock_class = TRUE
+    
    ,public = list(
        position     = NULL
       ,operations   = NULL
       ,cameras      = NULL
       ,providers    = NULL
       ,interval     = 15
-      ,initialize    = function(id, parent, session) {
+      ,initialize   = function(id, parent, session) {
           super$initialize(id, parent, session)
-         
           self$position   = self$factory$getObject(self$codes$object$position)
           self$providers  = self$factory$getObject(self$codes$object$providers)
           self$updateData(TRUE)
@@ -33,6 +34,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
+          browser()
           df = self$position$getGlobalPosition()
           ids = YATAWEB$getCTCID(df$currency)
           if (!is.null(ids)) {

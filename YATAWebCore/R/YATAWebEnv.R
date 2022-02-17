@@ -21,7 +21,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$hID   = HashMap$new()
             private$hSym  = HashMap$new()
             private$hCam  = HashMap$new()
-            loadFiats()
+#            loadFiats()
          }, error = function(e) {
            browser()
             self$inError = TRUE
@@ -99,13 +99,13 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
     }
     ,getCTCID = function(codes) {
         cdg = codes
-        eur = which(codes == "EUR")
-        if (length(eur)) cdg = codes[-eur]
+        fiat = which(codes == "FIAT")
+        if (length(fiat)) cdg = codes[-fiat]
         if (length(cdg) == 0) return(NULL)
         df = tblCurrencies$table(inValues=list(symbol=cdg))
         data = df$id
         names(data) = df$symbol
-        if (length(eur)) data = c(data,EUR=0)
+        if (length(fiat)) data = c(data,FIAT=0)
         data
     }
     ,getCameraNames = function(codes) {
@@ -181,25 +181,25 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         if (type == "long")   return (info$lbl32)
         if (type == "medium") return (info$lbl20)
     }
-    ,loadFiats = function() {
-         info = list()
-         info$id     = 99999
-         info$symbol = "EUR"
-         info$name   = "Euro"
-         info$lbl    = paste0(info$symbol, " - ", info$name)
-         info$lbl32  = info$lbl
-         info$lbl20  = info$lbl
-         hSym$put(info$symbol, info)
-         hID$put (info$id, info)
-         info$id     = 99998
-         info$symbol = "USD"
-         info$name   = "US Dollar"
-         info$lbl    = paste0(info$symbol, " - ", info$name)
-         info$lbl32  = info$lbl
-         info$lbl20  = info$lbl
-         hSym$put(info$symbol, info)
-         hID$put (info$id, info)
-    }
+    # ,loadFiats = function() {
+    #      info = list()
+    #      info$id     = 99999
+    #      info$symbol = "EUR"
+    #      info$name   = "Euro"
+    #      info$lbl    = paste0(info$symbol, " - ", info$name)
+    #      info$lbl32  = info$lbl
+    #      info$lbl20  = info$lbl
+    #      hSym$put(info$symbol, info)
+    #      hID$put (info$id, info)
+    #      info$id     = 99998
+    #      info$symbol = "USD"
+    #      info$name   = "US Dollar"
+    #      info$lbl    = paste0(info$symbol, " - ", info$name)
+    #      info$lbl32  = info$lbl
+    #      info$lbl20  = info$lbl
+    #      hSym$put(info$symbol, info)
+    #      hID$put (info$id, info)
+    # }
 
   )
 )

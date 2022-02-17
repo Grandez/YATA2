@@ -9,7 +9,7 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
        ,initialize  = function(factory) {
            super$initialize(factory)
            private$providers    = HashMap$new()
-           private$tblProviders = factory$getTable(codes$tables$Providers)
+           private$tblProviders = factory$getTable(codes$tables$providers)
            self$id              = parms$getOnlineProvider()
 
            private$dfProviders  = tblProviders$table(active = codes$flag$active)

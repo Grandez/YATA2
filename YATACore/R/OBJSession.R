@@ -11,9 +11,9 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            name = "session"
            #JGG Especial
            private$provider      = factory$getProvider("MKTCAP", "MarketCap")
-           private$tblSession    = factory$getTable(codes$tables$Session)
-           private$tblCurrencies = factory$getTable(codes$tables$Currencies)
-           private$tblExch       = factory$getTable(codes$tables$Exchanges)
+           private$tblSession    = factory$getTable(codes$tables$session)
+           private$tblCurrencies = factory$getTable(codes$tables$currencies)
+           private$tblExch       = factory$getTable(codes$tables$exchanges)
            private$lastGet       = as.integer(tblSession$getLastUpdate())
            private$interval      = 15
            private$dfLast        = tblSession$getLatest()

@@ -9,10 +9,9 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
         ,print = function() { message("Currencies")}
         ,initialize = function(factory) {
             super$initialize(factory)
-            tbl = factory$getTable(codes$tables$Currencies)
-            private$tblCurrencies = factory$getTable(codes$tables$Currencies)
-            private$tblExchanges  = factory$getTable(codes$tables$Exchanges)
-            private$tblCameras    = factory$getTable(codes$tables$Cameras)
+            private$tblCurrencies = factory$getTable(codes$tables$currencies)
+            private$tblExchanges  = factory$getTable(codes$tables$exchanges)
+            private$tblCameras    = factory$getTable(codes$tables$cameras)
             private$icons         = factory$getClass("Icons")
         }
         ,select = function(...) {

@@ -23,6 +23,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              private$makePlots()
          }
          ,loadData = function() {
+             browser()
              self$vars$sessionChanged = FALSE
              private$loadPosition()
            
@@ -101,7 +102,8 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$data$dfGlobal = NULL
         }
        ,loadPosition = function() {
-           df = self$getGlobalPosition() # (fiat=TRUE)
+           browser()
+           df = self$getGlobalPosition()
            if (is.null(df)) return()
            df = cbind(df, day=0, week=0, month=0)
            self$data$dfGlobal = df
@@ -250,7 +252,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           #YATAWEB$end("flags$best")
        })
        observeEvent(flags$refresh, ignoreInit = TRUE, { 
-           browser()
           #YATAWEB$beg("refresh")
           pnl$monitors$update() 
           flags$position = isolate(!flags$position)
@@ -273,7 +274,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            #YATAWEB$end("history")
        })
        observeEvent(flags$table, ignoreInit = TRUE, {
-           browser()
            table = pnl$vars$table$target
            row   = pnl$vars$table$row
            df    = pnl$getDFTable(table)
@@ -348,7 +348,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
        observeEvent(flags$plotsBest, ignoreInit = TRUE, {
-         browser()
            #YATAWEB$beg("plotsBest")
            table = pnl$vars$table
            plot = pnl$getPlot(paste0("plot", table$target))
@@ -468,7 +467,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       #####################################################
 
       observeEvent(input$tableBest, ignoreInit = TRUE, {
-          browser()
            pnl$vars$table = input$tableBest
            if (!startsWith(input$tableBest$colName, "Button")) {
                flags$table = isolate(!flags$table)
@@ -477,7 +475,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
       observeEvent(input$tablePos, {
-          browser()
            pnl$vars$table = input$tablePos
            if (!startsWith(input$tablePos$colName, "Button")) {
                flags$tablePos = isolate(!flags$tablePos)
@@ -520,7 +517,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
 
      carea = pnl$getCommarea()  
      if (!pnl$loaded || carea$position) {
-       browser()
           yuiLoading()
           pnl$loadData()
           if (!carea$position) initPage()

@@ -7,8 +7,8 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
         print          = function() { message("Cameras")}
        ,initialize     = function(factory) {
            super$initialize(factory)
-           private$tblCameras   = factory$getTable(factory$codes$tables$Cameras)
-           private$tblExchanges = factory$getTable(factory$codes$tables$Exchanges)
+           private$tblCameras   = factory$getTable(factory$codes$tables$cameras)
+           private$tblExchanges = factory$getTable(factory$codes$tables$exchanges)
            private$icons        = factory$getClass("Icons")
        }
        ,select         = function(id) {
