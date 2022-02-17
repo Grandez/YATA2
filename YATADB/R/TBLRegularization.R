@@ -25,10 +25,12 @@ TBLRegularization = R6::R6Class("TBLREGULARIZATION"
         }
      )
      ,private = list (
-           key    = c("camera", "currency")
+           key    = c("camera", "currency", "date", "id")
           ,fields = list(
-              camera    = "CAMERA"
+              id        = "ID"
+             ,camera    = "CAMERA"
              ,currency  = "CURRENCY"
+             ,date      = "DATE_REG"
              ,balance   = "BALANCE"
              ,available = "AVAILABLE"
              ,buyHigh   = "BUY_HIGH"
@@ -43,9 +45,10 @@ TBLRegularization = R6::R6Class("TBLREGULARIZATION"
              ,sell      = "SELL"
              ,value     = "VALUE"
              ,profit    = "PROFIT"
+             ,period    = "PERIOD"
              ,since     = "SINCE"
              ,last      = "LAST"
-             ,cc        = "CC"
+             ,idOper    = "ID_OPER"
           )
      )
 )

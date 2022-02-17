@@ -39,7 +39,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
       }
        ,getHistoryCurrencies = function() {
          df = tblPosition$table()
-         df = df[!df$currency %in% c("EUR", "USD"),]
+         df = df[!df$currency == "FIAT",]
          df = df %>% group_by(currency) %>% summarise(currency, min(since))
          colnames(df) = c("symbol", "since")
          df
@@ -76,7 +76,6 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
           # Call 2 times because base is sell and counter is buy (distinct field names)
           # Amount sale de base y entra en counter
           if (data$amount == 0 || data$value == 0) return (invisible(self))
-#browser()
           .updateBase(data)
           .updateCounter(data)
       }
@@ -143,25 +142,11 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
           }
           tblPosition$apply()
       }
-
-       # ,updatePosition    = function(currency, amount, balance=TRUE, available=TRUE, price = 0.0) {
-       #     # Actualiza la cuenta currency (base o counter)
-       #     prtPos$select(camera=current$camera,currency=currency, create=TRUE)
-       #     oldAv    = prtPos$getField("available")
-       #     oldBa    = prtPos$getField("balance")
-       #     oldPrice = prtPos$getField("price")
-       #
-       #     if (price == 0) price = oldPrice
-       #     if (available)  prtPos$setField("available",  oldAv + amount)
-       #     if (balance  )  prtPos$setField("balance",    oldBa + amount)
-       #
-       #     if ((oldBa + amount) != 0) {
-       #         medio = (oldBa * oldPrice) + (amount * price)
-       #         medio = medio / (oldBa + amount)
-       #         prtPos$setField("price", medio)
-       #     }
-       #     prtPos$apply()
-       # }
+      ,updatePosition    = function(values) {
+           tblPosition$select(camera=values$camera,currency=values$currency, create=TRUE)
+           tblPosition$set(values)
+           tblPosition$apply()
+       }
 
       ##################################################
       ### Caches
@@ -190,8 +175,8 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
          # De aqui salen VALUE UNIDADES EL PRECIO ES 1/PRECIO
            tblPosition$select(camera=data$camera, currency=data$base, create=TRUE)
            self$current  = tblPosition$current
-           # El Euro me lleva loco
-           if (data$base == "EUR") return (.updateBaseEuro(data))
+
+           if (data$base == "FIAT") return (.updateBaseFiat(data))
 
            if (current$sellLow == 0)  self$current$sellLow = data$price + 1
 
@@ -199,20 +184,22 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            if (data$price > current$sellHigh) tblPosition$setField("sellHigh", data$price)
            if (data$price < current$sellLow)  tblPosition$setField("sellLow",  data$price)
 
-           wrk = (current$sell * current$sellNet) + data$amount
-           self$current$sellNet = wrk / (current$sell + data$value)
+           wrk = (current$sell * current$sellNet) + data$value
+           wrk = wrk / (current$sell + data$amount)
+           self$current$sellNet = wrk
            tblPosition$setField("sellNet",  current$sellNet)
 
-           self$current$sell = current$sell + data$value
+           self$current$sell = current$sell + data$amount
            tblPosition$setField("sell",  current$sell)
 
-           tblPosition$setField("balance",   current$balance   - data$value)
-           tblPosition$setField("available", current$available - data$value)
+           tblPosition$setField("balance",   current$balance   - data$amount)
+           tblPosition$setField("available", current$available - data$amount)
 
            wrk = (current$buy * current$buyNet) - (current$sell * current$sellNet)
            den = current$buy - current$sell
            wrk = ifelse(den == 0, 0, wrk / den)
-           tblPosition$setField("value", wrk)
+           self$current$value = wrk
+           tblPosition$setField("value", current$value)
 
           # profit se actualiza si hay compras y ventas
           if (current$buy > 0 && current$sell > 0) {
@@ -226,7 +213,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
           tblPosition$select(camera=data$camera, currency=data$counter, create=TRUE)
           self$current  = tblPosition$current
 
-          if (data$counter == "EUR") return (.updateCounterEuro(data))
+          if (data$counter == "FIAT") return (.updateCounterFiat(data))
 
           if (current$buyLow == 0)  self$current$buyLow = data$price + 1
 
@@ -234,20 +221,21 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
           if (data$price > current$buyHigh) tblPosition$setField("buyHigh", data$price)
           if (data$price < current$buyLow)  tblPosition$setField("buyLow",  data$price)
 
-          wrk = (current$buy * current$buyNet) + (data$amount * data$price)
-          self$current$buyNet = wrk / (current$buy + data$amount)
+          wrk = (current$buy * current$buyNet) + (data$value * data$price)
+          self$current$buyNet = wrk / (current$buy + data$value)
           tblPosition$setField("buyNet",  current$buyNet)
 
-          tblPosition$setField("balance",   current$balance   + data$amount)
-          tblPosition$setField("available", current$available + data$amount)
+          tblPosition$setField("balance",   current$balance   + data$value)
+          tblPosition$setField("available", current$available + data$value)
 
-          self$current$buy = current$buy + data$amount
+          self$current$buy = current$buy + data$value
           tblPosition$setField("buy",  current$buy)
 
           wrk = (current$buy * current$buyNet) - (current$sell * current$sellNet)
           den = current$buy - current$sell
           wrk = ifelse(den == 0, 0, wrk / den)
-          tblPosition$setField("value", wrk)
+          self$current$value = wrk
+          tblPosition$setField("value", current$value)
 
           # profit se actualiza si hay compras y ventas
           if (current$buy > 0 && current$sell > 0) {
@@ -257,33 +245,33 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
 
           tblPosition$apply()
       }
-      ,.updateBaseEuro = function (data) {
-           if (current$sellLow == 0)  self$current$sellLow = data$value + 1
+      ,.updateBaseFiat = function (data) {
+           if (current$sellLow == 0)  self$current$sellLow = data$amount + 1
 
-           tblPosition$setField("sellLast",   data$value)
-           if (data$value > current$sellHigh) tblPosition$setField("sellHigh", data$value)
-           if (data$value < current$sellLow)  tblPosition$setField("sellLow",  data$value)
+           tblPosition$setField("sellLast",   data$amount)
+           if (data$amount > current$sellHigh) tblPosition$setField("sellHigh", data$amount)
+           if (data$amount < current$sellLow)  tblPosition$setField("sellLow",  data$amount)
            tblPosition$setField("sellNet",  1)
 
-           tblPosition$setField("sell",  current$sell + data$value)
+           tblPosition$setField("sell",  current$sell + data$amount)
            tblPosition$setField("value", 1)
-           tblPosition$setField("balance",   current$balance   - data$value)
-           tblPosition$setField("available", current$available - data$value)
+           tblPosition$setField("balance",   current$balance   - data$amount)
+           tblPosition$setField("available", current$available - data$amount)
            tblPosition$apply()
       }
-      ,.updateCounterEuro = function (data) {
-           if (current$buyLow == 0)  self$current$buyLow = data$amount + 1
+      ,.updateCounterFiat = function (data) {
+           if (current$buyLow == 0)  self$current$buyLow = data$value + 1
 
-           tblPosition$setField("buyLast",   data$amount)
-           if (data$amount > current$buyHigh) tblPosition$setField("buyHigh", data$amount)
-           if (data$amount < current$buyLow)  tblPosition$setField("buyLow",  data$amount)
+           tblPosition$setField("buyLast",   data$value)
+           if (data$value > current$buyHigh) tblPosition$setField("buyHigh", data$value)
+           if (data$value < current$buyLow)  tblPosition$setField("buyLow",  data$value)
            tblPosition$setField("buyNet",  1)
 
-           tblPosition$setField("buy",  current$buy + data$amount)
+           tblPosition$setField("buy",  current$buy + data$value)
            tblPosition$setField("value", 1)
-           tblPosition$setField("balance",   current$balance   + data$amount)
-           tblPosition$setField("available", current$available + data$amount)
-           tblPosition$setField("profit", current$buy + data$amount - current$sell)
+           tblPosition$setField("balance",   current$balance   + data$value)
+           tblPosition$setField("available", current$available + data$value)
+           tblPosition$setField("profit", current$buy + data$value - current$sell)
            tblPosition$apply()
       }
     )

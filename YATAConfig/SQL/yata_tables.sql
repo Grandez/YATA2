@@ -26,7 +26,7 @@ CREATE TABLE POSITION  (
    ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
    ,VALUE       DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
    ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
-   ,SINCE       TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
+   ,TMS         TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
    ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP  -- Ultima actualizacion
    ,CC          VARCHAR(512)        -- Codigo de cuenta
@@ -56,7 +56,7 @@ CREATE TABLE HIST_POSITION  (
    ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
    ,VALUE       DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
    ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
-   ,SINCE       TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
+   ,TMS        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
    ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
    ,CC          VARCHAR(512)        -- Codigo de cuenta
    ,PRIMARY KEY ( DATE_POS DESC, CAMERA, CURRENCY )
@@ -67,28 +67,29 @@ CREATE TABLE HIST_POSITION  (
 -- Para el calculo de los precios de coste y netos
 DROP TABLE  IF EXISTS REGULARIZATION CASCADE;
 CREATE TABLE REGULARIZATION  (
-    CAMERA      VARCHAR(10) NOT NULL     -- Codigo de camara
-   ,CURRENCY    VARCHAR(10) NOT NULL     -- Moneda
-   ,DATE_REG    DATE        NOT NULL     -- Fecha de regularizacion
-   ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
-   ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
-   ,BUY_HIGH    DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
-   ,BUY_LOW     DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
-   ,BUY_LAST    DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
-   ,BUY_NET     DOUBLE      DEFAULT 0.0  -- Precio medio de compra
-   ,SELL_HIGH   DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
-   ,SELL_LOW    DOUBLE      DEFAULT 0.0  -- Precio minimo de compra
-   ,SELL_LAST   DOUBLE      DEFAULT 0.0  -- Ultimo precio de compra
-   ,SELL_NET    DOUBLE      DEFAULT 0.0  -- Precio medio de compra   
-   ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
-   ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
-   ,VALUE       DOUBLE      DEFAULT 1.0  -- Valor neutro (punto en el que el beneficio es cero)
-   ,SINCE       TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
-   ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
-                            ON UPDATE CURRENT_TIMESTAMP  -- Ultima actualizacion
-   ,CC          VARCHAR(512)        -- Codigo de cuenta
-
-   ,PRIMARY KEY ( CAMERA, CURRENCY, DATE_REG DESC )
+    ID          INT UNSIGNED  NOT NULL     -- Identificador unico de la operacion
+   ,CAMERA      VARCHAR(10)   NOT NULL     -- Codigo de camara
+   ,CURRENCY    VARCHAR(10)   NOT NULL     -- Moneda
+   ,DATE_REG    DATE          NOT NULL     -- Fecha de regularizacion
+   ,BALANCE     DOUBLE        DEFAULT 0.0  -- Saldo real 
+   ,AVAILABLE   DOUBLE        DEFAULT 0.0  -- Saldo disponible
+   ,BUY_HIGH    DOUBLE        DEFAULT 0.0  -- Precio maximo de compra
+   ,BUY_LOW     DOUBLE        DEFAULT 0.0  -- Precio minimo de compra
+   ,BUY_LAST    DOUBLE        DEFAULT 0.0  -- Ultimo precio de compra
+   ,BUY_NET     DOUBLE        DEFAULT 0.0  -- Precio medio de compra
+   ,SELL_HIGH   DOUBLE        DEFAULT 0.0  -- Precio maximo de compra
+   ,SELL_LOW    DOUBLE        DEFAULT 0.0  -- Precio minimo de compra
+   ,SELL_LAST   DOUBLE        DEFAULT 0.0  -- Ultimo precio de compra
+   ,SELL_NET    DOUBLE        DEFAULT 0.0  -- Precio medio de compra   
+   ,BUY         DOUBLE        DEFAULT 0.0  -- Cantdad Comprada
+   ,SELL        DOUBLE        DEFAULT 0.0  -- Cantidad Vendida
+   ,VALUE       DOUBLE        DEFAULT 1.0  -- Valor neutro (punto en el que el beneficio es cero)
+   ,PROFIT      DOUBLE        DEFAULT 0.0  -- Resultado en FIAT
+   ,PERIOD      INT                        -- Periodo regularizado en dias
+   ,ID_OPER     INT UNSIGNED  NOT NULL     -- Identificador de la operacion
+   ,TMS         TIMESTAMP   
+   ,LAST        TIMESTAMP   
+   ,PRIMARY KEY ( CAMERA, CURRENCY, DATE_REG DESC, ID )
 );
 
 
@@ -110,8 +111,8 @@ CREATE TABLE OPERATIONS  (
    ,CAMERA       VARCHAR(10) NOT NULL  -- Clearing House
    ,BASE         VARCHAR(10) NOT NULL  -- From currency
    ,COUNTER      VARCHAR(10) NOT NULL  -- To currency
-   ,VALUE        DOUBLE      DEFAULT 0 -- Coste de la operacion
-   ,AMOUNT       DOUBLE      NOT NULL  -- Cantidad propuesta que entra
+   ,AMOUNT       DOUBLE      NOT NULL  -- Cantidad que sale
+   ,VALUE        DOUBLE      DEFAULT 0 -- Valor de la operacion
    ,PRICE        DOUBLE      NOT NULL  -- Precio unitario
    ,ACTIVE       TINYINT     DEFAULT 1 -- Flag activa/inactiva
    ,STATUS       TINYINT     DEFAULT 0 -- Estado de la operacion
@@ -127,11 +128,11 @@ CREATE TABLE OPERATIONS  (
 DROP TABLE  IF EXISTS OPERATIONS_CONTROL;
 CREATE TABLE OPERATIONS_CONTROL  (
     ID_OPER      INT UNSIGNED     NOT NULL -- Identificador de la operacion
-   ,FEE          DOUBLE     DEFAULT 0.0  -- Comision
-   ,GAS          DOUBLE     DEFAULT 0.0  -- Comision blockchain
-   ,TARGET       DOUBLE                  -- Objetivo
-   ,STOP         DOUBLE                  -- Stop
-   ,LIMITE       DOUBLE                  -- Limit
+   ,FEE          DOUBLE    DEFAULT 0.0  -- Comision
+   ,GAS          DOUBLE    DEFAULT 0.0  -- Comision blockchain
+   ,TARGET       DOUBLE    DEFAULT 0.0   -- Objetivo
+   ,STOP         DOUBLE    DEFAULT 0.0   -- Stop
+   ,LIMITE       DOUBLE    DEFAULT 0.0   -- Limit
    ,DEADLINE     INTEGER   DEFAULT 0     -- Plazo en dias
    ,AMOUNT_IN    DOUBLE    NOT NULL      -- Cantidad propuesta
    ,PRICE_IN     DOUBLE    NOT NULL      -- Precio de la operacion   
@@ -273,5 +274,5 @@ CREATE TABLE PROFILE (
    ,NAME    VARCHAR(64)
 );
 
-INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "EUR", 10000, 10000);
+INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "FIAT", 10000, 10000);
 COMMIT;

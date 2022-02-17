@@ -25,31 +25,46 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
              tblPos = Factory$getTable(Tables$position)
              db$begin()
              lapply(tbls, function(tbl) db$execute(paste("DELETE FROM", tbl)))
-             tblPos$add(list(camera="YATA", currency="EUR", balance="10000", available="10000"))
+             tblPos$add(list(camera="YATA", currency="FIAT", balance="10000", available="10000"))
              db$commit()
           }, error = function (e) {
                db$rollback()
               .error(e, "iniciando entorno")
           })
       }
-      ,add = function(...) {
-          values = args2list(...)
-          data = list( camera   = "YATA", base     = "EUR", counter  = "BTC"
+      ,buy = function(amount, price) {
+          oper( type=Codes$oper$buy, base="FIAT", counter="BTC"
+               ,amount=amount * price, value=amount, price = price)
+      }
+      ,sell = function(amount, price) {
+          oper( type=Codes$oper$sell, base="BTC", counter="FIAT"
+               ,amount=amount, value=amount * price, price = price)
+      }
+   )
+  ,private = list(
+      dataOper= list( camera   = "YATA", base     = "FIAT", counter  = "BTC"
                       ,value    = 1000  , amount   = 10   , price    = 100
                       ,reason   = 1     , alert    = 3    , target   = 0
                       ,deadline = 5     , stop     = 0    , limit    = 0
                       ,comment = "Test operation")
-          data = list.merge(data, values)
-          tryCatch( objOper$add(data$type, data)
-                   , error = function (e) .error(e, "Registrando Operacion"))
+      ,oper = function(...) {
+          values = args2list(...)
+          data = list.merge(dataOper, values)
+          tryCatch(
+              objOper$add(data$type, data)
+                   , error = function (e) {
+                       browser()
+                       .error(e, "Registrando Operacion")
+                       })
       }
-   )
+
+  )
 )
 
 .oper_buy_01  = function(cls) {
     cls$lbl("Buying BTC 01")
 
-    idOper = cls$add(type=Codes$oper$buy, value = 1000, amount = 10, price = 100)
+    idOper = cls$buy(amount=10, price = 100)
 
     rc = tryCatch({
            rows = list(
@@ -62,8 +77,8 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
         values = list(balance=10, available=10,buyNet=100,buyHigh=100,buyLow=100,buy=10,sell=0)
         checkRowValues(Tables$position, list(camera="YATA", currency="BTC"), values)
         values = list(balance=9000, available=9000, buyNet=0, sellNet=1, buy=0, sell=1000)
-        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
-        values = list(amount=10, value=1000,price=100)
+        checkRowValues(Tables$position, list(camera="YATA", currency="FIAT"), values)
+        values = list(value=10, amount=1000,price=100)
         checkRowValues(Tables$operations, list(id=idOper), values)
         FALSE
     }, error = function(e) { TRUE })
@@ -74,7 +89,7 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
 }
 .oper_buy_02  = function(cls) {
     cls$lbl("Buying 10 BTC at 200")
-    idOper = cls$add(type=Codes$oper$buy, value = 2000, amount = 10, price = 200)
+    idOper = cls$buy(amount=10, price = 200)
 
     rc = tryCatch({
            rows = list(
@@ -85,11 +100,12 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
                        ,list(table=Tables$flows,      rows = 4)
                       )
         checkNumRows(rows)
-        values = list(balance=20, available=20,buyNet=150,buyHigh=200,buyLow=100,buy=20,sell=0, value=150)
+        values = list(balance=20, available=20,buyHigh=200,buyLow=100,buyNet=150,buy=20,sell=0, value=150)
         checkRowValues(Tables$position, list(camera="YATA", currency="BTC"), values)
+
         values = list(balance=7000, available=7000, buyNet=0, sellHigh=2000,sellLow=1000,sellNet=1, buy=0, sell=3000)
-        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
-        values = list(amount=10, value=2000,price=200)
+        checkRowValues(Tables$position, list(camera="YATA", currency="FIAT"), values)
+        values = list(value=10, amount=2000,price=200)
         checkRowValues(Tables$operations, list(id=idOper), values)
         FALSE
     }, error = function(e) { TRUE })
@@ -100,7 +116,8 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
 }
 .oper_sell_01 = function(cls) {
     cls$lbl("Closing position with profit = 0")
-    idOper = cls$add(type=Codes$oper$sell, base="BTC", counter="EUR",value=20, amount=3000,price= 150)
+    idOper = cls$sell(amount=20, price = 150)
+
     rc = tryCatch({
            rows = list(
                         list(table=Tables$position,   rows = 2)
@@ -116,12 +133,13 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
                       ,buy      =  20, sell    =  20
                       ,value=0,   profit = 0)
         checkRowValues(Tables$position, list(camera="YATA", currency="BTC"), values)
+
         values = list( balance  = 10000, available=10000
                       ,buyHigh  =  3000, buyLow   = 3000, buyLast  = 3000, buyNet = 1
                       ,sellHigh =  2000, sellLow  = 1000, sellLast = 2000, sellNet = 1
                       ,buy      =  3000, sell     = 3000, profit   =    0)
-        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
-        values = list(value = 20, amount = 3000, price = 150)
+        checkRowValues(Tables$position, list(camera="YATA", currency="FIAT"), values)
+        values = list(amount = 20, value = 3000, price = 150)
         checkRowValues(Tables$operations, list(id=idOper), values)
         FALSE
     }, error = function(e) { TRUE })
@@ -131,14 +149,15 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
     rc
 }
 .oper_win_01  = function (cls) {
-    # EUR/BTC - 1000 -   10 - 100
-    # BTC/EUR -   10 - 1500 - 150
+    # FIAT/BTC - 1000 -   10 - 100
+    # BTC/FIAT -   10 - 1500 - 150
     # Profit: 500
 
      cls$lbl("Open and closing position with profit")
-     cls$add(type = Codes$oper$buy,  base="EUR", counter="BTC", value=1000, amount=  10, price= 100)
-     idOper = cls$add(type = Codes$oper$sell, base="BTC", counter="EUR", value=10,   amount=1500, price= 150)
-    rc = tryCatch({
+     idOper = cls$buy (amount=10, price = 100)
+     idOper = cls$sell(amount=10, price = 150)
+
+     rc = tryCatch({
            rows = list(
                         list(table=Tables$operations, rows = 2)
                        ,list(table=Tables$position,   rows = 2)
@@ -160,16 +179,16 @@ TSTOperation = R6::R6Class("YATA.CI.OPER"
                       ,sellHigh =  1000, sellLast = 1000, sellNet = 1
                       ,buy      =  1500, sell     = 1000
                      ,value     =     1, profit   =  500)
-        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
+        checkRowValues(Tables$position, list(camera="YATA", currency="FIAT"), values)
 
-        values = list(value = 10, amount = 1500, price = 150)
+        values = list(amount = 10, value = 1500, price = 150)
         checkRowValues(Tables$operations, list(id=idOper), values)
 
         values = list(amount = -10, price = 150)
         checkRowValues(Tables$flows, list(idOper=idOper, currency="BTC"), values)
 
         values = list(amount = 1500, price = 150)
-        checkRowValues(Tables$flows, list(idOper=idOper, currency="EUR"), values)
+        checkRowValues(Tables$flows, list(idOper=idOper, currency="FIAT"), values)
 
          FALSE
     }, error = function(e) { TRUE })
@@ -186,7 +205,7 @@ testOperations = function(mode) {
     .oper_buy_01(cls)
     .oper_buy_02(cls)
     .oper_sell_01(cls)
-    cls$initEnv()
+     cls$initEnv()
     .oper_win_01(cls)
     cls = NULL
 }

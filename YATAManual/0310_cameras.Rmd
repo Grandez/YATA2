@@ -33,3 +33,51 @@ El proceso seria:
 3. Tras operar, regularizamos (recogemos beneficios o asumimos perdidas) al Wallet original
 4. Cuando sea necesario, de ese Wallet transferimos a la cuenta ROOT
 
+
+## Regularizaciones
+
+Regularizar es la accion de traspasar el beneficio o la perdida de una posicion a la cuenta de resultados y "empezar de nuevo"
+
+Supongamos la siguiente situacion (extrema)
+
+| Unidades | Precio  | Valor  | Posicion | Valor | Neto | Resultado |
+|----------|---------|--------|----------|-------|------|-----------|
+|       10 |    1000 |  10000 |       10 | 10000 | 1000 |         0 |
+|       -2 |     800 |  -1600 |        8 |  6400 | 1050 |      -400 |
+|       -2 |     700 |  -1400 |        6 |  4200 | 1167 |     -1000 |
+|       -2 |     600 |  -1200 |        4 |  2400 | 1450 |     -1800 |
+|       -2 |     500 |  -1000 |        2 |  1000 | 2400 |     -2800 |
+
+Llevamos acumuladas unas perdidas de 2.800 um  y necesitariamos vender nuestras 2 ultimas monedas a 2.400 para dejar el resultado a 0
+
+O esta otra:
+
+| Unidades | Precio  | Valor  | Posicion | Valor | Neto | Resultado |
+|----------|---------|--------|----------|-------|------|-----------|
+|       10 |    1000 |  10000 |       10 | 10000 | 1000 |         0 |
+|       -2 |    2000 |  -4000 |        8 | 16000 |  750 |      2000 |
+|       -2 |    3000 |  -6000 |        6 | 18000 |    0 |      6000 |
+
+En esta situacion, aunque regalaramos nuestra posicion (vender a precio 0) nuestro resultado seria 0.
+
+En el primer caso, parece previsible que el valor de la moneda no llegara a 2400 por lo que la posicion siempre dara perdidas.
+
+En el segundo caso, que la posicion se pueda "regalar" tampoco parece una opcion razonable.
+
+Cuando asumimos que ciertas operaciones son excepcionales o que hemos cerrado un ciclo de la posicion, regularizamos la misma.
+
+Otra regularizacion seria la contable, cada año cerramos las cuentas y los resultados los pasamos a P&L
+con lo que:
+
+- Mantenemos la posicion
+- El resultado pasa a ser 0
+- El valor se calcula a partir de la posicion original en modo FIFO
+- El Neto se calcula a paritr del nuevo valor y las operaciones encontradas
+
+En nuestros ejemplos, la posicion quedaria respectivamente:
+
+| Posicion | Valor | Neto  | Resultado |
+|----------|-------|-------|-----------|
+|        2 |  1000 |  1000 |         0 |
+|        8 |  1000 |  1000 |         0 |
+

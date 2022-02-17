@@ -29,7 +29,7 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
           tblPos = Factory$getTable(Tables$position)
           tryCatch({
              db$begin()
-             tblPos$add(list(camera="CASH", currency="EUR", balance="10000", available="10000", value=1))
+             tblPos$add(list(camera="CASH", currency="FIAT", balance="10000", available="10000", value=1))
              db$commit()
           }, error = function (e) {
                db$rollback()
@@ -59,7 +59,7 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
 .xferInitial = function(cls) {
     cls$lbl("Transferring from CASH to YATA")
     cls$initEnv()
-    res = cls$objOper$xfer(from="CASH", to="YATA",currency="EUR", amount=10000, price=1)
+    res = cls$objOper$xfer(from="CASH", to="YATA",currency="FIAT", amount=10000, price=1)
     rows = list(
         list(table=Tables$transfer,   rows = 1)
        ,list(table=Tables$position,   rows = 2)
@@ -70,13 +70,13 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
         checkNumRows(rows)
         values = list(amount=10000)
         checkRowValues(Tables$transfer, NULL, values)
-        values = list(base="EUR", counter="EUR", amount=10000, value=10000)
+        values = list(base="FIAT", counter="FIAT", amount=10000, value=10000)
         checkRowValues(Tables$operations, list(camera="CASH"), values)
         checkRowValues(Tables$operations, list(camera="YATA"), values)
         values = list(balance=0, available=0)
-        checkRowValues(Tables$position, list(camera="CASH", currency="EUR"), values)
+        checkRowValues(Tables$position, list(camera="CASH", currency="FIAT"), values)
         values = list(balance=10000, available=10000)
-        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
+        checkRowValues(Tables$position, list(camera="YATA", currency="FIAT"), values)
         FALSE
     }, error = function(e) { TRUE })
 
@@ -86,7 +86,7 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
 }
 .xferReturn  = function(cls) {
     cls$lbl("Returning 2500 to CASH")
-    res = cls$objOper$xfer(from="YATA", to="CASH",currency="EUR", amount=2500)
+    res = cls$objOper$xfer(from="YATA", to="CASH",currency="FIAT", amount=2500)
 
     rc = tryCatch({
         rows = list(
@@ -99,9 +99,9 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
         values = list(amount=2500, value=1)
         checkRowValues(Tables$transfer, list(cameraIn="CASH", cameraOut="YATA"), values)
         values = list(balance=2500, available=2500, value=1)
-        checkRowValues(Tables$position, list(camera="CASH", currency="EUR"), values)
+        checkRowValues(Tables$position, list(camera="CASH", currency="FIAT"), values)
         values = list(balance=7500, available=7500, value=1)
-        checkRowValues(Tables$position, list(camera="YATA", currency="EUR"), values)
+        checkRowValues(Tables$position, list(camera="YATA", currency="FIAT"), values)
         FALSE
     }, error = function(e) { TRUE })
 
@@ -118,7 +118,7 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
     tryCatch({
        cls$db$begin()
        tblPos = Factory$getTable(Tables$position)
-       tblPos$add(list(camera="YATA", currency="CTC", balance="100", available="100", value=150))
+       tblPos$add(list(camera="YATA", currency="BTC", balance="100", available="100", value=150))
        cls$db$commit()
 
     }, error = function (e) {
@@ -126,7 +126,7 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
        .error(e, "Setting environment for xferCTC_01")
     })
 
-    res = cls$objOper$xfer(from="YATA", to="OTHER",currency="CTC", amount=75)
+    res = cls$objOper$xfer(from="YATA", to="OTHER",currency="BTC", amount=75)
     rc = tryCatch({
         rows = list(
             list(table=Tables$transfer,   rows = 1)
@@ -138,9 +138,9 @@ TSTTransfer = R6::R6Class("YATA.CI.XFER"
         values = list(amount=75, value=150)
         checkRowValues(Tables$transfer, list(cameraOut="YATA", cameraIn="OTHER"), values)
         values = list(balance=25, available=25)
-        checkRowValues(Tables$position, list(camera="YATA", currency="CTC"), values)
+        checkRowValues(Tables$position, list(camera="YATA", currency="BTC"), values)
         values = list(balance=75, available=75, value=150)
-        checkRowValues(Tables$position, list(camera="OTHER", currency="CTC"), values)
+        checkRowValues(Tables$position, list(camera="OTHER", currency="BTC"), values)
         FALSE
     }, error = function(e) { TRUE })
 

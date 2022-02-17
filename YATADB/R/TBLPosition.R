@@ -53,7 +53,7 @@ TBLPosition = R6::R6Class("TBLPOSITION"
              ,sell      = "SELL"
              ,value     = "VALUE"
              ,profit    = "PROFIT"
-             ,since     = "SINCE"
+             ,tms       = "TMS"
              ,last      = "LAST"
              ,cc        = "CC"
           )

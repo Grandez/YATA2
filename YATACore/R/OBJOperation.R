@@ -31,6 +31,18 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 0
           })
         }
+        ,regularize = function(camera, currency) {
+            tryCatch({
+                db$begin()
+                idOper = addRegulatization(camera, currency)
+                db$commit()
+                idOper
+            },error = function(cond) {
+                db$rollback()
+                message(cond)
+                0
+          })
+        }
         ##############################
         # Acciones sobre operacion
         ##############################
@@ -289,7 +301,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             }
             df
         }
-
+        ,getMovements  = function(camera, currency, since=NULL) {
+           df1   = prtOper$tableInterval(from=since, to= NULL, camera=camera, base=currency)
+           df2   = prtOper$tableInterval(from=since, to= NULL, camera=camera, counter=currency)
+           df    = rbind(df1, df2)
+           # Los id son tms luego ordenamos descendente
+           df[order(df$id, decreasing=TRUE),]
+        }
         ,getOperations = function(...) { prtOper$get(...)   }
         ,getOperation  = function (id) {
             res = prtOper$table(id=id)
@@ -300,7 +318,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             if (!missing(idOper)) select(idOper)
             tblFlows$dfCurrent
         }
-#        ,getDateBegin      = function(currency) { prtOper$getDateBegin(currency) }
         ,setAlert = function(fecha=NULL) {
             if (is.null(fecha)) {
                 prtOper$setField("alert", DBDict$flag$inactive)
@@ -331,14 +348,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
     ,private = list(
         # Tablas asociadas
         prtOper        = NULL
-#       ,tblOperControl = NULL
-#       ,tblOperLog     = NULL
        ,objPos         = NULL
        ,dfReg          = NULL
        ,tblFlows       = NULL
+       ,tblReg         = NULL
        ,addFlow        = function(type, currency, amount, price) {
            data = list(
-              idOper   = self$current$idOper
+              idOper   = current$idOper
              ,idFlow   = YATATools::getID()
              ,type     = type
              ,currency = currency
@@ -446,45 +462,32 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            self$current$dtAlert = Sys.Date() + lubridate::days(days)
            self$current$alert   = codes$flag$active
 
-           amount = ifelse(current$base == "EUR", current$amount, current$value)
-           self$current$amountIn = amount
-           self$current$priceIn  = self$current$price
+#           amount = ifelse(current$base == "FIAT", current$amount, current$value)
            #JGG Temporal mientras no procesemos el flujo de request/accept/execute
-           self$current$amountOut = amount
+           self$current$amountIn  = current$amount
+           self$current$amountOut = current$amount
+           self$current$priceIn   = self$current$price
            self$current$priceOut  = self$current$price
 
            self$current$prcTaxes   = 0
            if (current$type == codes$oper$sell) {
-               res = calculateExpense()
+               res = calculateExpense(current$camera, current$base, current$amount)
                self$current$expense = res$expense
                self$current$alive   = res$alive
-               self$current$profit = self$current$amount - self$current$expense
+               self$current$profit = self$current$value - self$current$expense
            }
            prtOper$add(current)
 
-           addFlow(codes$flow$output,  current$base,    current$value * -1, current$price)
-           addFlow(codes$flow$input,   current$counter, current$amount,     current$price)
+           addFlow(codes$flow$output,  current$base,    current$amount * -1, current$price)
+           addFlow(codes$flow$input,   current$counter, current$value,       current$price)
 
-           if (!is.null(current$idParent) && !is.na(current$idParent)) {
-               select(idParent)
-               current$flag = codes$flags$parent
-               current$amountOut = current$amount
-               current$priceOut  = current$price
-               prtOper$apply()
-           }
-       }
-
-       ,operOper     = function() {
-           # Abre una operacion de compra o venta
-           self$current$active = codes$flag$active
-           self$current$status = codes$status$pending
-
-           days = ifelse(is.null(self$current$alert), lubridate::days(parms$getAlertDays(1))
-                                                    , self$current$alert)
-           self$current$dtAlert = Sys.Date() + lubridate::days(days)
-           self$current$alert   = codes$flag$active
-
-           prtOper$add(current)
+           # if (!is.null(current$idParent) && !is.na(current$idParent)) {
+           #     select(idParent)
+           #     current$flag = codes$flags$parent
+           #     current$amountOut = current$amount
+           #     current$priceOut  = current$price
+           #     prtOper$apply()
+           # }
        }
        ,acceptBuy    = function(price, amount, fee) {
            # Acepta una compra, puede haber cambiado el precio y la cantidad
@@ -502,76 +505,105 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            if (fee != 0) addFlow(codes$flow$fee, imp * fee / 100, 1)
            objPos$updateOper(current$camera, current$base, imp, 1, fee)
        }
-       # ,acceptSell   = function(price, amount, fee) {
-       #     # Acepta una compra, puede haber cambiado el precio y la cantidad
-       #      oldPrice  = current$price
-       #      oldAmount = current$amount
-       #      newPrice  = ifelse(price  == 0, oldPrice,  price)
-       #      newAmount = ifelse(amount == 0, oldAmount, amount)
-       #      diffAmount = newAmount - oldAmount
-       #      diffPrice  = newPrice  - oldPrice
-       #      impFee     = (newAmount * fee) / -100
-       #      imp        = newAmount * newPrice
-       #      regularize = ifelse(diffAmount != 0 || diffPrice != 0, TRUE, FALSE)
-       #
-       #      tryCatch({
-       #         db$begin()
-       #         prtOper$set(status=codes$status$accepted, amount=newAmount, price=newPrice)
-       #         prtOper$apply()
-       #         addFlow(codes$flow$output, current$counter, oldAmount, 1)
-       #         if (regularize) addFlow(codes$flow$regInput,current$counter,diffAmount,1)
-       #         addFlow(codes$flow$pending, current$base, newAmount * -1, newPrice)
-       #         if (impFee != 0) {
-       #             addFlow(codes$flow$fee, self$current$counter, impFee,    newPrice)
-       #             objPos$updateBalance(current$camera, current$base, impFee * -1)
-       #         }
-       #         if (diffAmount != 0) objPos$updateAvailable(current$camera, current$counter, diffAmount)
-       #         objPos$update(current$camera, current$counter, newAmount, newPrice, FALSE)
-       #
-       #         if (current$parent != 0) {
-       #             select(current$parent)
-       #             prtOper$set(status=codes$status$closed, active=codes$flag$inactive)
-       #             prtOper$apply()
-       #         }
-       #         db$commit()
-       #         FALSE
-       #      },error = function(cond) {
-       #          message(cond)
-       #          db$rollback()
-       #          TRUE
-       #      })
-       #
-       # }
-       ,calculateExpense = function() {
+      ,addRegulatization = function(camera, currency) {
+            # Genera el registro de regularizacion
+
+            self$current$idOper = YATATools::getID()
+            if (is.null(tblReg)) private$tblReg = factory$getTable(codes$tables$regularization)
+
+            objPos$getPosition(camera=camera, currency=currency)
+
+            position        = objPos$current
+            position$id     = YATATools::getID()
+            position$date   = as.POSIXct(Sys.time())
+            position$period = getRegularizationPeriod(camera, currency, objPos$current$tms)
+            position$idOper = current$idOper
+
+            tblReg$add(position)
+
+            price  = ifelse(position$sell == 0, 0, position$profit / position$sell)
+            value  = position$profit
+            sell   = position$sell
+
+            operation = list(
+                 id       = current$idOper
+                ,idOper   = current$idOper
+                ,type     = codes$oper$reg
+                ,active   = codes$flag$inactive
+                ,status   = codes$status$executed
+                ,camera   = camera
+                ,base     = currency
+                ,counter  = "FIAT"
+                ,value    = position$profit
+                ,amount   = position$sell
+                ,price    = price
+                ,priceIn  = price
+                ,priceOut = price
+                ,parent   = position$id
+            )
+            prtOper$add(operation)
+
+            cost = calculateExpense(camera, currency, position$sell)
+            wrk = (position$buyNet * position$buy) - (cost$expense * position$sell)
+            wrk = ifelse (position$balance == 0, 0, wrk / position$balance)
+
+            position$buy      = position$balance
+            position$buyHigh  = wrk
+            position$buyLow   = wrk
+            position$buyLast  = wrk
+            position$buyNet   = wrk
+
+            position$sell     = 0
+            position$sellHigh = 0
+            position$sellLow  = 0
+            position$sellLast = 0
+            position$sellNet  = 0
+
+            position$profit   = 0
+            position$value    = wrk
+            position$since    = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+
+            objPos$updatePosition(position)
+
+            addFlow(codes$flow$input,  "FIAT",   value, price)
+            addFlow(codes$flow$output, currency, sell,  price)
+
+            current$idOper
+      }
+      ,getRegularizationPeriod = function (camera, currency, since) {
+          tblReg$tableLimit(camera=camera, currency=currency)
+          if (!is.null(tblReg$current)) since = tblReg$current$date
+          diff = difftime(Sys.time(), since, unit="days")
+          as.integer(round(diff, digits=0))
+      }
+       ,calculateExpense = function(camera, currency, amount) {
            # Calcula el coste de la operaciones de compra asociadas a la venta
            # Funciona como una cola LIFO
            # Si hay compras en medio, se añaden a sell y se quitan despues
 
            value = 0
-           pend  = current$amount
            sell  = 0
-           df1   = prtOper$get(camera=current$camera, base=current$base,    counter=current$counter)
-           df2   = prtOper$get(camera=current$camera, base=current$counter, counter=current$base)
-           df    = rbind(df1, df2)
-           # Los id son tms luego ordenamos descendente
-           df    = df[order(df$id, decreasing=TRUE),]
+           pend  = amount
+
+           df = getMovements(camera, currency)
 
            nrow = 0
            while ( pend > 0) {
                nrow = nrow + 1
                # Esto no puede ocurrir
                if (nrow > nrow(df)) { nrow = nrow -1; break }
+               if (df[nrow, "type"] == codes$oper$xfer) break # Regularizacion.
+               if (df[nrow, "type"] != codes$oper$sell && df[nrow,"type"] != codes$oper$buy) {
+                   next
+               }
 
-               if (df[nrow,"type"] != codes$oper$sell && df[nrow,"type"] != codes$oper$buy) {
-                   next
-               }
                if (df[nrow,"type"] == codes$oper$sell) {
-                   sell = sell + df[nrow,"value"]
+                   sell = sell + df[nrow,"amount"]
                    next
                }
-               sell = sell - df[nrow,"amount"]
+               sell = sell - df[nrow,"value"]
                if (sell >= 0) next   # Pendiente procesar esa compra
-               value = value - (sell * df[nrow, "priceOut"])
+               value = value - (sell * df[nrow, "price"])
                pend = pend + sell
                sell = 0
            }
@@ -583,17 +615,3 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
     )
 )
-
-# Algo de venta
-# Select operations hasta la ultima regularizacion
-# Ordenar al reves
-# Crear estructura
-# Mientras pendiente no sea cero
-#    si compra
-#       apply = min(0, pend - inc)
-#       pend = pend - apply
-#       expense = expense * (compra + precio)
-#    si venta
-#       inc = inc + venta
-#    si otro
-#       seguir

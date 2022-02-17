@@ -54,7 +54,8 @@ yataError = function(msg, action=NULL, origin=NULL, subclass=NULL, ...) {
 }
 yataErrorSQL = function(msg, action=NULL, origin=NULL, ...) {
     yataError(msg,action=action,origin=origin, subclass="SQL", ...)
-    # inst = YATAERROR$new("ERROR", msg, action, origin, cls="YATASQL", ...)
-    # errorCondition(msg, inst, class=inst$getClasses())
+}
+yataErrorLogical = function(msg, action=NULL, origin=NULL, ...) {
+    yataError(msg,action=action,origin=origin, subclass="LOGICAL", ...)
 }
 

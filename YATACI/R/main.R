@@ -18,7 +18,7 @@
 
 .error = function(e, msg) {
     CI$ko()
-    err(e)
+#    err(e)
     throw(msg)
 }
 
@@ -27,4 +27,5 @@ start = function(mode="console", errors=0) {
     CI <<- YATACI$new(mode, errors)
     testTransfers(mode)
     testOperations(mode)
+    testRegularizations(mode)
 }

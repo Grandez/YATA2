@@ -76,22 +76,25 @@ YATATable <- R6::R6Class("YATA.TABLE"
       }
       ,set      = function(...) {
           args = args2list(...)
-          self$current = rlist::list.merge(self$current, args)
-          lapply(names(args), function (field) private$changed[field] = TRUE)
+          lapply(names(args), function (field) setField(field, args[[field]]))
           invisible(self)
       }
       ,setField = function(field, value) {
-         # Actualiza un campo
-         # marca la lista de cambiados para hacer el apply (UPDATE)
-         self$current[field] = value
-         private$changed[field] = TRUE
+         if (is.null(current))
+             yataErrorLogical("No register active", action="Set field", origin=tblName)
+         if (field %in% key) return (invisible(self))
+         if (is.na(value))   return (invisible(self)) # NA genera ERROR
+         if (field %in% names(current) && current[[field]] != value) {
+             self$current[field] = value
+             private$changed[field] = TRUE
+         }
          invisible(self)
       }
       ,getField = function(name)         { self$current[[name]] }
       ,addField = function(name, value)  { self$current[[name]] = self$current[[name]] + value }
       ,select   = function(..., create=FALSE)  {
          # selecciona un registro o conjunto, segun los parametros (solo equal)
-         self$current = NULL
+         reset()
          filter = mountWhere(...)
          sql = paste("SELECT * FROM ", tblName, filter$sql)
          df = db$query(sql, filter$values)
@@ -115,8 +118,6 @@ YATATable <- R6::R6Class("YATA.TABLE"
          colnames(data) = fields[colnames(data)]
          db$write(tblName, data, append, isolated)
       }
-      # ,getById   = function(id)   { getBySimpleKey("id", id) }
-      # ,getByName = function(name) { getBySimpleKey("name", name) }
       ###############################################
       # Operaciones sobre la tabla
       ##############################################
@@ -143,15 +144,22 @@ YATATable <- R6::R6Class("YATA.TABLE"
       }
       ,query   = function(sql, ...) {
          # Query personalizada
-         setColNames(db$query(paste(sql, filter$sql), params=filter$values))
-      }
-      ,query2   = function(sql, ...) {
-         # Query personalizada
          filter = mountWhere(...)
          df = db$query(paste("SELECT ", sql, "FROM ", tblName, filter$sql), params=filter$values)
          setColNames(df)
       }
-
+      ,queryLimit   = function(sql, limit=1, ...) {
+         # Query personalizada
+         filter = mountWhere(...)
+         if (is.null(filter$values)) {
+            filter$values[limit_] = limit
+         } else {
+            filter$values = list.append(filter$values, limit_=limit)
+         }
+         qry = paste("SELECT ", sql, "FROM ", tblName, filter$sql, "LIMIT ?")
+         df = db$query(qry, params=filter$values)
+         setColNames(df)
+      }
       ,table   = function(..., inValues=NULL, includeKeys = TRUE) {
           # Recupera los datos de la tabla completa en funcion de los parms
          filter = mountWhere(..., inValues=inValues)
@@ -159,8 +167,49 @@ YATATable <- R6::R6Class("YATA.TABLE"
          df = db$query(sql, params=filter$values)
          df = setColNames(df)
          if (!includeKeys) df = df[,-getKeys(...)]
-         self$current = NULL
+         reset()
          if (nrow(df) < 2) self$current = as.list(df)
+         df
+      }
+      ,tableInterval   = function(from=NULL, to=NULL, ..., inValues=NULL, includeKeys = TRUE) {
+          from = if (is.null(from)) as.POSIXct(1, origin="1970-01-01")
+          to   = if (is.null(to))   as.POSIXct(Sys.time())
+          # Recupera los datos de la tabla completa en funcion de los parms y between tms
+         filter = mountWhere(..., inValues=inValues)
+         if (is.null(filter$sql)) {
+            filter$sql = " WHERE TMS BETWEEN ? AND ?"
+         } else {
+            filter$sql = paste(filter$sql, "AND TMS BETWEEN ? AND ?")
+         }
+         if (is.null(filter$values)) {
+            filter$values["from"] = from
+            filter$values["to"]   = to
+         } else {
+            filter$values = list.append(filter$values, from=from, to=to)
+         }
+
+         sql = paste("SELECT * FROM ", tblName, filter$sql)
+         df = db$query(sql, params=filter$values)
+         df = setColNames(df)
+         if (!includeKeys) df = df[,-getKeys(...)]
+         reset()
+         if (nrow(df) < 2) self$current = as.list(df)
+         df
+       }
+      ,tableLimit = function(..., limit=1, inValues=NULL, includeKeys = TRUE) {
+          # Recupera los datos de la tabla completa en funcion de los parms
+         filter = mountWhere(..., inValues=inValues)
+         if (is.null(filter$values)) {
+            filter$values[limit_] = limit
+         } else {
+            filter$values = list.append(filter$values, limit_=limit)
+         }
+         sql = paste("SELECT * FROM ", tblName, filter$sql, "LIMIT ?")
+         df = db$query(sql, params=filter$values)
+         df = setColNames(df)
+         if (!includeKeys) df = df[,-getKeys(...)]
+         reset()
+         if (nrow(df) == 1) self$current = as.list(df)
          df
       }
       ,uniques = function(fields, ...) {
@@ -174,9 +223,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
       }
       ,add     = function(data, isolated=FALSE) {
           if (missing(data)) data = self$current
-          if (is.data.frame(data)) {
-             data = as.list.data.frame(data)
-          }
+          if (is.data.frame(data)) data = as.list.data.frame(data)
+
+          self$current = data
+          private$changed = list()
+
           fields = rlist::list.clean(private$fields[names(data)])
           values = rlist::list.clean(data[names(fields)])
           names(values) = private$fields[names(values)]
@@ -255,7 +306,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
            #devuelve una lista de 2: sql la parte WHERE y values los valores
            cond  = ""
            data = makeList(...)
-           if (is.null(data) && is.null(inValues)) return (list(sql="", values=NULL))
+           if (is.null(data) && is.null(inValues)) return (list(sql=NULL, values=NULL))
            values = list.clean(data)      # Quitar nulos
            if (is.null(values))     return (list(sql="", values=NULL))
            if (length(values) == 0) return (list(sql="", values=NULL))
@@ -336,8 +387,10 @@ YATATable <- R6::R6Class("YATA.TABLE"
          } else {
             args
          }
-
-
       }
+       ,reset = function() {
+          private$changed = list()
+          self$current = NULL
+       }
    )
 )
