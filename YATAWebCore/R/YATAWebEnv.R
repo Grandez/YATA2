@@ -83,7 +83,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
     ,getCTCLabels = function(codes, type="medium", invert = FALSE) {
         # Acepta: id, sym, name, long, medium, short
         # Devuelve una lista
-        # Invert se usa para combos, en vez de la lista de etiquetas las da de codess
+        # Invert se usa para combos, en vez de la lista de etiquetas las da de codes
         if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, type))
         else                   data = lapply(codes, function(code) .getNameBySym(code, type))
         names(data) = codes

@@ -10,11 +10,9 @@ TBLCameras = R6::R6Class("TBL.CAMERAS"
          ,getCameras = function(all=FALSE) { getTable(all)  }
          ,getCameraNames = function(codes, full=FALSE) {
             df = table()
+            df = df[df$active == YATACodes$flag$active,]
             if (!missing(codes) && length(codes) > 0) {
                 df = df[df$id %in% codes,]
-            }
-            else {
-                df = df[df$active == YATACodes$flag$active,]
             }
             df$f = df$name
             if (full) df$f = paste(df$id,df$name, sep=" - ")

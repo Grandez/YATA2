@@ -1,43 +1,108 @@
-modOperXferServer = function(id, full, pnl, parent) {
+modOperXferServer = function(id, full, pnlParent, parent) {
    ns = NS(id)
    ns2 = NS(full)
+   PNLOperXfer = R6::R6Class("PNL.OPER.XFER"
+        ,inherit    = YATAPanel
+        ,cloneable  = FALSE
+        ,lock_class = TRUE
+        ,public = list(
+             available  = 0
+            ,balance    = 0
+            ,initialize = function(id, pnlParent, session) {
+                super$initialize(id, pnlParent, session)
+                objs = self$codes$object
+                private$position = self$factory$getObject(objs$position)
+                private$oper     = self$factory$getObject(objs$operation)
+            }
+            ,cboCamerasFrom  = function (all)  { 
+              self$parent$cboCameras(all) 
+            }
+            ,cboCamerasTo    = function (from) { 
+              self$parent$cboCameras(exclude = from) 
+            }
+            ,cboCurrencies = function (camera) {
+                df = private$position$getCameraPosition(camera, available = TRUE)
+                private$cameraIn = df
+                YATAWEB$getCTCLabels(as.vector(df$currency), invert = TRUE)
+            }
+            ,getAvailable = function (currency) {
+                df = private$cameraIn[private$cameraIn$currency == currency,]
+                self$available = ifelse (nrow(df) > 0, df[1,"available"], 0)
+                self$available
+            }
+            ,getBalance = function (camera, currency) {
+                df = private$position$getCameraPosition(camera)
+                df = df[df$currency == currency,]
+                self$balance = ifelse (nrow(df) > 0, df[1,"balance"], 0)
+                self$balance
+            }
+            ,transfer = function (from, to, amount, currency) {
+                tryCatch({
+                    private$oper$xfer(from=from, to=to, amount=amount, currency=currency)    
+                    FALSE
+                }, error = function(e) {
+                    TRUE
+                })
+                
+            }
+        )
+        ,private = list(
+             position  = NULL
+            ,oper      = NULL            
+            ,cameraIn  = NULL
+        )
+   )       
    moduleServer(id, function(input, output, session) {
-      browser()
-       validate = function() {
-          res = FALSE
-          if (input$impAmount <= 0) { res = TRUE; yataMsgError(ns2("msg"),"La cantidad debe ser positiva") }
-          res 
-       }
-       reset = function() {
-          updCombo("cboTo", selected="GRAL")
-          updNumericInput("impAmount", value = 0)
-       }
-       updCombo("cboFrom",    choices=pnl$cboCameras(full=TRUE))
-       updCombo("cboTo",      choices=pnl$cboCameras(full=TRUE))
-       observeEvent(input$cboFrom, {
-#          yataMsgReset(ns2("msg")) 
-         #  if (input$cboFrom == "EXT") {
-         #      updCombo("cboTo",       choices=pnl$cboCameras())
-         #      updCombo("cboCurrency", choices=c("EUR - Euro" = "EUR"))
-         #  }
-         # else {
-         #      updCombo("cboTo",       choices=c("Externo"="EXT", pnl$cboCameras(exclude=input$cboFrom)))
-               updCombo("cboCurrency", choices=pnl$cboCurrency(input$cboFrom, available=TRUE))
-         # }
-       }, ignoreInit = TRUE)
-       observeEvent(input$operBtnKO, { 
-          output$msg = renderText({""}); reset() })
-       observeEvent(input$operBtnOK, {
-          if (validate()) return()
-           browser()
-          res = pnl$operations$xfer( from=input$cboFrom, to=input$cboTo
-                                    ,amount=input$impAmount
-                                    ,currency=input$cboCurrency)
+      pnl = YATAWEB$getPanel(id)
+      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOperXfer$new(id, pnlParent, session))
+       
+      validate = function() {
+          if (input$impAmount <= 0) 
+              return (yataMsgError(ns2("msg"),YATAWEB$MSG$get("MSG.AMOUNT.NEGATIVE"))) 
           
-          if (res) output$msg = updMessageKO(full, YATAWEB$MSG$get("XFER.KO"))
-          if (!res) {
-              yataMsgSuccess(ns2("operMsg"), pnl$MSG$get("XFER.OK"))
-             reset()
+          if (input$impAmount > pnl$available) 
+              return (yataMsgError(ns2("msg"),YATAWEB$MSG$get("MSG.AMOUNT.EXCESS")))
+          FALSE 
+       }
+       updCombo("cboFrom",    choices=pnl$cboCamerasFrom(all=TRUE))
+
+       observeEvent(input$cboFrom, {
+           yataMsgReset(ns2("msg"))
+           if (!pnl$inEvent) {
+               data = pnl$cboCurrencies(input$cboFrom)
+               updCombo("cboCurrency", choices=data)
+           }
+           updCombo("cboTo",      choices=pnl$cboCamerasTo(input$cboFrom))           
+           pnl$inEvent = FALSE
+       }, ignoreInit = TRUE, ignoreNULL = TRUE)
+       
+       observeEvent(input$cboTo, {
+          yataMsgReset(ns2("msg"))
+          output$lblTo = updLabelText(pnl$getBalance(input$cboTo, input$cboCurrency))
+       }, ignoreInit = TRUE, ignoreNULL = TRUE)
+       
+       observeEvent(input$cboCurrency, {
+           yataMsgReset(ns2("msg"))
+           output$lblFrom = updLabelText(pnl$getAvailable(input$cboCurrency))
+       }, ignoreInit = TRUE, ignoreNULL = TRUE)
+       
+       observeEvent(input$btnKO, { 
+          output$msg = renderText({""})
+          updNumericInput("impAmount", value = 0)
+        })
+       
+       observeEvent(input$btnOK, {
+           browser()
+          if (validate()) return()
+          res = pnl$transfer(input$cboFrom, input$cboTo, input$impAmount, input$cboCurrency)
+          
+          if (res) {
+              yataMsgError(ns2("msg"), pnl$MSG$get("XFER.KO"))
+          } else {
+              yataMsgSuccess(ns2("msg"), pnl$MSG$get("XFER.OK"))
+              updNumericInput("impAmount", value = 0)
+              output$lblFrom = updLabelText(pnl$available - input$impAmount)
+              output$lblTo   = updLabelText(pnl$balance   + input$impAmount)
           }
       })
   })

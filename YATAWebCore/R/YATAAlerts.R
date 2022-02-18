@@ -1,8 +1,8 @@
 yataMsgSuccess = function(id, msg) { yataMessage(id,msg, "success") }
 yataMsgInfo    = function(id, msg) { yataMessage(id,msg, "info")    }
 yataMsgWarn    = function(id, msg) { yataMessage(id,msg, "warning") }
-yataMsgError   = function(id, msg) { yataMessage(id,msg, "error")   }
-yataMsgReset   = function(id) {
+yataMsgError   = function(id, msg) { yataMessage(id,msg, "error"); TRUE   }
+yataMsgReset   = function(id)      { #yataMessage(id,"" , "info")    }
     idVal = paste0("#", id, "_value")
     removeUI(idVal, immediate = TRUE)
 }

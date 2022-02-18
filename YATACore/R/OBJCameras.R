@@ -27,8 +27,12 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
                    tblCameras$add(data)
                }
        }
-       ,getCameras         = function(full=FALSE) { tblCameras$getCameras(full) }
-       ,getCameraName      = function(codes)      { tblCameras$getNames(codes, full=FALSE) }
+       ,getCameras         = function(all = FALSE) {
+           df = tblCameras$table()
+           if (!all) df = df[df$active == factory$codes$flag$active,]
+           df
+        }
+       ,getCameraName      = function(codes, full=FALSE) { tblCameras$getCameraNames(codes,full) }
        ,getActiveCameras   = function() { tblCameras$getTable(all=FALSE) }
        ,getInactiveCameras = function() { tblCameras$table(active=factory$codes$flag$inactive) }
        ,getAllCameras      = function() { tblCameras$table()                               }

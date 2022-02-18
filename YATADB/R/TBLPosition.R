@@ -24,7 +24,6 @@ TBLPosition = R6::R6Class("TBLPOSITION"
             df = table(camera=camera)
             if (balance)   df = df[df$balance   > 0,]
             if (available) df = df[df$available > 0,]
-            browser()
             self$current = list(df)
             df
         }

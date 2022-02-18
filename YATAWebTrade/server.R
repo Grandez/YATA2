@@ -34,7 +34,6 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
-          browser()
           df = self$position$getGlobalPosition()
           ids = YATAWEB$getCTCID(df$currency)
           if (!is.null(ids)) {

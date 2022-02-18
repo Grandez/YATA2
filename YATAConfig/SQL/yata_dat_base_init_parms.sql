@@ -104,6 +104,13 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 91, 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 92,    1, ''    , 'CANCEL'     );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 93,    1, ''    , 'REJECT'     );
 
+-- ----------------------------------------------------
+-- Grupo 16 - Combos
+--   Sub  1 - Operaciones
+-- ----------------------------------------------------
+-- INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (16,  1,  1,  10, 'Abrir posicion' ,   '1');
+-- INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (16,  1,  1,  10, 'Comprar' ,   '1');
+-- INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (16,  1,  1,  10, 'Vender' ,   '1');
 
 -- ----------------------------------------------------
 -- Grupo 5: Bases de datos

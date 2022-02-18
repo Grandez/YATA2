@@ -1,21 +1,35 @@
 yuiLoading = function() { show_modal_spinner(spin="dots") }
 yuiLoaded  = function() { remove_modal_spinner()          }
 
-yuiYesNo = function(id=ns("tag"), lblOK, lblKO){ # , cols=4, left=0) {
+yuiYesNo = function(id=ns("tag"), lblOK, lblKO, left = 0, width = 12) {
     # el tag es para crear el nombre completo
     toks = strsplit(id, "-")[[1]]
     prfx = toks[length(toks) - 2]
     toks = paste(toks[1:(length(toks)- 1)], collapse="-")
     if (missing(lblOK)) lblOK = "Aceptar"
     if (missing(lblKO)) lblKO = "Cancelar"
-    divMsg = tags$div(class="row",tags$div( id=paste0(toks, "-", prfx, "Msg")
-                                           ,tags$span(id=paste0(toks, "-", prfx, "Msg"), "")))
+    # divMsg = tags$div(class="row",tags$div( id=paste0(toks, "-", prfx, "Msg")
+    #                                        ,tags$span(id=paste0(toks, "-", prfx, "Msg"), "")))
+    #
+    # divBtns = tags$div(class="row yata_buttons"
+    #                   ,tags$div(yuiBtnOK(paste0(toks, "-", prfx, "BtnOK"), lblOK))
+    #                   ,tags$div(yuiBtnKO(paste0(toks, "-", prfx, "BtnKO"), lblKO))
+    #           )
+    divMsg = tags$div(class="row",tags$div( id=paste0(toks, "-", "msg")
+                                           ,tags$span(id=paste0(toks, "-", "msg"), "")))
 
     divBtns = tags$div(class="row yata_buttons"
-                      ,tags$div(yuiBtnOK(paste0(toks, "-", prfx, "BtnOK"), lblOK))
-                      ,tags$div(yuiBtnKO(paste0(toks, "-", prfx, "BtnKO"), lblKO))
+                      ,tags$div(yuiBtnOK(paste0(toks, "-", "btnOK"), lblOK))
+                      ,tags$div(yuiBtnKO(paste0(toks, "-", "btnKO"), lblKO))
               )
-    tagList(tags$div(class="container-fluid", divMsg), tags$div(class="container-fluid", divBtns))
+
+    if (left > 0) {
+      tagList( fluidRow(yuiColumn(left), yuiColumn(width, divMsg))
+              ,fluidRow(yuiColumn(left), yuiColumn(width, divBtns)))
+    } else {
+      tagList( tags$div(class="container-fluid", divMsg)
+              ,tags$div(class="container-fluid", divBtns))
+    }
 }
 yuiButtons = function(...) { tags$div(class="yata_flex_row", ...) }
 yuiRank = function(id,lbl=NULL) { sliderInput(id, lbl, min=-2,max=2,step=1,value=0, ticks=FALSE) }

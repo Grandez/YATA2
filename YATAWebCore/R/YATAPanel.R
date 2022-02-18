@@ -2,6 +2,15 @@
 YATAPanel = R6::R6Class("YATA.PANEL"
   ,cloneable  = FALSE
   ,lock_class = TRUE
+  ,active = list(
+    inEvent = function(value) {
+      if (missing(value)) {
+        private$.inEvent
+      } else {
+        private$.inEvent = value
+      }
+    }
+  )
   ,public = list(
      name       = NULL
     ,parent     = NULL  # Puntero al padre
@@ -119,6 +128,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
   ,private = list(
        invalid = c("")
       ,root   = NULL
+      ,.inEvent = FALSE
       ,loadCookies = function() {
           cookies = YATAWEB$getCookies(self$name)
           if (!is.null(cookies)) self$cookies = list.merge(self$cookies, cookies)

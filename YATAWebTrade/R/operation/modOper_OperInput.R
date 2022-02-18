@@ -6,19 +6,23 @@ modOperOperInput = function(id, title="") {
               ,yuiColumn(1, yuiComboSelect( ns("cboOper")
                                            ,choices=c("Abrir posicion"=1, "Comprar"=2, "Vender"=3)
                                            ,selected=1))
-              ,yuiColumn(1)
               ,yuiColumn(1,h4("Moneda"))
-              ,yuiColumn(1,yuiComboSelect(ns("cboCounter"),text="Counter"))
+              ,yuiColumn(1,yuiComboSelect(ns("cboCurrency"),text="Counter"))
+
+              ,yuiColumn(1, h4("Camara"))
+              ,yuiColumn(1, yuiComboSelect(ns("cboCamera"), choices=list(" ")))
+              #,yuiColumn(1)
      )
     ,fluidRow(
          yuiColumn(2)
         ,yuiColumn(3
             ,fluidRow(h2("Base"))
             ,fluidRow(tags$table(
-                 tags$tr(tags$td("Camara"),   tags$td(yuiCombo(ns("cboCamera"), choices=list(" "))))
-                ,tags$tr(tags$td("Base"),     tags$td(yuiCombo(ns("cboBase"),   choices=list(" "))))
-                ,tags$tr(tags$td("Cantidad"), tags$td(yuiNumericInput(ns("impAmount"), NULL, value = 0)))
+
+                #,tags$tr(tags$td("Base"),     tags$td(yuiCombo(ns("cboBase"),   choices=list(" "))))
+                 tags$tr(tags$td("Cantidad"), tags$td(yuiNumericInput(ns("impAmount"), NULL, value = 0)))
                 ,tags$tr(tags$td("Precio"),   tags$td(yuiNumericInput(ns("impPrice"),  NULL, value = 0)))
+                ,tags$tr(tags$td("Valor"),    tags$td(yuiNumericInput(ns("impValue"),  NULL, value = 0)))
                 ,tags$tr(tags$td("Motivo"),   tags$td(yuiCombo(ns("cboReasons"))))
             ))
         )

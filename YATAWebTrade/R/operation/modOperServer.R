@@ -35,9 +35,18 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
             }
            ,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
+           ,getCboCameras = function (currency) {
+               browser()
+               df = self$position$getCurrencyPosition(currency)   
+               df = df[df$camera != "CASH",]
+               df = df[df$available > 0,]
+               df = self$cameras$getCameras(as.vector(df$camera))
+               self$makeCombo(data)
+           }
+            
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
-           ,cboCameras   = function(exclude, full=FALSE) {
-              data = self$cameras$getCameras(full)
+           ,cboCameras   = function(exclude, all=FALSE) {
+              data = self$cameras$getCameras(all)
               if (!missing(exclude)) data = data[!data$id %in% exclude,]
               self$makeCombo(data)
            }
@@ -53,7 +62,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                }
                else {
                   if (camera == "CASH") {
-                      data = data.frame(id="EUR", name="EUR - EURO")
+                      data = data.frame(id="FIAT", name="EUR - EURO")
                       self$makeCombo(data)
                   }
                   else {

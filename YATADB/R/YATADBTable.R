@@ -308,8 +308,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
            data = makeList(...)
            if (is.null(data) && is.null(inValues)) return (list(sql=NULL, values=NULL))
            values = list.clean(data)      # Quitar nulos
-           if (is.null(values))     return (list(sql="", values=NULL))
-           if (length(values) == 0) return (list(sql="", values=NULL))
+           if (is.null(values) && is.null(inValues))     return (list(sql="", values=NULL))
+           if (length(values) == 0 && is.null(inValues)) return (list(sql="", values=NULL))
            if (!is.null(values) && length(values) > 0) {
                marks = lapply(values, function(x) " = ?") # Montar la secuencia campo = ? ...
                cond = asString(paste(fields[names(values)], marks), " AND ")
