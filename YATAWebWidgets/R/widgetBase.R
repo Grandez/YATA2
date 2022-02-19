@@ -51,9 +51,9 @@ yuiMessage = function(id) {
 #   renderUI({HTML(lbl)})
 # }
 
-updMessageReset = function(txt) {
-
-}
+# updMessageReset = function(txt) {
+#
+# }
 
 updMessage = function(txt) {
   lbl = paste0("<span class='", cls, "'>",text,"</span>")
@@ -89,16 +89,22 @@ updLabelText = function(txt) {
 #   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 # }
 yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+  textOutput(id) %>% tagAppendAttributes(class = 'yata_number') #yataTextRight')
+  #
+  # htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 }
 
-yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+# yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
+#   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
+# }
+updLabel = function(txt) {
+    renderText({txt})
 }
 updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
   text = format(value, big.mark = ".", decimal.mark=",")
   if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
-  .updLabelNumber(value, text, bold, color)
+  #.updLabelNumber(value, text, bold, color)
+  updLabel(text)
 }
 yuiLabelInteger = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
@@ -149,7 +155,7 @@ yuiNumericInput = function(id, label=NULL, value=0, step, min, max) {
   mn = NA ; if (!missing(min))  mn=min
   ma = NA ; if (!missing(max))  ma=max
   widget = numericInput(id, label = label, value = value, mn, ma,st, width="auto")
-  widget[[3]][[2]]$attribs$class = "form-control yata-number"
+  widget[[3]][[2]]$attribs$class = "form-control yata_number"
   widget
 }
 updNumericInput = function(id, value, session=getDefaultReactiveDomain()) {
@@ -236,11 +242,10 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   updateTextAreaInput(session, id, label=label, value=text)
 }
 .updLabelNumber = function(value, text,bold,color) {
-  cls = "yata_num"
-  if (bold) cls = paste(cls, "yata_num_bold")
+  if (bold) cls = paste(cls, "yata_number_bold")
   if (color) {
-     col = if(value > 0) cls = paste(cls, "yata_num_pos")
-     col = if(value < 0) cls = paste(cls, "yata_num_neg")
+     col = if(value > 0) cls = paste(cls, "yata_number_pos")
+     col = if(value < 0) cls = paste(cls, "yata_number_neg")
   }
   lbl = paste0("<span class='", cls, "'>",text,"</span>")
   renderUI({HTML(lbl)})

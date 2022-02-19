@@ -1,6 +1,4 @@
-
-
-modOperPosInput = function(id, title) {
+modOperPosInput = function(id, title="") {
     ns = NS(id)
     noOpen   = YATAWEB$getMsg("OPER.OPEN.NONE")
     noAccept = YATAWEB$getMsg("OPER.ACCEPT.NONE")
@@ -41,5 +39,3 @@ modOperPosInput = function(id, title) {
       )
     list(left=left, main=main, right=NULL)
 }
-
-

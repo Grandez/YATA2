@@ -19,24 +19,27 @@ updBtn          = function(id, session=getDefaultReactiveDomain(), ...) {
    shinyBS::updateButton(session, id, label = args$label)
    #do.call(shinyBS::updateButton, args)
 }
-.btnIcon = function(color, ico, title) {
+.btnIcon = function(id, color, ico, title) {
     sty = paste("simple; background-color:", color, ";")
-   yuiActionBtn(title=title, style = "simple", color=color, class="yata_btn_icon", icon = icon(ico, class="yata_btn_icon"))
+   yuiActionBtn( id=id, title=title, style = "simple", color=color
+                ,class="yata_btn_icon"
+                ,icon = icon(ico, class="yata_btn_icon"))
 }
-yuiBtnIconAlert    = function(title) {.btnIcon("yellow"    , "bell"             ,ifelse(missing(title), "Alert" ,title)) }
-yuiBtnIconCancel   = function(title) {.btnIcon("red"       , "times"            ,ifelse(missing(title), "Cancel",title)) }
-yuiBtnIconOK       = function(title) {.btnIcon("green"     , "check"            ,ifelse(missing(title), "Accept",title)) }
-yuiBtnIconDel      = function(title) {.btnIcon("orange"    , "trash"            ,ifelse(missing(title), "Delete",title)) }
-yuiBtnIconRefuse   = function(title) {.btnIcon("navy"      , "thumbs-down"      ,ifelse(missing(title), "Refuse",title)) }
-yuiBtnIconCloud    = function(title) {.btnIcon("aqua"      , "cloud-upload-alt" ,ifelse(missing(title), "Cloud" ,title)) }
-yuiBtnIconEdit     = function(title) {.btnIcon("darkgreen" , "pen"              ,ifelse(missing(title), "Edit"  ,title)) }
-yuiBtnIconCash     = function(title) {.btnIcon("violet"    , "wallet"           ,ifelse(missing(title), "Close" ,title)) }
-yuiBtnIconView     = function(title) {.btnIcon("mediumblue", "search-dollar"    ,ifelse(missing(title), "View"  ,title)) }
-yuiBtnIconActive   = function(title) {.btnIcon("limegreen" , "plus-circle"      ,ifelse(missing(title), "Activar"  ,title)) }
-yuiBtnIconInactive = function(title) {.btnIcon("maroon"    , "minus-circle"     ,ifelse(missing(title), "Desactivar"  ,title)) }
-yuiBtnIconBuy      = function(title) {.btnIcon("green"     , "shopping-cart"    ,ifelse(missing(title), "Buy",title)) }
-yuiBtnIconUp       = function(title) {.btnIcon("green"     , "sort-up"          ,ifelse(missing(title), "Up",title)) }
-yuiBtnIconDown     = function(title) {.btnIcon("green"     , "sort-down"        ,ifelse(missing(title), "Down",title)) }
+yuiBtnIconAlert    = function(title,id=NULL) {.btnIcon(id, "yellow"    , "bell"             ,ifelse(missing(title), "Alert"      ,title)) }
+yuiBtnIconCancel   = function(title,id=NULL) {.btnIcon(id, "red"       , "times"            ,ifelse(missing(title), "Cancel"     ,title)) }
+yuiBtnIconOK       = function(title,id=NULL) {.btnIcon(id, "green"     , "check"            ,ifelse(missing(title), "Accept"     ,title)) }
+yuiBtnIconDel      = function(title,id=NULL) {.btnIcon(id, "orange"    , "trash"            ,ifelse(missing(title), "Delete"     ,title)) }
+yuiBtnIconRefuse   = function(title,id=NULL) {.btnIcon(id, "navy"      , "thumbs-down"      ,ifelse(missing(title), "Refuse"     ,title)) }
+yuiBtnIconCloud    = function(title,id=NULL) {.btnIcon(id, "aqua"      , "cloud-upload-alt" ,ifelse(missing(title), "Cloud"      ,title)) }
+yuiBtnIconEdit     = function(title,id=NULL) {.btnIcon(id, "darkgreen" , "pen"              ,ifelse(missing(title), "Edit"       ,title)) }
+yuiBtnIconCash     = function(title,id=NULL) {.btnIcon(id, "violet"    , "wallet"           ,ifelse(missing(title), "Close"      ,title)) }
+yuiBtnIconView     = function(title,id=NULL) {.btnIcon(id, "mediumblue", "search-dollar"    ,ifelse(missing(title), "View"       ,title)) }
+yuiBtnIconActive   = function(title,id=NULL) {.btnIcon(id, "limegreen" , "plus-circle"      ,ifelse(missing(title), "Activate"   ,title)) }
+yuiBtnIconInactive = function(title,id=NULL) {.btnIcon(id, "maroon"    , "minus-circle"     ,ifelse(missing(title), "Deactivate" ,title)) }
+yuiBtnIconBuy      = function(title,id=NULL) {.btnIcon(id, "green"     , "shopping-cart"    ,ifelse(missing(title), "Buy"        ,title)) }
+yuiBtnIconUp       = function(title,id=NULL) {.btnIcon(id, "green"     , "sort-up"          ,ifelse(missing(title), "Up"         ,title)) }
+yuiBtnIconDown     = function(title,id=NULL) {.btnIcon(id, "green"     , "sort-down"        ,ifelse(missing(title), "Down"       ,title)) }
+yuiBtnIconCalc     = function(title,id=NULL) {.btnIcon(id, "green"     , "calculator"       ,ifelse(missing(title), "Down"        ,title)) }
 
 yuiTblButton = function(id, table, label, btn) {
    clk = paste0("onclick='Shiny.setInputValue(\"", id, "-btnTable", titleCase(table), "\","
@@ -70,7 +73,7 @@ yuiCustomIcon = function(icon, event, value) {
 # Action: Removed match.arg color control
 #         Removed id and label
 #         Removed attach
-yuiActionBtn = function (title=NULL, icon = NULL, style = "unite", class=NULL,
+yuiActionBtn = function (id=NULL, title=NULL, icon = NULL, style = "unite", class=NULL,
 #JGG yataActionBttn = function (inputId, label = NULL, icon = NULL, style = "unite",
     color = "default", size = "md", block = FALSE,
     no_outline = TRUE)
@@ -82,7 +85,7 @@ yuiActionBtn = function (title=NULL, icon = NULL, style = "unite", class=NULL,
         "gradient", "fill", "material-circle",
         "material-flat", "pill", "float", "unite"))
     size <- match.arg(arg = size, choices = c("xs", "sm", "md", "lg"))
-    tagBttn <- tags$button( type = "button"
+    tagBttn <- tags$button( id=id, type = "button"
                            ,title=title
                            ,class = paste("action-button bttn", class)
                            ,class = paste0("bttn-", style)

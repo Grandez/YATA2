@@ -36,12 +36,11 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            ,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,getCboCameras = function (currency) {
-               browser()
                df = self$position$getCurrencyPosition(currency)   
                df = df[df$camera != "CASH",]
                df = df[df$available > 0,]
                df = self$cameras$getCameras(as.vector(df$camera))
-               self$makeCombo(data)
+               self$makeCombo(df)
            }
             
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
@@ -78,19 +77,19 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            #     private$asCombo(self$getCamerasCurrency(camera))
            # }
            ,selectCamera = function(camera) { self$cameras$select(camera) }
-           ,operation    = function(...) {
-               data = args2list(...)
-               if (is.null(data)) data = self$data
-               tryCatch({self$operations$add(data$type, data)
-                         FALSE
-               }
-               ,error = function(cond) {
-                   browser()
-                   return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
-                   TRUE
-                 }
-               )
-           } 
+           # ,operation    = function(...) {
+           #     data = args2list(...)
+           #     if (is.null(data)) data = self$data
+           #     tryCatch({self$operations$add(data$type, data)
+           #               FALSE
+           #     }
+           #     ,error = function(cond) {
+           #         browser()
+           #         return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
+           #         TRUE
+           #       }
+           #     )
+           # } 
            ,loadOperations = function(status) {
                df = self$operations$getOperations(active = self$codes$flag$active, status = status)
                # Guardar los id               

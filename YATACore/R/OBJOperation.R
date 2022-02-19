@@ -450,6 +450,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             self$current$idOper
        }
        ,operOper2     = function() {
+           if (is.null(current$value)) current$value = current$price * current$amount
            objPos$updatePositions   (current)
 
            self$current$active = ifelse (current$type == codes$oper$oper

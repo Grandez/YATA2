@@ -564,25 +564,30 @@ body {
   font-weight: bold;
 }
 
-.yata_num {
+/*
+.yata_number {
   float: right;
 }
-
-.yata_num_bold {
-  font-weight: bold;
-}
-
-.yata_num_pos {
-  color: green;
-}
-
-.yata_num_neg {
-  color: crimson;
-}
-
+*/
 .yata_number {
   text-align: right;
 }
+
+.yata_number_bold {
+  text-align: right;
+  font-weight: bold;
+}
+
+.yata_number_pos {
+  text-align: right;
+  color: green;
+}
+
+.yata_number_neg {
+  text-align: right;
+  color: crimson;
+}
+
 
 /*********************************/
 /* Cajas                         */
