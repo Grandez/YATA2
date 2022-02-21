@@ -4,7 +4,7 @@ import os
 import sys
 
 euid = os.geteuid()
-if ! euid == 0:
+if not euid == 0:
     print("This sript must be executed as roo", file=sys.stderr)
     exit(127)
 
