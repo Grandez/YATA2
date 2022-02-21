@@ -11,7 +11,7 @@ fi
 
 echo "Getting YATA"
 dest=${HOME}/"YATA2"
-if [ $# -gt 1 ] ; then dest=$1 ; fi   
+if [ $# -gt 0 ] ; then dest=$1 ; fi   
 git clone https://github.com/Grandez/YATA2 $dest
 rc=$?
 if [ $rc -ne 0 ] ; then
@@ -19,7 +19,13 @@ if [ $rc -ne 0 ] ; then
    exit 127
 fi   
 
-cfg=$HOME/yata2.cfg
+cfg=$HOME/yata.cfg
 echo "[base]"  > $cfg
 echo root=$dest >> $cfg
-    
+
+distro="Linux"
+os=`uname -a`
+rc =`echo $os | grep -q "Ubuntu"`
+if [ $rc -eq 0 ] ; then distro="Ubuntu" ; fi
+
+echo distro=$distro >> $cfg     
