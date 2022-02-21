@@ -17,6 +17,8 @@ if [ $? -ne 0 ] ; then
    echo "Error cleaning YATA directory"
    exit 127
 fi     
+echo "DEST es " $dest
+echo git clone https://github.com/Grandez/YATA2 $dest
 git clone https://github.com/Grandez/YATA2 $dest > dev/null 2> /dev/null
 rc=$?
 if [ $rc -ne 0 ] ; then
