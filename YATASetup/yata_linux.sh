@@ -9,11 +9,17 @@ if [ $? -eq 127 ] ; then
    exit 127
 fi
 
-echo "Getting YATA"   
-git clone https://github.com/Grandez/YATA2 $1
+echo "Getting YATA"
+dest=${HOME}/"YATA2"
+if [ $# -gt 1 ] ; then dest=$1 ; fi   
+git clone https://github.com/Grandez/YATA2 $dest
 rc=$?
 if [ $rc -ne 0 ] ; then
    echo "Error " $rc " getting YATA"
    exit 127
 fi   
-      
+
+cfg=$HOME/yata2.cfg
+echo "[base]"  > $cfg
+echo root=$dest >> $cfg
+    
