@@ -30,11 +30,14 @@ fi
 
 cfg=$HOME/yata.cfg
 echo "[base]"  > $cfg
-echo root=$dest >> $cfg
+echo root=\"$dest\" >> $cfg
 
 distro="Linux"
 os=`uname -a`
 echo $os | grep -q "Ubuntu"
 if [ $? -eq 0 ] ; then distro="Ubuntu" ; fi
 
-echo distro=$distro >> $cfg     
+echo distro=\"$distro\" >> $cfg     
+
+chmod 775 $dest/YATASetup/yatasetup
+. ${dest}/YATASetup/${distro}/yatasetup "scratch"
