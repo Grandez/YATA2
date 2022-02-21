@@ -19,8 +19,7 @@ if [ -d $dest ] ; then
       exit 127
    fi
 fi
-echo "DEST es " $dest
-echo git clone https://github.com/Grandez/YATA2 $dest
+
 git clone https://github.com/Grandez/YATA2 $dest > /dev/null 2> /dev/null
 rc=$?
 if [ $rc -ne 0 ] ; then
@@ -39,5 +38,5 @@ if [ $? -eq 0 ] ; then distro="Ubuntu" ; fi
 
 echo distro=\"$distro\" >> $cfg     
 
-chmod 775 $dest/YATASetup/yatasetup
+chmod 775 ${dest}/YATASetup/${distro}/yatasetup
 . ${dest}/YATASetup/${distro}/yatasetup "scratch"
