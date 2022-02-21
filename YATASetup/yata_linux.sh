@@ -11,8 +11,13 @@ fi
 
 echo "Getting YATA"
 dest=${HOME}/"YATA2"
-if [ $# -gt 0 ] ; then dest=$1 ; fi   
-git clone https://github.com/Grandez/YATA2 $dest
+if [ $# -gt 0 ] ; then dest=$1 ; fi  
+ [ -d $dest ] && rm -rf $dest
+if [ $? -ne 0 ] ; then 
+   echo "Error cleaning YATA directory"
+   exit 127
+fi     
+git clone https://github.com/Grandez/YATA2 $dest > dev/null 2> /dev/null
 rc=$?
 if [ $rc -ne 0 ] ; then
    echo "Error " $rc " getting YATA"
