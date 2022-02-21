@@ -1,0 +1,38 @@
+ El volumen de la unidad P es Windows
+ El número de serie del volumen es: 721C-BD90
+
+ Directorio de P:\R\YATA2
+
+09/02/2022  22:47    <DIR>          .
+09/02/2022  22:47    <DIR>          ..
+20/02/2022  12:48    <DIR>          .git
+11/02/2021  17:51    <DIR>          YATAAnalytics
+23/12/2021  21:13    <DIR>          YATABatch
+21/05/2021  14:27    <DIR>          YATABook
+17/02/2022  16:54    <DIR>          YATACI
+09/02/2022  18:06    <DIR>          YATACI2
+18/06/2021  11:28    <DIR>          YATACLI
+20/02/2022  12:55    <DIR>          YATAConfig
+07/03/2021  20:22    <DIR>          YATAControl
+20/02/2022  12:48    <DIR>          YATACore
+18/02/2022  19:36    <DIR>          YATADB
+29/04/2021  09:46    <DIR>          YATADT
+03/03/2021  20:48    <DIR>          YATAExternal
+27/04/2021  14:48    <DIR>          YATAMan
+13/02/2022  16:41    <DIR>          YATAManual
+10/02/2022  10:35    <DIR>          YATAManualTech
+15/06/2021  13:15    <DIR>          YATAModels
+03/06/2021  11:46    <DIR>          YATAModels2
+10/01/2022  20:46    <DIR>          YATAProviders
+05/07/2021  22:00    <DIR>          YATAPUT
+07/07/2021  13:59    <DIR>          YATAREST
+09/02/2022  17:48    <DIR>          YATASetup
+17/02/2022  16:54    <DIR>          YATATools
+17/03/2021  18:08    <DIR>          YATAWebAdmin
+19/02/2022  20:52    <DIR>          YATAWebCore
+15/06/2021  13:15    <DIR>          YATAWebModels
+18/01/2022  01:46    <DIR>          YATAWebTheme
+19/02/2022  23:28    <DIR>          YATAWebTrade
+19/02/2022  12:44    <DIR>          YATAWebWidgets
+               0 archivos              0 bytes
+              31 dirs  248.873.115.648 bytes libres

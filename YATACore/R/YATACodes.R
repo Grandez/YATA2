@@ -36,7 +36,13 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,history        = "History"
     )
     ,flag = list(inactive=0, active=1, parent=2)
-    ,oper = list( oper=1, buy=2, sell=3, xfer=4, split=5, net=6, reg=10, close=16)
+    ,oper = list( oper  =  0
+                 ,bid   =  1, buy  =  2
+                 ,ask   = 11, sell = 12
+                 ,xfer  = 21, reg  = 22
+                 ,split = 31, net  = 32
+                 ,close = 50)
+
     ,flow = list( pending = 0
                  ,input   = 20, regInput  = 21
                  ,output  = 30, regOutput = 32

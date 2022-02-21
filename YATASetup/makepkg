@@ -1,0 +1,6 @@
+#! /bin/python3
+
+import configparser
+config = configparser.ConfigParser()
+config.read("YATA.cfg")
+pkgs  = dict(config.items("packages"))

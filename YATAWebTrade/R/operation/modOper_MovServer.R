@@ -63,7 +63,12 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           FALSE          
       }
       xlateCode = function (code) {
-          ifelse (as.integer(code) %% 2 == 0, pnl$codes$oper$buy, pnl$codes$oper$sell)
+          code = as.integer(code)
+          if (code == 10) return (pnl$codes$oper$bid)
+          if (code == 11) return (pnl$codes$oper$buy)
+          if (code == 20) return (pnl$codes$oper$ask)
+          if (code == 21) return (pnl$codes$oper$sell)
+          pnl$codes$oper$oepr
       }
       resetValues = function() {
           updNumericInput("impAmount", value=0)
@@ -243,7 +248,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
             ,alert   = input$alert
          )
 
-         if (data$type == pnl$codes$oper$buy) {
+         if ((input$cboOper %% 2) == 0) {
              data$amount  = input$impAmount * input$impPrice
              data$value   = input$impAmount
              data$base    = "FIAT"
