@@ -9,7 +9,13 @@ if not euid == 0:
     exit(127)
 
 print ("Soy root")
-n = len(sys.argv)
+ini_file = "YATA.cfg"
+uid = os.getenv('SUDO_USER', 'root')
+
+if len(sys.argv) > 1:
+    ini_file = sys.argv[1]
+
+
 print("Total arguments passed:", n)
  
 # Arguments passed
@@ -18,4 +24,3 @@ print("\nName of Python script:", sys.argv[0])
 print("\nArguments passed:", end = " ")
 for i in range(1, n):
     print(sys.argv[i], end = " ")
-         
