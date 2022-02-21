@@ -1,6 +1,14 @@
 #!/bin/bash
-# Crea el proceso inicial
-# uso: yata_linux.sh [root]
+#####################################################################
+# Name:    yata_linux.sh
+# Purpose: Install and prepare YATA System from scracth
+# Author:  Grandez
+# Use:     script [root]
+#          root - Directory where install YATA
+#                 Default $HOME/YATA2
+# Requires: git
+#
+#####################################################################
 
 # Check git
 git > /dev/null 2> /dev/null
@@ -26,6 +34,8 @@ if [ $rc -ne 0 ] ; then
    echo "Error " $rc " getting YATA"
    exit 127
 fi   
+
+echo "Generating yata.cfg"
 
 cfg=$HOME/yata.cfg
 echo "[base]"  > $cfg
