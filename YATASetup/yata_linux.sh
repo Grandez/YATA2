@@ -21,7 +21,7 @@ if [ -d $dest ] ; then
 fi
 echo "DEST es " $dest
 echo git clone https://github.com/Grandez/YATA2 $dest
-git clone https://github.com/Grandez/YATA2 $dest > dev/null 2> /dev/null
+git clone https://github.com/Grandez/YATA2 $dest > /dev/null 2> /dev/null
 rc=$?
 if [ $rc -ne 0 ] ; then
    echo "Error " $rc " getting YATA"
@@ -34,7 +34,7 @@ echo root=$dest >> $cfg
 
 distro="Linux"
 os=`uname -a`
-rc =`echo $os | grep -q "Ubuntu"`
-if [ $rc -eq 0 ] ; then distro="Ubuntu" ; fi
+echo $os | grep -q "Ubuntu"
+if [ $? -eq 0 ] ; then distro="Ubuntu" ; fi
 
 echo distro=$distro >> $cfg     
