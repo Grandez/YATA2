@@ -5,7 +5,13 @@ import os, pwd, subprocess
 import configparser
 import shutil
 
-sys.path.insert(0, '../python')
+yataroot = os.environ.get('YATA_ROOT')
+if not yataroot :
+    print("Missing environment variable YATA_ROOT", file=sys.stderr)
+    exit(127)
+
+sys.path.insert(0, yataroot + '/YATASetup/python')
+
 import yatatools as tools
 
 def demote(user_uid, user_gid):
@@ -46,7 +52,7 @@ def make_package(package):
     env = os.environ.copy()
     env.update({'HOME': homedir, 'LOGNAME': 'yata', 'PWD': os.getcwd()})
 
-    pkg = os.environ.get('YATA_ROOT') + '/' + package
+    pkg = yataroot + '/' + package
     #proc = subprocess.Popen(['R', 'CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg],
     proc = subprocess.Popen(['R CMD INSTALL --no-multiarch --with-keep.source ' + pkg],
                               shell=True,
@@ -58,11 +64,6 @@ def make_package(package):
     #os.chdir(oldwd)
     return proc.returncode
 
-oldwd = os.getcwd()
-yataroot = os.environ.get('YATA_ROOT')
-if not yataroot :
-    tools.fatal(16, "Missing environment variable YATA_ROOT")
-
 file_ini = yataroot + '/YATASetup/yata.cfg'
 n = len(sys.argv)
 if (n > 1) :
@@ -71,6 +72,7 @@ if (n > 1) :
 config = configparser.ConfigParser()
 config.read(file_ini)
 
+oldwd = os.getcwd()
 os.chdir(yataroot)
 tools.msg("Retrieving repository")    
 # config["YATA"]["repo"]
