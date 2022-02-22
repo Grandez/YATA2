@@ -15,15 +15,14 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
           res$status
       }
       ,getPackages = function() {
+          browser()
           greps = NULL
           out = unlist(strsplit(gitout, "\n"))
           res = regexpr(" YATA[a-zA-Z0-9_]+/", out)
           len = attr(res, "match.length")
-          if (length(res) > 0) {
-              for (idx in 1:length(res)) {
-                  if (res > -1) {
-                      greps = c(greps, substr(out[idx], res[idx] + 1, res[idx] + len[idx] - 1))
-                  }
+          for (idx in 1:length(res)) {
+              if (res > -1) {
+                  greps = c(greps, substr(out[idx], res[idx] + 1, res[idx] + len[idx] - 1))
               }
           }
           greps = unique(greps)
