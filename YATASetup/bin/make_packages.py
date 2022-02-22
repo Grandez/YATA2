@@ -90,4 +90,4 @@ for pkg in pkgs.values():
         tools.fatal(4, "ERROR MAKING PACKAGE " + pkg)
         
 tools.msg("Moving packages to " + os.environ.get("R_LIBS_SITE"))
-distutils.dir_util.copy_tree(os.environ.get("R_LIBS_USER"), os.environ.get("R_LIBS_SITE"))
+# distutils.dir_util.copy_tree(os.environ.get("R_LIBS_USER"), os.environ.get("R_LIBS_SITE"))
