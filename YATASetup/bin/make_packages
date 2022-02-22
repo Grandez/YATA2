@@ -46,7 +46,7 @@ def make_package(package):
     env = os.environ.copy()
     env.update({'HOME': homedir, 'LOGNAME': 'yata', 'PWD': os.getcwd()})
 
-    pkg = os.environ('YATA_ROOT') + package
+    pkg = os.environ.get('YATA_ROOT') + '/' + package
     #proc = subprocess.Popen(['R', 'CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg],
     proc = subprocess.Popen(['R CMD INSTALL --no-multiarch --with-keep.source ' + pkg],
                               shell=True,
@@ -59,7 +59,7 @@ def make_package(package):
     return proc.returncode
 
 oldwd = os.getcwd()
-yataroot = os.environ('YATA_ROOT')
+yataroot = os.environ.get('YATA_ROOT')
 if not yataroot :
     tools.fatal(16, "Missing environment variable YATA_ROOT")
 
@@ -73,11 +73,11 @@ config.read(file_ini)
 
 os.chdir(yataroot)
 tools.msg("Retrieving repository")    
-config["YATA"]["repo"]
+# config["YATA"]["repo"]
 proc = subprocess.run("git pull")
 if proc.returncode != 0:
     os.chdir(oldwd)
-    tools.fatal(16, "Error " + proc.returncode + "retrieving repository")
+    tools.fatal(16, "Error " + str(proc.returncode) + "retrieving repository")
 
 os.chdir(oldwd)
 pkgs = dict(config.items("packages"))
@@ -87,5 +87,5 @@ for pkg in pkgs.values():
     if (rc != 0):
         tools.fatal(4, "ERROR MAKING PACKAGE " + pkg)
         
-tools.msg("Moving packages to " + os.environ("R_LIBS_SITE"))
-shutil.copytree(os.environ("R_LIBS_USER"), os.environ("R_LIBS_SITE"))
+tools.msg("Moving packages to " + os.environ.get("R_LIBS_SITE"))
+shutil.copytree(os.environ.get("R_LIBS_USER"), os.environ.get("R_LIBS_SITE"))
