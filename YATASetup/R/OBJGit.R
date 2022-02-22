@@ -16,22 +16,24 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
       }
       ,getPackages = function() {
           browser()
+          pkgs = c()
           greps = NULL
           out = unlist(strsplit(gitout, "\n"))
           res = regexpr(" YATA[a-zA-Z0-9_]+/", out)
+          if (length(res) == 0) return (pkgs)
           len = attr(res, "match.length")
           for (idx in 1:length(res)) {
-              if (res > -1) {
+              if (res[idx] > -1) {
                   greps = c(greps, substr(out[idx], res[idx] + 1, res[idx] + len[idx] - 1))
               }
           }
           greps = unique(greps)
-          pkgs = NULL
+
           rpkgs = objini$getSectionValues("packages")
           for (pkg in rpkgs) {
               if (pkg %in% greps) pkgs = c(pkgs, pkg)
           }
-          pkg
+          pkgs
       }
       ,getBinaries = function() {
 
