@@ -27,6 +27,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
                   greps = c(greps, substr(out[idx], res[idx] + 1, res[idx] + len[idx] - 1))
               }
           }
+          if (is.null(greps)) return (pkgs)
           greps = unique(greps)
 
           rpkgs = objini$getSectionValues("packages")

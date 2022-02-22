@@ -6,6 +6,8 @@ yata_update = function() {
     browser()
     rc = git$pull()
     browser()
+    pkgs = git$getPackages()
+    browser()
 #    makeBinaries(git$getBinaries())
 #    makePackages(git$getPackages())
 }
