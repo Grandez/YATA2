@@ -8,7 +8,6 @@
 #                 Default $HOME/YATA2
 # Requires: git
 #
-# Para evitar que se alargue usamos source
 #####################################################################
 
 # Check git
@@ -17,11 +16,6 @@ if [ $? -eq 127 ] ; then
    echo "git must be installed"
    exit 127
 fi
-
-# Get root of script
-base=${$0%/*}
-
-#source ${base}/script
 
 echo "Getting YATA"
 dest=${HOME}/"YATA2"
@@ -41,22 +35,18 @@ if [ $rc -ne 0 ] ; then
    exit 127
 fi   
 
-source ${base}/YATASetup/xbin/prueba.inc
-prueba()
+echo "Generating yata.cfg"
 
-# echo "Generating yata.cfg"
-# 
-# cfg=$HOME/yata.cfg
-# echo "[base]"  > $cfg
-# echo root=\"$dest\" >> $cfg
-# 
-# distro="linux"
-# os=`uname -a`
-# echo $os | grep -q "Ubuntu"
-# if [ $? -eq 0 ] ; then distro="ubuntu" ; fi
-# 
-# echo distro=\"$distro\" >> $cfg     
-# 
-# # Copia los ejecutables a bin
-# chmod 775 ${dest}/YATASetup/${distro}/.yatasetup
-# . ${dest}/YATASetup/${distro}/.yatasetup `whoami` \'$dest\' "scratch" 
+cfg=$HOME/yata.cfg
+echo "[base]"  > $cfg
+echo root=\"$dest\" >> $cfg
+
+distro="Linux"
+os=`uname -a`
+echo $os | grep -q "Ubuntu"
+if [ $? -eq 0 ] ; then distro="Ubuntu" ; fi
+
+echo distro=\"$distro\" >> $cfg     
+
+chmod 775 ${dest}/YATASetup/${distro}/.yatasetup
+. ${dest}/YATASetup/${distro}/.yatasetup `whoami` \'$dest\' "scratch" 

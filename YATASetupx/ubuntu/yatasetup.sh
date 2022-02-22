@@ -7,6 +7,11 @@ echo "Ejecutando startup en Ubuntu con " $1
 # R_LIBS_SITE
 # R_LIBS_USER
 
+# En perfil del usuario
+
+# export YATA_ROOT=${HOME}/YATA2
+# PATH=YATASetup cosas
+
 #sys.path.insert(0, './lib')
 #import BoxTime
 
