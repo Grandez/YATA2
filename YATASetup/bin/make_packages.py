@@ -76,7 +76,7 @@ oldwd = os.getcwd()
 os.chdir(yataroot)
 tools.msg("Retrieving repository")    
 # config["YATA"]["repo"]
-proc = subprocess.run("git pull")
+proc = subprocess.run(['git', 'pull'])
 if proc.returncode != 0:
     os.chdir(oldwd)
     tools.fatal(16, "Error " + str(proc.returncode) + "retrieving repository")
