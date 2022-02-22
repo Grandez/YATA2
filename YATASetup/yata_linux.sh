@@ -48,5 +48,5 @@ if [ $? -eq 0 ] ; then distro="Ubuntu" ; fi
 
 echo distro=\"$distro\" >> $cfg     
 
-chmod 775 ${dest}/YATASetup/${distro}/yatasetup
-. ${dest}/YATASetup/${distro}/yatasetup "scratch"
+chmod 775 ${dest}/YATASetup/${distro}/.yatasetup
+. ${dest}/YATASetup/${distro}/.yatasetup `whoami` \'$dest\' "scratch" 
