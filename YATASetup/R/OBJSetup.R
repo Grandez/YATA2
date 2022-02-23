@@ -30,7 +30,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
            rc = tryCatch({
                    .makePackages()
-                   0
                 }, system_command_error = function(res) {
                    .msg$ko()
                    .msg$err("ERROR %d making package", res$status)
@@ -38,10 +37,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                 })
            rc = tryCatch({
                    .makeBinaries()
-                   0
                 }, system_command_error = function(res) {
                    .msg$ko()
-                   .msg$err("ERROR %d making package", res$status)
+                   .msg$err("ERROR %d processing scripts", res$status)
                    16
                 })
 
@@ -60,13 +58,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            changes = .git$getPackages()
            if (is.null(changes) || length(changes) == 0) {
                .msg$out("Nothing to do\n")
-               return()
+               return(0)
            }
            rpkgs = .ini$getSectionValues("packages")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
                .msg$out("Nothing to do\n")
-               return()
+               return(0)
            }
 
            for (pkg in pkgs) {
@@ -74,10 +72,31 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                .run$install(pkg)
                .msg$ok()
            }
+           0
        }
        ,.makeBinaries = function () {
+           browser()
            .msg$lbl("Checking binaries and scripts")
-           changes = .git$getBinaries()
+           from = .git$getBinaries()
+           if (is.null(from) || length(from) == 0) {
+               .msg$out("Nothing to do\n")
+               return(0)
+           }
+           to = c()
+           for (script in from) {
+               bin = sub("/x", "/", script)
+               bin = sub("\\.[a-zA-Z0-9]+$", "", bin)
+               bin = sub("YATACLI/[a-zA-Z0-9/]+", "YATACLI/bin/")
+               to = c(to, bin)
+           }
+           for (idx in 1:length(from)) {
+               src = paste0(Sys.getenv("YATA_ROOT"), "/", from[idx])
+               if (file.exists(src)) {
+                   dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
+                   .run$copy(src, dst)
+                   .run$chmod(dst, "775")
+               }
+           }
            browser()
        }
     )

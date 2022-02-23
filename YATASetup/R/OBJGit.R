@@ -34,7 +34,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
           # rpkgs[which(rpkgs %in% greps)]
       }
       ,getBinaries = function() {
-          .parseOut(" YATACLI[a-zA-Z0-9_/]+x[a-zA-Z0-9_]+ ")
+          .parseOut(" YATACLI/[a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ")
           # pkgs = c()
           # greps = NULL
           # out = unlist(strsplit(gitout, "\n"))
