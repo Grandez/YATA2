@@ -33,7 +33,7 @@ YATASTD = R6::R6Class("YATA.R6.STD.MSG"
       }
    )
    ,private = list(
-      length = 50
+      length = 30
       ,line = function(fmt, ...) {
           txt = sprintf(fmt, ...)
           endl = (substr(txt,nchar(txt),nchar(txt)) == "\n")

@@ -113,6 +113,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                })
      }
      ,.manageWebSites = function () {
+         browser()
           .msg$lbl("Making Web sites")
            changed = list()
            changes = .git$getPackages()
