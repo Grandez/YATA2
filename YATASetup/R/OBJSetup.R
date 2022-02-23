@@ -24,9 +24,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            if (res$status == 0) {
                .msg$ok()
            } else {
-               .msg$ok()
+               .msg$ko()
                .msg$err("ERROR %d retrieving repo", res$status)
-               return (1127)
+               return (127)
            }
            rc = tryCatch({
                    .makePackages()
@@ -62,7 +62,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                .msg$out("Nothing to do\n")
                return()
            }
-           rpkgs = objini$getSectionValues("packages")
+           rpkgs = .ini$getSectionValues("packages")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
                .msg$out("Nothing to do\n")
