@@ -86,7 +86,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            for (script in from) {
                bin = sub("/x", "/", script)
                bin = sub("\\.[a-zA-Z0-9]+$", "", bin)
-               bin = sub("YATACLI/[a-zA-Z0-9/]+", "YATACLI/bin/")
+               bin = sub("YATACLI/[a-zA-Z0-9/]+", "YATACLI/bin/", bin)
                to = c(to, bin)
            }
            for (idx in 1:length(from)) {
