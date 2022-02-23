@@ -34,6 +34,17 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.ini = NULL
        ,.msg = NULL
        ,.run = NULL
+       ,.fail = function(rc, fmt, ...) {
+           txt = sprintf(fmt, ...)
+           strerr = structure(list(msg = txt, rc=rc),class = c("YATAERROR", "error", "condition"))
+           stop(strerr)
+        }
+       ,.checkfail = function(rc, rc2, fmt, ...) {
+           if (rc2 == 0) .msg$ok()
+           if (rc2 == 0) .msg$KO()
+           if (rc2 != 0) .fail(rc, "ERROR %d retrieving repo", rc2)
+           FALSE
+        }
        ,.makePackages = function() {
            changed = list()
            changes = .git$getPackages()
@@ -130,17 +141,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
 
            for (pkg in pkgs) .run$copy2web(pkgs)
            .msg$ok()
-     }
-     ,.fail = function(rc, fmt, ...) {
-         txt = sprintf(fmt, ...)
-         strerr = structure(list(msg = txt, rc=rc),class = c("YATAERROR", "error", "condition"))
-         stop(strerr)
-     }
-     ,.checkfail = function(rc, rc2, fmt, ...) {
-         if (rc2 == 0) .msg$ok()
-         if (rc2 == 0) .msg$KO()
-         if (rc2 != 0) .fail(rc, "ERROR %d retrieving repo", rc2)
-         FALSE
      }
     )
 )
