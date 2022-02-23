@@ -2,12 +2,15 @@
 library(YATASetup)
 yata_update = function() {
     setup = YATASetup$new()
-    rc = setup$git$pull()
-
-    if (rc != 0) setup$fatal(127, "Error en el pull")
     browser()
-    pkgs = setup$getPackages()
-    browser()
+    rc = setup$updateYATA()
+    # rc = setup$git$pull()
+    # 
+    # if (rc != 0) setup$fatal(127, "Error en el pull")
+    # browser()
+    # pkgs = setup$getPackages()
+    # browser()
 #    makeBinaries(git$getBinaries())
 #    makePackages(git$getPackages())
+    rc
 }

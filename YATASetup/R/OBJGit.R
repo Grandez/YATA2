@@ -11,7 +11,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
       ,pull = function() {
           res = processx::run("git", c("pull"), FALSE, Sys.getenv("YATA_ROOT"))
           private$gitout = res$stdout
-          res$status
+          res
       }
       ,getPackages = function() {
           browser()
