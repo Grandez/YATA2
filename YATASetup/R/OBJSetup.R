@@ -87,29 +87,30 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            .checkfail(127, res$status, "ERROR %d retrieving repo", res$status)
       }
       ,.managePackages = function() {
+          rc2 = 0
            .msg$lbl("Making packages")
            rc = tryCatch({
                    pkgs = .makePackages()
                    .run$copy2site(pkgs)
-                   .msg$ko()
                 }, system_command_error = function(res) {
-                   .msg$ko()
-                   .msg$err("ERROR %d making package", res$status)
-                   16
+                    rc2 = res$status
                 }, error = function (cond) {
-                    browser()
-                })
+                    rc2=32
+                }
+               ,finally = function() {
+                   .checkfail(32, rc2, "")
+               })
 
       }
      ,.manageBinaries = function() {
+         rc2 = 0
            rc = tryCatch({
                    .makeBinaries()
                 }, system_command_error = function(res) {
-                   .msg$ko()
-                   .msg$err("ERROR %d processing scripts", res$status)
-                   16
-                })
-
+                   rc2 = 16
+               },finally = function() {
+                   .checkfail(32, rc2, "ERROR %d processing scripts", rc2)
+               })
      }
      ,.manageWebSites = function () {
           .msg$lbl("Making Web sites")
@@ -135,6 +136,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
          stop(strerr)
      }
      ,.checkfail = function(rc, rc2, fmt, ...) {
+         if (rc2 == 0) .msg$ok()
+         if (rc2 == 0) .msg$KO()
          if (rc2 != 0) .fail(rc, "ERROR %d retrieving repo", rc2)
          FALSE
      }
