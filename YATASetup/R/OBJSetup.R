@@ -36,6 +36,15 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                    .msg$err("ERROR %d making package", res$status)
                    16
                 })
+           rc = tryCatch({
+                   .makeBinaries()
+                   0
+                }, system_command_error = function(res) {
+                   .msg$ko()
+                   .msg$err("ERROR %d making package", res$status)
+                   16
+                })
+
            if (rc != 0) return (rc)
 
            0
@@ -49,12 +58,27 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.makePackages = function() {
            .msg$lbl("Making packages")
            changes = .git$getPackages()
-           if (is.null(changes) || length(changes) == 0) .msg$out("Nothing to do\n")
-           for (pkg in changes) {
+           if (is.null(changes) || length(changes) == 0) {
+               .msg$out("Nothing to do\n")
+               return()
+           }
+           rpkgs = objini$getSectionValues("packages")
+           pkgs = rpkgs[which(rpkgs %in% changes)]
+           if (length(pkgs) == 0) {
+               .msg$out("Nothing to do\n")
+               return()
+           }
+
+           for (pkg in pkgs) {
                .msg$out("\tMaking %s", pkg)
                .run$install(pkg)
                .msg$ok()
            }
+       }
+       ,.makeBinaries = function () {
+           .msg$lbl("Checking binaries and scripts")
+           changes = .git$getBinaries()
+           browser()
        }
     )
 )
