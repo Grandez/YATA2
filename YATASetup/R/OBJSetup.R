@@ -38,6 +38,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            rc = tryCatch({
                    .makeBinaries()
                 }, system_command_error = function(res) {
+                    browser()
                    .msg$ko()
                    .msg$err("ERROR %d processing scripts", res$status)
                    16
