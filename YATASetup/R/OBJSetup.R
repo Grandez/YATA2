@@ -18,33 +18,15 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
       ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
-          .msg$out("Retrieving repository")
-           res = .git$pull()
-           if (res$status == 0) {
-               .msg$ok()
-           } else {
-               .msg$ko()
-               .msg$err("ERROR %d retrieving repo", res$status)
-               return (127)
-           }
-           rc = tryCatch({
-                   .makePackages()
-                }, system_command_error = function(res) {
-                   .msg$ko()
-                   .msg$err("ERROR %d making package", res$status)
-                   16
-                })
-           rc = tryCatch({
-                   .makeBinaries()
-                }, system_command_error = function(res) {
-                   .msg$ko()
-                   .msg$err("ERROR %d processing scripts", res$status)
-                   16
-                })
-
-           if (rc != 0) return (rc)
-
-           0
+          rc = tryCatch({
+             .retrieveRepo()
+             .managePackages()
+             .manageBinaries()
+             .manageWebSites()
+             0
+          }, YATAERROR = function (cond) {
+             cond$rc
+          })
       }
     )
    ,private = list(
@@ -53,25 +35,26 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.msg = NULL
        ,.run = NULL
        ,.makePackages = function() {
-           .msg$lbl("Making packages")
+           changed = list()
            changes = .git$getPackages()
            if (is.null(changes) || length(changes) == 0) {
                .msg$out("Nothing to do\n")
-               return(0)
+               return(changed)
            }
            rpkgs = .ini$getSectionValues("packages")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
                .msg$out("Nothing to do\n")
-               return(0)
+               return(changed)
            }
 
            for (pkg in pkgs) {
                .msg$out("\tMaking %s", pkg)
                .run$install(pkg)
                .msg$ok()
+               changed = append(changed, pkg)
            }
-           0
+           changed
        }
        ,.makeBinaries = function () {
            .msg$lbl("Checking binaries and scripts")
@@ -98,5 +81,62 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            .msg$ok()
            0
        }
+      ,.retrieveRepo = function() {
+          .msg$out("Retrieving repository")
+           res = .git$pull()
+           .checkfail(127, res$status, "ERROR %d retrieving repo", res$status)
+      }
+      ,.managePackages = function() {
+           .msg$lbl("Making packages")
+           rc = tryCatch({
+                   pkgs = .makePackages()
+                   .run$copy2site(pkgs)
+                   .msg$ko()
+                }, system_command_error = function(res) {
+                   .msg$ko()
+                   .msg$err("ERROR %d making package", res$status)
+                   16
+                }, error = function (cond) {
+                    browser()
+                })
+
+      }
+     ,.manageBinaries = function() {
+           rc = tryCatch({
+                   .makeBinaries()
+                }, system_command_error = function(res) {
+                   .msg$ko()
+                   .msg$err("ERROR %d processing scripts", res$status)
+                   16
+                })
+
+     }
+     ,.manageWebSites = function () {
+          .msg$lbl("Making Web sites")
+           changed = list()
+           changes = .git$getPackages()
+           if (is.null(changes) || length(changes) == 0) {
+               .msg$out("Nothing to do\n")
+               return(changed)
+           }
+           rpkgs = .ini$getSectionValues("web")
+           pkgs = rpkgs[which(rpkgs %in% changes)]
+           if (length(pkgs) == 0) {
+               .msg$out("Nothing to do\n")
+               return(changed)
+           }
+
+           for (pkg in pkgs) .run$copy2web(pkgs)
+           .msg$ok()
+     }
+     ,.fail = function(rc, fmt, ...) {
+         txt = sprintf(fmt, ...)
+         strerr = structure(list(msg = txt, rc=rc),class = c("YATAERROR", "error", "condition"))
+         stop(strerr)
+     }
+     ,.checkfail = function(rc, rc2, fmt, ...) {
+         if (rc2 != 0) .fail(rc, "ERROR %d retrieving repo", rc2)
+         FALSE
+     }
     )
 )

@@ -13,6 +13,24 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
        ,chmod = function(what, mode) {
            processx::run( 'chmod', c(mode, what), TRUE)
        }
+       ,copy2site = function(pkgs) {
+           libuser = Sys.getenv("R_LIBS_USER")
+           libsite = Sys.getenv("R_LIBS_SITE")
+           lapply(pkgs, function (pkg) {
+               from = file.path(libuser, pkg)
+               to   = file.path(libsite, pkg)
+               file.copy(from, to, overwrite=TRUE, recursive = TRUE)
+           })
+       }
+       ,copy2web = function(pkgs) {
+           libuser = Sys.getenv("YATA_ROOT")
+           libweb  = Sys.getenv("R_LIBS_SHINY")
+           lapply(pkgs, function (pkg) {
+               from = file.path(libuser, pkg)
+               to   = file.path(libweb, pkg)
+               file.copy(from, to, overwrite=TRUE, recursive = TRUE)
+           })
+       }
 
     )
    ,private = list(
