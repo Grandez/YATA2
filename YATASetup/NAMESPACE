@@ -4,3 +4,4 @@ import(processx)
 import(ini)
 
 export(YATASetup)
+export(checkEnv)

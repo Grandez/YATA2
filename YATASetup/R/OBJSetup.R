@@ -18,7 +18,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
       ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
-          browser()
           .msg$out("Retrieving repository")
            res = .git$pull()
            if (res$status == 0) {
@@ -38,7 +37,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            rc = tryCatch({
                    .makeBinaries()
                 }, system_command_error = function(res) {
-                    browser()
                    .msg$ko()
                    .msg$err("ERROR %d processing scripts", res$status)
                    16
@@ -76,7 +74,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            0
        }
        ,.makeBinaries = function () {
-           browser()
            .msg$lbl("Checking binaries and scripts")
            from = .git$getBinaries()
            if (is.null(from) || length(from) == 0) {
@@ -98,7 +95,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                    .run$chmod(dst, "775")
                }
            }
-           browser()
+           .msg$ok()
+           0
        }
     )
 )
