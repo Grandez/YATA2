@@ -12,7 +12,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           private$.msg = YATASTD$new()
           private$.ini = YATAINI$new()
           private$.run = YATARUN$new()
-          private$.git = YATAGIT$new(.ini)
+          private$.git = YATAGIT$new()
       }
       #,print       = function()             {}
       ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
