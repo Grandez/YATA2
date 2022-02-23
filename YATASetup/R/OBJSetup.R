@@ -49,14 +49,11 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.makePackages = function() {
            .msg$lbl("Making packages")
            changes = .git$getPackages()
-           if (is.null(changes)) .msg$out("Nothing to do\n")
-           pkgs = .ini$getSectionValues("packages")
-           for (pkg in pkgs) {
-               if (pkg %in% changes ) {
-                   .msg$out("\tMaking %s", pkg)
-                   .run$install(pkg)
-                   .msg$ok()
-               }
+           if (is.null(changes) || length(changes) == 0) .msg$out("Nothing to do\n")
+           for (pkg in changes) {
+               .msg$out("\tMaking %s", pkg)
+               .run$install(pkg)
+               .msg$ok()
            }
        }
     )
