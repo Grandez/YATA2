@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
 library(YATASetup)
 yata_update = function() {
-    ini = YATAINI$new()
-    git = YATAGIT$new(ini)
+    setup = YATASetup$new()
+    rc = setup$git$pull()
+
+    if (rc != 0) setup$fatal(127, "Error en el pull")
     browser()
-    rc = git$pull()
-    browser()
-    pkgs = git$getPackages()
+    pkgs = setup$getPackages()
     browser()
 #    makeBinaries(git$getBinaries())
 #    makePackages(git$getPackages())

@@ -1,5 +1,4 @@
 YATAGIT = R6::R6Class("YATA.R6.GIT"
-   ,inherit    = YATASTD
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,portable   = FALSE
