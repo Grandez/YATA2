@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 library(YATASetup)
 yata_update = function() {
-    # CAmbiado otra vez
+    # CAmbiado otra
     setup = YATASetup$new()
     browser()
     rc = setup$updateYATA()
