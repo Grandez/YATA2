@@ -8,7 +8,7 @@ YATASTD = R6::R6Class("YATA.R6.STD.MSG"
       ,out = function(fmt, ...) { cat(line(fmt, ...)) ; invisible(self) }
       ,err = function(fmt, ...) {
           sink(stderr())
-          cat(red(line(fmt, ...)))
+          cat(red(paste0(line(fmt, ...), "\n")))
           sink()
           invisible(self)
       }
