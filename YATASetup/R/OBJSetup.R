@@ -132,7 +132,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .msg$lbl("Checking services")
           base=Sys.getenv("YATA_ROOT")
           from = .git$getServices()
-          browser()
           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
           for (srv in from) {
               f = paste0(base,srv)
@@ -146,7 +145,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           }
      }
      ,.manageWebSites = function () {
-         browser()
           .msg$lbl("Making Web sites")
            changed = list()
            changes = .git$getPackages()
