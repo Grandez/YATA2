@@ -36,7 +36,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .msg$lbl("Generating/Updating services")
           if (full) updateYATA()
           path = file.path(Sys.getenv("YATA_ROOT"), "YATACLI/services")
-          .makeServices(path)
+          .makeServices(list.files(path))
           .msg$ok()
           0
       }
