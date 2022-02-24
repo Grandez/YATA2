@@ -9,7 +9,8 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
           res
       }
       ,getPackages = function() { .parseOut(" YATA[a-zA-Z0-9_]+/")                       }
-      ,getBinaries = function() { .parseOut(" YATACLI/[a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ") }
+      ,getBinaries = function() { .parseOut(" YATACLI/[a-rt-z][a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ") }
+      ,getServices = function() { .parseOut(" YATACLI/services/x[a-zA-Z0-9_\\.]+ ") }
     )
    ,private = list(
         gitout = ""
@@ -26,6 +27,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
               }
               greps = unique(greps)
           }
+          if (length(greps) == 0 ) greps = c()
           greps
        }
     )

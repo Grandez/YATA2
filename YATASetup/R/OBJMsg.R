@@ -4,29 +4,27 @@ YATASTD = R6::R6Class("YATA.R6.STD.MSG"
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
-       lbl = function(fmt, ...)  { cat(line(fmt, ...)) }
-      ,out  = function(fmt, ...) { cat(line(fmt, ...)) }
-      ,err  = function(fmt, ...) {
+       lbl = function(fmt, ...) { cat(line(fmt, ...)) ; invisible(self) }
+      ,out = function(fmt, ...) { cat(line(fmt, ...)) ; invisible(self) }
+      ,err = function(fmt, ...) {
           sink(stderr())
           cat(red(line(fmt, ...)))
           sink()
+          invisible(self)
       }
       ,fatal  = function(rc, fmt, ...) {
           self$err(fmt, ...)
           quit(save="no", status = rc)
       }
-      ,outfmt = function(attr, fmt, ...) { cat(attr(line(fmt, ...))) }
+      ,outfmt = function(attr, fmt, ...) { cat(attr(line(fmt, ...))) ; invisible(self) }
       ,errfmt = function(attr, fmt, ...) {
           sink(stderr())
           cat(attr(line(fmt, ...)))
           sink()
+          invisible(self)
       }
-      ,logical = function(object, expected, result) {
-         txt = paste0("ERROR in ", object, ". Expected: ", expected, "- Found: ", result)
-         err(txt)
-      }
-      ,ok = function() { outfmt(bold,"\tOK\n") }
-      ,ko = function() { outfmt(bold $ red,"\tKO\n") }
+      ,ok = function() { outfmt(bold,"\tOK\n"); FALSE }
+      ,ko = function() { outfmt(bold $ red,"\tKO\n"); TRUE }
       ,msgBlock = function(txt) {
           cat(txt)
           # write(txt, stdout())

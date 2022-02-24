@@ -13,6 +13,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           private$.ini = YATAINI$new()
           private$.run = YATARUN$new()
           private$.git = YATAGIT$new()
+          if (file.exists(file.path(Sys.getenv("HOME"), "yata.cfg"))) {
+              .ini$add(file.path(Sys.getenv("HOME"), "yata.cfg"))
+          }
       }
       #,print       = function()             {}
       ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
@@ -21,8 +24,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           rc = tryCatch({
              .retrieveRepo()
              .managePackages()
-             .manageBinaries()
              .manageWebSites()
+             .manageBinaries()
+             .manageServices()
              0
           }, YATAERROR = function (cond) {
              cond$rc
@@ -123,6 +127,23 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                },finally = function() {
                    .checkfail(32, rc2, "ERROR %d processing scripts", rc2)
                })
+     }
+     ,.manageServices = function() {
+          .msg$lbl("Checking services")
+          base=Sys.getenv("YATA_ROOT")
+          from = .git$getServices()
+          browser()
+          if (length(from) == 0) return (.msg$out("Nothing to do\n"))
+          for (srv in from) {
+              f = paste0(base,srv)
+              data = processFile(f, .ini)
+              f = sub(".*/x", paste0(.ini$getSite(),"/"))
+              f = sub("\\.[a-zA-Z0-9]+$", "", f)
+              ftmp = sub(".*/","/tmp/")
+              writeLines(data,ftmp)
+              .run$copy(ftmp, f, .ini$getUserPass())
+              .run$chmod(f, 775, .ini$getUserPass())
+          }
      }
      ,.manageWebSites = function () {
          browser()
