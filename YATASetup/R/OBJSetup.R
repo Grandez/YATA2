@@ -73,7 +73,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                .msg$out("Nothing to do\n")
                return(changed)
            }
-
+           .msg$out("\n")
            for (pkg in pkgs) {
                .msg$out("\tMaking %s", pkg)
                .run$install(pkg)
