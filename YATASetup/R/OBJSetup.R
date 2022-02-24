@@ -2,11 +2,11 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,portable   = FALSE
-   ,active = list(
-        ini = function(value) { private$.ini }
-       ,git = function(value) { private$.git }
-       ,msg = function(value) { private$.msg }
-   )
+   # ,active = list(
+   #      ini = function(value) { private$.ini }
+   #     ,git = function(value) { private$.git }
+   #     ,msg = function(value) { private$.msg }
+   # )
    ,public = list(
       initialize    = function() {
           private$.msg = YATASTD$new()
@@ -18,8 +18,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           }
       }
       #,print       = function()             {}
-      ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
-      ,getPackages = function()             { .git$getPackages()       }
+      # ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
+      # ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
           rc = tryCatch({
              .retrieveRepo()
@@ -31,6 +31,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           }, YATAERROR = function (cond) {
              cond$rc
           })
+      }
+      ,updateServices = function(full = FALSE) {
+          .msg$lbl("Generating/Updating services")
+          if (full) updateYATA()
+          path = file.path(Sys.getenv("YATA_ROOT"), "YATACLI/services")
+          .makeServices(services)
+          .msg$ok()
+          0
       }
     )
    ,private = list(
@@ -130,19 +138,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
      }
      ,.manageServices = function() {
           .msg$lbl("Checking services")
-          base=Sys.getenv("YATA_ROOT")
           from = .git$getServices()
           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
-          for (srv in from) {
-              f = paste0(base,srv)
-              data = processFile(f, .ini)
-              f = sub(".*/x", paste0(.ini$getSite(),"/"))
-              f = sub("\\.[a-zA-Z0-9]+$", "", f)
-              ftmp = sub(".*/","/tmp/")
-              writeLines(data,ftmp)
-              .run$copy(ftmp, f, .ini$getUserPass())
-              .run$chmod(f, 775, .ini$getUserPass())
-          }
+          .makeServices(from)
      }
      ,.manageWebSites = function () {
           .msg$lbl("Making Web sites")
@@ -161,6 +159,21 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
 
            for (pkg in pkgs) .run$copy2web(pkgs)
            .msg$ok()
+     }
+     ,.makeServices = function (services) {
+          base=Sys.getenv("YATA_ROOT")
+          for (srv in services) {
+              f = paste0(base,srv)
+              data = processFile(f, .ini)
+              f = sub(".*/x", paste0(.ini$getSite(),"/"))
+              f = sub("\\.[a-zA-Z0-9]+$", "", f)
+              ftmp = sub(".*/","/tmp/")
+              writeLines(data,ftmp)
+              .run$copy(ftmp, f, .ini$getUserPass())
+              .run$chmod(f, 775, .ini$getUserPass())
+              file.remove(ftmp)
+          }
+
      }
     )
 )
