@@ -2,7 +2,7 @@
 library(YATASetup)
 process = function() {
     setup = YATASetup$new()
-    rc = setup$updateYATA()
+    rc = setup$updateServices()
     invisible(rc)
 }
 process()
