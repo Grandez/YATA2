@@ -36,14 +36,17 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.msg = NULL
        ,.run = NULL
        ,.fail = function(rc, fmt, ...) {
+           .msg$err(fmt, ...)
            txt = sprintf(fmt, ...)
            strerr = structure(list(msg = txt, rc=rc),class = c("YATAERROR", "error", "condition"))
            stop(strerr)
         }
        ,.checkfail = function(rc, rc2, fmt, ...) {
-           if (rc2 == 0) .msg$ok()
-           if (rc2 == 0) .msg$KO()
-           if (rc2 != 0) .fail(rc, "ERROR %d retrieving repo", rc2)
+           if (rc2 != 0) {
+               .msg$KO()
+               .fail(rc, "ERROR %d retrieving repo", rc2)
+           }
+           .msg$ok()
            FALSE
         }
        ,.makePackages = function() {
