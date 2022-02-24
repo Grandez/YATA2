@@ -18,6 +18,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
       ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
+          browser()
           rc = tryCatch({
              .retrieveRepo()
              .managePackages()
