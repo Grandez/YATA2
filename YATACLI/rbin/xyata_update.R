@@ -12,5 +12,5 @@ yata_update = function() {
     # browser()
 #    makeBinaries(git$getBinaries())
 #    makePackages(git$getPackages())
-    rc
+    invisible(rc)
 }
