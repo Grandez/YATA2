@@ -1,5 +1,4 @@
 start = function(port) {
-    # Nada
     YATARest = YATAREST$new()
     if (missing(port)) {
         port = YATARest$getPort()
