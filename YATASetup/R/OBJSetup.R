@@ -9,7 +9,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
    # )
    ,public = list(
       initialize    = function() {
-          cat ("Iniciando")
           private$.msg = YATASTD$new()
           private$.ini = YATAINI$new()
           private$.run = YATARUN$new()
