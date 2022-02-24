@@ -1,0 +1,14 @@
+[Unit]
+Description=COVID-19 Shiny App
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=shiny
+ExecStart=nohup R -e "shiny::runApp('/home/shiny/covidapp-shiny/02-shiny-app/app', port = 3838, host = '0.0.0.0')" > /home/shiny/covidapp.log 2>&1 &
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+# Creamos en SERVER (/srv/yata)
+# $SERVER/services
+# y ahi los scripts de arranque y parada
+
+# Luego creamos los ficheros en /etc/systemd/system
+# como xxx.service
+
+
+[Unit]
+Description=REST service for YATA
+After=network.target syslog.target
+
+[Service]
+Type=simple
+#EnvironmentFile=-/etc/crypto-policies/back-ends/opensshserver.config
+#EnvironmentFile=-/etc/sysconfig/sshd
+ExecStart=/srv/yata/services/yataRest start #Aqui el paths al script /usr/sbin/sshd -D $OPTIONS $CRYPTO_POLICY
+#Execstop=kill -KILL -- pid
+#ExecReload
+#RestartSec=2 #Tiempo de espera en la recarga
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

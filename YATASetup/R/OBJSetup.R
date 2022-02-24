@@ -89,8 +89,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                    .run$chmod(dst, "775")
                }
            }
-           .msg$ok()
-           0
        }
       ,.retrieveRepo = function() {
           .msg$out("Retrieving repository")
