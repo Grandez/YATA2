@@ -40,6 +40,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .msg$ok()
           0
       }
+      ,updatePackages = function() {
+          .msg$lbl("Generating/Updating packages")
+          rpkgs = .ini$getSectionValues("packages")
+          .makePackages(rpkgs)
+          0
+      }
+
     )
    ,private = list(
         .git = NULL
@@ -60,15 +67,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            .msg$ok()
            FALSE
         }
-       ,.makePackages = function() {
-           changed = list()
-           changes = .git$getPackages()
-           if (is.null(changes) || length(changes) == 0) {
+       ,.makePackages = function(packages) {
+           changed = c()
+           if (length(packages) == 0) {
                .msg$out("Nothing to do\n")
                return(changed)
            }
            rpkgs = .ini$getSectionValues("packages")
-           pkgs = rpkgs[which(rpkgs %in% changes)]
+           pkgs = rpkgs[which(rpkgs %in% packages)]
            if (length(pkgs) == 0) {
                .msg$out("Nothing to do\n")
                return(changed)
@@ -78,7 +84,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                .msg$out("\tMaking %s", pkg)
                .run$install(pkg)
                .msg$ok()
-               changed = append(changed, pkg)
+               changed = c(changed, pkg)
            }
            changed
        }
@@ -112,19 +118,18 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       }
       ,.managePackages = function() {
           rc2 = 0
-           .msg$lbl("Making packages")
-           rc = tryCatch({
-                   pkgs = .makePackages()
-                   .run$copy2site(pkgs)
-                }, system_command_error = function(res) {
-                    rc2 = res$status
-                }, error = function (cond) {
-                    rc2=32
-                }
-               ,finally = function() {
-                   .checkfail(32, rc2, "")
-               })
-
+          .msg$lbl("Making packages")
+          rc = tryCatch({
+                  pkgs = .makePackages(.git$getPackages())
+                  .run$copy2site(pkgs)
+               }, system_command_error = function(res) {
+                  rc2 = res$status
+               }, error = function (cond) {
+                  rc2=32
+               }
+              ,finally = function() {
+                 .checkfail(32, rc2, "")
+              })
       }
      ,.manageBinaries = function() {
          rc2 = 0
