@@ -3,7 +3,6 @@ library(YATASetup)
 yata_update = function() {
     # CAmbiado otra
     setup = YATASetup$new()
-    browser()
     rc = setup$updateYATA()
     # rc = setup$git$pull()
     # 

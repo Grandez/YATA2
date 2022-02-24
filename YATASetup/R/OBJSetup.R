@@ -18,7 +18,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
       ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
-          browser()
           rc = tryCatch({
              .retrieveRepo()
              .managePackages()
@@ -43,7 +42,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
         }
        ,.checkfail = function(rc, rc2, fmt, ...) {
            if (rc2 != 0) {
-               .msg$KO()
+               .msg$ko()
                .fail(rc, "ERROR %d retrieving repo", rc2)
            }
            .msg$ok()
