@@ -15,6 +15,11 @@ YATAPage =  function(title = NULL,id = NULL,
                      #,tabs = NULL
                      ) {
 
+markTabAsSelected <- function(x) {
+  attr(x, "selected") <- TRUE
+  x
+}
+
 findAndMarkSelectedTab = function (tabs, selected, foundSelected)
 {
     tabs <- lapply(tabs, function(div) {
