@@ -8,7 +8,6 @@ YATATheme = function(base = "cerulean") {
 }
 
 .addSass = function(theme) {
-
     base <- system.file("extdata/www/yata", "yatabase.scss", package = "YATAWebCore")
     bs_add_rules(theme, sass::sass_file(base))
     theme
