@@ -310,7 +310,7 @@ buildTabset = function (tabs, ulClass, textFilter = NULL, id = NULL, selected = 
         #                             Shiny.onInputChange("dimension", dimension);
         #                         });
         #                     ')
-      ,theme = theme, lang=YATAWEBDEF$lang # ) # end boostrappage
+      ,theme = theme, lang=YATAWEBDEF$lang # ) # end boostrap page
 
    )
 
