@@ -46,6 +46,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .makePackages(rpkgs)
           0
       }
+      ,fatal = function(fmt, ...) {
+          .fail(16, fmt, ...)
+      }
 
     )
    ,private = list(
