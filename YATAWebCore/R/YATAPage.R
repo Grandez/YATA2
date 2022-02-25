@@ -57,8 +57,8 @@ anyNamed = function (x) {
         return(FALSE)
     any(nzchar(nms))
 }
-withPrivateSeed = function (expr)
-{
+withPrivateSeed = function (expr) {
+    .globals = list() # No tenemos .globals
     if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
         hasOrigSeed <- TRUE
         origSeed <- .GlobalEnv$.Random.seed
@@ -66,6 +66,7 @@ withPrivateSeed = function (expr)
     else {
         hasOrigSeed <- FALSE
     }
+
     if (is.null(.globals$ownSeed)) {
         if (hasOrigSeed) {
             rm(.Random.seed, envir = .GlobalEnv, inherits = FALSE)
@@ -85,10 +86,95 @@ withPrivateSeed = function (expr)
     })
     expr
 }
+randomInt <- function(min, max) {
+  if (missing(max)) {
+    max <- min
+    min <- 0
+  }
+  if (min < 0 || max <= min)
+    stop("Invalid min/max values")
+
+  min + sample(max-min, 1)-1
+}
+
 p_randomInt = function (...)
 {
     withPrivateSeed(randomInt(...))
 }
+isTabSelected <- function(x) {
+  isTRUE(attr(x, "selected", exact = TRUE))
+}
+
+# Returns the icon object (or NULL if none), provided either a
+# tabPanel, OR the icon class
+getIcon <- function(tab = NULL, iconClass = NULL) {
+  if (!is.null(tab)) iconClass <- tab$attribs$`data-icon-class`
+  if (!is.null(iconClass)) {
+    if (grepl("fa-", iconClass, fixed = TRUE)) {
+      # for font-awesome we specify fixed-width
+      iconClass <- paste(iconClass, "fa-fw")
+    }
+    icon(name = NULL, class = iconClass)
+  } else NULL
+}
+
+# Builds tabPanel/navbarMenu items (this function used to be
+# declared inside the buildTabset() function and it's been
+# refactored for clarity and reusability). Called internally
+# by buildTabset.
+buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
+                         divTag = NULL, textFilter = NULL) {
+
+  divTag <- if (!is.null(divTag)) divTag else tabs[[index]]
+
+  if (is.character(divTag) && !is.null(textFilter)) {
+    # text item: pass it to the textFilter if it exists
+    liTag <- textFilter(divTag)
+    divTag <- NULL
+
+  } else if (inherits(divTag, "shiny.navbarmenu")) {
+    # navbarMenu item: build the child tabset
+    tabset <- buildTabset(divTag$tabs, "dropdown-menu",
+      navbarMenuTextFilter, foundSelected = foundSelected)
+
+    # if this navbarMenu contains a selected item, mark it active
+    containsSelected <- containsSelectedTab(divTag$tabs)
+    liTag <- tags$li(
+      class = paste0("dropdown", if (containsSelected) " active"),
+      tags$a(href = "#",
+        class = "dropdown-toggle", `data-toggle` = "dropdown",
+        `data-value` = divTag$menuName,
+        getIcon(iconClass = divTag$iconClass),
+        divTag$title, tags$b(class = "caret")
+      ),
+      tabset$navList   # inner tabPanels items
+    )
+    # list of tab content divs from the child tabset
+    divTag <- tabset$content$children
+
+  } else {
+    # tabPanel item: create the tab's liTag and divTag
+    tabId <- paste("tab", tabsetId, index, sep = "-")
+    liTag <- tags$li(
+               tags$a(
+                 href = paste("#", tabId, sep = ""),
+                 `data-toggle` = "tab",
+                 `data-value` = divTag$attribs$`data-value`,
+                 getIcon(iconClass = divTag$attribs$`data-icon-class`),
+                 divTag$attribs$title
+               )
+    )
+    # if this tabPanel is selected item, mark it active
+    if (isTabSelected(divTag)) {
+      liTag$attribs$class <- "active"
+      divTag$attribs$class <- "tab-pane active"
+    }
+    divTag$attribs$id <- tabId
+    divTag$attribs$title <- NULL
+  }
+  return(list(liTag = liTag, divTag = divTag))
+}
+
 buildTabset = function (tabs, ulClass, textFilter = NULL, id = NULL, selected = NULL,
     foundSelected = FALSE)
 {

@@ -38,10 +38,10 @@
                  role = "button"
                 ,shiny::tags$span( id="left_side_closed"
                                   ,class="yata_side_open"
-                                  ,shiny::icon("chevron-right fa-lg", style="padding-top: 12px"))
+                                  ,shiny::icon("chevron-right" ,"fa-lg", style="padding-top: 12px"))
                 ,shiny::tags$span( id="left_side_open"
                                   ,class="yata_side_closed"
-                                  ,shiny::icon("chevron-left fa-lg", style= "padding-top: 12px"))
+                                  ,shiny::icon("chevron-left" ,"fa-lg", style= "padding-top: 12px"))
          )),
          shiny::div(class="navbar yata_nav_left", tabnav),
          shiny::tags$div(id="yata_right_menu_btn", # right menu
@@ -54,11 +54,11 @@
                                        `data-toggle` = "yataoffcanvas", role = "button"
                                        ,shiny::tags$span( id="right_side_closed"
                                                          ,class="yata_side_open"
-                                                         ,shiny::icon("gear fa-lg", style="padding-top: 12px"))
+                                                         ,shiny::icon("cog" ,"fa-lg", style="padding-top: 12px"))
                                        ,shiny::tags$span( id="right_side_open", class="yata_side_closed"
-                                                         ,shiny::icon("cogs fa-lg", style= "padding-top: 12px"))
+                                                         ,shiny::icon("cogs" ,"fa-lg", style= "padding-top: 12px"))
                         )
-                        ,shiny::tags$a(shiny::icon("info fa-lg", style="padding-top: 12px"))
+                        ,shiny::tags$a(shiny::icon("info" ,"fa-lg", style="padding-top: 12px"))
                       )
      )
 }
