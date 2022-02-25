@@ -4,5 +4,6 @@ import(processx)
 import(ini)
 import(rlist)
 
+exportPattern("yata_.*")
 export(YATASetup)
 export(checkEnv)
