@@ -5,7 +5,7 @@ yata_test = function() {
 yata_ports = function() {
     setup = YATASetup$new()
     core <- system.file(package = "YATACore")
-    if (nzchar(core)) setup$fatal("YATACore is not available yet")
+    if (nchar(core) == 0) setup$fatal("YATACore is not available yet")
     core_available = supressWarnings(require("YATACore"))
     message("Hecho")
 
