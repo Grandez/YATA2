@@ -1,4 +1,5 @@
 modOperRegInput = function(id, title) {
+    
    ns = NS(id)
    main = tagList(  
    yataRow(align="center", h2(YATAWEB$MSG$get("TITLE.REGULARIZATION")))

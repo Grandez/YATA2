@@ -1,4 +1,5 @@
 modOperRegServer = function(id, full, pnl, parent) {
+    
    ns = NS(id)
    ns2 = NS(full)
    moduleServer(id, function(input, output, session) {
