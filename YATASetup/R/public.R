@@ -3,6 +3,7 @@ yata_test = function() {
     message("Esta todo bien")
 }
 yata_ports = function() {
+    library(base)
     setup = YATASetup$new()
     core <- system.file(package = "YATACore")
     if (nchar(core) == 0) setup$fatal("YATACore is not available yet")
