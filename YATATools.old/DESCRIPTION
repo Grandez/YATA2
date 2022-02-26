@@ -9,4 +9,10 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.1.0), R6, hash, stringr
+Depends: R (>= 4.0,4)
+        ,R6
+        ,hash
+        ,stringr
+Imports:
+    hash
+   ,stringr

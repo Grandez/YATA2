@@ -12,5 +12,6 @@ LazyData: true
 Depends:
     R               (>= 4.0)
    ,shiny           (>= 1.6)
+   ,YATABase
    ,YATACore        (>= 1.0) 
    ,YATAWebWidgets  (>= 1.0) 

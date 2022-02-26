@@ -10,7 +10,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
        initialize = function(code, eurusd, dbf) {
           super$initialize  (code, "CoinMarketCap", eurusd, dbf)
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
-          private$hID     = HashMap$new()
+          private$hID     = YATABase$map
           #getLatest()
        }
       ,loadTickers = function() {

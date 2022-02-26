@@ -12,4 +12,4 @@ LazyData: true
 imports: httr
         ,jsonlite
         ,rlist
-Depends: YATATools (>= 1.0)
+Depends: YATABase

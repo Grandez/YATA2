@@ -15,5 +15,5 @@ Imports:
     ,configr
     ,R6
     ,lubridate
-Depends: YATADB, YATAProviders, YATATools
+Depends: YATABase, YATADB, YATAProviders
 

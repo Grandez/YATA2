@@ -1,7 +1,7 @@
 .onLoad <- function(libname, pkgname){
     #JGG Chequear que se esta cargando desde otra libreria
     if (!interactive()) {
-        message("Cargando DB batch")
+        message("Cargando YATADB")
         #if (!exists(YATACore::YATAEnv)) stop("This library should loaded from YATACore")
     }
 

@@ -202,7 +202,7 @@ buildTabset = function (tabs, ulClass, textFilter = NULL, id = NULL, selected = 
     makeMessageHandler = function(name, funcName) {
        if (missing(funcName)) funcName = name
        scr = "Shiny.addCustomMessageHandler('yata"
-       scr = paste0(scr, titleCase(name), "', function(data) {")
+       scr = paste0(scr, YATABase$str$titleCase(name), "', function(data) {")
        scr = paste0(scr, YATAWEBDEF$jsapp, ".", funcName, "(data); })")
        scr
     }

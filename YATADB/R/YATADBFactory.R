@@ -11,8 +11,8 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
               private$dbBase  = connect(base)
           } else {
                sf     = system.file("extdata", "yatadb.ini", package=packageName())
-               cfg    = read.config(file=sf)
-               private$dbBase = connect(cfg$base)
+               cfg    = YATABase$ini(sf)
+               private$dbBase = connect(cfg$getSection("base"))
           }
        }
       ,print      = function()     { message("Databases Factory") }
@@ -27,7 +27,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           if (missing(info)) stop("Se ha llamado a setDB sin datos")
           if (!is.null(dbAct)) dbAct$disconnect()
           private$dbAct   = connect(info)
-          private$objects = HashMap$new()
+          private$objects = YATABase$map
           private$dbID = info$id
           invisible(self)
       }
@@ -49,7 +49,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
        dbBase  = NULL
       ,dbAct   = NULL
       ,dbID    = NULL
-      ,objects = HashMap$new()
+      ,objects = YATABase$map
       ,connect = function(info) {
           if (info$engine == "MariaDB") {
               MARIADB$new(info)

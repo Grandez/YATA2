@@ -34,7 +34,7 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
 
    )
    ,private = list(
-       providers = HashMap$new()
+       providers = YATABase$map
       ,dbf    = NULL
       ,EUR    = NULL
       ,mktcap = NULL

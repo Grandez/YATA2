@@ -15,7 +15,7 @@ R6Icons = R6::R6Class("R6.ICONS"
     ,private = list(
         icons = NULL
        ,loadIcons = function() {
-           icons = HashMap$new()
+           icons = YATABase$map
            sf = system.file("extdata/icons", package="YATACore")
            lapply(list.files(sf),function(x) icons$put(x, paste0("icons/", x)))
            sf = normalizePath("P:\\R\\YATA2\\YATAExternal\\icons")

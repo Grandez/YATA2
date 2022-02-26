@@ -4,7 +4,7 @@ unloadNamespace("YATADT")
 unloadNamespace("YATAProviders")
 unloadNamespace("YATADB")
 unloadNamespace("YATAWebWidgets")
-unloadNamespace("YATATools")
+unloadNamespace("YATABase")
 
 # Core
 library(utils)
@@ -16,7 +16,7 @@ suppressMessages(library(tidyr, warn.conflicts = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE))
 
 # YATA
-suppressMessages(library(YATATools,      warn.conflicts = FALSE))
+suppressMessages(library(YATABase,      warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 suppressMessages(library(YATAWebWidgets, warn.conflicts = FALSE))

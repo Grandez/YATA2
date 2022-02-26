@@ -57,7 +57,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            if (!is.null(args$title))    private$title         = args$title
            if (!is.null(args$data))     addData(args$data)
 
-           private$svg = HashMap$new()
+           private$svg = YATABase$map()
            self$plot = private$base()
        }
       ,getPlot = function() {

@@ -18,6 +18,7 @@ YATABASE = R6::R6Class("YATA.BASE.BASE"
          private$.cond = YATABaseCond$new()
       }
       ,print = function() { message("Common tools and utilities for YATA")}
+      ,ini   = function(iniFile) { YATABaseIni$new(iniFile) }
 # Genera un identificador unico
 # El EPOCH UNix da los segundos (rounded) desde 1970-01-01
 # Quitamos Desde una fecha dada

@@ -4,13 +4,9 @@ importFrom(data.table,transpose)
 import(lubridate)
 import(stringr)
 
-#import(xml2)
-#import(rvest)
 import(httr)
 import(jsonlite)
 
-import(YATATools)
-import(YATADB)
+import(YATABase)
 
-#exportPattern("^[[:alpha:]]+")
 export(ProviderFactory)

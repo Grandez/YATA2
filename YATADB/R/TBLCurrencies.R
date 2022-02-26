@@ -6,7 +6,7 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
     ,public = list(
           initialize    = function(name,  db=NULL) {
              super$initialize(name, fields=private$fields, db=db)
-              private$hMap = HashMap$new()
+              private$hMap = YATABase$map
           }
           ,getNames     = function(codes, all=FALSE) {
               df = getData(codes, all)

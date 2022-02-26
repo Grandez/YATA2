@@ -37,7 +37,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
        }
       ,changeDB  = function(id) {
           connInfo = parms$getDBInfo(id)
-         private$objects = HashMap$new()
+         private$objects = YATABase$map
          parms$setLastOpen(id)
          setDB(connInfo)
       }
@@ -84,8 +84,8 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
 
           self$codes  = YATACore::YATACODES$new()
 
-          private$objects     = HashMap$new()
-          private$classes     = HashMap$new()
+          private$objects     = YATABase$map
+          private$classes     = YATABase$map
           private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
           private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
 

@@ -6,13 +6,11 @@ import(zoo)
 import(httr)
 import(jsonlite)
 import(future)
-#import(promises)
 
 # Shiny
 import(shiny)
 import(shinyjs)
 import(shinyBS)          # Botones yataBtn
-# import(shinydashboard)
 import(shinydashboardPlus)
 import(htmltools)
 import(shinyWidgets)
@@ -24,11 +22,7 @@ import(markdown)
 # import(DT)
 
 # YATA
-# import(YATATools)
-# import(YATACore)
-# import(YATADT)
 
-# exportPattern("^[[:alpha:]]+")
 exportPattern("YATA.*")
 exportPattern("yata.*")
 exportPattern("yui.*")

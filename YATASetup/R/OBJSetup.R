@@ -51,7 +51,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
    ,private = list(
         .git = NULL
        ,.ini = NULL
-       ,.msg = NULL
        ,.run = NULL
        ,base = NULL
        ,.fail = function(rc, fmt, ...) {

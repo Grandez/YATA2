@@ -8,7 +8,7 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
         print       = function() { message("Providers Object")}
        ,initialize  = function(factory) {
            super$initialize(factory)
-           private$providers    = HashMap$new()
+           private$providers    = YATABase$map
            private$tblProviders = factory$getTable(codes$tables$providers)
            self$id              = parms$getOnlineProvider()
 

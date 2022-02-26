@@ -18,9 +18,9 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 
             private$tblCurrencies = factory$getTable("Currencies")
             private$tblCameras    = factory$getTable("Cameras")
-            private$hID   = HashMap$new()
-            private$hSym  = HashMap$new()
-            private$hCam  = HashMap$new()
+            private$hID   = YATABase$map
+            private$hSym  = YATABase$map
+            private$hCam  = YATABase$map
 #            loadFiats()
          }, error = function(e) {
            browser()
@@ -127,7 +127,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 # Cada objeto representa una pagina
 # De esta forma se gestiona la inicializacion de la pagina
 # Y guardamos los datos temporales
-      panels  = HashMap$new()
+      panels  = YATABase$map
      ,tblCurrencies = NULL
      ,tblCameras    = NULL
      ,hID     = NULL
