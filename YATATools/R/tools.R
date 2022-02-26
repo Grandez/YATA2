@@ -25,7 +25,7 @@ getID <- function() {
 HashMap = R6::R6Class("JGG.HASHMAP"
     ,public = list(
          initialize = function()           { private$hmap = hash() }
-        ,get        = function (key)       { private$hmap[[as.character(key)]] }
+        ,get        = function(key)        { private$hmap[[as.character(key)]] }
         ,put        = function(key, value) { private$hmap[[as.character(key)]] = value }
         ,remove     = function(key)        { private$hmap(as.character(key),hmap)  }
         ,keys       = function()           { keys(private$hmap)   }

@@ -109,6 +109,19 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             names(data) = df$name
             data
         }
+        ################################################
+        ### Metodos de actualizacion
+        ################################################
+        ,updateParameter = function(group, subgroup, id, value, transactional = TRUE) {
+            # Debe existir. transaccional es por si son varias actualizaciones
+            tblParms$select(group=group, subgroup=subgroup, id = id)
+            if (nrow(df) == 0) stop("El parametro debe existir")
+            checkParameterType(value, df[1,"type"])
+            if (transactional) db$begin()
+            tblParms$setField("value", value)
+            tblParms$apply()
+            if (transactional) db$commit()
+        }
         ,updateParmsBulk = function(parms) {
             db$begin()
             tryCatch({
@@ -124,6 +137,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
                 db$rollback()
             })
         }
+
     )
     ,private = list(
         cfg           = NULL
@@ -132,6 +146,12 @@ OBJParms = R6::R6Class("OBJ.PARMS"
        ,tblCurrencies = NULL
        ,tblProviders  = NULL
        ,splitKeys = function(id) { as.integer(strsplit(id, " ", fixed=TRUE)[[1]]) }
+       ,checkParameterType = function (value, type) {
+           if (type == 10 && !is.integer(value)) stop("Debe ser numerico")
+           if (type == 11 && !is.numeric(value)) stop("Debe ser numerico")
+           if (type == 20) {}  #JGG Tirar de as.boolean
+           #JGG etc
+       }
     )
 )
 

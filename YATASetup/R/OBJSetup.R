@@ -2,14 +2,11 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,portable   = FALSE
-   # ,active = list(
-   #      ini = function(value) { private$.ini }
-   #     ,git = function(value) { private$.git }
-   #     ,msg = function(value) { private$.msg }
-   # )
    ,public = list(
-      initialize    = function() {
-          private$.msg = YATASTD$new()
+       print = function() { message("Setup object")}
+      ,initialize    = function() {
+          private$base = YATABase
+          #private$.msg = YATASTD$new()
           private$.ini = YATAINI$new()
           private$.run = YATARUN$new()
           private$.git = YATAGIT$new()
@@ -21,6 +18,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       # ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
       # ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
+          base$msg$lblgroup("Generating/Updating services")
+          return (0)
           rc = tryCatch({
              .retrieveRepo()
              .managePackages()
@@ -46,9 +45,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .makePackages(rpkgs)
           0
       }
-      ,fatal = function(fmt, ...) {
-          .fail(16, fmt, ...)
-      }
+      ,fatal = function(fmt, ...) { .fail(16, fmt, ...) }
 
     )
    ,private = list(
@@ -56,6 +53,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.ini = NULL
        ,.msg = NULL
        ,.run = NULL
+       ,base = NULL
        ,.fail = function(rc, fmt, ...) {
            .msg$err(fmt, ...)
            txt = sprintf(fmt, ...)

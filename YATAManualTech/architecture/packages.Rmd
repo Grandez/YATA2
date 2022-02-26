@@ -1,0 +1,15 @@
+## Paquetes
+
+YATABase lo encapsulamos en un objeto que podemos hacerlo global en los entornos
+De esta forma se sabe de donde viene por que escribimos base$funcion()
+
+¿pero como hacemos base$bloque$funcion? CON INVISIBLE(self$bloque)
+Es decir, YATABase crea sus propios paquetes
+
+class(
+active = list(
+pp = function() {
+invisible(private$object_messages)
+}
+)
+)

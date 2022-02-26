@@ -1,0 +1,18 @@
+Package: YATABase
+Type: Package
+Title: Common utilities and errors management
+Version: 0.1.0
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: No tiene mas depdendencias que las basicas
+    Usado por todos
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Depends: R  (>= 4.0.4)
+        ,R6 (>= 2.5.0)
+        ,hash
+        ,stringr
+Imports:
+    hash
+   ,stringr

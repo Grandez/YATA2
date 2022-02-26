@@ -24,10 +24,10 @@ DELETE FROM PARMS;
 --           3 - lastDB
 --  Sub  3 - Operaciones
 --           1 - alert - Dias para la proxima alerta
---  Sub  4 - REST Server            
+--  Sub  4 - Servers            
 --           1 - URL
---           2 - Port
--- --------------------------------------------------2- 
+--           2 - Port Base (+0 = webserver +1 = rest server + Batch +1, Deferred +2)
+-- --------------------------------------------------- 
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'currency'    , 'EUR');
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 2,  1, 'altcurrency' , 'USD');
