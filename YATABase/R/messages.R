@@ -4,10 +4,19 @@ YATABaseMsg = R6::R6Class("YATA.BASE.MSG"
    ,lock_class = TRUE
    ,public = list(
        lbl = function(fmt, ...) { cat(line(fmt, ...)) ; invisible(self) }
-      ,lblgroup = function(fmt, ...) {
+      ,lblGroup = function(fmt, ...) {
          fmt = paste0(fmt, "\n")
          crayon::bold(sprintf(fmt, ...))
       }
+      ,lblProcess = function(level, fmt, ...) {
+         prfx = paste0(rep("\t", times=level), collapse="")
+         fmt  = paste0(prfx,fmt)
+         cat(line(fmt, ...)) ;
+         invisible(self)
+      }
+      ,lblProcess1 = function (fmt, ...) { lblProcess(1, fmt, ...)   }
+      ,lblProcess2 = function (fmt, ...) { lblProcess(2, fmt, ...)   }
+      ,lblProcess3 = function (fmt, ...) { lblProcess(3, fmt, ...)   }
       ,out = function(fmt, ...) { cat(line(fmt, ...)) ; invisible(self) }
       ,err = function(fmt, ...) {
           sink(stderr())
@@ -34,13 +43,13 @@ YATABaseMsg = R6::R6Class("YATA.BASE.MSG"
       }
    )
    ,private = list(
-      length = 30
+      LENGTH = 30
       ,line = function(fmt, ...) {
           txt = sprintf(fmt, ...)
           endl = (substr(txt,nchar(txt),nchar(txt)) == "\n")
-          size = length - nchar(txt)
+          size = LENGTH - nchar(txt)
           if (size > 0 && endl == FALSE) {
-             # size = nchar(txt) - length
+             # size = nchar(txt) - LENGTH
              txt = paste(txt, sprintf("%*s", size, " "))
           }
           txt
@@ -49,14 +58,11 @@ YATABaseMsg = R6::R6Class("YATA.BASE.MSG"
 )
 
 .line = function(fmt, ...) {
-          txt = sprintf(fmt, ...)
-          endl = (substr(txt,nchar(txt),nchar(txt)) == "\n")
-          size = length - nchar(txt)
-          if (size > 0 && endl == FALSE) {
-             # size = nchar(txt) - length
-             txt = paste(txt, sprintf("%*s", size, " "))
-          }
-          txt
+    txt = sprintf(fmt, ...)
+    endl = (substr(txt,nchar(txt),nchar(txt)) == "\n")
+    size = LENGTH - nchar(txt)
+    if (size > 0 && endl == FALSE) txt = paste(txt, sprintf("%*s", size, " "))
+    txt
 }
 
 # lbl = function(fmt, ...) { cat(.line(fmt, ...))  }

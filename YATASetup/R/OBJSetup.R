@@ -14,19 +14,18 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               .ini$add(file.path(Sys.getenv("HOME"), "yata.cfg"))
           }
       }
-      #,print       = function()             {}
-      # ,fatal       = function(rc, fmt, ...) { .msg$fatal(rc, fmt, ...) }
-      # ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
-          base$msg$lblgroup("Generating/Updating services")
+          base$msg$lblGroup("Generating/Updating services")
 
           rc = tryCatch({
+              browser()
              .retrieveRepo()
+              .manageCode()
              .managePackages()
              .manageWebSites()
              .manageBinaries()
              .manageServices()
-             .manageBinaries()
+             .manageCode()
              0
           }, YATAERROR = function (cond) {
              cond$rc
@@ -113,13 +112,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
        }
       ,.retrieveRepo = function() {
-          base$msg$out("Retrieving repository")
+           base$msg$lblProcess1("Retrieving repository")
            res = .git$pull()
            .checkfail(127, res$status, "ERROR %d retrieving repo", res$status)
       }
       ,.managePackages = function() {
           rc2 = 0
-          base$msg$lbl("Making packages")
+          base$msg$lblProcess1("Making packages")
           rc = tryCatch({
                   pkgs = .makePackages(.git$getPackages())
                   .run$copy2site(pkgs)
@@ -150,12 +149,16 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
      }
      ,.manageCode = function() {
          browser()
-          base$msg$lbl("Checking non R code")
+          base$msg$lblProcess1("Checking non R code")
           oldcwd = getwd()
           scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
-          if (length(scripts) > 0) {
-              # Genera los scripts
-          }
+          lapply(scripts, function(script) {
+              to = script
+              to = sub("scripts/_", "bin/", to)
+              .run$copy(script, to, mode=775)
+              .checkfail(32, rc, "Generating %s code", folder)
+          })
+
           code = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
           if (length(code) == 0) return (.msg$out("Nothing to do\n"))
           # Quitamos YATACode/scripts si existe
