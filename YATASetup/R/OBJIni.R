@@ -4,7 +4,7 @@ YATAINI = R6::R6Class("YATA.R6.INI"
    ,portable   = FALSE
    ,public = list(
       initialize    = function() {
-          fname = system.file("", "yata.cfg", package="YATASetup")
+          fname = system.file("config", "yata.cfg", package="YATASetup")
           private$.cfg = YATABase$ini(fname)
       }
       ,getSite     = function() { .cfg$getValue("base", "site")       }

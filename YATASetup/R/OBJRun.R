@@ -21,6 +21,19 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
                processx::run( 'chmod', c(mode, what), TRUE)
            }
        }
+       ,copyFile(file, from, to, mode=NULL), su = NULL) {
+           org = paste(from, file, sep="/")
+           dst = paste(to,   file, sep="/")
+           if (!is.null(su)) {
+               processx::run( 'echo', c(su, paste(" | sudo -S cp", org, dst)), TRUE)
+               if (!is.null(mode)) {
+                   processx::run( 'echo', c(su, paste(" | sudo -S chmod", mode, dst)), TRUE)
+               }
+           } else {
+               processx::run( 'cp', c(org, dst), TRUE)
+               if (!is.null(mode)) processx::run( 'chmod', c(mode, dst), TRUE)
+           }
+        }
        ,wait = function(program, args = NULL, su = NULL) {
            if (!is.null(su)) {
                processx::run( 'echo', c(su, paste(" | sudo -S", program)), FALSE)

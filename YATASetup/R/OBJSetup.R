@@ -19,7 +19,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
       # ,getPackages = function()             { .git$getPackages()       }
       ,updateYATA  = function() {
           base$msg$lblgroup("Generating/Updating services")
-          return (0)
+
           rc = tryCatch({
              .retrieveRepo()
              .managePackages()
@@ -149,8 +149,10 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .makeServices(from)
      }
      ,.manageCode = function() {
+         browser()
           base$msg$lbl("Checking non R code")
-          scripts = .git$getChanges(" YATACode/scripts/x[a-zA-Z0-9_\\.]+ ")
+          oldcwd = getwd()
+          scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
           if (length(scripts) > 0) {
               # Genera los scripts
           }
@@ -160,20 +162,26 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           # Cogemos la fecha y hora
           # Ejecutamos YATACode/bin/make_{dir}.sh
           # Si va bien lo pasamos a YATACLI/bin lo que tenga la fecha mas nueva
-          base=Sys.getenv("YATA_ROOT")
+          root = Sys.getenv("YATA_ROOT")
           for (pkg in from) {
-              f = paste0(base,pkg, ".sh")
-              data = processFile(f, .ini)
-              f = sub(".*/_", paste0(.ini$getSite(),"/"))
-              f = sub("\\.[a-zA-Z0-9]+$", "", f)
-              ftmp = sub(".*/","/tmp/")
-              writeLines(data,ftmp)
-              .run$copy(ftmp, f, .ini$getUserPass())
-              .run$chmod(f, 775, .ini$getUserPass())
-              file.remove(ftmp)
+              # si no es YATACode/scripts
+              if (!grep("YATACode/scripts", pkg)) {
+                  grepout = regexpr("/.*", pkg)
+                  folder = substr(pkg, grepout + 1, grepout + attr("grepout", "match.length") - 2)
+                  wd = paste(root, "YATACode/bin", sep="/")
+                  rc = .run$command(paste0("make_", folder, ".sh"), wd=wd)
+                  .checkfail(32, rc, "Generating %s code", folder)
+              }
           }
-
-          .makeServices(from)
+          now = as.POSIXct(Sys.time)
+          files = file.info(list.files(paste(root, "YATACode/bin", sep="/")))
+          row = 1
+          while (row <= nrow(files)) {
+              if (!files[row, "isdir"] && files[row,"mtime"] >= now) {
+                  .run$copyFile(file, from, to, mode=775, su = NULL)
+                  .checkfail(32, rc, "Publishing %s code", folder)
+              }
+          }
      }
 
      ,.manageWebSites = function () {
