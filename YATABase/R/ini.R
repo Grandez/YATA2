@@ -4,11 +4,11 @@ YATABaseIni = R6::R6Class("YATA.BASE.INI"
    ,portable   = FALSE
    ,public = list(
       initialize    = function(iniFile) {
-         if (!missing(iniFile)) private$.cfg = ini::read.ini(fname)
+         if (!missing(iniFile)) private$.cfg = ini::read.ini(iniFile)
 #          fname = system.file("", "yata.cfg", package="YATASetup")
       }
       ,load = function(iniFile) {
-         private$.cfg = ini::read.ini(fname)
+         private$.cfg = ini::read.ini(iniFile)
       }
       ,getSection = function (section) { .cfg[[section]] }
       ,getValue   = function (section, key) {

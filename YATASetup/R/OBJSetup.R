@@ -54,46 +54,46 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.ini = NULL
        ,.run = NULL
        ,base = NULL
-       ,.fail = function(rc, fmt, ...) {
-           .msg$err(fmt, ...)
+       ,.fail = function(rc, fmt, ..., ext) {
+           base$msg$err(fmt, ...)
            txt = sprintf(fmt, ...)
-           strerr = structure(list(msg = txt, rc=rc),class = c("YATAERROR", "error", "condition"))
+           strerr = structure(list(msg = txt, rc=rc, ext=ext),class = c("YATAERROR", "error", "condition"))
            stop(strerr)
         }
-       ,.checkfail = function(rc, rc2, fmt, ...) {
+       ,.checkfail = function(rc, rc2, fmt, ..., ext=NULL) {
            if (rc2 != 0) {
-               .msg$ko()
-               .fail(rc, "ERROR %d retrieving repo", rc2)
+               base$msg$ko()
+               .fail(rc, "ERROR %d retrieving repo", rc2, ext)
            }
-           .msg$ok()
+           base$msg$ok()
            FALSE
         }
        ,.makePackages = function(packages) {
            changed = c()
            if (length(packages) == 0) {
-               .msg$out("Nothing to do\n")
+               base$msg$out("Nothing to do\n")
                return(changed)
            }
            rpkgs = .ini$getSectionValues("packages")
            pkgs = rpkgs[which(rpkgs %in% packages)]
            if (length(pkgs) == 0) {
-               .msg$out("Nothing to do\n")
+               base$msg$out("Nothing to do\n")
                return(changed)
            }
-           .msg$out("\n")
+           base$msg$out("\n")
            for (pkg in pkgs) {
-               .msg$out("\tMaking %s", pkg)
+               base$msg$out("\tMaking %s", pkg)
                .run$install(pkg)
-               .msg$ok()
+               base$msg$ok()
                changed = c(changed, pkg)
            }
            changed
        }
        ,.makeBinaries = function () {
-           .msg$lbl("Checking binaries and scripts")
+           base$msg$lbl("Checking binaries and scripts")
            from = .git$getBinaries()
            if (is.null(from) || length(from) == 0) {
-               .msg$out("Nothing to do\n")
+               base$msg$out("Nothing to do\n")
                return(0)
            }
            to = c()
@@ -113,13 +113,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
        }
       ,.retrieveRepo = function() {
-          .msg$out("Retrieving repository")
+          base$msg$out("Retrieving repository")
            res = .git$pull()
            .checkfail(127, res$status, "ERROR %d retrieving repo", res$status)
       }
       ,.managePackages = function() {
           rc2 = 0
-          .msg$lbl("Making packages")
+          base$msg$lbl("Making packages")
           rc = tryCatch({
                   pkgs = .makePackages(.git$getPackages())
                   .run$copy2site(pkgs)
@@ -143,13 +143,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                })
      }
      ,.manageServices = function() {
-          .msg$lbl("Checking services")
+          base$msg$lbl("Checking services")
           from = .git$getServices()
           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
           .makeServices(from)
      }
      ,.manageCode = function() {
-          .msg$lbl("Checking non R code")
+          base$msg$lbl("Checking non R code")
           scripts = .git$getChanges(" YATACode/scripts/x[a-zA-Z0-9_\\.]+ ")
           if (length(scripts) > 0) {
               # Genera los scripts
@@ -177,13 +177,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
      }
 
      ,.manageWebSites = function () {
-          .msg$lbl("Making Web sites")
-           changed = list()
-           changes = .git$getPackages()
-           if (is.null(changes) || length(changes) == 0) {
-               .msg$out("Nothing to do\n")
-               return(changed)
-           }
+          base$msg$lbl("Making Web sites")
+          changed = list()
+          changes = .git$getPackages()
+          if (is.null(changes) || length(changes) == 0) {
+              base$msg$out("Nothing to do\n")
+              return(changed)
+          }
            rpkgs = .ini$getSectionValues("web")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
@@ -192,7 +192,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
 
            for (pkg in pkgs) .run$copy2web(pkgs)
-           .msg$ok()
+           base$msg$ok()
      }
      ,.makeServices = function (services) {
           base=Sys.getenv("YATA_ROOT")
