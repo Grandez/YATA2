@@ -150,6 +150,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
      ,.manageCode = function() {
          browser()
           base$msg$lblProcess1("Checking non R code")
+          .run$wd = Sys.getenv("YATA_ROOT")
           oldcwd = getwd()
           scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
           lapply(scripts, function(script) {

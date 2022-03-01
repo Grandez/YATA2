@@ -2,6 +2,15 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,portable   = FALSE
+   ,active = list(
+       wd = function(value) {
+           if (missing(value)) {
+               return (.wd)
+           } else {
+               private$.wd = value
+           }
+       }
+   )
    ,public = list(
        install = function(pkg) {
           args = c('CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg)
@@ -66,7 +75,7 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
 
     )
    ,private = list(
-
+       .wd = NULL
     )
 )
 #proc = subprocess.Popen(['R', 'CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg],
