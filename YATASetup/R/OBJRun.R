@@ -21,6 +21,13 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
                processx::run( 'chmod', c(mode, what), TRUE)
            }
        }
+       ,wait = function(program, args = NULL, su = NULL) {
+           if (!is.null(su)) {
+               processx::run( 'echo', c(su, paste(" | sudo -S", program)), FALSE)
+           } else {
+               processx::run( program, args, FALSE)
+           }
+       }
        ,copy2site = function(pkgs) {
            libuser = Sys.getenv("R_LIBS_USER")
            libsite = Sys.getenv("R_LIBS_SITE")

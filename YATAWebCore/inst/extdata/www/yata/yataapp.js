@@ -444,3 +444,16 @@ jQuery(document).ready(function() {
   //CHECKED alert( "JQuery Documento listo" );
 	$.yata.init();
 });
+
+jQuery(document).on('shiny:connected', function(event) {
+  Shiny.setInputValue("connected", new Date(), { priority: 'event' });
+});
+
+jQuery(document).on('shiny:sessioninitialized', function(event) {
+  Shiny.setInputValue("initialized", new Date(), { priority: 'event' });
+});
+
+jQuery(document).on('shiny:disconnected', function(event) {
+  Shiny.setInputValue("disconnected", new Date(), { priority: 'event' });
+});
+

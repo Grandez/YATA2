@@ -2,6 +2,13 @@
     p  = req$parameters_query[[parm]]
     ifelse(is.null(p), dafult, p)
 }
+handler_alive = function(.req, .res) {
+   .res$set_status_code(200)
+   .res$set_body("OK")
+}
+FUN = function(.req, .res) {
+             .res$set_status_code(200)
+             .res$set_body("OK") }
 best_handler = function(req, .res) {
 #      message(paste("best:", Sys.time()))
     top   = .getParm(req, "top",  10)

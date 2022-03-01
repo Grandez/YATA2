@@ -26,6 +26,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              .manageWebSites()
              .manageBinaries()
              .manageServices()
+             .manageBinaries()
              0
           }, YATAERROR = function (cond) {
              cond$rc
@@ -147,6 +148,26 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
           .makeServices(from)
      }
+     ,.manageBinaries = function() {
+          .msg$lbl("Checking services")
+          from = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
+          if (length(from) == 0) return (.msg$out("Nothing to do\n"))
+          base=Sys.getenv("YATA_ROOT")
+          for (pkg in from) {
+              f = paste0(base,pkg, ".sh")
+              data = processFile(f, .ini)
+              f = sub(".*/x", paste0(.ini$getSite(),"/"))
+              f = sub("\\.[a-zA-Z0-9]+$", "", f)
+              ftmp = sub(".*/","/tmp/")
+              writeLines(data,ftmp)
+              .run$copy(ftmp, f, .ini$getUserPass())
+              .run$chmod(f, 775, .ini$getUserPass())
+              file.remove(ftmp)
+          }
+
+          .makeServices(from)
+     }
+
      ,.manageWebSites = function () {
           .msg$lbl("Making Web sites")
            changed = list()
