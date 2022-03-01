@@ -446,14 +446,17 @@ jQuery(document).ready(function() {
 });
 
 jQuery(document).on('shiny:connected', function(event) {
+    alert("Connected");
   Shiny.setInputValue("connected", new Date(), { priority: 'event' });
 });
 
 jQuery(document).on('shiny:sessioninitialized', function(event) {
+    alert("sessioninitialized");
   Shiny.setInputValue("initialized", new Date(), { priority: 'event' });
 });
 
 jQuery(document).on('shiny:disconnected', function(event) {
+    alert("disconnected");
   Shiny.setInputValue("disconnected", new Date(), { priority: 'event' });
 });
 

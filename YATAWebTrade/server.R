@@ -123,6 +123,18 @@ function(input, output, session) {
       eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
    })
    
+   observeEvent(input$connected, { 
+       browser() 
+       })
+   observeEvent(input$disconnected, { 
+       browser() 
+       POST("end")
+       })
+   observeEvent(input$initialized, { 
+       browser() 
+       POST("begin")
+       })
+   
    # En este observer, cargamos la posicion y las cotizaciones
     observe({
        message("SERVER Update")

@@ -7,11 +7,12 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
           res = processx::run("git", c("pull"), FALSE, Sys.getenv("YATA_ROOT"))
           private$gitout = res$stdout
           res
-      }
+       }
+       # Friendly functions
       ,getPackages = function() { .parseOut(" YATA[a-zA-Z0-9_]+/")                       }
       ,getBinaries = function() { .parseOut(" YATACLI/[a-rt-z][a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ") }
-      ,getServices = function() { .parseOut(" YATACLI/services/x[a-zA-Z0-9_\\.]+ ") }
-      ,getChanges  = function(pattern) { .parseOut(" YATACode/[a-zA-Z0-9_]+/") }
+      ,getServices = function() { .parseOut(" YATACLI/services/_[a-zA-Z0-9_\\.]+ ") }
+      ,getChanges  = function(pattern) { .parseOut(pattern) }
     )
    ,private = list(
         gitout = ""

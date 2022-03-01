@@ -21,6 +21,8 @@
  * El hijo se para cuando el main acaba
  */
 
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

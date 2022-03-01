@@ -148,15 +148,23 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
           .makeServices(from)
      }
-     ,.manageBinaries = function() {
-          .msg$lbl("Checking services")
-          from = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
-          if (length(from) == 0) return (.msg$out("Nothing to do\n"))
+     ,.manageCode = function() {
+          .msg$lbl("Checking non R code")
+          scripts = .git$getChanges(" YATACode/scripts/x[a-zA-Z0-9_\\.]+ ")
+          if (length(scripts) > 0) {
+              # Genera los scripts
+          }
+          code = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
+          if (length(code) == 0) return (.msg$out("Nothing to do\n"))
+          # Quitamos YATACode/scripts si existe
+          # Cogemos la fecha y hora
+          # Ejecutamos YATACode/bin/make_{dir}.sh
+          # Si va bien lo pasamos a YATACLI/bin lo que tenga la fecha mas nueva
           base=Sys.getenv("YATA_ROOT")
           for (pkg in from) {
               f = paste0(base,pkg, ".sh")
               data = processFile(f, .ini)
-              f = sub(".*/x", paste0(.ini$getSite(),"/"))
+              f = sub(".*/_", paste0(.ini$getSite(),"/"))
               f = sub("\\.[a-zA-Z0-9]+$", "", f)
               ftmp = sub(".*/","/tmp/")
               writeLines(data,ftmp)
@@ -191,7 +199,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           for (srv in services) {
               f = paste0(base,srv)
               data = processFile(f, .ini)
-              f = sub(".*/x", paste0(.ini$getSite(),"/"))
+              f = sub(".*/_", paste0(.ini$getSite(),"/"))
               f = sub("\\.[a-zA-Z0-9]+$", "", f)
               ftmp = sub(".*/","/tmp/")
               writeLines(data,ftmp)
