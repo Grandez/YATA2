@@ -155,7 +155,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           lapply(scripts, function(script) {
               to = script
               to = sub("scripts/_", "bin/", to)
-              .run$copy(script, to, mode=775)
+              .run$copyExe(script, to)
               .checkfail(32, rc, "Generating %s code", folder)
           })
 

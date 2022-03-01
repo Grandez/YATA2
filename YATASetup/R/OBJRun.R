@@ -7,14 +7,16 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
           args = c('CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg)
           processx::run( 'R', args, TRUE,Sys.getenv("YATA_ROOT"))
        }
-       ,copy = function(src, dst, mode = NULL, su = NULL) {
+       ,copy = function(src, dst, su = NULL) {
            if (!is.null(su)) {
                processx::run( 'echo', c(su, paste(" | sudo -S cp", src, dst)), TRUE)
-               if (!is.null(mode))processx::run( 'echo', c(su, paste(" | sudo -S chmod", mode, dst)), TRUE)
            } else {
                processx::run( 'cp', c(src, dst), TRUE)
-               if (!is.null(mode)) processx::run( 'chmod', c(mode, dst), TRUE)
            }
+       }
+       ,copyExe = function(src, dst, su = NULL) {
+           copy(src,dst,su)
+           chmod(dst, 775, su)
        }
        ,chmod = function(what, mode, su = NULL) {
            if (!is.null(su)) {
