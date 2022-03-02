@@ -125,7 +125,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.managePackages = function() {
           rc2 = 0
           base$msg$lblProcess1("Making packages")
-          .makePackages(.git$getPackages())
+          pkgs = .makePackages(.git$getPackages())
           .run$copy2site(pkgs)
           base$msg$ok()
       }
