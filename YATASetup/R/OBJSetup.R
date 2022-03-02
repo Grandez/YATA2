@@ -27,6 +27,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              .manageServices()
              .manageCode()
              0
+          }, system_command_error = function(cond) {
+              browser()
           }, error = function(cond) {
               browser()
           }, YATAERROR = function (cond) {
