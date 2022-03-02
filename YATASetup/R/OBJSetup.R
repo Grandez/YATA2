@@ -73,50 +73,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            base$msg$ok()
            FALSE
         }
-       ,.makePackages   = function(packages) {
-           changed = c()
-           if (length(packages) == 0) {
-               base$msg$out("\tNothing to do\n")
-               return(changed)
-           }
-           rpkgs = .ini$getSectionValues("packages")
-           pkgs = rpkgs[which(rpkgs %in% packages)]
-           if (length(pkgs) == 0) {
-               base$msg$out("\tNothing to do\n")
-               return(changed)
-           }
-           base$msg$out("\n")
-           for (pkg in pkgs) {
-               base$msg$out("\tMaking %s", pkg)
-               .run$install(pkg)
-               base$msg$ok()
-               changed = c(changed, pkg)
-           }
-           changed
-       }
-       ,.makeBinaries   = function() {
-           base$msg$lbl("Checking binaries and scripts")
-           from = .git$getBinaries()
-           if (is.null(from) || length(from) == 0) {
-               base$msg$out("\tNothing to do\n")
-               return(0)
-           }
-           to = c()
-           for (script in from) {
-               bin = sub("/x", "/", script)
-               bin = sub("\\.[a-zA-Z0-9]+$", "", bin)
-               bin = sub("/[a-zA-Z0-9/]+/", "/bin/", bin)
-               to = c(to, bin)
-           }
-           for (idx in 1:length(from)) {
-               src = paste0(Sys.getenv("YATA_ROOT"), "/", from[idx])
-               if (file.exists(src)) {
-                   dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
-                   .run$copy(src, dst)
-                   .run$chmod(dst, "775")
-               }
-           }
-       }
        ,.retrieveRepo   = function() {
            base$msg$lblProcess1("Retrieving repository")
            res = .git$pull()
@@ -140,7 +96,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                })
      }
        ,.manageServices = function() {
-           base$msg$lbl("Checking services")
+           base$msg$lblProcess1("Checking services")
            from = .git$getServices()
            if (length(from) == 0) return (.msg$out("\tNothing to do\n"))
            .makeServices(from)
@@ -206,7 +162,52 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
 
            for (pkg in pkgs) .run$copy2web(pkgs)
            base$msg$ok()
-     }
+       }
+       ,.makePackages   = function(packages) {
+           changed = c()
+           if (length(packages) == 0) {
+               base$msg$out("\tNothing to do\n")
+               return(changed)
+           }
+           rpkgs = .ini$getSectionValues("packages")
+           pkgs = rpkgs[which(rpkgs %in% packages)]
+           if (length(pkgs) == 0) {
+               base$msg$out("\tNothing to do\n")
+               return(changed)
+           }
+           base$msg$out("\n")
+           for (pkg in pkgs) {
+               base$msg$out("\tMaking %s", pkg)
+               .run$install(pkg)
+               base$msg$ok()
+               changed = c(changed, pkg)
+           }
+           changed
+       }
+       ,.makeBinaries   = function() {
+           base$msg$lbl("Checking binaries and scripts")
+           from = .git$getBinaries()
+           if (is.null(from) || length(from) == 0) {
+               base$msg$out("\tNothing to do\n")
+               return(0)
+           }
+           to = c()
+           for (script in from) {
+               bin = sub("/x", "/", script)
+               bin = sub("\\.[a-zA-Z0-9]+$", "", bin)
+               bin = sub("/[a-zA-Z0-9/]+/", "/bin/", bin)
+               to = c(to, bin)
+           }
+           for (idx in 1:length(from)) {
+               src = paste0(Sys.getenv("YATA_ROOT"), "/", from[idx])
+               if (file.exists(src)) {
+                   dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
+                   .run$copy(src, dst)
+                   .run$chmod(dst, "775")
+               }
+           }
+       }
+
        ,.makeServices   = function(services) {
            base=Sys.getenv("YATA_ROOT")
            for (srv in services) {
