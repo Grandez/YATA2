@@ -6,7 +6,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        print = function() { message("Setup object")}
       ,initialize    = function() {
           private$base = YATABase
-          #private$.msg = YATASTD$new()
           private$.ini = YATAINI$new()
           private$.run = YATARUN$new()
           private$.git = YATAGIT$new()
@@ -38,15 +37,15 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           })
       }
       ,updateServices = function(full = FALSE) {
-          .msg$lbl("Generating/Updating services")
+          base$msg$lbl("Generating/Updating services")
           if (full) updateYATA()
           path = file.path(Sys.getenv("YATA_ROOT"), "YATACLI/services")
           .makeServices(list.files(path))
-          .msg$ok()
+          base$msg$ok()
           0
       }
       ,updatePackages = function() {
-          .msg$lbl("Generating/Updating packages")
+          base$msg$lbl("Generating/Updating packages")
           rpkgs = .ini$getSectionValues("packages")
           .makePackages(rpkgs)
           0
@@ -98,7 +97,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.manageServices = function() {
            base$msg$lblProcess1("Checking services")
            from = .git$getServices()
-           if (length(from) == 0) return (.msg$out("\tNothing to do\n"))
+           if (length(from) == 0) return (base$msg$out("\tNothing to do\n"))
            .makeServices(from)
         }
        ,.manageCode     = function() {
@@ -121,7 +120,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           # Process projects (exclude scripts)
           dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
           dirs = dirs [-which(dirs == "YATACode/scripts")]
-          if (length(dirs) == 0) return (.msg$out("\tNothing to do\n"))
+          if (length(dirs) == 0) return (base$msg$out("\tNothing to do\n"))
 
           now = as.POSIXct(Sys.time())
 
@@ -156,7 +155,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            rpkgs = .ini$getSectionValues("web")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
-               .msg$out("\tNothing to do\n")
+               base$msg$out("\tNothing to do\n")
                return(changed)
            }
 
