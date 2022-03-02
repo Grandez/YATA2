@@ -27,7 +27,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              .manageServices()
              .manageCode()
              0
-          }, error = function(conde) {
+          }, error = function(cond) {
               browser()
           }, YATAERROR = function (cond) {
              cond$rc
@@ -163,7 +163,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
              lapply(scripts, function(script) {
                     to = script
-                    to = sub("scripts/_", "bin/", to)
+                    to = sub("scripts/_", "bin/scripts/", to)
                     .run$copyExex(script, to)
              })
 
@@ -178,9 +178,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                   folder = substr(pkg,  beg + 1, beg + attr(grepout, "match.length")[1] - 1)
                   .run$wd = paste0(.run$wd, "/", "YATACode/bin")
                    .run$commandx(paste0("make_", folder, ".sh"))
-              }
-              now = as.POSIXct(Sys.time)
-              files = file.info(list.files(paste(.run$wd, "YATACode/bin", sep="/")))
+             }
+             browser()
+              now = as.POSIXct(Sys.time())
+              #files = file.info(list.files(paste(Sys.getenv("YATA_ROOT"), "YATACode/bin", sep="/")))
+              from = .run$wd
+              to   = "/srv/yata/bin"
+              files = file.info(list.files(from))
               row = 1
               while (row <= nrow(files)) {
                   browser()
