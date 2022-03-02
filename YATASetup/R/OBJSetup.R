@@ -125,17 +125,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.managePackages = function() {
           rc2 = 0
           base$msg$lblProcess1("Making packages")
-          rc = tryCatch({
-                  pkgs = .makePackages(.git$getPackages())
-                  .run$copy2site(pkgs)
-               }, system_command_error = function(res) {
-                  rc2 = res$status
-               }, error = function (cond) {
-                  rc2=32
-               }
-              ,finally = function() {
-                 .checkfail(32, rc2, "")
-              })
+          .makePackages(.git$getPackages())
+          .run$copy2site(pkgs)
+          base$msg$ok()
       }
        ,.manageBinaries = function() {
          rc2 = 0
