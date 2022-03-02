@@ -186,7 +186,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              browser()
 
               #files = file.info(list.files(paste(Sys.getenv("YATA_ROOT"), "YATACode/bin", sep="/")))
-              from = .run$wd
+              from = paste0(sys.getenv("YATA_ROOT"), "/YATACode/bin")
               to   = "/srv/yata/bin"
 
               lapply(list.files(from, full.names=TRUE), function(file) {
