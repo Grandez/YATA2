@@ -181,7 +181,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                   beg = grepout[1]
                   folder = substr(pkg,  beg + 1, beg + attr(grepout, "match.length")[1] - 1)
                   .run$wd = paste(.run$wd, "YATACode", folder, sep="/")
-                  .run$commandx(paste0("../../make_", folder, ".sh"))
+                  .run$commandx(paste0("../bin/scripts/make_", folder, ".sh"))
              }
              browser()
 
