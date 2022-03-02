@@ -164,17 +164,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                     .run$copyExex(script, to)
              })
              dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
+             dirs = dirs [-which(dirs == "YATACode/scripts")]
              if (length(code) == 0) return (.msg$out("Nothing to do\n"))
 
              for (pkg in dirs) {
-                  # si no es YATACode/scripts
-                  if (!grep("YATACode/scripts", pkg)) {
-                      grepout = regexpr("/.*", pkg)
-                      folder = substr(pkg, grepout + 1, grepout + attr("grepout", "match.length") - 2)
-                      .run$wd = paste0(.run$wd, "/", "YATACode/bin")
-                       rc = .run$commandx(paste0("make_", folder, ".sh"))
-#                       .checkfail(32, rc, "Generating %s code", folder)
-                   }
+                  grepout = regexpr("/.*", pkg)
+                  folder = substr(pkg, grepout + 1, grepout + attr("grepout", "match.length") - 2)
+                  .run$wd = paste0(.run$wd, "/", "YATACode/bin")
+                   rc = .run$commandx(paste0("make_", folder, ".sh"))
               }
               now = as.POSIXct(Sys.time)
               files = file.info(list.files(paste(root, "YATACode/bin", sep="/")))
