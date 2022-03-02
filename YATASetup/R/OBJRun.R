@@ -12,48 +12,34 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
        }
    )
    ,public = list(
-       install = function(pkg) {
+        install    = function(pkg) {
           args = c('CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg)
-          processx::run( 'R', args, TRUE,Sys.getenv("YATA_ROOT"))
+          processx::run( 'R', args, TRUE, Sys.getenv("YATA_ROOT"))
        }
-       ,copy = function(src, dst, su = NULL) {
-           if (!is.null(su)) {
-               processx::run( 'echo', c(su, paste(" | sudo -S cp", src, dst)), TRUE)
-           } else {
-               processx::run( 'cp', c(src, dst), TRUE)
-           }
+       ,copy       = function (src,  dst,  su = NULL) { .copy      (su, FALSE, src, dst)   }
+       ,copyExe    = function (src,  dst,  su = NULL) { .copyExe   (su, FALSE, src, dst)   }
+       ,chmod      = function (what, mode, su = NULL) { .chmod     (su, FALSE, what, mode) }
+       ,copy2site  = function (pkgs,       su = NULL) { .copy2site (su, FALSE, pkgs)       }
+       ,copyx      = function (src,  dst,  su = NULL) { .copy      (su, TRUE, src, dst)    }
+       ,copyExex   = function (src,  dst,  su = NULL) { .copyExe   (su, TRUE, src, dst)    }
+       ,chmodx     = function (what, mode, su = NULL) { .chmod     (su, TRUE, what, mode)  }
+       ,copy2sitex = function (pkgs,       su = NULL) { .copy2site (su, TRUE, pkgs)        }
+       ,command    = function (cmd, args=NULL, su=NULL) { .command(su, FALSE, cmd,args)    }
+       ,commandx   = function (cmd, args=NULL, su=NULL) { .command(su, TRUE,  cmd,args)    }
+       ,copyFile   = function (file, from, to, mode=NULL, su = NULL) {
+           .copyFile(su, FALSE, file, from, mode)
        }
-       ,copyExe = function(src, dst, su = NULL) {
-           copy(src,dst,su)
-           chmod(dst, 775, su)
-       }
-       ,chmod = function(what, mode, su = NULL) {
-           if (!is.null(su)) {
-               processx::run( 'echo', c(su, paste(" | sudo -S chmod", mode, what)), TRUE)
-           } else {
-               processx::run( 'chmod', c(mode, what), TRUE)
-           }
-       }
-       ,copyFile = function (file, from, to, mode=NULL, su = NULL) {
-           org = paste(from, file, sep="/")
-           dst = paste(to,   file, sep="/")
-           if (!is.null(su)) {
-               processx::run( 'echo', c(su, paste(" | sudo -S cp", org, dst)), TRUE)
-               if (!is.null(mode)) {
-                   processx::run( 'echo', c(su, paste(" | sudo -S chmod", mode, dst)), TRUE)
-               }
-           } else {
-               processx::run( 'cp', c(org, dst), TRUE)
-               if (!is.null(mode)) processx::run( 'chmod', c(mode, dst), TRUE)
-           }
+       ,copyFilex  = function (file, from, to, mode=NULL, su = NULL) {
+           .copyFile(su, TRUE, file, from, mode)
         }
-       ,wait = function(program, args = NULL, su = NULL) {
-           if (!is.null(su)) {
-               processx::run( 'echo', c(su, paste(" | sudo -S", program)), FALSE)
-           } else {
-               processx::run( program, args, FALSE)
-           }
-       }
+
+       # ,wait = function(program, args = NULL, su = NULL) {
+       #     if (!is.null(su)) {
+       #         processx::run( 'echo', c(su, paste(" | sudo -S", program)), FALSE)
+       #     } else {
+       #         processx::run( program, args, FALSE)
+       #     }
+       # }
        ,copy2site = function(pkgs) {
            libuser = Sys.getenv("R_LIBS_USER")
            libsite = Sys.getenv("R_LIBS_SITE")
@@ -63,7 +49,7 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
                file.copy(from, to, overwrite=TRUE, recursive = TRUE)
            })
        }
-       ,copy2web = function(pkgs) {
+       ,copy2web  = function(pkgs) {
            libuser = Sys.getenv("YATA_ROOT")
            libweb  = Sys.getenv("R_LIBS_SHINY")
            lapply(pkgs, function (pkg) {
@@ -76,6 +62,44 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
     )
    ,private = list(
        .wd = NULL
+       ,.copy      = function (su, excep, src, dst) {
+           if (!is.null(su)) {
+               processx::run( 'echo', c(su, paste(" | sudo -S cp", src, dst)), excep, .wd)
+           } else {
+               processx::run( 'cp', c(src, dst), excep, .wd)
+           }
+       }
+       ,.copyExe   = function (su, excep, src, dst) {
+           .copy (su, excep, src, dst)
+           .chmod(su, excep, dst, 775)
+       }
+       ,.chmod     = function (su, excep, what, mode) {
+           if (!is.null(su)) {
+               processx::run( 'echo', c(su, paste(" | sudo -S chmod", mode, what)), excep, .wd)
+           } else {
+               processx::run( 'chmod', c(mode, what), excep, .wd)
+           }
+       }
+       ,.copyFile  = function (su, excep, file, from, to, mode=NULL) {
+           org = paste(from, file, sep="/")
+           dst = paste(to,   file, sep="/")
+           if (!is.null(su)) {
+               processx::run( 'echo', c(su, paste(" | sudo -S cp", org, dst)), excep, .wd)
+               if (!is.null(mode)) {
+                   processx::run( 'echo', c(su, paste(" | sudo -S chmod", mode, dst)), excep, .wd)
+               }
+           } else {
+               processx::run( 'cp', c(org, dst), excep, .wd)
+               if (!is.null(mode)) processx::run( 'chmod', c(mode, dst), excep, .wd)
+           }
+       }
+       ,.command   = function (su, excep, cmd, args) {
+           if (!is.null(su)) {
+               processx::run( 'echo', c(su, paste(" | sudo -S", cmd, args)), excep, .wd)
+           } else {
+               processx::run( cmd, args, excep, .wd)
+           }
+       }
     )
 )
 #proc = subprocess.Popen(['R', 'CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg],

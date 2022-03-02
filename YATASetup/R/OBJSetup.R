@@ -20,7 +20,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           rc = tryCatch({
               browser()
              .retrieveRepo()
-              .manageCode()
+             .manageCode()
              .managePackages()
              .manageWebSites()
              .manageBinaries()
@@ -148,46 +148,55 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .makeServices(from)
      }
      ,.manageCode = function() {
-         browser()
-          base$msg$lblProcess1("Checking non R code")
-          .run$wd = Sys.getenv("YATA_ROOT")
-          oldcwd = getwd()
-          scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
-          lapply(scripts, function(script) {
-              to = script
-              to = sub("scripts/_", "bin/", to)
-              .run$copyExe(script, to)
-              .checkfail(32, rc, "Generating %s code", folder)
-          })
-
-          code = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
-          if (length(code) == 0) return (.msg$out("Nothing to do\n"))
           # Quitamos YATACode/scripts si existe
           # Cogemos la fecha y hora
           # Ejecutamos YATACode/bin/make_{dir}.sh
           # Si va bien lo pasamos a YATACLI/bin lo que tenga la fecha mas nueva
-          root = Sys.getenv("YATA_ROOT")
-          for (pkg in from) {
-              # si no es YATACode/scripts
-              if (!grep("YATACode/scripts", pkg)) {
-                  grepout = regexpr("/.*", pkg)
-                  folder = substr(pkg, grepout + 1, grepout + attr("grepout", "match.length") - 2)
-                  wd = paste(root, "YATACode/bin", sep="/")
-                  rc = .run$command(paste0("make_", folder, ".sh"), wd=wd)
-                  .checkfail(32, rc, "Generating %s code", folder)
-              }
-          }
-          now = as.POSIXct(Sys.time)
-          files = file.info(list.files(paste(root, "YATACode/bin", sep="/")))
-          row = 1
-          while (row <= nrow(files)) {
-              if (!files[row, "isdir"] && files[row,"mtime"] >= now) {
-                  .run$copyFile(file, from, to, mode=775, su = NULL)
-                  .checkfail(32, rc, "Publishing %s code", folder)
-              }
-          }
-     }
 
+          browser()
+          base$msg$lblProcess1("Checking non R code")
+          .run$wd = Sys.getenv("YATA_ROOT")
+          rc = tryCatch({
+             scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
+             lapply(scripts, function(script) {
+                    to = script
+                    to = sub("scripts/_", "bin/", to)
+                    .run$copyExex(script, to)
+             })
+             dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
+             if (length(code) == 0) return (.msg$out("Nothing to do\n"))
+
+             for (pkg in dirs) {
+                  # si no es YATACode/scripts
+                  if (!grep("YATACode/scripts", pkg)) {
+                      grepout = regexpr("/.*", pkg)
+                      folder = substr(pkg, grepout + 1, grepout + attr("grepout", "match.length") - 2)
+                      .run$wd = paste0(.run$wd, "/", "YATACode/bin")
+                       rc = .run$commandx(paste0("make_", folder, ".sh"))
+#                       .checkfail(32, rc, "Generating %s code", folder)
+                   }
+              }
+              now = as.POSIXct(Sys.time)
+              files = file.info(list.files(paste(root, "YATACode/bin", sep="/")))
+              row = 1
+              while (row <= nrow(files)) {
+                     if (!files[row, "isdir"] && files[row,"mtime"] >= now) {
+                         .run$copyFile(file, from, to, mode=775)
+                     }
+              }
+       }
+    , system_command_error = function(res) {
+           browser()
+                  rc2 = res$status
+               }, error = function (cond) {
+                  rc2=32
+               }
+              ,finally = function() {
+                 .checkfail(32, rc2, "")
+              })
+        browser()
+     }
+      }
      ,.manageWebSites = function () {
           base$msg$lbl("Making Web sites")
           changed = list()
