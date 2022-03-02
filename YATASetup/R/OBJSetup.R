@@ -188,11 +188,11 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               from = paste0(Sys.getenv("YATA_ROOT"), "/YATACode/bin")
               to   = "/srv/yata/bin"
 
-              lapply(list.files(from), function(file) {
+              lapply(list.files(from, full.names=TRUE), function(file) {
                   browser()
-                  nfo = file.info(paste(from,file,sep="/"))
+                  nfo = file.info(file)
                   if (!nfo[1, "isdir"] && nfo[1,"mtime"] >= now) {
-                         .run$copyx(file, from, to)
+                         .run$copyx(file, to)
                      }
 
               })
