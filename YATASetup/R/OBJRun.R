@@ -16,14 +16,14 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
           args = c('CMD', 'INSTALL', '--no-multiarch', '--with-keep.source', pkg)
           processx::run( 'R', args, TRUE, Sys.getenv("YATA_ROOT"))
        }
-       ,copy       = function (src,  dst,  su = NULL) { .copy      (su, FALSE, src, dst)   }
-       ,copyx      = function (src,  dst,  su = NULL) { .copy      (su, TRUE, src, dst)    }
-       ,copyExe    = function (src,  dst,  su = NULL) { .copyExe   (su, FALSE, src, dst)   }
-       ,copyExex   = function (src,  dst,  su = NULL) { .copyExe   (su, TRUE, src, dst)    }
-       ,chmod      = function (what, mode, su = NULL) { .chmod     (su, FALSE, what, mode) }
-       ,chmodx     = function (what, mode, su = NULL) { .chmod     (su, TRUE, what, mode)  }
-       ,command    = function (cmd, args=NULL, su=NULL) { .command(su, FALSE, cmd,args)    }
-       ,commandx   = function (cmd, args=NULL, su=NULL) { .command(su, TRUE,  cmd,args)    }
+       ,copy       = function (src,  dst,     su = NULL) { .copy      (su, FALSE, src, dst)   }
+       ,copyx      = function (src,  dst,     su = NULL) { .copy      (su, TRUE, src, dst)    }
+       ,copyExe    = function (src,  dst,     su = NULL) { .copyExe   (su, FALSE, src, dst)   }
+       ,copyExex   = function (src,  dst,     su = NULL) { .copyExe   (su, TRUE, src, dst)    }
+       ,chmod      = function (what, mode,    su = NULL) { .chmod     (su, FALSE, what, mode) }
+       ,chmodx     = function (what, mode,    su = NULL) { .chmod     (su, TRUE, what, mode)  }
+       ,command    = function (cmd,  args="", su = NULL) { .command(su, FALSE, cmd,args)    }
+       ,commandx   = function (cmd,  args="", su = NULL) { .command(su, TRUE,  cmd,args)    }
        ,copyFile   = function (file, from, to, mode=NULL, su = NULL) {
            .copyFile(su, FALSE, file, from, mode)
        }

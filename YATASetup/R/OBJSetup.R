@@ -27,6 +27,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              .manageServices()
              .manageCode()
              0
+          }, error = function(conde) {
+              browser()
           }, YATAERROR = function (cond) {
              cond$rc
           })
@@ -156,44 +158,48 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           browser()
           base$msg$lblProcess1("Checking non R code")
           .run$wd = Sys.getenv("YATA_ROOT")
-          rc = tryCatch({
+#          rc = tryCatch({
+              # Process scripts
              scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
              lapply(scripts, function(script) {
                     to = script
                     to = sub("scripts/_", "bin/", to)
                     .run$copyExex(script, to)
              })
+
+             # Process projects (exclude scripts)
              dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
              dirs = dirs [-which(dirs == "YATACode/scripts")]
              if (length(dirs) == 0) return (.msg$out("Nothing to do\n"))
 
              for (pkg in dirs) {
                   grepout = regexpr("/.*", pkg)
-                  start = grepout[1]
-                  folder = substr(pkg,  start+ 1, start + attr("grepout", "match.length")[1] - 1)
+                  beg = grepout[1]
+                  folder = substr(pkg,  beg + 1, beg + attr(grepout, "match.length")[1] - 1)
                   .run$wd = paste0(.run$wd, "/", "YATACode/bin")
-                   rc = .run$commandx(paste0("make_", folder, ".sh"))
+                   .run$commandx(paste0("make_", folder, ".sh"))
               }
               now = as.POSIXct(Sys.time)
-              files = file.info(list.files(paste(root, "YATACode/bin", sep="/")))
+              files = file.info(list.files(paste(.run$wd, "YATACode/bin", sep="/")))
               row = 1
               while (row <= nrow(files)) {
+                  browser()
                      if (!files[row, "isdir"] && files[row,"mtime"] >= now) {
                          .run$copyFile(file, from, to, mode=775)
                      }
               }
        }
-    , system_command_error = function(res) {
-           browser()
-                  rc2 = res$status
-               }, error = function (cond) {
-                  rc2=32
-               }
-              ,finally = function() {
-                 .checkfail(32, rc2, "")
-              })
-        browser()
-      }
+    # , system_command_error = function(res) {
+    #        browser()
+    #               rc2 = res$status
+    #            }, error = function (cond) {
+    #               rc2=32
+    #            }
+    #           ,finally = function() {
+    #              .checkfail(32, rc2, "")
+    #           })
+    #     browser()
+    #   }
      ,.manageWebSites = function () {
           base$msg$lbl("Making Web sites")
           changed = list()
