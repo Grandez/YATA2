@@ -76,13 +76,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.makePackages   = function(packages) {
            changed = c()
            if (length(packages) == 0) {
-               base$msg$out("Nothing to do\n")
+               base$msg$out("\tNothing to do\n")
                return(changed)
            }
            rpkgs = .ini$getSectionValues("packages")
            pkgs = rpkgs[which(rpkgs %in% packages)]
            if (length(pkgs) == 0) {
-               base$msg$out("Nothing to do\n")
+               base$msg$out("\tNothing to do\n")
                return(changed)
            }
            base$msg$out("\n")
@@ -98,7 +98,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            base$msg$lbl("Checking binaries and scripts")
            from = .git$getBinaries()
            if (is.null(from) || length(from) == 0) {
-               base$msg$out("Nothing to do\n")
+               base$msg$out("\tNothing to do\n")
                return(0)
            }
            to = c()
@@ -142,7 +142,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.manageServices = function() {
            base$msg$lbl("Checking services")
            from = .git$getServices()
-           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
+           if (length(from) == 0) return (.msg$out("\tNothing to do\n"))
            .makeServices(from)
         }
        ,.manageCode     = function() {
@@ -165,7 +165,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           # Process projects (exclude scripts)
           dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
           dirs = dirs [-which(dirs == "YATACode/scripts")]
-          if (length(dirs) == 0) return (.msg$out("Nothing to do\n"))
+          if (length(dirs) == 0) return (.msg$out("\tNothing to do\n"))
 
           now = as.POSIXct(Sys.time())
 
@@ -194,13 +194,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            changed = list()
            changes = .git$getPackages()
            if (is.null(changes) || length(changes) == 0) {
-               base$msg$out("Nothing to do\n")
+               base$msg$out("\tNothing to do\n")
                return(changed)
            }
            rpkgs = .ini$getSectionValues("web")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
-               .msg$out("Nothing to do\n")
+               .msg$out("\tNothing to do\n")
                return(changed)
            }
 
