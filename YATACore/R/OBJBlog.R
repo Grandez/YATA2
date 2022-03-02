@@ -12,7 +12,7 @@ OBJBlog = R6::R6Class("OBJ.BLOG"
            # private$icons        = factory$getClass("Icons")
        }
        ,add = function(data) {
-          data$id = YATATools::getID()
+          data$id = YATABase$getID()
           data$type = DBDict$blog[[data$type]]
           self$current = data
           tblBlog$add(data,isolate=TRUE)

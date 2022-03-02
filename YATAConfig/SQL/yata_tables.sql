@@ -92,7 +92,6 @@ CREATE TABLE REGULARIZATION  (
    ,PRIMARY KEY ( CAMERA, CURRENCY, DATE_REG DESC, ID )
 );
 
-
 -- ------------------------------------------------------------------
 -- Operaciones
 -- Una operacion tiene:
@@ -195,53 +194,6 @@ CREATE TABLE FLOWS  (
    ,PRICE      DOUBLE      NOT NULL -- Precio Necesario para saber la diferencia
    ,TMS          TIMESTAMP DEFAULT CURRENT_TIMESTAMP           -- Fecha de entrada
    ,PRIMARY KEY ( ID_OPER, ID_FLOW )
-);
-
--- Tabla de razones de la operacion
-
--- DROP TABLE  IF EXISTS REASONS;
--- CREATE TABLE REASONS  (
---     ID_REASON      INT UNSIGNED     NOT NULL -- Identificador de la razon
---    ,DATA           TEXT       
---    ,TMS           TIMESTAMP DEFAULT CURRENT_TIMESTAMP           -- Fecha de entrada   
---    ,PRIMARY KEY ( ID_REASON )
--- );
--- 
-
--- SYMBOL puede estar repetido
--- Se debe machear contra currencies
-DROP TABLE  IF EXISTS SESSION;
-CREATE TABLE SESSION  (
-    ID        INTEGER       NOT NULL
-   ,SYMBOL    VARCHAR(18)   NOT NULL
-   ,PRICE     DOUBLE   
-   ,VOLUME    DOUBLE   
-   ,RANK      INTEGER
-   ,VAR01     DOUBLE
-   ,VAR24     DOUBLE
-   ,VAR07     DOUBLE
-   ,VAR30     DOUBLE
-   ,VAR60     DOUBLE
-   ,VAR90     DOUBLE
-   ,VOL24     DOUBLE
-   ,VOL07     DOUBLE
-   ,VOL30     DOUBLE
-   ,DOMINANCE DOUBLE
-   ,TURNOVER  DOUBLE
-   ,TMS       TIMESTAMP     NOT NULL
-   ,PRIMARY KEY (ID, TMS)
---   ,UNIQUE  KEY (SYMBOL, TMS)
-   ,INDEX       (SYMBOL)
-);
-
--- ----------------------------------------------------------
--- Contiene la ultima vez que se acutalizo session
--- Nos evita hacer una query
--- ----------------------------------------------------------
-DROP TABLE  IF EXISTS SESSION_CTRL;
-CREATE TABLE SESSION_CTRL  (
-    TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
-   ,PRIMARY KEY (TMS)
 );
 
 DROP TABLE  IF EXISTS BLOG;

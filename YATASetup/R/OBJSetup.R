@@ -20,7 +20,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           rc = tryCatch({
               browser()
              .retrieveRepo()
-             .manageCode()
              .managePackages()
              .manageWebSites()
              .manageBinaries()
@@ -28,11 +27,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              .manageCode()
              0
           }, system_command_error = function(cond) {
-              browser()
-          }, error = function(cond) {
+              base$msg$ko()
               browser()
           }, YATAERROR = function (cond) {
+              base$msg$ko()
              cond$rc
+          }, error = function(cond) {
+              base$msg$ko()
+              browser()
           })
       }
       ,updateServices = function(full = FALSE) {
@@ -57,13 +59,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.ini = NULL
        ,.run = NULL
        ,base = NULL
-       ,.fail = function(rc, fmt, ..., ext) {
+       ,.fail           = function(rc, fmt, ..., ext) {
            base$msg$err(fmt, ...)
            txt = sprintf(fmt, ...)
            strerr = structure(list(msg = txt, rc=rc, ext=ext),class = c("YATAERROR", "error", "condition"))
            stop(strerr)
         }
-       ,.checkfail = function(rc, rc2, fmt, ..., ext=NULL) {
+       ,.checkfail      = function(rc, rc2, fmt, ..., ext=NULL) {
            if (rc2 != 0) {
                base$msg$ko()
                .fail(rc, "ERROR %d retrieving repo", rc2, ext)
@@ -71,7 +73,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            base$msg$ok()
            FALSE
         }
-       ,.makePackages = function(packages) {
+       ,.makePackages   = function(packages) {
            changed = c()
            if (length(packages) == 0) {
                base$msg$out("Nothing to do\n")
@@ -92,7 +94,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
            changed
        }
-       ,.makeBinaries = function () {
+       ,.makeBinaries   = function() {
            base$msg$lbl("Checking binaries and scripts")
            from = .git$getBinaries()
            if (is.null(from) || length(from) == 0) {
@@ -115,12 +117,12 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                }
            }
        }
-      ,.retrieveRepo = function() {
+       ,.retrieveRepo   = function() {
            base$msg$lblProcess1("Retrieving repository")
            res = .git$pull()
            .checkfail(127, res$status, "ERROR %d retrieving repo", res$status)
       }
-      ,.managePackages = function() {
+       ,.managePackages = function() {
           rc2 = 0
           base$msg$lblProcess1("Making packages")
           rc = tryCatch({
@@ -135,7 +137,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                  .checkfail(32, rc2, "")
               })
       }
-     ,.manageBinaries = function() {
+       ,.manageBinaries = function() {
          rc2 = 0
            rc = tryCatch({
                    .makeBinaries()
@@ -145,77 +147,64 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                    .checkfail(32, rc2, "ERROR %d processing scripts", rc2)
                })
      }
-     ,.manageServices = function() {
-          base$msg$lbl("Checking services")
-          from = .git$getServices()
-          if (length(from) == 0) return (.msg$out("Nothing to do\n"))
-          .makeServices(from)
-     }
-     ,.manageCode = function() {
+       ,.manageServices = function() {
+           base$msg$lbl("Checking services")
+           from = .git$getServices()
+           if (length(from) == 0) return (.msg$out("Nothing to do\n"))
+           .makeServices(from)
+        }
+       ,.manageCode     = function() {
           # Quitamos YATACode/scripts si existe
           # Cogemos la fecha y hora
           # Ejecutamos YATACode/bin/make_{dir}.sh
-          # Si va bien lo pasamos a YATACLI/bin lo que tenga la fecha mas nueva
+          # Si va bien lo pasamos al servidor lo que tenga la fecha mas nueva
 
-          browser()
           base$msg$lblProcess1("Checking non R code")
           .run$wd = Sys.getenv("YATA_ROOT")
-#          rc = tryCatch({
-              # Process scripts
-             scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
-             lapply(scripts, function(script) {
-                    to = script
-                    to = sub("scripts/_", "bin/scripts/", to)
-                    .run$copyExex(script, to)
-             })
 
-             # Process projects (exclude scripts)
-             dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
-             dirs = dirs [-which(dirs == "YATACode/scripts")]
-             if (length(dirs) == 0) return (.msg$out("Nothing to do\n"))
+          # Process scripts
+          scripts = .git$getChanges(" YATACode/scripts/_[a-zA-Z0-9_\\.]+ ")
+          lapply(scripts, function(script) {
+                 to = script
+                 to = sub("scripts/_", "bin/scripts/", to)
+                 .run$copyExex(script, to)
+          })
 
-             now = as.POSIXct(Sys.time())
+          # Process projects (exclude scripts)
+          dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
+          dirs = dirs [-which(dirs == "YATACode/scripts")]
+          if (length(dirs) == 0) return (.msg$out("Nothing to do\n"))
 
-             for (pkg in dirs) {
-                  grepout = regexpr("/.*", pkg)
-                  beg = grepout[1]
-                  folder = substr(pkg,  beg + 1, beg + attr(grepout, "match.length")[1] - 1)
-                  .run$wd = paste(.run$wd, "YATACode", folder, sep="/")
-                  .run$commandx(paste0("../bin/scripts/make_", folder, ".sh"))
-             }
-             browser()
+          now = as.POSIXct(Sys.time())
 
-              from = paste0(Sys.getenv("YATA_ROOT"), "/YATACode/bin")
-              to   = "/srv/yata/bin"
+          for (pkg in dirs) {
+               grepout = regexpr("/.*", pkg)
+               beg = grepout[1]
+               folder = substr(pkg,  beg + 1, beg + attr(grepout, "match.length")[1] - 1)
+               .run$wd = paste(.run$wd, "YATACode", folder, sep="/")
+               .run$commandx(paste0("../bin/scripts/make_", folder, ".sh"))
+          }
 
-              lapply(list.files(from, full.names=TRUE), function(file) {
-                  browser()
+          from = paste0(Sys.getenv("YATA_ROOT"), "/YATACode/bin")
+          to   = "/srv/yata/bin"
+
+          lapply(list.files(from, full.names=TRUE), function(file) {
                   nfo = file.info(file)
                   if (!nfo[1, "isdir"] && nfo[1,"mtime"] >= now) {
                          .run$copyx(file, to)
                      }
+                })
 
-              })
+          base$msg$ok()
        }
-    # , system_command_error = function(res) {
-    #        browser()
-    #               rc2 = res$status
-    #            }, error = function (cond) {
-    #               rc2=32
-    #            }
-    #           ,finally = function() {
-    #              .checkfail(32, rc2, "")
-    #           })
-    #     browser()
-    #   }
-     ,.manageWebSites = function () {
-          base$msg$lbl("Making Web sites")
-          changed = list()
-          changes = .git$getPackages()
-          if (is.null(changes) || length(changes) == 0) {
-              base$msg$out("Nothing to do\n")
-              return(changed)
-          }
+       ,.manageWebSites = function() {
+           base$msg$lbl("Making Web sites")
+           changed = list()
+           changes = .git$getPackages()
+           if (is.null(changes) || length(changes) == 0) {
+               base$msg$out("Nothing to do\n")
+               return(changed)
+           }
            rpkgs = .ini$getSectionValues("web")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
@@ -226,20 +215,19 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            for (pkg in pkgs) .run$copy2web(pkgs)
            base$msg$ok()
      }
-     ,.makeServices = function (services) {
-          base=Sys.getenv("YATA_ROOT")
-          for (srv in services) {
-              f = paste0(base,srv)
-              data = processFile(f, .ini)
-              f = sub(".*/_", paste0(.ini$getSite(),"/"))
-              f = sub("\\.[a-zA-Z0-9]+$", "", f)
-              ftmp = sub(".*/","/tmp/")
-              writeLines(data,ftmp)
-              .run$copy(ftmp, f, .ini$getUserPass())
-              .run$chmod(f, 775, .ini$getUserPass())
-              file.remove(ftmp)
-          }
-
-     }
+       ,.makeServices   = function(services) {
+           base=Sys.getenv("YATA_ROOT")
+           for (srv in services) {
+                f = paste0(base,srv)
+                data = processFile(f, .ini)
+                f = sub(".*/_", paste0(.ini$getSite(),"/"))
+                f = sub("\\.[a-zA-Z0-9]+$", "", f)
+                ftmp = sub(".*/","/tmp/")
+                writeLines(data,ftmp)
+                .run$copy(ftmp, f, .ini$getUserPass())
+                .run$chmod(f, 775, .ini$getUserPass())
+                file.remove(ftmp)
+            }
+        }
     )
 )

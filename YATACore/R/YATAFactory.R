@@ -47,6 +47,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           ProvFactory$get(code, object, force)
       }
       ,getObject   = function(name, force = FALSE) {
+          browser()
          if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
          if (is.null(objects$get(name))) private$objects$put(name,
                                          eval(parse(text=paste0("OBJ", name, "$new(self)"))))

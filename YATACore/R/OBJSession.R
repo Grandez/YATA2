@@ -7,6 +7,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
     ,public = list(
         print       = function() { message("Session Object")}
        ,initialize = function(factory) {
+           browser()
            super$initialize(factory)
            name = "session"
            #JGG Especial
@@ -72,7 +73,8 @@ OBJSession = R6::R6Class("OBJ.SESSION"
 
        ,updateLatest = function(force=FALSE) {
            res = NULL
-           if (force || (as.integer(Sys.time()) - lastGet) > 900) {
+           browser()
+#JGG           if (force || (as.integer(Sys.time()) - lastGet) > 900) {
                # Puede haber nombre duplicados
                df = provider$getLatest()
                df[,c("name", "slug")] = NULL
@@ -87,7 +89,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
                df = df[,-ncol(df)]
                tryCatch({tblSession$update(df) ; res = df }
                        ,error = function(e) { stop(paste("Fallo en el update", e)) })
-          }
+          #JGG }
            res
         }
     )

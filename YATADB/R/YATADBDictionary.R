@@ -13,7 +13,6 @@ DBDict = list(
         ,OperControl  = "OPERATIONS_CONTROL"
         ,OperLog      = "OPERATIONS_LOG"
         ,Flows        = "FLOWS"
-        ,Session      = "SESSION"
         ,Blog         = "BLOG"
         ,Transfers    = "TRANSFERS"
     )
@@ -26,6 +25,7 @@ DBDict = list(
         ,Path         = "PATH"
         ,Messages     = "MESSAGES"
         ,History      = "HISTORY"
+        ,Session      = "SESSION"
     )
     ,fields = list(
          active    = "ACTIVE"

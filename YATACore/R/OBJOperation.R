@@ -357,7 +357,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
        ,addFlow        = function(type, currency, amount, price) {
            data = list(
               idOper   = current$idOper
-             ,idFlow   = YATATools::getID()
+             ,idFlow   = YATABase$getID()
              ,type     = type
              ,currency = currency
              ,amount   = amount
@@ -377,7 +377,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
            tblPos  = factory$getTable(codes$tables$transfer)
            tblXfer = factory$getTable(codes$tables$transfer)
-           idXfer = YATATools::getID()
+           idXfer = YATABase$getID()
            xfer = list(
                id        = idXfer
               ,cameraIn  = current$to
@@ -388,8 +388,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            )
            tblXfer$add(xfer)
 
-           idOut = YATATools::getID()
-           idIn  = YATATools::getID()
+           idOut = YATABase$getID()
+           idIn  = YATABase$getID()
            data = list(
                 id      = idOut
                ,camera  = current$from
@@ -416,7 +416,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
            flow = list(
                 idOper   = idOut
-               ,idFlow   = YATATools::getID()
+               ,idFlow   = YATABase$getID()
                ,type     = codes$flow$xferOut
                ,currency = current$currency
                ,amount   = current$amount * -1
@@ -437,7 +437,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             # Si hay error devuelve TRUE
             self$current        = args2list(...)
             self$current$type   = type
-            self$current$id     = YATATools::getID()
+            self$current$id     = YATABase$getID()
             self$current$idOper = self$current$id
             # if (type %in% c(codes$oper$sell, codes$oper$close)) {
             #     self$current$amount = current$amount * -1
@@ -511,13 +511,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       ,addRegulatization = function(camera, currency) {
             # Genera el registro de regularizacion
 
-            self$current$idOper = YATATools::getID()
+            self$current$idOper = YATABase$getID()
             if (is.null(tblReg)) private$tblReg = factory$getTable(codes$tables$regularization)
 
             objPos$getPosition(camera=camera, currency=currency)
 
             position        = objPos$current
-            position$id     = YATATools::getID()
+            position$id     = YATABase$getID()
             position$date   = as.POSIXct(Sys.time())
             position$period = getRegularizationPeriod(camera, currency, objPos$current$tms)
             position$idOper = current$idOper
