@@ -178,8 +178,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                   grepout = regexpr("/.*", pkg)
                   beg = grepout[1]
                   folder = substr(pkg,  beg + 1, beg + attr(grepout, "match.length")[1] - 1)
-                  .run$wd = paste0(.run$wd, "/", "YATACode/bin")
-                  .run$commandx(paste0("make_", folder, ".sh"))
+                  .run$wd = paste(.run$wd, "YATACode", folder, sep="/")
+                  .run$commandx(paste0("../../make_", folder, ".sh"))
              }
              browser()
               now = as.POSIXct(Sys.time())
@@ -187,13 +187,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               from = .run$wd
               to   = "/srv/yata/bin"
               files = file.info(list.files(from))
-              row = 1
-              while (row <= nrow(files)) {
+              lapply(list.files(from), function(file) {
                   browser()
-                     if (!files[row, "isdir"] && files[row,"mtime"] >= now) {
-                         .run$copyFile(file, from, to, mode=775)
+                  nfo = file.info(file)
+                  if (!ndo[1, "isdir"] && nfo[1,"mtime"] >= now) {
+                         .run$copyx(file, from, to)
                      }
-              }
+
+              })
        }
     # , system_command_error = function(res) {
     #        browser()
