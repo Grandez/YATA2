@@ -195,7 +195,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                  .checkfail(32, rc2, "")
               })
         browser()
-     }
       }
      ,.manageWebSites = function () {
           base$msg$lbl("Making Web sites")
