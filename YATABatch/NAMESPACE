@@ -5,7 +5,7 @@ import(YATABase)
 import(YATACore)
 
 # exportPattern("^[[:alpha:]]+")
-#exportPattern("update.*")
+exportPattern("update.*")
 #exportPattern("load.*")
 #exportPattern("unload.*")
 #export(recreatePosi#tion)
