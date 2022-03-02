@@ -17,13 +17,11 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
           processx::run( 'R', args, TRUE, Sys.getenv("YATA_ROOT"))
        }
        ,copy       = function (src,  dst,  su = NULL) { .copy      (su, FALSE, src, dst)   }
-       ,copyExe    = function (src,  dst,  su = NULL) { .copyExe   (su, FALSE, src, dst)   }
-       ,chmod      = function (what, mode, su = NULL) { .chmod     (su, FALSE, what, mode) }
-       ,copy2site  = function (pkgs,       su = NULL) { .copy2site (su, FALSE, pkgs)       }
        ,copyx      = function (src,  dst,  su = NULL) { .copy      (su, TRUE, src, dst)    }
+       ,copyExe    = function (src,  dst,  su = NULL) { .copyExe   (su, FALSE, src, dst)   }
        ,copyExex   = function (src,  dst,  su = NULL) { .copyExe   (su, TRUE, src, dst)    }
+       ,chmod      = function (what, mode, su = NULL) { .chmod     (su, FALSE, what, mode) }
        ,chmodx     = function (what, mode, su = NULL) { .chmod     (su, TRUE, what, mode)  }
-       ,copy2sitex = function (pkgs,       su = NULL) { .copy2site (su, TRUE, pkgs)        }
        ,command    = function (cmd, args=NULL, su=NULL) { .command(su, FALSE, cmd,args)    }
        ,commandx   = function (cmd, args=NULL, su=NULL) { .command(su, TRUE,  cmd,args)    }
        ,copyFile   = function (file, from, to, mode=NULL, su = NULL) {
