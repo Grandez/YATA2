@@ -45,8 +45,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           0
       }
       ,updatePackages = function() {
+          browser()
           base$msg$lbl("Generating/Updating packages")
-          rpkgs = .ini$getSectionValues("packages")
+          rpkgs = .ini$getSection("packages")
           .makePackages(rpkgs)
           0
       }

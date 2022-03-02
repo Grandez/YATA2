@@ -17,7 +17,7 @@ YATAINI = R6::R6Class("YATA.R6.INI"
           tok = substr(pattern,3, nchar(pattern) - 2)
           .cfg$getValue("variables", tok)
       }
-      ,getSection = function(section) { .cfgetSection(section) }
+      ,getSection = function(section) { .cfg$getSection(section) }
     )
    ,private = list(
        .cfg = NULL
