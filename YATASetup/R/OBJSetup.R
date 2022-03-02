@@ -45,7 +45,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           0
       }
       ,updatePackages = function() {
-          browser()
           base$msg$lbl("Generating/Updating packages")
           rpkgs = .ini$getSection("packages")
           .makePackages(rpkgs)
@@ -169,7 +168,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                base$msg$out("\tNothing to do\n")
                return(changed)
            }
-           rpkgs = .ini$getSectionValues("packages")
+           rpkgs = .ini$getSection("packages")
            pkgs = rpkgs[which(rpkgs %in% packages)]
            if (length(pkgs) == 0) {
                base$msg$out("\tNothing to do\n")
@@ -177,7 +176,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
            base$msg$out("\n")
            for (pkg in pkgs) {
-               base$msg$out("\tMaking %s", pkg)
+               base$msg$out("\t\tMaking %s", pkg)
                .run$install(pkg)
                base$msg$ok()
                changed = c(changed, pkg)
