@@ -51,7 +51,12 @@ int   total   =  0;
 void *threadLaunch (void *arg)  {
    time_t tt;
    struct tm * tmInfo;
-
+   pid_t pid = 33;
+   char *argv[] = { 
+        "--defaultPackages='YATABatch'"
+       ,"-e"
+       ,"YATABatch::getLatest()"
+   }; 
    time(&tt);
    tmInfo = localtime(&tt);
    
@@ -60,8 +65,13 @@ void *threadLaunch (void *arg)  {
 
    while (1) {
      printf("Ejecuta hilo\n");
-     sleep(QPERIOD * 60);
-     // sleep(QPERIOD);
+       printf("hace fork\n");
+      pid = fork();
+      if (pid == 0) {
+          execv("Rscript", argv);
+      } else {
+         sleep(QPERIOD * 60);   
+      }
    }
 }
 
