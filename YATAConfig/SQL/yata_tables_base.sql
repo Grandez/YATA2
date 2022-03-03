@@ -26,13 +26,15 @@ CREATE TABLE CURRENCIES  (
    ,SLUG     VARCHAR(64)   
    ,RANK     INTEGER      DEFAULT 99999   
    ,DECIMALS TINYINT      DEFAULT 6
-   ,BEG      DATE                         -- First record
-   ,END      DATE                         -- Last record
    ,CREATED  TINYINT      DEFAULT 0       -- Since mark the beginning of CTC?    
    ,ICON     VARCHAR(255)    
-   ,CAMERAS  TIMESTAMP
+   ,CAMERAS  TIMESTAMP   
    ,TMS      TIMESTAMP DEFAULT   CURRENT_TIMESTAMP
                        ON UPDATE CURRENT_TIMESTAMP
+   ,BEG      DATE                         -- First record
+   ,END      DATE                         -- Last record
+   ,CREATED  TINYINT      DEFAULT 0
+   ,ACTIVE   TINYINT      DEFAULT 1                       
    ,PRIMARY KEY ( ID )
    ,INDEX       ( SYMBOL )
 );

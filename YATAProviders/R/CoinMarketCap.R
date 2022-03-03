@@ -130,7 +130,13 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
        ,getCurrencies = function(page) {
           url = urlbase
           if (!missing(page)) url = paste0(url, "?page=", page)
-          page = tryCatch(read_html(url), error = function(cond) NULL )
+          page = tryCatch({
+              browser()
+              read_html(url)
+          }
+              , error = function(cond) {
+                  browser()
+                  NULL })
           if (is.null(page)) return (NULL)
           tab = page %>% html_nodes("table")
           rows = tab %>% html_nodes("tr")

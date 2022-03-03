@@ -49,10 +49,18 @@ int   clients =  0;
 int   total   =  0;   
 
 void *threadLaunch (void *arg)  {
-//printf("Arranca hilo\n");
+   time_t tt;
+   struct tm * tmInfo;
+
+   time(&tt);
+   tmInfo = localtime(&tt);
+   
+   int prev = QPERIOD - (tmInfo.tm_min % QPERIOD) + 1;
+   sleep(prev * 60);
+
    while (1) {
      printf("Ejecuta hilo\n");
-     sleep(5);
+     sleep(QPERIOD * 60);
      // sleep(QPERIOD);
    }
 }

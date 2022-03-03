@@ -6,7 +6,7 @@
    #define QNAME "/yata"
    #define PID_FILE "/tmp/yata_mqs.pid"
    #define LOG_FILE "/tmp/yata.log"
-   #define QIDLE    30  // Minutes idle before end server
+   #define QIDLE    60  // Minutes idle before end server
    #define QPERIOD  15  // Interval in minutes to launch external process
    #define QMODE          0660
    #define QUEUE_MSG_MAX   100

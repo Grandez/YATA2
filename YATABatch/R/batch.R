@@ -1,7 +1,15 @@
-getLatest = function(console=FALSE) {
+getLatest = function(console=FALSE, log=1) {
     browser()
+    begin = as.numeric(Sys.time())
+    logger = YATACore::YATALogger$new("latest", console, log)
     fact = YATACore::YATAFACTORY$new()
-    session = fact$getObject(fact$codes$object$session)
-    res = session$updateLatest()
-
+    rc = tryCatch({
+       session = fact$getObject(fact$codes$object$session)
+       session$updateLatest()
+    }, error = function (cond) {
+        16
+    })
+    diff =
+    logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
+    rc
 }
