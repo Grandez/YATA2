@@ -125,6 +125,7 @@ function(input, output, session) {
    
    observeEvent(input$connected, { 
        browser() 
+       POST("begin")
        })
    observeEvent(input$disconnected, { 
        browser() 

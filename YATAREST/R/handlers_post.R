@@ -2,6 +2,7 @@
     p  = req$parameters_query[[parm]]
     ifelse(is.null(p), dafult, p)
 }
+
 post_begin = function(.req, .res) {
     interval = .req$parameters_query[["interval"]]
     alive    = .req$parameters_query[["alive"]]

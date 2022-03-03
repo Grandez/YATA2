@@ -1,3 +1,4 @@
+
 #ifndef __YATA__
    #define __YATA__
    
