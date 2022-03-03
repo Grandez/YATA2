@@ -1,30 +1,25 @@
-
 --- Tabla de crypto monedas con las que trabajamos
 DROP TABLE  IF EXISTS CURRENCIES CASCADE;
 CREATE TABLE CURRENCIES  (
-    ID       INTEGER      DEFAULT 0
-   ,NAME     VARCHAR(64)  NOT NULL        -- Clearing Name
-   ,SYMBOL   VARCHAR(20)  NOT NULL        -- Moneda   
-   ,SLUG     VARCHAR(64)   
-   ,RANK     INTEGER      DEFAULT 99999   
-   ,DECIMALS TINYINT      DEFAULT 6
-   ,CREATED  TINYINT      DEFAULT 0       -- Since mark the beginning of CTC?    
+    ID       INTEGER       DEFAULT 0
+   ,SYMBOL   VARCHAR(20)   NOT NULL        
+   ,NAME     VARCHAR(64)   NOT NULL        
+   ,SLUG     VARCHAR(64)    
+   ,RANK     INTEGER       DEFAULT 99999   
+   ,DECIMALS TINYINT       DEFAULT 6
    ,ICON     VARCHAR(255)    
-   ,CAMERAS  TIMESTAMP   
-   ,TMS      TIMESTAMP DEFAULT   CURRENT_TIMESTAMP
-                       ON UPDATE CURRENT_TIMESTAMP
-   ,BEG      DATE                         -- First record
-   ,END      DATE                         -- Last record
-   ,CREATED  TINYINT      DEFAULT 0
-   ,ACTIVE   TINYINT      DEFAULT 1                       
+   ,SINCE    DATE                         -- Active from ...
+   ,ACTIVE   TINYINT       DEFAULT 1                       
+   ,TMS      TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP
+                           ON UPDATE CURRENT_TIMESTAMP   
    ,PRIMARY KEY ( ID )
    ,INDEX       ( SYMBOL )
 );
 
 DROP TABLE  IF EXISTS HISTORY CASCADE;
 CREATE TABLE HISTORY  (
-    TMS      DATE        NOT NULL -- Moneda   
-   ,SYMBOL   VARCHAR(20)  NOT NULL -- Moneda   
+    SYMBOL   VARCHAR(20)  NOT NULL -- Moneda   
+   ,TMS      DATE         NOT NULL -- Moneda   
    ,OPEN     DOUBLE   
    ,CLOSE    DOUBLE
    ,HIGH     DOUBLE
