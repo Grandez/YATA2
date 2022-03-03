@@ -85,20 +85,37 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           base$msg$ok()
       }
        ,.manageBinaries = function() {
-         rc2 = 0
-           rc = tryCatch({
-                   .makeBinaries()
-                }, system_command_error = function(res) {
-                   rc2 = 16
-               },finally = function() {
-                   .checkfail(32, rc2, "ERROR %d processing scripts", rc2)
-               })
+           base$msg$lblProcess1("Checking binaries and scripts")
+           from = .git$getChanges(" YATACLI/[a-rt-z][a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ")
+           if (is.null(from) || length(from) == 0) {
+               base$msg$out("\tNothing to do\n")
+               return(0)
+           }
+           site = paste0(Sys.getenv("YATA_SITE"), "/cli")
+           to = c()
+           for (script in from) {
+               bin = sub("/x", "/", script)
+               bin = sub("\\.[a-zA-Z0-9]+$", "", bin)
+               bin = sub("/[a-zA-Z0-9/]+/", "/bin/", bin)
+               to = c(to, bin)
+           }
+           for (idx in 1:length(from)) {
+               src  = paste0(Sys.getenv("YATA_ROOT"), "/", from[idx])
+               if (file.exists(src)) {
+                   dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
+                   .run$copyExex(src, dst)
+                   src = paste0(dst, "/", to[idx])
+                   .run$copyExex(src, site)
+               }
+           }
+           base$msg$ok()
      }
        ,.manageServices = function() {
            base$msg$lblProcess1("Checking services")
            from = .git$getServices()
            if (length(from) == 0) return (base$msg$out("\tNothing to do\n"))
            .makeServices(from)
+           base$msg$ok()
         }
        ,.manageCode     = function() {
           # Quitamos YATACode/scripts si existe
@@ -145,14 +162,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           base$msg$ok()
        }
        ,.manageWebSites = function() {
-           base$msg$lbl("Making Web sites")
+           base$msg$lblProcess1("Making Web sites")
            changed = list()
            changes = .git$getPackages()
            if (is.null(changes) || length(changes) == 0) {
                base$msg$out("\tNothing to do\n")
                return(changed)
            }
-           rpkgs = .ini$getSectionValues("web")
+           rpkgs = .ini$getSection("web")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
                base$msg$out("\tNothing to do\n")
@@ -183,30 +200,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
            changed
        }
-       ,.makeBinaries   = function() {
-           base$msg$lbl("Checking binaries and scripts")
-           from = .git$getBinaries()
-           if (is.null(from) || length(from) == 0) {
-               base$msg$out("\tNothing to do\n")
-               return(0)
-           }
-           to = c()
-           for (script in from) {
-               bin = sub("/x", "/", script)
-               bin = sub("\\.[a-zA-Z0-9]+$", "", bin)
-               bin = sub("/[a-zA-Z0-9/]+/", "/bin/", bin)
-               to = c(to, bin)
-           }
-           for (idx in 1:length(from)) {
-               src = paste0(Sys.getenv("YATA_ROOT"), "/", from[idx])
-               if (file.exists(src)) {
-                   dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
-                   .run$copy(src, dst)
-                   .run$chmod(dst, "775")
-               }
-           }
-       }
-
        ,.makeServices   = function(services) {
            base=Sys.getenv("YATA_ROOT")
            for (srv in services) {
