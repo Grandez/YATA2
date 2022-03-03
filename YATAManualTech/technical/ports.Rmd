@@ -1,0 +1,22 @@
+# Puertos
+
+Para el sistema necesitamos:
+
+- SGDB
+- Shiny Server
+- Servicios REST
+- Servicios propios
+
+Para ello necesitamos 15 puertos libres consecutivos
+Supongamos el puerto 4000
+
+4000 - Shiny YATA Web
+4001 - Shiny YATA Admin Web
+4002 - Shiny otras web
+
+4005 - SGDB 1
+4006 - SGDB 2
+
+4010 - Servicios REST online
+4011 - Servicios REST deferred
+4012 - Servicios REST Batch

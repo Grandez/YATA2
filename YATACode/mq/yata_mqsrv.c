@@ -60,7 +60,7 @@ void *threadLaunch (void *arg)  {
    time(&tt);
    tmInfo = localtime(&tt);
    
-   int prev = QPERIOD - (tmInfo.tm_min % QPERIOD) + 1;
+   int prev = QPERIOD - (tmInfo->tm_min % QPERIOD) + 1;
    sleep(prev * 60);
 
    while (1) {
