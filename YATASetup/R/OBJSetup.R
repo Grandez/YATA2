@@ -82,7 +82,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           base$msg$lblProcess1("Making packages")
           pkgs = .makePackages(.git$getPackages())
           .run$copy2site(pkgs)
-          base$msg$ok()
       }
        ,.manageBinaries = function() {
            base$msg$lblProcess1("Checking binaries and scripts")
@@ -175,7 +174,6 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                base$msg$out("\tNothing to do\n")
                return(changed)
            }
-
            for (pkg in pkgs) .run$copy2web(pkgs)
            base$msg$ok()
        }
