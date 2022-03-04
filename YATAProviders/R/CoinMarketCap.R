@@ -7,12 +7,102 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-       initialize = function(code, eurusd, dbf) {
-          super$initialize  (code, "CoinMarketCap", eurusd, dbf)
+       initialize = function(code, eurusd) { # }, dbf) {
+          super$initialize  (code, "CoinMarketCap", eurusd) #, dbf)
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
           private$hID     = YATABase$map
           #getLatest()
        }
+      ,getCurrencies = function(from = 1, max = 0) {
+          url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
+          count   =   0
+          until   = 501
+          dfc     = NULL
+          process = TRUE
+          parms = list( start=from, limit=500, convert = "EUR"
+                       ,cryptoType="all", tagType="all")
+
+          while (process) {
+               if (count > 0) Sys.sleep(1) # Para no saturar
+               data  = request(url, parms)
+               until = ifelse (max == 0, data$totalCount, max)
+               data  = data[[1]]
+               parms$start = parms$start + length(data)
+
+               lst = lapply(data, function(x) {
+                      since = ifelse(is.null(x$dateAdded), x$lastUpdated, x$dateAdded)
+                      since = paste(substr(since,1,10),substr(since,12,19), sep="-")
+                      if (nchar(x$symbol) > 20) x$symbol = substr(x$symbol,1,20)
+                      list( id=as.integer(x$id)
+                           ,name=x$name
+                           ,symbol=x$symbol
+                           ,slug=x$slug
+                           ,rank=as.integer(x$cmcRank)
+                           ,since = since
+                           ,icon = paste0(x$id, ".png")
+                           ,active = as.integer(x$isActive)
+                       )
+                     })
+               if (length(lst) > 0) {
+                   df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
+                                   ,stringsAsFactors=FALSE)
+                   colnames(df) = names(lst[[1]])
+                   dfc = rbind(dfc, df)
+               }
+               count = count + length(data)
+               if (count >= until || length(data) < 500) process = FALSE
+          }
+          dfc
+      }
+      ,getTickers    = function(from = 1, max = 0) {
+          url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
+          count =   0
+          until = 501
+          dfc   = NULL
+          parms = list( start=from, limit=500, convert = "EUR"
+                       ,cryptoType="all", tagType="all")
+
+          while (count < until) {
+               if (count > 0) Sys.sleep(1)
+               data = request(url, parms)
+               if (is.null(data)) break
+               until = ifelse (max == 0, data$totalCount, max)
+               data = data[[1]]
+               count = length(data)
+               parms$start = parms$start + count
+
+               lst = lapply(data, function(x) {
+                      quote = x$quotes[[1]]
+                      list( id=as.integer(x$id)
+                           ,symbol=x$symbol
+                           ,price  = ifelse(is.null(quote$price),            0, as.numeric(quote$price))
+                           ,volume = ifelse(is.null(quote$volume24),         0, as.numeric(quote$volume24))
+                           ,vol24  = ifelse(is.null(quote$volume24),         0, as.numeric(quote$volume24))
+                           ,vol07  = ifelse(is.null(quote$volume7d),         0, as.numeric(quote$volume7d))
+                           ,vol30  = ifelse(is.null(quote$volume30d),        0, as.numeric(quote$volume30d))
+                           ,var01  = ifelse(is.null(quote$percentChange1h),  0, as.numeric(quote$percentChange1h))
+                           ,var24  = ifelse(is.null(quote$percentChange24h), 0, as.numeric(quote$percentChange24h))
+                           ,var07  = ifelse(is.null(quote$percentChange7d),  0, as.numeric(quote$percentChange7d))
+                           ,var30  = ifelse(is.null(quote$percentChange30d), 0, as.numeric(quote$percentChange30d))
+                           ,var60  = ifelse(is.null(quote$percentChange60d), 0, as.numeric(quote$percentChange60d))
+                           ,var90  = ifelse(is.null(quote$percentChange90d), 0, as.numeric(quote$percentChange90d))
+                           ,dominance = ifelse(is.null(quote$dominance),     0, as.numeric(quote$dominance))
+                           ,turnover  = ifelse(is.null(quote$turnover),      0, as.numeric(quote$turnover))
+                      )
+                     })
+               df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
+                               ,stringsAsFactors=FALSE)
+               colnames(df) = c( "id",        "symbol", "price"
+                                ,"volume",    "volday", "volweek", "volmonth"
+                                ,"hour",      "day",    "week",    "month",   "bimonth", "quarter"
+                                ,"dominance", "turnover")
+
+               dfc = rbind(dfc, df)
+          }
+          dfc
+      }
+
+
       ,loadTickers = function() {
            if (difftime(Sys.time(), lastGet, unit="mins") < interval) return (invisible(self))
            private$lastGet = Sys.time()
@@ -31,7 +121,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
 
        }
-      ,getLatest = function(start=1, max=1000) {
+      ,getLatest2 = function(start=1, max=1000) {
          browser()
           limit = 1000 # Max items per connection
           max = start + max
@@ -69,65 +159,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
       ,unloadCurrencies = function(from, limit) {
          getLatest(from, limit)
       }
-       # Esta version se come los creditos
-       # ,getLatest = function() {
-       #     makeList = function(item) {
-       #
-       #        id=item$id
-       #        name=item$name
-       #        symbol=item$symbol
-       #        eur = item$quote$EUR
-       #        price      = ifelse(is.null(eur$price), 0, eur$price)
-       #        change_1h  = ifelse(is.null(eur$percent_change_1h) , 0, eur$percent_change_1h)
-       #        change_24h = ifelse(is.null(eur$percent_change_24h), 0, eur$percent_change_24h)
-       #        change_7d  = ifelse(is.null(eur$percent_change_7d) , 0, eur$percent_change_7d)
-       #        change_30d = ifelse(is.null(eur$percent_change_30d), 0, eur$percent_change_30d)
-       #        change_60d = ifelse(is.null(eur$percent_change_60d), 0, eur$percent_change_60d)
-       #        change_90d = ifelse(is.null(eur$percent_change_90d), 0, eur$percent_change_90d)
-       #        volume     = ifelse(is.null(eur$volume_24h),         0, eur$volume_24h)
-       #        list( id       = id
-       #             ,name     = name
-       #             ,symbol   = symbol
-       #             ,price    = price
-       #             ,change01 = change_1h
-       #             ,change24 = change_24h
-       #             ,change07 = change_7d
-       #             ,change30 = change_30d
-       #             ,change60 = change_60d
-       #             ,change90 = change_90d
-       #             ,volume   = volume
-       #        )
-       #     }
-       #     return(NULL)
-       #     # Se come los creditos
-       #     url = mountURL("cryptocurrency/listings/latest")
-       #     page = GET(url,add_headers("X-CMC_PRO_API_KEY" = info$token)
-       #                   ,add_headers(Accept = "application/json")
-       #                   ,query = list(start = 1, limit = 5000, convert = "EUR")
-       #               )
-       #
-       #     json = content(page, type = "application/json")
-       #     resp = json[[1]]
-       #     data = json[[2]]
-       #     l = lapply(data, function(item) makeList(item))
-       #     df = data.frame(matrix(unlist(l), nrow=length(l), byrow=TRUE))
-       #     df$X1 = as.integer(df$X1)
-       #     for (col in 4:ncol(df)) df[,col] = as.numeric(df[,col])
-       #
-       #     tms = Sys.time()
-       #     dft = data.frame(tms=rep(tms, nrow(df)))
-       #     df = cbind(dft, df)
-       #
-       #     colnames(df) = c( "tms", "id", "name", "symbol", "price"
-       #                      ,"change01", "change24", "change07"
-       #                      ,"change30", "change60", "change90"
-       #                      ,"volume")
-       #
-       #     df[df$volume < 10, "volume"] = 0
-       #     private$dfTickers = df
-       #     df
-       #  }
-       ,getCurrencies = function(page) {
+
+       ,getCurrencies2 = function(page) {
           url = urlbase
           if (!missing(page)) url = paste0(url, "?page=", page)
           page = tryCatch({
@@ -272,57 +305,6 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          private$dfTickers = df
          df
       }
-      ,requestLatest = function(beg, end) {
-         url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
-         # Sin sor ordena por defecto por rank
-         makeRow = function(x) {
-            quote = x$quotes[[1]]
-            list( id=as.integer(x$id)
-                 ,name=x$name
-                 ,symbol=x$symbol
-                 ,slug=x$slug
-                 ,rank=as.integer(x$cmcRank)
-                 ,price  = ifelse(is.null(quote$price),            0, as.numeric(quote$price))
-                 ,volume = ifelse(is.null(quote$volume24),         0, as.numeric(quote$volume24))
-                 ,vol24  = ifelse(is.null(quote$volume24),         0, as.numeric(quote$volume24))
-                 ,vol07  = ifelse(is.null(quote$volume7d),         0, as.numeric(quote$volume7d))
-                 ,vol30  = ifelse(is.null(quote$volume30d),        0, as.numeric(quote$volume30d))
-                 ,var01  = ifelse(is.null(quote$percentChange1h),  0, as.numeric(quote$percentChange1h))
-                 ,var24  = ifelse(is.null(quote$percentChange24h), 0, as.numeric(quote$percentChange24h))
-                 ,var07  = ifelse(is.null(quote$percentChange7d),  0, as.numeric(quote$percentChange7d))
-                 ,var30  = ifelse(is.null(quote$percentChange30d), 0, as.numeric(quote$percentChange30d))
-                 ,var60  = ifelse(is.null(quote$percentChange60d), 0, as.numeric(quote$percentChange60d))
-                 ,var90  = ifelse(is.null(quote$percentChange90d), 0, as.numeric(quote$percentChange90d))
-                 ,dominance = ifelse(is.null(quote$dominance),     0, as.numeric(quote$dominance))
-                 ,turnover  = ifelse(is.null(quote$turnover),      0, as.numeric(quote$turnover))
-            )
-         }
-         # Campos a recuperar
-         aux = c( "ath"    , "atl"  # Hgh/Low
-                 ,"high24h", "low24h"
-                 ,"num_market_pairs"
-                 ,"cmc_rank"
-                #,"date_added"
-                #,"tags"
-                #,"platform"
-                #,"max_supply"
-                # ,"circulating_supply"
-                # ,"total_supply"
-                  ,"volume_7d"
-                  ,"volume_30d"
-         )
-         parms = list( start=beg, limit=end, convert = "EUR"
-                      ,cryptoType="all", tagType="all", aux = paste(aux, collapse=","))
-   # ,sortBy="market_cap"
-   # ,sortType="desc"
-
-         data = request(url, parms)
-         if (is.null(data)) return (NULL)
-         # Debe devolver 2 listas
-         data[which(names(data) == "totalCount")] = NULL
-         data = data[[1]]
-         lapply(data, function(x) makeRow(x))
-      }
       ,request = function (url, parms) {
           if (missing(parms) || is.null(parms)) {
               page = httr::GET(url, add_headers(.headers=headers))
@@ -330,10 +312,12 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
              page = httr::GET(url, add_headers(.headers=headers), query=parms)
           }
          resp = httr::content(page, type="application/json")
-         if (http_error(page)) {
+         if (http_error(page) || resp$status$error_code != 0) {
              data = resp$status
              status=list(code=data$error_code,message=data$error_message)
-             return (NULL)
+             YATABase$cond$HTTP( "HTTP Error", origin=page, action="get"
+                                ,rc=resp$status$error_code
+                                ,message = resp$status$error_message)
          }
          resp$status = NULL
          #JGG  Depurar la lista a devolver

@@ -8,7 +8,6 @@ CREATE TABLE CURRENCIES  (
    ,NAME     VARCHAR(64)   NOT NULL        
    ,SLUG     VARCHAR(64)    
    ,RANK     INTEGER       DEFAULT 99999   
-   ,DECIMALS TINYINT       DEFAULT 6
    ,ICON     VARCHAR(255)    
    ,SINCE    DATE                         -- Active from ...
    ,ACTIVE   TINYINT       DEFAULT 1                       
@@ -36,23 +35,24 @@ CREATE TABLE HISTORY  (
 DROP TABLE  IF EXISTS SESSION;
 CREATE TABLE SESSION  (
     ID        INTEGER       NOT NULL
-   ,SYMBOL    VARCHAR(18)   NOT NULL
+   ,SYMBOL    VARCHAR(20)   NOT NULL
    ,PRICE     DOUBLE   
-   ,VOLUME    DOUBLE   
-   ,RANK      INTEGER
    ,VAR01     DOUBLE
    ,VAR24     DOUBLE
    ,VAR07     DOUBLE
    ,VAR30     DOUBLE
    ,VAR60     DOUBLE
    ,VAR90     DOUBLE
+   ,VOLUME    DOUBLE      
    ,VOL24     DOUBLE
    ,VOL07     DOUBLE
    ,VOL30     DOUBLE
    ,DOMINANCE DOUBLE
    ,TURNOVER  DOUBLE
-   ,TMS       TIMESTAMP     NOT NULL
-   ,PRIMARY KEY (ID, TMS)
+   ,TMS      TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP
+                           ON UPDATE CURRENT_TIMESTAMP   
+
+   ,PRIMARY KEY (ID, TMS DESC)
 --   ,UNIQUE  KEY (SYMBOL, TMS)
    ,INDEX       (SYMBOL)
 );

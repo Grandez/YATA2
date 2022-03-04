@@ -13,15 +13,27 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,initialize = function(module, console=FALSE,log=1) {
            .setLogFile()
            if (!missing(module)) private$modname = module
-           private$level   = log
+           private$logLevel   = log
            private$console = console
        }
+       ,process = function(level, fmt, ...) {
+          if (level > logLevel) return (invisible(self))
+          msg = .mountMessage(fmt,...)
+          .println(2, msg)
+          invisible(self)
+       }
+       ,info = function(level, fmt, ...) {
+          if (level > logLevel) return (invisible(self))
+          msg = .mountMessage(fmt,...)
+          .println(3, msg)
+          invisible(self)
+       }
       ,executed = function(rc, elapsed, fmt, ...) {
-          if (level == 0) return()
+          if (logLevel == 0) return()
           msg = .mountMessage(fmt,...)
           if (console) {
               .toConsole(msg)
-              if (level > 1) {
+              if (logLevel > 1) {
                   .toConsole(paste("Elapsed time:", elapsed))
                   .toConsole(paste("Return code :", rc))
               }
@@ -31,9 +43,14 @@ YATALogger = R6::R6Class("YATA.LOGGER"
     )
     ,private = list(
         logFile  = NULL
-       ,level    = 0
+       ,logLevel = 0
        ,console  = FALSE
        ,modname  = "YATA"
+       ,.println = function(type, msg) {
+          if (!console) return (.toFile(type, msg))
+          .toConsole(msg)
+           cat("\n")
+       }
        ,.setLogFile = function() {
            if (.Platform$OS.type != "windows") {
                private$logFile = "/tmp/yata.log"

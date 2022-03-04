@@ -41,7 +41,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                                                ,dbname   = dbInfo$dbname
                     )
           },error = function(cond) {
-              yataErrorSQL("Connection error", origin=cond, action="connect") })
+              YATABase$cond$SQL("Connection error", origin=cond, action="connect") })
       }
       ,disconnect = function(conn) {
           if (isValid(conn))  {
@@ -72,7 +72,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           if (!is.null(params)) names(params) = NULL
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, param=params) }
                     ,error = function (cond) {
-                       yataErrorSQL("QUERY Error", origin=cond, action="query")
+                       YATABase$cond$SQL("QUERY Error", origin=cond, action="query", )
                     })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
@@ -85,11 +85,11 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                     },warning = function(cond) {
                         browser()
                        if (isolated) rollback()
-                       yataErrorSQL("EXECUTE", origin=cond, sql=qry, action="execute")
+                       YATABase$cond$SQL("EXECUTE", origin=cond, sql=qry, action="execute")
                     },error = function (cond) {
                         browser()
                        if (isolated) rollback()
-                       yataErrorSQL("EXECUTE", origin=cond, sql=qry, action="execute")
+                       YATABase$cond$SQL("EXECUTE", origin=cond, sql=qry, action="execute")
                     })
       }
       ,write      = function(table, data, append=TRUE, isolated=FALSE) {

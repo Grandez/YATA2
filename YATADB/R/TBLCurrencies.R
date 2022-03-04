@@ -5,7 +5,7 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
     ,lock_class = FALSE
     ,public = list(
           initialize    = function(name,  db=NULL) {
-             super$initialize(name, fields=private$fields, db=db)
+              super$initialize(name, fields=private$fields, db=db)
               private$hMap = YATABase$map
           }
           ,getNames     = function(codes, all=FALSE) {
@@ -37,19 +37,15 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
      )
      ,private = list (
            fields = list(
-              id        = "ID"
-              ,name     = "NAME"
-              ,symbol   = "SYMBOL"
-              ,slug     = "SLUG"
-              ,rank     = "RANK"
-              ,decimals = "DECIMALS"
-              ,icon     = "ICON"
-              ,cameras  = "CAMERAS"
-              ,tms      = "TMS"
-              ,from     = "BEG"
-              ,to       = "END"
-              ,beg      = "CREATED"
-              ,active   = "ACTIVE"
+              id       = "ID"
+              ,name    = "NAME"
+              ,symbol  = "SYMBOL"
+              ,slug    = "SLUG"
+              ,rank    = "RANK"
+              ,icon    = "ICON"
+              ,since   = "SINCE"
+              ,active  = "ACTIVE"
+              ,tms     = "TMS"
           )
          ,hMap = NULL
          ,getData = function(codes, all) {

@@ -15,8 +15,11 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
           )
           stop(err)
      }
-     ,errorSQL = function(msg, action=NULL, origin=NULL, ...) {
+     ,SQL = function(msg, action=NULL, origin=NULL, ...) {
         self$error(msg,action=action,origin=origin, subclass="SQL", ...)
+     }
+     ,HTTP = function(msg, action=NULL, origin=NULL, ...) {
+        self$error(msg,action=action,origin=origin, subclass="HTTP", ...)
       }
      ,logical = function(msg, action=NULL, origin=NULL, ...) {
            self$error(msg,action=action,origin=origin, subclass="LOGICAL", ...)

@@ -4,20 +4,21 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-       initialize = function(dbf) {
+        initialize = function() { # dbf) {
           # le pasamos la factoria para que obtenga sus datos
 #           if (!missing(external)) private$provNames = c(private$provNames, external)
-            if (missing(dbf)) dbf = YATADB::YATADBFactory$new()
-            private$dbf  = dbf
+            # if (missing(dbf)) dbf = YATADB::YATADBFactory$new()
+            # private$dbf  = dbf
 #            private$EUR = get("EUR", "Euro")
             # Por ahora vamos a tirar de MarketCap
-            private$mktcap = PROVMarketCap$new("MKTCAP", NULL, dbf)
+            private$mktcap = PROVMarketCap$new("MKTCAP", NULL) # , dbf)
         }
        ,finalize = function() {
           private$providers = NULL
           private$dbf = NULL
           private$config = NULL
-        }
+       }
+       ,print = function() { message("Providers Factory")}
        ,get = function(code, provider, force=FALSE) {
           private$mktcap
            # if (force) {
@@ -40,7 +41,8 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
       ,mktcap = NULL
       ,config = list()
       ,createProvider = function (code, provider) {
-         eval(parse(text=paste0("PROV", provider, "$new(code, EUR, dbf=dbf)")))
+         #eval(parse(text=paste0("PROV", provider, "$new(code, EUR, dbf=dbf)")))
+          eval(parse(text=paste0("PROV", provider, "$new(code, EUR)")))
       }
    )
 

@@ -17,8 +17,8 @@ PROVPoloniex = R6::R6Class("PROV.POLONIEX"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-        initialize = function(code, eurusd, dbf) {
-           super$initialize(code, "Poloniex", eurusd, dbf)
+        initialize = function(code, eurusd) {
+           super$initialize(code, "Poloniex", eurusd)
            private$lastGet = as.POSIXct(1, origin="1970-01-01")
            loadTickers()
         }

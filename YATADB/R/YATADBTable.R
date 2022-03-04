@@ -27,16 +27,18 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,current   = NULL   # Registro activo
       ,metadata  = NULL
       ,err       = NULL
+      ,db        = NULL
+      ,base      = NULL
       ,initialize  = function(name, fields, key=c("id"), db=NULL)    {
           self$name       = name
-          private$tblName = DBDict$tables[[name]]
-          if (is.null(tblName)) private$tblName = DBDict$baseTables[[name]]
+          self$base       = YATABASE$new()
+          private$tblName = getTblName(name)
           private$fields  = fields
           private$key     = key
-          private$db      = db
+          self$db         = db
       }
       ,print       = function() { cat(self$name)                              }
-      ,getDB       = function() { private$db }  # Para debug
+      ,getDB       = function() { self$db }  # Para debug
       ,getColNames = function() { private$fields }
       ,selected    = function() { .selected }
       ,loadAll     = function() {
@@ -75,7 +77,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
           private$changed = list()
       }
       ,set      = function(...) {
-          args = args2list(...)
+          args = base$args2list(...)
           lapply(names(args), function (field) setField(field, args[[field]]))
           invisible(self)
       }
@@ -284,8 +286,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,setData     = function(df)            { self$dfa = df; self$dfCurrent=df; invisible(self) }
    )
    ,private = list(
-       db      = NULL
-      ,tblName = NULL   # Nombre fisico de la tabla
+       tblName = NULL   # Nombre fisico de la tabla
       ,fields  = NULL   # Nombres de las columnas de la tabla
       ,changed = list() # Lista de campos cambiados en el registro activo
       ,key     = c("id")   # Indice primario
@@ -391,6 +392,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
        ,reset = function() {
           private$changed = list()
           self$current = NULL
+       }
+       ,getTblName = function(name) {
+           if (!is.null(DBDict$tables[[name]])) return (DBDict$tables[[name]])
+           if (!is.null(DBDict$base  [[name]])) return (DBDict$base  [[name]])
+           DBDict$data  [[name]]
        }
    )
 )

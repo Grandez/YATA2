@@ -7,9 +7,9 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     ,public = list(valid = TRUE
         ,err = NULL
         ,print = function() { message("YATA Parameters")}
-        ,initialize = function(dbf) {
+        ,initialize = function(codes, dbf) {
             tryCatch({
-                private$tblParms = dbf$getTable("Parameters")
+                private$tblParms = dbf$getTable(codes$tables$parameters)
                 private$db       = dbf$getDBBase()
              }, error = function(cond) {
                  browser()
@@ -46,7 +46,9 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             data$id = id
             data
         }
-        ,lastOpen          = function() { getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen)) }
+        ,lastOpen          = function() {
+            getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen))
+        }
         ,defaultDB         = function() {
             id = getDefaultDbId()
             getList(DBParms$group$databases, id)

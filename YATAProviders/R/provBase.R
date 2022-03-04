@@ -8,21 +8,23 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,code = NULL
       ,info = NULL
       ,status = NULL   # Control del error
-      ,initialize  = function(code, name, EUR, dbf) {
+      ,initialize  = function(code, name, EUR) {
           self$code = code
           self$name = name
 
           private$created = Sys.time()
           private$lastGet = as.Date.POSIXct(1)
           private$EUR     = EUR
-          private$dbf     = dbf
+          #private$dbf     = dbf
           # tbl = dbf$getTable("Path")
           # private$dfPath = tbl$table(provider = code)
-          tbl = dbf$getTable("Providers")
-          tbl$select(id=code)
-          self$info = tbl$current
+          # tbl = dbf$getTable("Providers")
+          # tbl$select(id=code)
+          # self$info = tbl$current
       }
       ,print       = function()         { message(name, " provider")}
+      ,getCurrencies = function(from, max) { stop("Este metodo es virtual")}
+
       ,setLimits   = function(limits)   { private$limits = limits }
       ,setInterval = function(interval) { private$interval = interval }
       ,getLatests  = function(base, counter) { stop("Este metodo es temporañ")}
@@ -30,10 +32,6 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       # Metodos
 
       ,ticker        = function() { stop("Este metodo es virtual")}
-      ,getCurrencies = function() {
-         # Devuelve el df de as monedas soportadas
-         stop("Este metodo es virtual")
-       }
       ,session       = function(base, counter, interval, from, to) { stop("Este metodo es virtual")}
       ,getDaySession = function(base, counter,           from, to) { stop("Este metodo es virtual")}
       ,currencies    = function() { stop("Este metodo es virtual")}

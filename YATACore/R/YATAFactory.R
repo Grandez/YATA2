@@ -46,6 +46,8 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           setProvFactory() # Necesita tener Base creado
           ProvFactory$get(code, object, force)
       }
+      ,getProviderBase = function() { ProvFactory$get() }
+
       ,getObject   = function(name, force = FALSE) {
          if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
          if (is.null(objects$get(name))) private$objects$put(name,
@@ -86,10 +88,10 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
 
           private$objects     = YATABase$map
           private$classes     = YATABase$map
-          private$DBFactory   = YATADB::YATADBFactory$new(cfg$base)
-          private$ProvFactory = YATAProviders::ProviderFactory$new(private$DBFactory)
+          private$DBFactory   = YATADB::YATADBFactory$new()
+          private$ProvFactory = YATAProviders::ProviderFactory$new()
 
-          self$parms  = OBJParms$new   (private$DBFactory)
+          self$parms  = OBJParms$new   (self$codes, private$DBFactory)
           self$MSG    = OBJMessages$new(self$codes, private$DBFactory)
 
           if (auto) {

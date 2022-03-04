@@ -5,14 +5,13 @@ YATABaseIni = R6::R6Class("YATA.BASE.INI"
    ,public = list(
       initialize    = function(iniFile) {
          if (!missing(iniFile)) private$.cfg = ini::read.ini(iniFile)
-#          fname = system.file("", "yata.cfg", package="YATASetup")
       }
       ,load = function(iniFile) {
          private$.cfg = ini::read.ini(iniFile)
       }
       ,getSection = function (section) { .cfg[[section]] }
       ,getValue   = function (section, key) {
-         #JGG Pendiente de manejar las listas
+         #JGG Pendiente de manejar las listas cuando hay valores duplicados
          .cfg[[section]][[key]]
       }
       ,add = function (fini) {

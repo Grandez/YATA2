@@ -35,6 +35,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
       ,getID      = function()     { private$dbID   }
       ,getTable   = function(name, force = FALSE) { get(name, force) }
       ,get        = function(name, force = FALSE) {
+         # force obliga a crear el objeto sin cachearlo
          prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")
          full = paste0(prfx, name)
          if (force) return (createObject(prfx, name))
@@ -68,7 +69,10 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
               if (numDB == 2 && !is.null(DBDict$data  [[name]])) { db = dbData; break; }
               if (numDB == 3 && !is.null(DBDict$tables[[name]])) { db = dbAct;  break; }
           }
-          if (is.null(db)) stop("QUE NO ENCUENTRO LA TABLA")
+          if (is.null(db)) {
+              sys.calls()
+              stop(paste("QUE NO ENCUENTRO LA TABLA", name))
+          }
           eval(parse(text=paste0(type, name, "$new(name, db)")))
       }
    )
