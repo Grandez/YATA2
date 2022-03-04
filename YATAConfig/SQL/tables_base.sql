@@ -19,7 +19,6 @@ COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
 
-
 -- Tabla de Proveedores
 DROP TABLE  IF EXISTS PROVIDERS CASCADE;
 CREATE TABLE PROVIDERS  (
@@ -35,23 +34,6 @@ CREATE TABLE PROVIDERS  (
    ,ICON       VARCHAR(255)    
    ,OBJECT     VARCHAR(255)   
    ,PRIMARY KEY ( PROVIDER )
-);
-
-
--- Path para obtener una moneda en un provider
--- Ejemplo:
--- EUR/XTT -> 1: XEM/XTT - 2: ETH/XEM - 3: BTC/ETH - 4: USDT/BTC - 5:USD/USDT (ultimo BASE/USD)
-DROP TABLE  IF EXISTS CHAIN CASCADE;
-CREATE TABLE CHAIN  (
-    PROVIDER  VARCHAR(10)  NOT NULL -- Camara
-   ,BASE      VARCHAR(10)  NOT NULL -- Moneda Base (EUR o USD)
-   ,COUNTER   VARCHAR(10)  NOT NULL -- Moneda destino
-   ,PATH1     VARCHAR(10)
-   ,PATH2     VARCHAR(10)
-   ,PATH3     VARCHAR(10)
-   ,PATH4     VARCHAR(10)
-   ,PATH5     VARCHAR(10)            
-   ,PRIMARY KEY ( PROVIDER, BASE, COUNTER )
 );
 
 -- Tabla de Textos

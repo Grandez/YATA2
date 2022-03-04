@@ -58,16 +58,6 @@ CREATE TABLE SESSION  (
 );
 
 
--- ----------------------------------------------------------
--- Contiene la ultima vez que se acutalizo session
--- Nos evita hacer una query
--- ----------------------------------------------------------
-DROP TABLE  IF EXISTS SESSION_CTRL;
-CREATE TABLE SESSION_CTRL  (
-    TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
-   ,PRIMARY KEY (TMS)
-);
-
 -- Tabla de monedas trabajadas por cada camara
 DROP TABLE  IF EXISTS EXCHANGES CASCADE;
 CREATE TABLE EXCHANGES  (

@@ -3,29 +3,32 @@
 DBDict = list(
     parts  = list(
 #      Position     = "POSITION"
-      Operations   = "OPERATIONS"
+      operations   = "OPERATIONS"
+    )
+    ,base = list(
+         parameters   = "PARMS"
+        ,providers    = "PROVIDERS"
+        ,messages     = "MESSAGES"
+        ,parms        = "PARMS"
+    )
+    ,data = list(
+         allCameras   = "GLOBAL_CAMERAS"
+        ,currencies   = "CURRENCIES"
+        ,history      = "HISTORY"
+        ,session      = "SESSION"
+        ,exchanges    = "EXCHANGES"
     )
     ,tables = list(
-         Position     = "POSITION"
-        ,Regularization = "REGULARIZATION"
-        ,PositionHist = "HIST_POSITION"
-        ,Operations   = "OPERATIONS"
-        ,OperControl  = "OPERATIONS_CONTROL"
-        ,OperLog      = "OPERATIONS_LOG"
-        ,Flows        = "FLOWS"
-        ,Blog         = "BLOG"
-        ,Transfers    = "TRANSFERS"
-    )
-    ,baseTables = list(
-         Cameras      = "CAMERAS"
-        ,Currencies   = "CURRENCIES"
-        ,Exchanges    = "EXCHANGES"
-        ,Parameters   = "PARMS"
-        ,Providers    = "PROVIDERS"
-        ,Path         = "PATH"
-        ,Messages     = "MESSAGES"
-        ,History      = "HISTORY"
-        ,Session      = "SESSION"
+         cameras        = "CAMERAS"
+        ,position       = "POSITION"
+        ,positionHist   = "HIST_POSITION"
+        ,regularization = "REGULARIZATION"
+        ,operations     = "OPERATIONS"
+        ,operControl    = "OPERATIONS_CONTROL"
+        ,operLog        = "OPERATIONS_LOG"
+        ,flows          = "FLOWS"
+        ,blog           = "BLOG"
+        ,transfers      = "TRANSFERS"
     )
     ,fields = list(
          active    = "ACTIVE"
@@ -49,7 +52,7 @@ DBDict = list(
       ,parent = 2
     )
   ,blog = list(
-      gral = 0
+       gral = 0
       ,all  = 1
       ,note = 2
       ,currency = 10

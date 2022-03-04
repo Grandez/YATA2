@@ -1,3 +1,20 @@
+-- Tabla de Camaras
+-- Lugares donde puede haber cuentas
+DROP TABLE  IF EXISTS CAMERAS CASCADE;
+CREATE TABLE CAMERAS  (
+    CAMERA  VARCHAR(10) NOT NULL -- Codigo de camara
+   ,NAME    VARCHAR(32) NOT NULL           -- Clearing Name
+   ,MAKER   DOUBLE      NOT NULL DEFAULT 0 -- Fees
+   ,TAKER   DOUBLE      NOT NULL DEFAULT 0
+   ,ACTIVE  TINYINT     NOT NULL DEFAULT 1 -- 0 Inactivo / 1 Activo 
+   ,ICON    VARCHAR(255) 
+   ,URL     VARCHAR(255) 
+-- Datos de acceso
+   ,TOKEN      VARCHAR(255)
+   ,USR        VARCHAR(32) 
+   ,PWD        VARCHAR(32) 
+   ,PRIMARY KEY ( CAMERA )
+);
 
 -- Tabla de Posiciones
 -- Necesita un clearing global, cuyo precio medio se calcula como la media de los otros
@@ -206,24 +223,6 @@ CREATE TABLE BLOG  (
    ,SUMMARY      TEXT
    ,DATA         TEXT 
    ,PRIMARY KEY ( ID_BLOG )
-);
-
-
-DROP TABLE IF EXISTS PROFILE;
-CREATE TABLE PROFILE (
-    SESSION BIGINT
-   ,LEVEL0  BIGINT
-   ,LEVEL1  BIGINT
-   ,LEVEL2  BIGINT
-   ,LEVEL3  BIGINT
-   ,LEVEL4  BIGINT
-   ,LEVEL5  BIGINT
-   ,LEVEL6  BIGINT
-   ,LEVEL7  BIGINT
-   ,LEVEL8  BIGINT
-   ,LEVEL9  BIGINT
-   ,ELAPSED BIGINT
-   ,NAME    VARCHAR(64)
 );
 
 INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "FIAT", 10000, 10000);
