@@ -8,6 +8,11 @@ PUT   = function(endpoint, ...) { # PUT No devuelve datos
    url = paste0(url, endpoint)
    future({ httr::GET(url, query = args2list(...)) })
 }
+POST   = function(endpoint, ...) { # PUT No devuelve datos
+   url = "http://127.0.0.1:4001/"
+   url = paste0(url, endpoint)
+   future({ httr::GET(url, query = args2list(...)) })
+}
 PUTSync = function(endpoint, ...) {
    url = "http://127.0.0.1:4001/"
    url = paste0(url, endpoint)

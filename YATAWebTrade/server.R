@@ -124,24 +124,23 @@ function(input, output, session) {
    })
    
    observeEvent(input$connected, { 
-       browser() 
-       POST("begin")
+       PUT("begin")
        })
    observeEvent(input$disconnected, { 
-       browser() 
-       POST("end")
+       PUT("end")
        })
    observeEvent(input$initialized, { 
-       browser() 
-       POST("begin")
+       PUT("begin")
        })
    
-   # En este observer, cargamos la posicion y las cotizaciones
-    observe({
-       message("SERVER Update")
-       PUT("update")
-       invalidateLater(pnl$interval * 60000)       
-    })
+   if (.Platform$OS.type != "windows") {
+       # En este observer, cargamos la posicion y las cotizaciones
+       observe({
+          message("SERVER Update")
+          PUT("update")
+          invalidateLater(pnl$interval * 60000)       
+       })
+   }
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
       cat("Shiny Session stopped\n")

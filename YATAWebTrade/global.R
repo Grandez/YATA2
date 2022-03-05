@@ -67,8 +67,7 @@ files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, igno
 sapply(files,source)
 
 YATAWEB = YATAWebEnv$new()
-
-if (Sys.info()[["sysname"]] == "Windows") {
+if (.Platform$OS.type != "windows") {
    future::plan(strategy="sequential")    
 } else {
   future::plan(list(tweak(multisession, workers = availableCores() %/% 4),

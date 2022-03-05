@@ -1,3 +1,4 @@
+
 function(input, output, session) {
     output$appTitle = renderText({"YATA - Config"})
     observeEvent(input$mainMenu,{

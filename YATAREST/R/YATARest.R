@@ -14,13 +14,13 @@ YATAREST = R6::R6Class("YATA.REST"
    ,private = list(
         factory = NULL
        ,initREST = function() {
-         super$add_get("/alive"  , handler_alive)
-         super$add_get("/best"   , best_handler)
-         super$add_get("/hist"   , hist_handler)
-         super$add_get("/latest" , latest_handler)
-         super$add_get("/update" , update_handler)
-         super$add_post("/begin" , post_begin)
-         super$add_post("/end"   , post_end)
+         super$add_get ("/alive"  , handler_alive)
+         super$add_get ("/best"   , best_handler)
+         super$add_get ("/hist"   , hist_handler)
+         super$add_get ("/latest" , latest_handler)
+         super$add_get ("/update" , update_handler)
+         super$add_post("/begin"  , post_begin)
+         super$add_post("/end"    , post_end)
        }
        ,setDoc = function() {
            doc_file = system.file("doc/yatarest.yaml", package = packageName())
