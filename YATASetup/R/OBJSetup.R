@@ -14,10 +14,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           }
       }
       ,updateYATA  = function() {
-          base$msg$lblGroup("Generating/Updating services")
+          base$msg$lblGroup("Generating/Updating YATA System")
 
           rc = tryCatch({
-              browser()
              .retrieveRepo()
              .managePackages()
              .manageWebSites()
@@ -25,15 +24,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              .manageServices()
              .manageCode()
              0
-          }, system_command_error = function(cond) {
-              base$msg$ko()
-              browser()
           }, YATAERROR = function (cond) {
               base$msg$ko()
              cond$rc
-          }, error = function(cond) {
-              base$msg$ko()
-              browser()
           })
       }
       ,updateServices = function(full = FALSE) {
@@ -103,8 +96,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                if (file.exists(src)) {
                    dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
                    .run$copyExex(src, dst)
-                   src = paste0(dst, "/", to[idx])
-                   .run$copyExex(src, site)
+                   .run$copyExex(dst, paste(site, basename(to[idx]), sep="/"))
                }
            }
            base$msg$ok()
@@ -207,8 +199,8 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                 f = sub("\\.[a-zA-Z0-9]+$", "", f)
                 ftmp = sub(".*/","/tmp/")
                 writeLines(data,ftmp)
-                .run$copy(ftmp, f, .ini$getUserPass())
-                .run$chmod(f, 775, .ini$getUserPass())
+                .run$copy_su (.ini$getUserPass(), ftmp, f )
+                .run$chmod_su(.ini$getUserPass(), f, 775 )
                 file.remove(ftmp)
             }
         }
