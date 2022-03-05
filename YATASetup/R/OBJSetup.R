@@ -77,7 +77,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           .run$copy2site(pkgs)
       }
        ,.manageBinaries = function() {
-           base$msg$lblProcess1("Checking binaries and scripts")
+           base$msg$lblProcess1("Making binaries and scripts")
            from = .git$getChanges(" YATACLI/[a-rt-z][a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ")
            if (is.null(from) || length(from) == 0) {
                base$msg$out("\tNothing to do\n")
@@ -102,7 +102,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            base$msg$ok()
      }
        ,.manageServices = function() {
-           base$msg$lblProcess1("Checking services")
+           base$msg$lblProcess1("Making services")
            from = .git$getServices()
            if (length(from) == 0) return (base$msg$out("\tNothing to do\n"))
            .makeServices(from)
@@ -114,7 +114,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           # Ejecutamos YATACode/bin/make_{dir}.sh
           # Si va bien lo pasamos al servidor lo que tenga la fecha mas nueva
 
-          base$msg$lblProcess1("Checking non R code")
+          base$msg$lblProcess1("Making non R code")
           .run$wd = Sys.getenv("YATA_ROOT")
 
           # Process scripts
