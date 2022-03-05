@@ -19,34 +19,36 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
         }
        ,stdout     = function() { .stdout }
        ,stderr     = function() { .stderr }
+       ,run_asis   = function(cmd, ...) {
+          processx::run(cmd, as.character(list(...)), FALSE, .wd)
+       }
        # Friendly functions
-       ,copy       = function (    src, dst) { .run   (    'cp', src, dst) }
-       ,copy_su    = function (su, src, dst) { .run_su(su, 'cp', src, dst) }
-       ,copyExe    = function (src,  dst) {
+       ,copy        = function (    src, dst) { .run   (    'cp', src, dst) }
+       ,copy_su     = function (su, src, dst) { .run_su(su, 'cp', src, dst) }
+       ,copyExe     = function (src,  dst) {
             copy (src, dst)
             chmod(dst, 775)
        }
-       ,copyExe_su    = function (su, src,  dst) {
+       ,copyExe_su  = function (su, src,  dst) {
             copy_su (su, src, dst)
             chmod_su(su, dst, 775)
        }
-       ,chmod      = function (    what, mode) { .run    (   'chmod', mode, what) }
-       ,chmod_su   = function (su, what, mode) { .run_su(su, 'chmod', mode, what) }
-
-       ,copyFile   = function (file, from, to, mode=NULL) {
+       ,chmod       = function (    what, mode) { .run    (   'chmod', mode, what) }
+       ,chmod_su    = function (su, what, mode) { .run_su(su, 'chmod', mode, what) }
+       ,copyFile    = function (file, from, to, mode=NULL) {
            org = paste(from, file, sep="/")
            dst = paste(to,   file, sep="/")
            copy(org, dst)
            if (!is.null(mode)) chmod(dst, mode)
        }
-       ,copyFile_su   = function (su, file, from, to, mode=NULL) {
+       ,copyFile_su = function (su, file, from, to, mode=NULL) {
            org = paste(from, file, sep="/")
            dst = paste(to,   file, sep="/")
            copy_su(su, org, dst)
            if (!is.null(mode)) chmod_su(su, dst, mode)
        }
-       ,command    = function (    cmd,  ...) { .run   (    cmd, ...) }
-       ,command_su = function (su, cmd,  ...) { .run_su(su, cmd, ...) }
+       ,command     = function (    cmd,  ...) { .run   (    cmd, ...) }
+       ,command_su  = function (su, cmd,  ...) { .run_su(su, cmd, ...) }
 
        ,copy2site = function(pkgs) {
            libuser = Sys.getenv("R_LIBS_USER")

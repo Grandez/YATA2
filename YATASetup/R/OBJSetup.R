@@ -68,14 +68,22 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.retrieveRepo   = function() {
            base$msg$lblProcess1("Retrieving repository")
            res = .git$pull()
-           .checkfail(127, res$status, "ERROR %d retrieving repo", res$status)
-      }
+           if (res$status == 0) return (base$msg$ok())
+           base$msg$ko()
+           YATABase$cond$EXEC( "EXEC", action="run"
+                                ,command = "git pull"
+                                ,rc      = res$status
+                                ,type    = "Exec"
+                                ,su      = NULL
+                                ,stdout  = res$stdout
+                                ,stderr  = res$stderr)
+       }
        ,.managePackages = function() {
           rc2 = 0
           base$msg$lblProcess1("Making packages")
           pkgs = .makePackages(.git$getPackages())
           .run$copy2site(pkgs)
-      }
+       }
        ,.manageBinaries = function() {
            base$msg$lblProcess1("Making binaries and scripts")
            from = .git$getChanges(" YATACLI/[a-rt-z][a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ")
