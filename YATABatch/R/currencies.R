@@ -61,9 +61,11 @@ updateCurrencies = function(console=FALSE, log=1) {
 #'
 updateTickers = function(max=0, console=FALSE, log=1) {
    logger = YATABase::YATALogger$new("currencies", console, log)
-   logger$process(1, "Retrieving currencies from CoinMarketCap")
+   logger$process(1, "Retrieving Tickers from CoinMarketCap")
 
    beg   = 1
+   count = 0
+   limit = ifelse (max > 0 && max < 500, max, 500)
    begin = as.numeric(Sys.time())
    codes = YATACore::YATACODES$new()
    fact  = YATACore::YATAFACTORY$new()
@@ -71,12 +73,14 @@ updateTickers = function(max=0, console=FALSE, log=1) {
    tbl   = fact$getTable(codes$tables$session)
 
    logger$info(2,"Retrieving tickers %d", beg)
-   df = prov$getTickers(beg, 500)
+   df = prov$getTickers(beg, limit)
 
    rc = tryCatch({
       process = TRUE
       while (process) {
-         if (nrow(df) < 500) process = FALSE
+         count = count + nrow(df)
+         if (nrow(df) <  limit) process = FALSE
+         if (count    >= max)   process = FALSE
          logger$info(2,"Updating currencies: %d", beg)
          for (row in 1:nrow(df)) {
               if (row %% 100 == 1) tbl$db$begin()
@@ -86,7 +90,9 @@ updateTickers = function(max=0, console=FALSE, log=1) {
          tbl$db$commit()
          beg = beg + nrow(df)
          if (is.null(df) || nrow(df) == 0) process = FALSE
+
          if (process) {
+             if (max > 0 && (max - count) < 500) limit = max - count
              logger$info(2,"Retrieving tickers %d", beg)
              df   = prov$getTickers(beg, 500)
          }
