@@ -5,49 +5,45 @@
 # Se llama como script paquete puerto accion
 local PKG=$1
 local PORT=$2
+shift 2
 
-function check {
-    line=`echo "yata" | sudo -S netstat -nlp | grep :$PORT`
-    if [ -z "$line" ] ; then
-        echo "No esta"
-        return 0
+function checkport {
+    PID=0
+    line=`echo "jgg" | sudo -S -u root netstat -nlp | grep :$PORT`
+    if [ -n "$line" ] ; then
+        PID=`echo $line | cut -d ' ' -f 7 | cut -d '/' -f 1`
     fi
-    pid=`echo $line | cut -d ' ' -f 7 | cut -d '/' -f 1`
-   return $pid
 }
 function start {
-    echo "start"
-    if [ check -eq 0 ] ; then
-        echo "Arranca"
-        Rscript --no-save --no-restore -e "$PKG::start($PORT)"
+    checkport
+    if [ $PID -eq 0 ] ; then
+        eval Rscript --default-packages=${PKG} -e \'${PKG}::start\(${PORT}\)\'
     fi    
-#RCMD="Rscript --no-save --no-restore "
-#$RCMD -e "YATAREST::start(9090)"
-    
 }
 function stop {
- echo "stop"   
     pid=check
-     while [ $pid ] ; do
-        echo "Para"
-        # kill -KILL -- $pid
+     while : ; do
+        checkport
+        [[ $PID -eq 0 ]] || break
+        kill -s KILL -- $PID
         sleep 1
-    fi    
+    done    
 
 }
-function restart {
-    echo "restart"
-}
-ACT="start"
-if [ $# gt 1 ] ; then ACT=$1
-    
-if [ "$ACT" == "restart" ] ; tehn
-    stop
-    start
-else
-   if [ "$ACT" == "stop" ] ; then
-      stop
-   else
-      start
-   fi
-fi             
+function status {
+    st=""
+    checkport
+    if [ $PID -eq 0 ] ; then st="NOT" ; fi
+    echo Service at port $PORT is $st active
+}    
+
+case $1 in
+    "stop")    stop   ;;
+    "status")  status ;;
+    "restart") stop
+               shift
+               start $*
+               ;;
+     *)        shift
+               start $*          
+esac               

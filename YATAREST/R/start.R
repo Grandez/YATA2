@@ -1,4 +1,8 @@
 start = function(port) {
+    if (.Platform$OS.type != "windows") {
+        sink("tmp/yata_rest.log", append=TRUE)
+    }
+
     YATARest = YATAREST$new()
     if (missing(port)) {
         port = YATARest$getPort()

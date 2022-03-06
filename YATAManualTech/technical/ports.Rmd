@@ -14,9 +14,10 @@ Supongamos el puerto 4000
 4001 - Shiny YATA Admin Web
 4002 - Shiny otras web
 
-4005 - SGDB 1
-4006 - SGDB 2
+4005 - Servicios REST online
+4006 - Servicios REST deferred
+4007 - Servicios REST Batch
 
-4010 - Servicios REST online
-4011 - Servicios REST deferred
-4012 - Servicios REST Batch
+4010 - SGDB 1
+4011 - SGDB 2
+
