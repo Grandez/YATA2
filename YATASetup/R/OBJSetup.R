@@ -6,9 +6,9 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        print = function() { message("Setup object")}
       ,initialize    = function() {
           private$base = YATABase
-          private$.ini = YATAINI$new()
-          private$.run = YATARUN$new()
-          private$.git = YATAGIT$new()
+          private$.ini = YATASetup:::YATAINI$new()
+          private$.run = YATASetup:::YATARUN$new()
+          private$.git = YATASetup:::YATAGIT$new()
           if (file.exists(file.path(Sys.getenv("HOME"), "yata.cfg"))) {
               .ini$add(file.path(Sys.getenv("HOME"), "yata.cfg"))
           }

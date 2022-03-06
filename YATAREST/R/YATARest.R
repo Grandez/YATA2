@@ -7,7 +7,7 @@ YATAREST = R6::R6Class("YATA.REST"
             super$initialize()
             private$factory = YATACore::YATAFACTORY$new()
             private$initREST()
-            private$setDoc()
+            # private$setDoc()
         }
         ,getPort = function() { private$factory$parms$getRESTPort() }
     )
@@ -22,10 +22,10 @@ YATAREST = R6::R6Class("YATA.REST"
          super$add_post("/begin"  , post_begin)
          super$add_post("/end"    , post_end)
        }
-       ,setDoc = function() {
-           doc_file = system.file("doc/yatarest.yaml", package = packageName())
-           super$add_openapi(path = "/yatarest.yaml", file_path = doc_file)
-           super$add_swagger_ui(path = "/doc", path_openapi = "/yatarest.yaml", use_cdn = TRUE)
-       }
+       # ,setDoc = function() {
+       #     doc_file = system.file("doc/yatarest.yaml", package = packageName())
+       #     super$add_openapi(path = "/yatarest.yaml", file_path = doc_file)
+       #     super$add_swagger_ui(path = "/doc", path_openapi = "/yatarest.yaml", use_cdn = TRUE)
+       # }
    )
 )
