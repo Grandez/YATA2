@@ -20,6 +20,7 @@ suppressMessages(library(YATABase,      warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 suppressMessages(library(YATAWebWidgets, warn.conflicts = FALSE))
+suppressMessages(library(JGGShiny,       warn.conflicts = FALSE))
 # suppressMessages(library(YATADT))
 
 # Shiny
@@ -74,3 +75,9 @@ if (.Platform$OS.type != "windows") {
                     tweak(multisession, workers = 4)))
 }
 
+onStart = function() {
+      cat("Doing application setup\n")
+}
+onStop(function() {
+  cat("Doing application cleanup\n")
+})

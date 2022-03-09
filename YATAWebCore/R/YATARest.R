@@ -1,7 +1,11 @@
 restCheck = function() {
    url = "http://127.0.0.1:4005/"
    url = paste0(url,"alive")
-   tryCatch({httr::http_error(httr::GET(url))}, error = function(e) TRUE)
+   tryCatch({httr::http_error(httr::GET(url))
+             0
+            },error = function(e) {
+             99
+            })
 }
 PUT   = function(endpoint, ...) { # PUT No devuelve datos
    url = "http://127.0.0.1:4005/"

@@ -1,6 +1,7 @@
 # Copiado de navbar
-YATAPage =  function(title = NULL,id = NULL,
+YATAPage =  function(title = NULL,
                        ...,
+                       id = NULL,
                        selected = NULL,
                        header = NULL,
                        footer = NULL,

@@ -1,0 +1,93 @@
+.jgg_page {
+   min-height: 100%;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+}
+.jgg_container {
+   min-height: 100%;
+   display: flex;
+   flex-direction: column;
+}
+.jgg_header {
+   width: 100%;
+   height: 42px;
+   background-color: black;
+   color: white;
+}
+.jgg_body {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 32px;
+}
+
+.jgg_footer {
+   background-color: black;
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   height: 32px;
+   color: white;
+}
+
+.jgg_clearfix {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.jgg_panel_err_container {
+   margin: 0;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   -webkit-transform: translate(-50%, -50%);
+   -ms-transform:     translate(-50%, -50%);
+   -moz-transform:    translate(-50%, -50%);
+   -o-transform:      translate(-50%, -50%);
+   transform:         translate(-50%, -50%);
+}
+.jgg_panel_err {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 900;
+   background-color: white;
+   opacity: 0.8;
+}
+.jgg_text_error {
+   font-size: 30px;
+   font-weight: bold;
+}
+.jgg_nav_left {
+    float: left;
+}
+/* Iconos de abrir/cerrar paneles */
+.jgg_side_none {
+  visibility: hidden;
+}
+
+.jgg_side_open {
+  padding-top: 14px;
+}
+
+.jgg_side_closed {
+  display: none;
+}
+
+.jgg_clickable:hover {
+    cursor: pointer;
+}
+
+#jgg_left_side {
+    color: rgb(255,255,255);
+}
+
+#jgg_nav_bar {
+    padding: 0;
+}
+
+.jgg_number {
+  text-align: right;
+}

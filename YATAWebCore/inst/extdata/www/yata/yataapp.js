@@ -444,7 +444,7 @@ jQuery(document).ready(function() {
   //CHECKED alert( "JQuery Documento listo" );
 	$.yata.init();
 });
-
+/*
 jQuery(document).on('shiny:connected', function(event) {
     alert("Connected");
   Shiny.setInputValue("connected", new Date(), { priority: 'event' });
@@ -459,4 +459,4 @@ jQuery(document).on('shiny:disconnected', function(event) {
     alert("disconnected");
   Shiny.setInputValue("disconnected", new Date(), { priority: 'event' });
 });
-
+*/

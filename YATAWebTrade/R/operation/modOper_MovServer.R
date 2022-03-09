@@ -40,6 +40,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
    
 
    moduleServer(id, function(input, output, session) {
+       browser()
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOperMov$new(id, pnlParent, session))
 
@@ -158,6 +159,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           }
       }
       observeEvent(input$cboOper, { 
+          browser()
           pnl$vars$oper = input$cboOper
           updatecboCurrency()
       }, ignoreNULL = TRUE)

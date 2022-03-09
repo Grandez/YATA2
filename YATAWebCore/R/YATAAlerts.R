@@ -46,9 +46,9 @@ yataNotify = function(txt) {
 
 yataErrGeneral = function(type, data, input, output, session) {
     sf = system.file('extdata/www/img/error.png', package=packageName())
-    output$yata_main_img_err = renderImage({
-                    list(src = sf, contentType = 'image/png', width = 400, height = 300, alt = "Error image")
+    output$jgg_main_img_err = renderImage({
+                    list(src = sf, contentType = 'image/png', width = 400, height = 400, alt = "Fatal Error")
                     }, deleteFile = FALSE)
-    output$yata_main_text_err = renderText({data})
-    shinyjs::show("yata_main_err")
+    output$jgg_main_text_err = renderText({data})
+    shinyjs::show("jgg_main_err")
 }

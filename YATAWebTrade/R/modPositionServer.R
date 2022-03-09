@@ -232,7 +232,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                shinyjs::show("posCameras")
                lapply(names(pnl$data$position), function(camera) {
                       if (!is.null(pnl$data$position[[camera]])) {
-                          sfx = titleCase(camera)
+                          sfx = YATABase$str$titleCase(camera)
                           data  = preparePosition(pnl$data$position[[camera]], paste0("Pos", sfx))
                           eval(parse(text=paste0("output$tblPos", sfx, " = updTable(data)")))
                       }
@@ -386,7 +386,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        renderUIPosition = function() {
            #YATAWEB$beg("renderUIPosition")
           cameraUI = function(camera) {
-             suffix  = titleCase(camera)
+             suffix  = YATABase$str$titleCase(camera)
              cam     = pnl$cameras$getCameraName(camera)
              nstable = paste0("tblPos", suffix)
              tags$div( id=paste0("divPos", suffix)
@@ -400,7 +400,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           cams =names(pnl$data$position)
           if(length(cams)) {
              for (camera in cams) {
-                  suffix  = titleCase(camera)
+                  suffix  = YATABAse$str$titleCase(camera)
                   cam     = pnl$cameras$getCameraName(camera)
                   nstable = paste0("tblPos", suffix)
                   divCam = tags$div( id=paste0("divPos", suffix)

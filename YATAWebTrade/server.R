@@ -86,13 +86,16 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
-   YATAWEB$beg("Server")
-   if (YATAWEB$inError) return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
-   if (restCheck())     return (yataErrGeneral(0, YATAWEB$getMsg("ERR.REST.DOWN"),  input, output, session))
+   YATAWEB$setSession(session)    
+   if (YATAWEB$errorLevel > 0) {
+       if (YATAWEB$errorLevel == 99) 
+           return (yataErrGeneral(0, YATAWEB$getMsg("ERR.REST.DOWN"),  input, output, session))
+       return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
+   }
 
-   YATAWEB$setSession(session)
-   pnl = YATAWEB$getPanel("tradeMain")
-   if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTradeMain$new("tradeMain", NULL, session))
+
+   pnl = YATAWEB$getPanel("server")
+   if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTradeMain$new("server", NULL, session))
    factory = pnl$factory
    changeDB= function() {
       data = frmChangeDBInput()
@@ -109,7 +112,8 @@ function(input, output, session) {
    # Vamos a usar req para evitar cargar todo
    # "test"
    observeEvent(input$mainMenu,{
-        eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, parent=session)")))
+       browser()
+        eval(parse(text=paste0("mod", YATABase$str$titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, parent=session)")))
     })
    observeEvent(input$btnKO, { closePanel() })
    observeEvent(input$btnDBChanged, { 
@@ -120,7 +124,7 @@ function(input, output, session) {
       }
       message(factory$getDBName())
       closePanel()
-      eval(parse(text=paste0("mod", titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
+      eval(parse(text=paste0("mod", YATABase$str$titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
    })
    
    observeEvent(input$connected, { 
@@ -133,18 +137,18 @@ function(input, output, session) {
        PUT("begin")
        })
    
-   if (.Platform$OS.type != "windows") {
+#   if (.Platform$OS.type != "windows") {
        # En este observer, cargamos la posicion y las cotizaciones
        observe({
           message("SERVER Update")
           PUT("update")
           invalidateLater(pnl$interval * 60000)       
+          #invalidateLater(1000)   
        })
-   }
+#   }
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
       cat("Shiny Session stopped\n")
       pnl$factory$finalize()
       })
-   YATAWEB$end("Server")
 }

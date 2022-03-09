@@ -5,26 +5,38 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
   ,portable   = FALSE
   ,cloneable  = FALSE
   ,lock_class = TRUE
+  ,active = list(
+      logLevel = function(value) {
+         if (!missing(value)) {
+             private$.logLevel = value
+             log$setLevel(value)
+         }
+         .logLevel
+      }
+  )
   ,public = list(
       MSG      = NULL
-     ,inError  = FALSE
+     ,errorLevel = 0 # Nivel de error (9 - No rest)
      ,txtError = NULL
      ,factory  = NULL
      ,session  = NULL
+     ,log      = NULL
      ,initialize = function() {
          tryCatch({
             self$factory = YATACore::YATAFACTORY$new()
-            self$MSG     = self$factory$MSG
-
-            private$tblCurrencies = factory$getTable("Currencies")
-            private$tblCameras    = factory$getTable("Cameras")
+            self$MSG     = factory$MSG
+            logger = YATALogger$new("WEB",console=interactive())
+            self$log     = YATALogger$new("WEB",console=interactive(), log=.logLevel)
+            # private$tblCurrencies = factory$getTable("Currencies")
+            # private$tblCameras    = factory$getTable("Cameras")
             private$hID   = YATABase$map
             private$hSym  = YATABase$map
             private$hCam  = YATABase$map
+            self$errorLevel = restCheck()
 #            loadFiats()
          }, error = function(e) {
            browser()
-            self$inError = TRUE
+            self$errorLevel = 98
             self$txtError = e
          })
      }
@@ -36,26 +48,9 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          private$hCam   = NULL
          factory$clear()
      }
-     ,log = function(tpl, ...) {
-       message(paste(as.integer(Sys.time()), "-", sprintf(tpl, ...)))
-     }
-     ,beg = function(name) {
-         if (logi > 10) return()
-         private$logs[logi] = as.integer(Sys.time())
-         private$logn[logi] = name
-         # if (!missing(fun))
-         message(sprintf("BEG - %d - %s", logs[logi], name))
-         private$logi = private$logi + 1
-     }
-     ,end = function(name) {
-       idx = which(logn == name)
-       if (length(idx) == 0) return()
-       private$logi = idx[length(idx)]
-       message(sprintf("END - %d - %d - %s", as.integer(Sys.time()), as.integer(Sys.time()) - logs[logi], name))
-       private$logn[logi] = ""
-       private$logi = private$logi - 1
-       if (logi == 0) private$logi = 1
-     }
+     # ,log = function(tpl, ...) {
+     #   message(paste(as.integer(Sys.time()), "-", sprintf(tpl, ...)))
+     # }
      ,setSession = function(session) {
          self$session = session
          private$cookies = list()
@@ -64,14 +59,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          invisible(self)
       }
      ,getPanel = function(name, loading=FALSE)  {
-         if (loading) message(paste("Carga panel ", name))
-         shinyjs::js$yataSetPage(list(name=name))
+         # Devuelve el objeto asociado al panel si existe
+         # Actualiza javascript jggshiny con la pagina activa
+         # if (loading) message(paste("Carga panel ", name))
+         shinyjs::js$jgg_set_page(list(name=name))
          private$panels$get(name)
       }
      ,addPanel = function(panel) {
        private$panels$put(panel$name, panel)
        # Notificamos a js que cargue la pagina
-       shinyjs::js$yataAddPage(panel$getDef())
+       shinyjs::js$jgg_set_page(panel$getDef())
        self$getPanel(panel$name, loading=TRUE)
      }
     ,getMsg      = function(code, ...) { MSG$get(code, ...) }
@@ -128,15 +125,16 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 # De esta forma se gestiona la inicializacion de la pagina
 # Y guardamos los datos temporales
       panels  = YATABase$map
+     ,.logLevel = 0
      ,tblCurrencies = NULL
      ,tblCameras    = NULL
      ,hID     = NULL
      ,hSym    = NULL
      ,hCam    = NULL
      ,logsess = as.integer(Sys.time())
-     ,logs    = c(rep(0,10))
-     ,logn    = c(rep("", 10))
-     ,logi    = 1
+     # ,logs    = c(rep(0,10))
+     # ,logn    = c(rep("", 10))
+     # ,logi    = 1
      ,cookies = list()
      ,.getNameByID = function (id, type) {
          info = hID$get(id)
