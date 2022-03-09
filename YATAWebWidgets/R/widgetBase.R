@@ -88,11 +88,6 @@ updLabelText = function(txt) {
 # yuiLabelText = function(id, label=NULL, inline=TRUE) {
 #   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 # }
-yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
-  textOutput(id) %>% tagAppendAttributes(class = 'yata_number') #yataTextRight')
-  #
-  # htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
-}
 
 # yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
 #   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
@@ -150,50 +145,7 @@ updLabelDate = function(epoch) {
   # })
 }
 
-yuiNumericInput = function(id, label=NULL, value=0, step, min, max) {
-  st = NA ; if (!missing(step)) st=step
-  mn = NA ; if (!missing(min))  mn=min
-  ma = NA ; if (!missing(max))  ma=max
-  widget = numericInput(id, label = label, value = value, mn, ma,st, width="auto")
-  widget[[3]][[2]]$attribs$class = "form-control yata_number"
-  widget
-}
-updNumericInput = function(id, value, session=getDefaultReactiveDomain()) {
-  updateNumericInput(session, id, value = value)
-}
 
-yuiIntegerInput = function(id, label=NULL, value=0, step, min, max) {
-  st = NA ; if (!missing(step)) st=step
-  mn = NA ; if (!missing(min))  mn=min
-  ma = NA ; if (!missing(max))  ma=max
-  widget = numericInput(id, label = label, value = value, mn, ma,st)
-  widget[[3]][[2]]$attribs$class = "form-control yata-number"
-  widget
-}
-updIntegerInput = function(id, value, session=getDefaultReactiveDomain()) {
-  updateNumericInput(session, id, value = value)
-}
-
-yuiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
-    lbl = NULL
-    choice = c("")
-    if (!is.null(label))   lbl    = label
-    if (!is.null(choices)) choice = choices
-    selectInput(id, lbl, choice, selected=selected,width="auto", selectize=FALSE)
-}
-updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
-    updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
-}
-yuiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = NULL) {
-    lbl = NULL
-    choice = c("")
-    if (!is.null(label))   lbl    = label
-    if (!is.null(choices)) choice = choices
-    selectizeInput(id,lbl,choice,selected=selected,
-                   options = list( placeholder = text
-                                  ,onInitialize = I('function() { this.setValue(""); }')
-                            ))
-}
 yuiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
     shinyWidgets::switchInput( inputId = id
                 ,onLabel = onLbl ,offLabel = offLbl

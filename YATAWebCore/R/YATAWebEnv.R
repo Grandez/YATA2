@@ -35,7 +35,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             self$errorLevel = restCheck()
 #            loadFiats()
          }, error = function(e) {
-           browser()
             self$errorLevel = 98
             self$txtError = e
          })

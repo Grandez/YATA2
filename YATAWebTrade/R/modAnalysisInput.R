@@ -1,7 +1,7 @@
 modAnaInput = function(id, title) {
     ns = NS(id)
     left = tagList(
-         yuiCombo(ns("cboCounter"), choices="")
+         guiCombo(ns("cboCounter"), choices="")
 ,dateRangeInput('dateRange2',
       label = paste('Date range input 2: range is limited,',
        'dd/mm/yy, language: fr, week starts on day 1 (Monday),',
@@ -11,10 +11,10 @@ modAnaInput = function(id, title) {
       separator = " - ", format = "dd/mm/yy",
       startview = 'year', language = 'fr', weekstart = 1
     )
-        ,yuiCombo(ns("cboPlot11"),  "Plot data1" , choices="")
-        ,yuiCombo(ns("cboPlot12"),  "Plot data1" , choices="")        
-        ,yuiCombo(ns("cboPlot21"),  "Plot data1" , choices="")        
-        ,yuiCombo(ns("cboPlot22"),  "Plot data1" , choices="")                
+        ,guiCombo(ns("cboPlot11"),  "Plot data1" , choices="")
+        ,guiCombo(ns("cboPlot12"),  "Plot data1" , choices="")        
+        ,guiCombo(ns("cboPlot21"),  "Plot data1" , choices="")        
+        ,guiCombo(ns("cboPlot22"),  "Plot data1" , choices="")                
      )
     main = tagList(
        fluidRow(column(6,yuiPlot(ns("plot1"))), column(6,yuiPlot(ns("plot2"))))

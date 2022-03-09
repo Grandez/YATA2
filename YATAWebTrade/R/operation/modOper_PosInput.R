@@ -8,8 +8,8 @@ modOperPosInput = function(id, title="") {
     boxExec  = YATAWEB$getMsg("BOX.OPER.EXEC")
     blocks = c("Plot" = "plotOpen", "Data"="data", "None"="none")
     left = tagList(
-         fluidRow(column(4, "Up"),   column(8, yuiCombo(ns("cboUp"), choices=blocks, selected="plot")))
-        ,fluidRow(column(4, "Down"), column(8, yuiCombo(ns("cboDown"), choices=blocks, selected="data")))
+         fluidRow(column(4, "Up"),   column(8, guiCombo(ns("cboUp"), choices=blocks, selected="plot")))
+        ,fluidRow(column(4, "Down"), column(8, guiCombo(ns("cboDown"), choices=blocks, selected="data")))
     )
 
     main = tagList(

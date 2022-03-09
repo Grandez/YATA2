@@ -6,10 +6,10 @@ modOperRegInput = function(id, title) {
    ,fluidRow(column(3)
       ,column(3
          ,yataFormTable(
-             list("De",       yuiCombo(ns("cboFrom"))) #, choices=list("")))
-            ,list("A",        yuiCombo(ns("cboTo"))) #,   choices=list("")))
-            ,list("Moneda",   yuiCombo(ns("cboCurrency"))) #,choices=list("")))
-            ,list("Cantidad", yuiNumericInput(ns("impAmount"), NULL, value = 0))
+             list("De",       guiCombo(ns("cboFrom"))) #, choices=list("")))
+            ,list("A",        guiCombo(ns("cboTo"))) #,   choices=list("")))
+            ,list("Moneda",   guiCombo(ns("cboCurrency"))) #,choices=list("")))
+            ,list("Cantidad", guiNumericInput(ns("impAmount"), NULL, value = 0))
          )
        )
     )

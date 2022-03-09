@@ -105,8 +105,6 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
         )
    )   
     moduleServer(id, function(input, output, session) {
-        browser()
-        YATAWEB$beg("modOperServer")
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
         
@@ -139,5 +137,4 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            }
         })
     })
-    YATAWEB$end("modOperServer")
 }    

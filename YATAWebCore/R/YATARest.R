@@ -1,24 +1,24 @@
 restCheck = function() {
-   url = "http://127.0.0.1:4005/"
+   url = "http://127.0.0.1:9090/"
    url = paste0(url,"alive")
-   tryCatch({httr::http_error(httr::GET(url))
+   tryCatch({httr::GET(url)
              0
             },error = function(e) {
              99
             })
 }
 PUT   = function(endpoint, ...) { # PUT No devuelve datos
-   url = "http://127.0.0.1:4005/"
+   url = "http://127.0.0.1:9090/"
    url = paste0(url, endpoint)
    future({ httr::GET(url, query = args2list(...)) })
 }
 POST   = function(endpoint, ...) { # PUT No devuelve datos
-   url = "http://127.0.0.1:4005/"
+   url = "http://127.0.0.1:9090/"
    url = paste0(url, endpoint)
    future({ httr::GET(url, query = args2list(...)) })
 }
 PUTSync = function(endpoint, ...) {
-   url = "http://127.0.0.1:4005/"
+   url = "http://127.0.0.1:9090/"
    url = paste0(url, endpoint)
    httr::GET(url, query = args2list(...))
 }
@@ -27,7 +27,7 @@ GETDF = function (endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
 restdf      = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
 restdfSync  = function(endpoint, ...) {          .restDfBody(endpoint, ...)   }
 .restDfBody = function(endpoint, ...) {
-    url = "http://127.0.0.1:4005/"
+    url = "http://127.0.0.1:9090/"
     url = paste0(url, endpoint)
 
     req = httr::GET(url, query = args2list(...))

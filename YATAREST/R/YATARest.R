@@ -5,8 +5,10 @@ YATAREST = R6::R6Class("YATA.REST"
         initialize = function() {
             cat("Initializing YATAREST\n")
             super$initialize()
+            self$logger$set_log_level("trace")
             private$factory = YATACore::YATAFACTORY$new()
             private$initREST()
+            cat("Init hecho")
             # private$setDoc()
         }
         ,getPort = function() { private$factory$parms$getRESTPort() }
