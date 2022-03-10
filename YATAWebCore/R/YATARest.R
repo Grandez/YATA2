@@ -32,7 +32,7 @@ YATARest = R6::R6Class("YATA.REST"
          httr::GET(url, query = args2list(...))
       }
      ,GETDF      = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
-     ,restdf     = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
+     ,DF         = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
      ,restdfSync = function(endpoint, ...) {          .restDfBody(endpoint, ...)   }
   )
   ,private = list(

@@ -89,7 +89,7 @@ modOperDetailServer = function(id, full, pnl, parent) {
           sym = pnl$active
           dfs = pnl$data$dfSymbols 
           df = dfs[dfs$symbol == sym,]
-          restdf("hist",id=df$id,from=df$since,to=Sys.Date())  %>% then(
+          WEB$REST$DF("hist",id=df$id,from=df$since,to=Sys.Date())  %>% then(
                  function(df) { flags$load = isolate(df)}, function(err) { })
       }
       getFlows = function() {

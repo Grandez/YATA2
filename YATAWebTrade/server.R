@@ -142,7 +142,7 @@ function(input, output, session) {
    if (.Platform$OS.type == "windows") {
        observe({
           message("SERVER Update")
-          PUT("update")
+          WEB$REST$PUT("update")
           invalidateLater(pnl$interval * 60000)       
           #invalidateLater(1000)   
        })

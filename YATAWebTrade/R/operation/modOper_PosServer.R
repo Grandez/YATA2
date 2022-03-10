@@ -226,7 +226,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            to = Sys.Date()
            from = since - as.difftime(7, unit="days")
 
-           restdf("hist",id=id,from=from,to=to) %>%
+           WEB$REST$DF("hist",id=id,from=from,to=to) %>%
                   then ( function(df) {
                          if (is.data.frame(df)) renderPlot(df, symbol)
                          }, function(err)    {

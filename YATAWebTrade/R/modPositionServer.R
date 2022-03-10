@@ -451,7 +451,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            if (id == 0) return()
            to = Sys.Date()
            from = to - as.difftime(pnl$cookies$history, unit="days")
-           restdf("hist",id=id,from=from,to=to)  %>% then(
+           WEB$REST$DF("hist",id=id,from=from,to=to)  %>% then(
                 function(df) {
 #           df = restdfSync("hist",id=id,from=from,to=to)
                     if (is.data.frame(df)) {
