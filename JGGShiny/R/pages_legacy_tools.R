@@ -1,6 +1,6 @@
 jgg_make_container = function (nav, content, titleActive) {
    contentDiv = shiny::tags$div(id="jgg_page")
-   divHeader  = shiny::tags$div(id="jgg_page_header", class="row bg-dark jgg_header" )
+   divHeader  = shiny::tags$div(id="jgg_page_header", class="jgg_header row" )
    divBody    = shiny::tags$div(id="jgg_page_body",   class="jgg_body"   )
    divFooter  = shiny::tags$div(id="jgg_page_footer", class="jgg_footer" )
 

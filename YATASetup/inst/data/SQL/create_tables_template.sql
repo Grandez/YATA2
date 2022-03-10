@@ -16,17 +16,6 @@ CREATE TABLE CAMERAS  (
    ,PRIMARY KEY ( CAMERA )
 );
 
-
--- Tabla de monedas trabajadas por cada camara
-DROP TABLE  IF EXISTS EXCHANGES CASCADE;
-CREATE TABLE EXCHANGES  (
-    CAMERA    VARCHAR(10)  NOT NULL -- Camara
-   ,SYMBOL    VARCHAR(10)  NOT NULL -- Moneda
-   ,ID        INTEGER      DEFAULT 0
-   ,ACTIVE    TINYINT      DEFAULT 1
-   ,PRIMARY KEY ( CAMERA, SYMBOL )
-);
-
 -- Tabla de Posiciones
 -- Necesita un clearing global, cuyo precio medio se calcula como la media de los otros
 -- Simplemente guarda la posicion de cada cuenta
@@ -234,24 +223,6 @@ CREATE TABLE BLOG  (
    ,SUMMARY      TEXT
    ,DATA         TEXT 
    ,PRIMARY KEY ( ID_BLOG )
-);
-
-
-DROP TABLE IF EXISTS PROFILE;
-CREATE TABLE PROFILE (
-    SESSION BIGINT
-   ,LEVEL0  BIGINT
-   ,LEVEL1  BIGINT
-   ,LEVEL2  BIGINT
-   ,LEVEL3  BIGINT
-   ,LEVEL4  BIGINT
-   ,LEVEL5  BIGINT
-   ,LEVEL6  BIGINT
-   ,LEVEL7  BIGINT
-   ,LEVEL8  BIGINT
-   ,LEVEL9  BIGINT
-   ,ELAPSED BIGINT
-   ,NAME    VARCHAR(64)
 );
 
 INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "FIAT", 10000, 10000);
