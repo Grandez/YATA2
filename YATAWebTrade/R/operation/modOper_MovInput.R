@@ -82,7 +82,7 @@ modOperMovInput = function(id, title) {
             )
      )  
     ,fluidRow(guiColumn(2), guiColumn(4, h2("Notas")))
-    ,fluidRow(guiColumn(2), guiColumn(7, guiTextArea(ns("comment"), label=NULL, cols="200", rows="20")))
+    ,fluidRow(guiColumn(2), guiColumn(7, guiTextArea(ns("comment"), label=NULL, cols="200", rows="10")))
     ,fluidRow(guiColumn(2), guiColumn(6, yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar")))
   )
   list(left=NULL, main=main, right=NULL)

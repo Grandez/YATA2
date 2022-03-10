@@ -29,7 +29,8 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
        }
        ,getCameras         = function(cameras) {
            df = tblCameras$table()
-           df[df$id %in% cameras,]
+           if (!missing(cameras)) df = df[df$id %in% cameras,]
+           df
         }
        ,getCameraName      = function(codes, full=FALSE) { tblCameras$getCameraNames(codes,full) }
        ,getActiveCameras   = function() { tblCameras$getTable(all=FALSE) }

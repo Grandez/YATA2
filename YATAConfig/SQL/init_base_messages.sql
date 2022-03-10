@@ -48,6 +48,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.OPERATIO
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.ANALYSIS"         ,"XX", "XX"     , "Analisis"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.LOG"              ,"XX", "XX"     , "Log"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.ADMIN"            ,"XX", "XX"     , "Admin"                                       );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.OPER"             ,"XX", "XX"     , "Operar"                                      );

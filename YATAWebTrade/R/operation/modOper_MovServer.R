@@ -40,7 +40,6 @@ modOperMovServer = function(id, full, pnlParent, parent) {
    
 
    moduleServer(id, function(input, output, session) {
-       browser()
         pnl = YATAWEB$getPanel(id)
         if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOperMov$new(id, pnlParent, session))
 
@@ -159,16 +158,15 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           }
       }
       observeEvent(input$cboOper, { 
-          browser()
           pnl$vars$oper = input$cboOper
           updatecboCurrency()
       }, ignoreNULL = TRUE)
 
       observeEvent(input$cboCurrency, {
-          currency = ifelse(input$cboOper == 3, input$cboCurrency, "FIAT")
-          updCombo("cboCamera", choices=pnl$getCboCameras(currency))
-          df = pnl$session$getLatest(input$cboCurrency)
-          if (nrow(df) > 0) updNumericInput("impPrice", df[1,"price"])
+          op = as.integer(input$cboOper) %% 2 # Impar es venta
+          currency = ifelse(op == 1, input$cboCurrency, "FIAT")
+          updCombo("cboCamera", choices=pnl$getCboCameras())
+          updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
           if (is.null(input$cboOper)) return()
@@ -184,19 +182,15 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           output$lblAvailable = updLabelNumber(pnl$vars$available)
       },ignoreInit = TRUE)   
       observeEvent(input$cboBase, {
-         YATAWEB$beg("cboBase")
          pnl$vars$inEvent = FALSE
          pnl$vars$available = 0
          df = pnl$position$getPosition(input$cboCamera, input$cboBase)
          if (nrow(df) != 0) pnl$vars$available = df[1,"available"]
          updateSummary()
-         YATAWEB$end("cboBase")
       })
       observeEvent(input$impAmount | input$impPrice, {
-          YATAWEB$beg("cboImp")
           pnl$vars$inEvent = FALSE
           updateSummary()
-          YATAWEB$end("cboImp")
       },ignoreInit = TRUE, ignoreNULL = TRUE)
       ##################################################
       # Buttons to calculate values
@@ -232,7 +226,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
       })
       
       observeEvent(input$btnOK, {
-          YATAWEB$beg("btnOK")
+          browser()
         # A veces se generan dos triggers (debe ser por los renderUI)
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
@@ -250,7 +244,8 @@ modOperMovServer = function(id, full, pnlParent, parent) {
             ,alert   = input$alert
          )
 
-         if ((input$cboOper %% 2) == 0) {
+         # Pares son compras
+         if ((as.integer(input$cboOper) %% 2) == 0) { 
              data$amount  = input$impAmount * input$impPrice
              data$value   = input$impAmount
              data$base    = "FIAT"

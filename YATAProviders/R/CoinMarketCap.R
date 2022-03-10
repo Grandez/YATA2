@@ -54,7 +54,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           }
           dfc
       }
-      ,getTickers    = function(from = 1, max = 0) {
+      ,getTickers    = function(max = 0, from = 1) {
           url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
           count =   0
           until = 501
@@ -73,21 +73,22 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
                lst = lapply(data, function(x) {
                       quote = x$quotes[[1]]
-                      list( id=as.integer(x$id)
+                      list( id=x$id
                            ,symbol=x$symbol
-                           ,price  = ifelse(is.null(quote$price),            0, as.numeric(quote$price))
-                           ,volume = ifelse(is.null(quote$volume24),         0, as.numeric(quote$volume24))
-                           ,vol24  = ifelse(is.null(quote$volume24),         0, as.numeric(quote$volume24))
-                           ,vol07  = ifelse(is.null(quote$volume7d),         0, as.numeric(quote$volume7d))
-                           ,vol30  = ifelse(is.null(quote$volume30d),        0, as.numeric(quote$volume30d))
-                           ,var01  = ifelse(is.null(quote$percentChange1h),  0, as.numeric(quote$percentChange1h))
-                           ,var24  = ifelse(is.null(quote$percentChange24h), 0, as.numeric(quote$percentChange24h))
-                           ,var07  = ifelse(is.null(quote$percentChange7d),  0, as.numeric(quote$percentChange7d))
-                           ,var30  = ifelse(is.null(quote$percentChange30d), 0, as.numeric(quote$percentChange30d))
-                           ,var60  = ifelse(is.null(quote$percentChange60d), 0, as.numeric(quote$percentChange60d))
-                           ,var90  = ifelse(is.null(quote$percentChange90d), 0, as.numeric(quote$percentChange90d))
-                           ,dominance = ifelse(is.null(quote$dominance),     0, as.numeric(quote$dominance))
-                           ,turnover  = ifelse(is.null(quote$turnover),      0, as.numeric(quote$turnover))
+                           ,price  = ifelse(is.null(quote$price),            0, quote$price)
+                           ,volume = ifelse(is.null(quote$volume24),         0, quote$volume24)
+                           ,vol24  = ifelse(is.null(quote$volume24),         0, quote$volume24)
+                           ,vol07  = ifelse(is.null(quote$volume7d),         0, quote$volume7d)
+                           ,vol30  = ifelse(is.null(quote$volume30d),        0, quote$volume30d)
+                           ,var01  = ifelse(is.null(quote$percentChange1h),  0, quote$percentChange1h)
+                           ,var24  = ifelse(is.null(quote$percentChange24h), 0, quote$percentChange24h)
+                           ,var07  = ifelse(is.null(quote$percentChange7d),  0, quote$percentChange7d)
+                           ,var30  = ifelse(is.null(quote$percentChange30d), 0, quote$percentChange30d)
+                           ,var60  = ifelse(is.null(quote$percentChange60d), 0, quote$percentChange60d)
+                           ,var90  = ifelse(is.null(quote$percentChange90d), 0, quote$percentChange90d)
+                           ,dominance = ifelse(is.null(quote$dominance),     0, quote$dominance)
+                           ,turnover  = ifelse(is.null(quote$turnover),      0, quote$turnover)
+                           ,tms = paste(substr(quote$lastUpdated,1,10),substr(quote$lastUpdated,12,19), sep="-")
                       )
                      })
                df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
@@ -95,8 +96,9 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                colnames(df) = c( "id",        "symbol", "price"
                                 ,"volume",    "volday", "volweek", "volmonth"
                                 ,"hour",      "day",    "week",    "month",   "bimonth", "quarter"
-                                ,"dominance", "turnover")
-
+                                ,"dominance", "turnover", "tms")
+               df$id = as.integer(df$id)
+               for (idx in 3:15) df[,idx] = as.numeric(df[,idx])
                dfc = rbind(dfc, df)
           }
           dfc

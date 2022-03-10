@@ -2,33 +2,34 @@
 # Contiene los codigos que se usan en la BBDD
 DBDict = list(
     parts  = list(
-#      Position     = "POSITION"
-      operations   = "OPERATIONS"
+       Operations   = "OPERATIONS"
+     , Session      = "SESSION"
     )
     ,base = list(
-         Parameters   = "PARMS"
-        ,Providers    = "PROVIDERS"
-        ,Messages     = "MESSAGES"
-        ,Parms        = "PARMS"
+       Parameters   = "PARMS"
+      ,Providers    = "PROVIDERS"
+      ,Messages     = "MESSAGES"
+      ,Parms        = "PARMS"
     )
     ,data = list(
-         AllCameras   = "GLOBAL_CAMERAS"
-        ,Currencies   = "CURRENCIES"
-        ,History      = "HISTORY"
-        ,Session      = "SESSION"
-        ,Exchanges    = "EXCHANGES"
+       AllCameras   = "GLOBAL_CAMERAS"
+      ,Currencies   = "CURRENCIES"
+      ,History      = "HISTORY"
+      ,Session      = "SESSION"
+      ,Exchanges    = "EXCHANGES"
+      ,SessionCtrl  = "SESSION_CTRL"
     )
     ,tables = list(
-         Cameras        = "CAMERAS"
-        ,Position       = "POSITION"
-        ,PositionHist   = "HIST_POSITION"
-        ,Regularization = "REGULARIZATION"
-        ,Operations     = "OPERATIONS"
-        ,OperControl    = "OPERATIONS_CONTROL"
-        ,OperLog        = "OPERATIONS_LOG"
-        ,Flows          = "FLOWS"
-        ,Blog           = "BLOG"
-        ,Transfers      = "TRANSFERS"
+       Cameras        = "CAMERAS"
+      ,Position       = "POSITION"
+      ,PositionHist   = "HIST_POSITION"
+      ,Regularization = "REGULARIZATION"
+      ,Operations     = "OPERATIONS"
+      ,OperControl    = "OPERATIONS_CONTROL"
+      ,OperLog        = "OPERATIONS_LOG"
+      ,Flows          = "FLOWS"
+      ,Blog           = "BLOG"
+      ,Transfers      = "TRANSFERS"
     )
     ,fields = list(
          active    = "ACTIVE"

@@ -9,23 +9,26 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
           )
           warning(warn)
       }
-     ,error = function(msg, subclass, ...) {
+     ,error = function(msg, subclass, action, origin, ...) {
          data = list(...)
          data$message = msg
          err = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
          stop(err)
      }
      ,SQL = function(msg, action=NULL, origin=NULL, ...) {
-        self$error(msg,action=action,origin=origin, subclass="SQL", ...)
+        self$error(msg, subclass="SQL", action=action,origin=origin,  ...)
      }
      ,HTTP = function(msg, action=NULL, origin=NULL, ...) {
-        self$error(msg,action=action,origin=origin, subclass="HTTP", ...)
+        self$error(msg, subclass="HTTP",action=action,origin=origin,  ...)
      }
      ,EXEC = function(msg, ...) {
-        self$error(msg, subclass="EXEC", ...)
-      }
+        self$error(msg, subclass="EXEC", NULL, NULL, ...)
+     }
      ,logical = function(msg, action=NULL, origin=NULL, ...) {
-           self$error(msg,action=action,origin=origin, subclass="LOGICAL", ...)
-      }
+           self$error(msg, subclass="LOGICAL", action=action,origin=origin, ...)
+     }
+     ,propagate = function(cond) {
+        stop(cond)
+     }
    )
 )

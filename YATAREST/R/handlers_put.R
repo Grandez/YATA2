@@ -1,10 +1,9 @@
 update_handler = function(.req, .res) {
     message(Sys.time(), "update Called")
     tryCatch({
-        browser()
        fact = YATACore::YATAFACTORY$new()
        sess = fact$getObject(fact$codes$object$session)
-       sess$updateLatest()
+       sess$updateLatest(isolated=TRUE)
       .res$set_status_code(200)
       .res$set_content_type("text/plain")
       .res$set_body("OK")

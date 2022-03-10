@@ -97,14 +97,8 @@ function(input, output, session) {
    pnl = YATAWEB$getPanel("server")
    if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTradeMain$new("server", NULL, session))
    factory = pnl$factory
-   changeDB= function() {
-      data = frmChangeDBInput()
-      output$form = renderUI({data})
-      output$lblDBCurrent    = updLabelText(self$factory$getDBName())
-      shinyjs::show("yata-main-err")
-   }
    closePanel = function() { shinyjs::hide("yata-main-err") }
-   output$appTitle <- renderText({ 
+   output$app_title = renderText({ 
       name = factory$getDBName()
       if (is.null(name)) name = "Sin conexion"
       paste("YATA", name, sep = "-")
@@ -127,27 +121,36 @@ function(input, output, session) {
    })
    
    observeEvent(input$connected, { 
-       PUT("begin")
+#       PUT("begin")
        })
    observeEvent(input$disconnected, { 
-       PUT("end")
+#       PUT("end")
        })
    observeEvent(input$initialized, { 
-       PUT("begin")
+#       PUT("begin")
        })
+  observeEvent(input$app_title, {
+      browser()
+      data = frmChangeDBInput()
+      output$form = renderUI({data})
+      output$lblDBCurrent    = updLabelText(self$factory$getDBName())
+      shinyjs::show("yata-main-err")
+  })
    
 #   if (.Platform$OS.type != "windows") {
        # En este observer, cargamos la posicion y las cotizaciones
+   if (.Platform$OS.type == "windows") {
        observe({
           message("SERVER Update")
           PUT("update")
           invalidateLater(pnl$interval * 60000)       
           #invalidateLater(1000)   
        })
+   }
 #   }
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
-      cat("Shiny Session stopped\n")
-      pnl$factory$finalize()
+      # cat("Shiny Session stopped\n")
+      # pnl$factory$finalize()
       })
 }

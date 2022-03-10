@@ -48,7 +48,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
           invisible(self)
       }
        ,message   = function(fmt, ...) {
-         .println(5, mountMessage(fmt, ...))
+         .println(5, .mountMessage(fmt, ...))
          invisible(self)
        }
        ,beg       = function(name, level = 0) {
@@ -67,7 +67,8 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        }
        ,end       = function(name) {
            idx = which.max(logNames)
-           if (idx == 0) return (invisible(self))
+           if (length(idx) == 0) return (invisible(self))
+           idx = idx[1]
            from = length(longNames)
            while (from > idx ) {
               diff = as.integer(Sys.time()) - logTimers[from]

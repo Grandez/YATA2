@@ -52,20 +52,23 @@ CREATE TABLE SESSION  (
    ,DOMINANCE DOUBLE
    ,TURNOVER  DOUBLE
    ,TMS       TIMESTAMP     NOT NULL
-   ,PRIMARY KEY (ID, TMS)
---   ,UNIQUE  KEY (SYMBOL, TMS)
+   ,LAST      TIMESTAMP     NOT NULL   
+   ,PRIMARY KEY (ID, TMS DESC)
    ,INDEX       (SYMBOL)
+   ,INDEX       (LAST)
 );
 
 
 -- ----------------------------------------------------------
 -- Contiene la ultima vez que se acutalizo session
--- Nos evita hacer una query
+-- Nos evita hacer una query 
+-- Evita que haya monedas con diferentes tms
 -- ----------------------------------------------------------
 DROP TABLE  IF EXISTS SESSION_CTRL;
 CREATE TABLE SESSION_CTRL  (
-    TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
-   ,PRIMARY KEY (TMS)
+     ID        INTEGER       NOT NULL
+    ,TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+   ,PRIMARY KEY (ID)
 );
 
 -- Tabla de monedas trabajadas por cada camara

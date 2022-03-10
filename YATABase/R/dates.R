@@ -5,6 +5,7 @@ YATABaseDat = R6::R6Class("YATA.BASE.DATES"
    ,public = list(
        asPosix   = function(epoch) { anytime(epoch)   }
       ,asDate    = function(epoch) { anydate(epoch)   }
+      ,asTMS     = function(epoch) { format(epoch, format = "%Y-%m-%d-%H:%M:%S") }
       ,asUnix    = function(date)  {
            if (("POSIXct" %in% class(date))) return (as.numeric(date))
 

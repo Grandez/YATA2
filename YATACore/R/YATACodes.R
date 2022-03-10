@@ -32,6 +32,7 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,parameters     = "Parameters"
         ,messages       = "Messages"
         ,session        = "Session"
+        ,sessionCtrl    = "SessionCtrl"
         ,blog           = "Blog"
         ,history        = "History"
     )

@@ -86,25 +86,37 @@ YATATable <- R6::R6Class("YATA.TABLE"
              yataErrorLogical("No register active", action="Set field", origin=tblName)
          if (field %in% key) return (invisible(self))
          if (is.na(value))   return (invisible(self)) # NA genera ERROR
-         if (field %in% names(current) && current[[field]] != value) {
-             self$current[field] = value
-             private$changed[field] = TRUE
+         if (field %in% names(current)) {
+             val = current[[field]]
+             if (is.na(val) || is.null(val)) {
+                 self$current[field] = value
+                 private$changed[field] = TRUE
+             } else {
+                 if (current[[field]] != value) {
+                     self$current[field] = value
+                     private$changed[field] = TRUE
+                 }
+             }
          }
          invisible(self)
       }
       ,getField = function(name)         { self$current[[name]] }
       ,addField = function(name, value)  { self$current[[name]] = self$current[[name]] + value }
-      ,select   = function(..., create=FALSE)  {
+      ,select   = function(..., create=FALSE, limit=0)  {
          # selecciona un registro o conjunto, segun los parametros (solo equal)
          reset()
          filter = mountWhere(...)
-         sql = paste("SELECT * FROM ", tblName, filter$sql)
-         df = db$query(sql, filter$values)
+         qry = paste("SELECT * FROM ", tblName, filter$sql)
+         if (limit > 0) {
+             filter$values = list.append(filter$values, limit_=limit)
+             qry = paste(qry, "LIMIT ?")
+         }
+         df = db$query(qry, params=filter$values)
 
          if (nrow(df) == 0 && !create) return (FALSE)
          if (nrow(df) == 0 &&  create) {
              self$add(list(...))
-             df = db$query(sql, filter$values)
+             select(..., create, limit)
          }
          self$dfCurrent    = setColNames(df)
          self$current      = as.list(self$dfCurrent[1,])
@@ -153,11 +165,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,queryLimit   = function(sql, limit=1, ...) {
          # Query personalizada
          filter = mountWhere(...)
-         if (is.null(filter$values)) {
-            filter$values[limit_] = limit
-         } else {
-            filter$values = list.append(filter$values, limit_=limit)
-         }
+         filter$values = list.append(filter$values, limit_=limit)
+
          qry = paste("SELECT ", sql, "FROM ", tblName, filter$sql, "LIMIT ?")
          df = db$query(qry, params=filter$values)
          setColNames(df)

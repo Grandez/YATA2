@@ -22,7 +22,6 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            )
            ,valid = FALSE
            ,initialize     = function(id, pnlParent, session) {
-               YATAWEB$beg("PNLPosOper init")          
                super$initialize(id, pnlParent, session)
                self$operations = self$factory$getObject("Operation")
                self$session    = self$factory$getObject(self$codes$object$session)
@@ -32,7 +31,6 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                self$vars$layout = c("plotOpen", "data")
                self$data$dfHist = list()
 #               private$applyCookies(session)
-               YATAWEB$end("PNLPosOper init")          
            }
         ,loadData = function() {
             self$data$lstHist    = list()
@@ -138,7 +136,6 @@ modOperPosServer = function(id, full, pnlParent, parent) {
    )
    
    moduleServer(id, function(input, output, session) {
-      YATAWEB$beg("modOper_Pos")
       pnl = YATAWEB$getPanel(full)
       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnlParent, session))
 
@@ -233,7 +230,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                   then ( function(df) {
                          if (is.data.frame(df)) renderPlot(df, symbol)
                          }, function(err)    {
-                          YATAWEB$log("hist resp: %d - %s - %s", id,from,to)
+                          YATAWEB$log$message("hist resp: %d - %s - %s", id,from,to)
                           browser()
                           message("ha ido mal 3") ; message(err)
                       })
@@ -363,7 +360,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       }
       observeEvent(input$btnTablePending, {
           browser()
-          YATAWEB$beg("Table Pending")
+          YATAWEB$log$beg("Table Pending")
           pnl$selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
               pnl$vars$nextAction = pnl$codes$status$accepted
@@ -385,17 +382,17 @@ modOperPosServer = function(id, full, pnlParent, parent) {
               output$form = renderUI({data})
               formChangeInit()
           }
-          YATAWEB$end("Table Pending")
+          YATAWEB$log$end("Table Pending")
       }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableAccepted, {
            browser()
-          YATAWEB$beg("Table Accepted")
+          YATAWEB$log$beg("Table Accepted")
           pnl$selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
           pnl$vars$nextAction = pnl$codes$status$executed
           data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
           output$form = renderUI({data})
           formChangeInit()
-          YATAWEB$end("Table Accepted")
+          YATAWEB$log$end("Table Accepted")
        }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTable, {
          browser()
@@ -466,8 +463,6 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          session$sendCustomMessage('yataShowBlock',list(ns=full,row=2,col=0,block=input$cboDown))
       }, ignoreNULL = TRUE)
 
-     YATAWEB$end("modOper_Pos")
-          
   })
 }
 

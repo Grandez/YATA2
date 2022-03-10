@@ -26,7 +26,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                self$vars$inForm  = FALSE
                self$vars$inEvent = FALSE
                self$vars$panel = ""
-               private$opers   = HashMap$new()
+               private$opers   = YATABase$map
            }
            ,getOper = function (id)        { private$opers$get(id)       }
            ,setOper = function (id, oper)  { 
@@ -36,6 +36,10 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            ,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,getCboCameras = function (currency) {
+               if (missing(currency)) {
+                   df = self$cameras$getCameras()
+                   return (self$makeCombo(df))
+               }
                df = self$position$getCurrencyPosition(currency)   
                df = df[df$camera != "CASH",]
                df = df[df$available > 0,]
@@ -123,9 +127,8 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
        })       
         
         observeEvent(input$pnlOpType, { 
-            browser()
            act = yataActiveNS(input$pnlOpType)
-           module = paste0("modOper", titleCase(act),"Server")
+           module = paste0("modOper", YATABase$str$titleCase(act),"Server")
            carea = pnl$getCommarea()
 
            if (is.null(carea$pending) || !carea$pending) {

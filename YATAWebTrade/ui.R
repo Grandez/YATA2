@@ -14,5 +14,6 @@ JGGDashboardFull(title="YATA", id = "mainMenu"
   ,tabPanel(YATAWEB$MSG$get("PNL.HISTORY"),   value="hist",  YATAModule("hist"))  
   ,tabPanel(YATAWEB$MSG$get("PNL.ANALYSIS"),  value="ana",   YATAModule("ana"))  
   ,tabPanel(YATAWEB$MSG$get("PNL.LOG"),       value="log",   YATAModule("log"))
+  ,tabPanel(YATAWEB$MSG$get("PNL.ADMIN"),     value="admin",   YATAModule("admin"))
   ,titleActive = TRUE, theme =  my_theme,lang = NULL    
 )
