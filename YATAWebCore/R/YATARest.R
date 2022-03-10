@@ -11,7 +11,7 @@ YATARest = R6::R6Class("YATA.REST"
         private$parms = servers[[type]]
         private$.url = paste0(parms$url, ":", parms$port, "/")
      }
-     ,restCheck = function() {
+     ,check = function() {
          tryCatch({
              httr::GET(paste0(.url,"alive"))
              0

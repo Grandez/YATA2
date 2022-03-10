@@ -33,8 +33,8 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$hID   = YATABase$map
             private$hSym  = YATABase$map
             private$hCam  = YATABase$map
-            self$errorLevel = restCheck()
             self$REST = YATARest$new()
+            self$errorLevel = REST$check()
 #            loadFiats()
          }, error = function(e) {
             self$errorLevel = 98
