@@ -11,7 +11,10 @@ YATAREST = R6::R6Class("YATA.REST"
             cat("Init hecho")
             # private$setDoc()
         }
-        ,getPort = function() { private$factory$parms$getRESTPort() }
+        ,getPort = function() {
+            servers = factory$parms$getServers()
+            servers$REST$port
+         }
     )
    ,private = list(
         factory = NULL

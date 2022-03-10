@@ -1,4 +1,6 @@
 -- ------------------------------
+-- ID = 0 Se reserva para la eiqueta de listas
+-- ------------------------------
 -- Tipos de datos
 -- string =   1
 -- integer = 10
@@ -24,9 +26,6 @@ DELETE FROM PARMS;
 --           3 - lastDB
 --  Sub  3 - Operaciones
 --           1 - alert - Dias para la proxima alerta
---  Sub  4 - Servers            
---           1 - URL
---           2 - Port Base (+0 = webserver +1 = rest server + Batch +1, Deferred +2)
 -- --------------------------------------------------- 
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'currency'    , 'EUR');
@@ -42,6 +41,67 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 1, 10, 
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 1,  1, 'url'      , '127.0.0.1');
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 2, 10, 'port'     , '4000');
+
+-- ----------------------------------------------------
+-- Grupo 2 - Servers
+--   Sub  1 - Web Server
+--        2 - Admin Server
+--        3 - Other Server
+--        5 - REST Online
+--        6 - REST Deferred
+--        7 - REST Batch  
+--       10 - Database Server BASE
+--       11 - Database Server DATA
+--       12 - Database Server CI
+--       14 - Database Server Instances
+-- ----------------------------------------------------
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  1,  0,  1, 'label'    , 'Web');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  1,  1,  1, 'name'     , 'Web server');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  1,  2,  1, 'url'      , 'http://127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  1,  3, 10, 'port'     , '80');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  2,  0,  1, 'label'    , 'WebAdmin');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  2,  1,  1, 'name'     , 'Web Admin server');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  2,  2,  1, 'url'      , 'http://127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  2,  3, 10, 'port'     , '3939');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  5,  0,  1, 'label'    , 'REST');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  5,  1,  1, 'name'     , 'REST Service');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  5,  2,  1, 'url'      , 'http://127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  5,  3, 10, 'port'     , '4005');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  6,  0,  1, 'label'    , 'Deferred');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  6,  1,  1, 'name'     , 'REST Deferred');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  6,  2,  1, 'url'      , 'http://127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  6,  3, 10, 'port'     , '4006');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  7,  0,  1, 'label'    , 'Batch');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  7,  1,  1, 'name'     , 'REST Batch');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  7,  2,  1, 'url'      , 'http://127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2,  7,  3, 10, 'port'     , '4007');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 10,  0,  1, 'label'    , 'DB_BASE');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 10,  1,  1, 'name'     , 'Base Database');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 10,  2,  1, 'url'      , '127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 10,  3, 10, 'port'     , '4007');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 11,  0,  1, 'label'    , 'DB_DATA');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 11,  1,  1, 'name'     , 'Data Database');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 11,  2,  1, 'url'      , '127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 11,  3, 10, 'port'     , '4007');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 12,  0,  1, 'label'    , 'DB_CI');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 12,  1,  1, 'name'     , 'CI Database');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 12,  2,  1, 'url'      , '127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 12,  3, 10, 'port'     , '4007');
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 14,  0,  1, 'label'    , 'DB_USER');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 14,  1,  1, 'name'     , 'Instances Database');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 14,  2,  1, 'url'      , '127.0.0.1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (2, 14,  3, 10, 'port'     , '4007');
+
+
 -- ----------------------------------------------------
 -- Grupo 3 - Proveedores
 --   Sub 1 - Online

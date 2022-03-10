@@ -65,7 +65,12 @@ OBJParms = R6::R6Class("OBJ.PARMS"
          }
         ,getCurrencyNames  = function(codes, full) {
              private$tblCurrencies$getNames(codes, full)
-         }
+        }
+        ,getServers = function() {
+            browser()
+            df1 = tblParms$groupAsList(DBParms$group$servers)
+            browser()
+        }
          ##############################################
          ### Providers
          ##############################################

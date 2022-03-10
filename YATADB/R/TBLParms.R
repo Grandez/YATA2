@@ -10,6 +10,26 @@ TBLParameters = R6::R6Class("TBL.PARMS"
         ####################################################
         ### Generic methods by ID
         ####################################################
+        ,groupAsList = function(group) {
+            parms = list()
+            block = NULL
+            blk = -1
+            df = table(group=group)
+            for (row in 1:nrow(df)) {
+                if (df[row, "subgroup"] != blk) {
+                    blk = df[row, "subgroup"]
+                    if (!is.null(block)) {
+                        lbl = ifelse(is.null(block$label), block$name, block$label)
+                        parms[[lbl]] = block
+                    }
+                    block = list()
+                }
+                block[df[row, "name"]] = applyType(df[row,"value"], df[row,"type"])
+            }
+            lbl = ifelse(is.null(block$label), block$name, block$label)
+            parms[[lbl]] = block
+            parms
+        }
         ,applyType = function(value, type) {
              if (type == DBDict$types$integer) return (as.integer(value))
              if (type == DBDict$types$numeric) return (as.numeric(value))

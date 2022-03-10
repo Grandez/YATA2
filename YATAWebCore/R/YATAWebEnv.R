@@ -16,6 +16,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
   )
   ,public = list(
       MSG      = NULL
+     ,REST   = NULL
      ,errorLevel = 0 # Nivel de error (9 - No rest)
      ,txtError = NULL
      ,factory  = NULL
@@ -33,6 +34,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$hSym  = YATABase$map
             private$hCam  = YATABase$map
             self$errorLevel = restCheck()
+            self$REST = YATARest$new()
 #            loadFiats()
          }, error = function(e) {
             self$errorLevel = 98

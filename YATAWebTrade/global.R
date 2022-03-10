@@ -67,7 +67,9 @@ plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeB
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
+WEB = YATAWebEnv$new()
 YATAWEB = YATAWebEnv$new()
+
 if (.Platform$OS.type != "windows") {
    future::plan(strategy="sequential")    
 } else {

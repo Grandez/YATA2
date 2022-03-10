@@ -19,7 +19,7 @@ DBParms = list(
     )
     ,group = list(
        general   =  1
-
+      ,servers   =  2
       ,providers =  3
       ,databases =  5
       ,prefs     = 10

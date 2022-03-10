@@ -10,11 +10,24 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
        codes  = NULL
       ,parms  = NULL
       ,MSG    = NULL  # Like WEB
+      ,delete_flag = FALSE
       # Ponemos init y clear para manejar fuera de initialize y finalize
       # auto se usa para el CI
       ,initialize = function(auto=TRUE) { init(auto, FALSE) }
       ,finalize   = function() { clear()     }
+      ,delete     = function(){
+          browser()
+          pf = parent.frame()
+          self$delete_flag = TRUE
+          insts = sapply(ls(pf), function(i) {class(get(i, envir = pf))[1] == "YATA.FACTORY"})
+
+          this = ls(pf)[insts][sapply(mget(ls(pf)[insts], envir = pf),
+                        function(x) x$delete_flag)]
+          rm(list = this, envir = pf)
+               message("demo object deleted!")
+       }
       ,clear     = function(){
+          message("Deleting factory")
          if (!is.null(DBFactory))   DBFactory$finalize()
          if (!is.null(ProvFactory)) ProvFactory$finalize()
          self$parms = NULL
