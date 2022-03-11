@@ -254,7 +254,14 @@ YATATable <- R6::R6Class("YATA.TABLE"
           sql = paste("SELECT COUNT(*) FROM ", tblName, filter$sql)
           df = db$query(sql, params=filter$values)
           as.numeric(df[1,1])
+      }
+      ,max    = function(field, ..., inValues=NULL) {
+          filter = mountWhere(..., inValues=inValues)
+          sql = paste("SELECT MAX(", fields[field], ") FROM ", tblName, filter$sql)
+          df = db$query(sql, params=filter$values)
+          as.numeric(df[1,1])
        }
+
       ,update  = function(lstValues, ..., isolated=FALSE) {
           sql = paste("UPDATE ", tblName, "SET")
           cols = fields[names(lstValues)]

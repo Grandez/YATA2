@@ -101,10 +101,12 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            }
            for (idx in 1:length(from)) {
                src  = paste0(Sys.getenv("YATA_ROOT"), "/", from[idx])
-               if (file.exists(src)) {
+               if (file.exists(src)) { # Modificado/Creado
                    dst = paste0(Sys.getenv("YATA_ROOT"), "/", to[idx])
-                   .run$copyExex(src, dst)
-                   .run$copyExex(dst, paste(site, basename(to[idx]), sep="/"))
+                   .run$copyExe(src, dst)
+                   .run$copyExe(dst, paste(site, basename(to[idx]), sep="/"))
+               } else { # Borrado
+                   .run$command("rm", paste(site, basename(to[idx]), sep="/"))
                }
            }
            base$msg$ok()

@@ -108,6 +108,76 @@ updateTickers = function(max=0, console=FALSE, log=1) {
 
       logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
 }
+#' Realiza la carga inicial o recarga de la tabla de monedas
+#'
+#' @param console Se ejecuta en una consola (interactivo)
+#' @param log     Nivel de detalle de los mensajes
+#'
+updateCurrencies = function(console=FALSE, log=1) {
+   logger = YATABase::YATALogger$new("currencies", console, log)
+   logger$process(1, "Retrieving currencies from CoinMarketCap")
+
+   beg   = 1
+   begin = as.numeric(Sys.time())
+   codes = YATACore::YATACODES$new()
+   fact  = YATACore::YATAFACTORY$new()
+   prov  = fact$getProviderBase()
+   tbl   = fact$getTable(codes$tables$currencies)
+
+   logger$info(2,"Retrieving currencies from %d", beg)
+   df = prov$getCurrencies(beg, 500)
+
+   rc = tryCatch({
+      process = TRUE
+      while (process) {
+         if (nrow(df) < 500) process = FALSE
+         logger$info(2,"Updating currencies: %d", beg)
+         for (row in 1:nrow(df)) {
+              if (row %% 100 == 1) tbl$db$begin()
+              tbl$select(id=df[row,"id"])
+              if (!is.null(tbl$current)) {
+                  tbl$set(slug=df[row,"slug"], rank=df[row,"rank"], active=df[row,"active"])
+                  tbl$apply()
+               } else {
+                  tbl$add(as.list(df[row,]))
+               }
+               if (row %% 100 == 0) tbl$db$commit()
+         }
+         tbl$db$commit()
+         beg = beg + nrow(df)
+
+         if (is.null(df) || nrow(df) == 0) process = FALSE
+         if (process) {
+             logger$info(2,"Retrieving currencies from %d", beg)
+             df   = prov$getCurrencies(beg, 500)
+         }
+      }
+         0
+      }, YATAERROR = function (cond) {
+              browser()
+              16
+      }, error = function (cond) {
+              browser()
+              16
+      })
+
+      logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
+}
+updateIcons = function(maximum, force=FALSE, console=FALSE, log=1) {
+   logger = YATABase::YATALogger$new("currencies", console, log)
+   logger$process(1, "Retrieving icons from CoinMarketCap")
+
+   beg   = 1
+   begin = as.numeric(Sys.time())
+   codes = YATACore::YATACODES$new()
+   fact  = YATACore::YATAFACTORY$new()
+   prov  = fact$getProviderBase()
+   tbl   = fact$getTable(codes$tables$currencies)
+
+   if (missing(maximum)) maximum = tbl$max("id")
+   prov$getIcons(maximum, force)
+   logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
+}
 
 #' Hay dos procesos
 #' El proceso inicial (Poner el YATA.cfg) tiene que leerlas monedas de marketcap

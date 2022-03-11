@@ -39,7 +39,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
           msg = .mountMessage(fmt,...)
           if (console) {
               .toConsole(msg)
-              if (.logLevel > 1) {
+              if (.logLevel > 0) {
                   .toConsole(paste("Elapsed time:", elapsed))
                   .toConsole(paste("Return code :", rc))
               }
