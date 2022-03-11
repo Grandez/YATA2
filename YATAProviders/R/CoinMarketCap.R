@@ -13,6 +13,31 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           private$hID     = YATABase$map
           #getLatest()
        }
+      ,getIcons = function(maximum, force=FALSE) {
+          urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
+          if (missing(maximum)) maximum=9999
+          oldwd = getwd()
+          site = Sys.getenv("YATA_SITE")
+          wd = normalizePath(site, "YATAExternal", "icons")
+          setwd(wd)
+          files = list.files()
+          for (idx in 1:maximum) {
+               png = paste0(idx, ".png")
+               cat(png)
+               if (length(which(files == png)) != 0 && !force) {
+                   cat("\tExist\n")
+                   next
+               }
+               resp = GET(paste0(urlbase, png), add_headers(.headers=headers), query=NULL)
+               if (page$status_code != "200") {
+                   cat("\tKO\n")
+               } else {
+                 writeBin(resp$content, png)
+                   cat("\tOK\n")
+               }
+          }
+          setwd(oldwd)
+      }
       ,getCurrencies = function(from = 1, max = 0) {
           url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
           count   =   0
