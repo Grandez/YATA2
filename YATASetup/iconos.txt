@@ -1,0 +1,6 @@
+0. en YATA un proceso para bajar la lista de slug
+1. Bajamos las URL con slug en curl a una fichero 
+2. Por cada pagina buscamos : grep -o -E "200x200/[0-9]+"
+3. Pegamos el s2..... y el resultado de 2 y .png
+4. Lo pasamos al JDownloader
+5. Dejamos que JD haga su trabajo

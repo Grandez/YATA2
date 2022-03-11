@@ -4,6 +4,7 @@
 #' @param log     Nivel de detalle de los mensajes
 #'
 updateCurrencies = function(console=FALSE, log=1) {
+    browser()
    logger = YATABase::YATALogger$new("currencies", console, log)
    logger$process(1, "Retrieving currencies from CoinMarketCap")
 
@@ -177,6 +178,21 @@ updateIcons = function(maximum, force=FALSE, console=FALSE, log=1) {
    if (missing(maximum)) maximum = tbl$max("id")
    prov$getIcons(maximum, force)
    logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
+}
+#' Realiza la carga inicial o recarga de la tabla de monedas
+#'
+#' @param console Se ejecuta en una consola (interactivo)
+#' @param log     Nivel de detalle de los mensajes
+#'
+getSlug = function(console=FALSE, log=1) {
+   logger = YATABase::YATALogger$new("currencies", console, log)
+   logger$process(1, "Retrieving currencies from CoinMarketCap")
+   fact  = YATACore::YATAFACTORY$new()
+   codes = YATACore::YATACODES$new()
+   tbl   = fact$getTable(codes$tables$currencies)
+
+   df = tbl$table()
+   cat(paste(df[,"slug"], "\n"))
 }
 
 #' Hay dos procesos

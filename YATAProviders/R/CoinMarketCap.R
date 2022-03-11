@@ -14,11 +14,14 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           #getLatest()
        }
       ,getIcons = function(maximum, force=FALSE) {
+          browser()
           urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
+          urlbase2 = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
           if (missing(maximum)) maximum=9999
           oldwd = getwd()
           site = Sys.getenv("YATA_SITE")
-          wd = normalizePath(site, "YATAExternal", "icons")
+          site = "P:/R/YATA2/"
+          wd = file.path(site, "YATAExternal", "icons")
           setwd(wd)
           files = list.files()
           for (idx in 1:maximum) {
@@ -29,7 +32,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                    next
                }
                resp = GET(paste0(urlbase, png), add_headers(.headers=headers), query=NULL)
-               if (page$status_code != "200") {
+               if (resp$status_code != 200) {
                    cat("\tKO\n")
                } else {
                  writeBin(resp$content, png)
