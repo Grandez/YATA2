@@ -48,10 +48,10 @@ jgg_make_container_full = function (nav, content, titleActive) {
 
    divMain  = shiny::tags$div(id="jgg_page_main",  class="jgg_page_main"  )
    divLeft  = shiny::tags$div( id="jgg_page_left"
-                              ,class="w-25 h-100 jgg_page_left jgg_side_none"  )
+                              ,class="w-25 h-100 jgg_page_left jgg_side_hide"  )
 
    divRight = shiny::tags$div( id="jgg_page_right"
-                              ,class="w-25 h-100 jgg_page_right jgg_side_none" )
+                              ,class="w-25 h-100 jgg_page_right jgg_side_hide" )
 
    divFooter = tagAppendChild(divFooter, tags$span("YATA - Grandez"))
 
@@ -122,25 +122,31 @@ jgg_make_page_header <- function(parent, nav, titleActive = FALSE, titleWidth = 
     # Iconos de la barra derecha
 
     button_left = shiny::tags$a( href = "#", id="jgg_left_side"
-                            ,class = "jgg_sidebar_toggle", role = "button"
-                            ,`data-toggle` = "jgg_left_button" # javascript
-                            ,shiny::tags$span( id="left_side_open", class="jgg_side_open"
-                                              ,shiny::icon( "chevron-right" ,"fa-lg"
-                                              ,style="padding-top: 12px"))
-                            ,shiny::tags$span( id="left_side_close", class="jgg_side_closed"
-                                              ,shiny::icon( "chevron-left" ,"fa-lg"
-                                                           ,style= "padding-top: 12px"))
-                      )
+        ,class = "jgg_sidebar_toggle"
+        ,role  = "button"
+        ,`data-toggle` = "jgg_left_button" # javascript
+        ,shiny::tags$span( id="jgg_left_side_open"
+               ,shiny::icon( "chevron-right" ,"fa-lg"
+                            ,style="padding-top: 12px")
+              )
+              ,shiny::tags$span( id="jgg_left_side_close"
+                                ,class="jgg_button_side_hide"
+                                ,shiny::icon( "chevron-left" ,"fa-lg"
+                                ,style= "padding-top: 12px")
+               )
+    )
     button_right = shiny::tags$a( href = "#", id="jgg_right_side"
-                            ,class = "jgg_sidebar_toggle", role = "button"
-                            ,`data-toggle` = "jgg_right_button" # javascript
-                            ,shiny::tags$span( id="right_side_open", class="jgg_side_open"
-                                              ,shiny::icon( "cog" ,"fa-lg"
-                                              ,style="padding-top: 12px"))
-                            ,shiny::tags$span( id="right_side_close", class="jgg_side_closed"
-                                              ,shiny::icon( "chevron-right" ,"fa-lg"
-                                                           ,style= "padding-top: 12px"))
-                      )
+        ,class = "jgg_sidebar_toggle"
+        ,role  = "button"
+        ,`data-toggle` = "jgg_right_button" # javascript
+        ,shiny::tags$span( id="jgg_right_side_open"
+                          ,shiny::icon( "cog" ,"fa-lg"
+                          ,style="padding-top: 12px"))
+        ,shiny::tags$span( id="jgg_right_side_close"
+                          ,class="jgg_button_side_hide"
+                          ,shiny::icon( "chevron-right" ,"fa-lg"
+                          ,style= "padding-top: 12px"))
+    )
 
     divBrand = tags$div(id="jgg_brand", class="col-lg-1")
     if (titleActive) {

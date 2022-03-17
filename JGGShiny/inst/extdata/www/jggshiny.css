@@ -78,15 +78,10 @@
     float: left;
 }
 /* Iconos de abrir/cerrar paneles */
-.jgg_side_none {
+.jgg_button_side_hide {
   display: none;
 }
-
-.jgg_side_open {
-  padding-top: 14px;
-}
-
-.jgg_side_closed {
+.jgg_side_hide {
   display: none;
 }
 

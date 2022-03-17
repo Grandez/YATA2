@@ -10,8 +10,8 @@ JGGModule = function(id, title="",mod=NULL, ...) {
    idForm = paste0(id, "_div_form")
    idErr  = paste0(id, "_div_err")
 
-   divLeft  = tags$div(id=paste0(id, "_container_left"),  class="jgg_panel_left  jgg_side_closed")
-   divRight = tags$div(id=paste0(id, "_container_right"), class="jgg_panel_right jgg_side_closed")
+   divLeft  = tags$div(id=paste0(id, "_container_left"),  class="jgg_panel_left  jgg_side_hide")
+   divRight = tags$div(id=paste0(id, "_container_right"), class="jgg_panel_right jgg_side_hide")
 
    if (!is.null(data$left))  divLeft  = tagAppendChildren(divLeft, data$left)
    if (!is.null(data$right)) divRight = tagAppendChildren(divRight, data$right)

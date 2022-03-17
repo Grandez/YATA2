@@ -19,7 +19,6 @@ class JGGShiny {
       this.#panels = new Map();
    }
    init(title) {
-       alert("Initializing JGG code");
        jQuery("#app_title").text(title);
        jQuery(document).on('click', this.#leftSideIcon,  {jggshiny: this}, jggshiny.sidebarLeft);
        jQuery(document).on('click', this.#rightSideIcon, {jggshiny: this}, jggshiny.sidebarRight);
@@ -70,17 +69,30 @@ class JGGShiny {
       let page = jggshiny.#page;
       if (page === undefined) return; // Se ha activado antes de insertarla
 
-       let id = "#" + page.name + "_container_left";
-       if (jQuery(id).hasClass('jgg_side_closed')) {
-           jQuery(id).removeClass('jgg_side_closed').trigger('expanded.pushMenu');
-           jQuery("#left_side_closed").addClass("jgg_side_closed");
-           jQuery("#left_side_open").removeClass("jgg_side_closed");
+       // Botones
+       let id = "#jgg_left_side";
+       if (page.left == 0) {
+           jQuery(id).addClass('jgg_side_hide');
+           return;
+       }
+       jQuery(id).removeClass('jgg_side_hide');
+
+       if (page.left == -1) {
+           jQuery("#jgg_left_side_close").removeClass('jgg_button_side_hide');
+           jQuery("#jgg_left_side_open").addClass    ('jgg_button_side_hide');
            page.left = 1; // Open
        } else {
-           jQuery(id).addClass('jgg_side_closed').trigger('collapsed.pushMenu');
-           jQuery("#left_side_closed").removeClass("jgg_side_closed");
-           jQuery("#left_side_open").addClass("jgg_side_closed");
+//           jQuery(id).addClass('jgg_side_closed').trigger('collapsed.pushMenu');
+           jQuery("#jgg_left_side_close").addClass  ('jgg_button_side_hide');
+           jQuery("#jgg_left_side_open").removeClass('jgg_button_side_hide');
            page.left = -1; // Closed
+       }
+
+       id = "#" + page.name + "_container_left";
+       if (page.left == 1) {
+           $(id).removeClass('jgg_side_hide').trigger('expanded.pushMenu');
+       } else {
+           $(id).addClass('jgg_side_hide').trigger('collapsed.pushMenu');
        }
        jggshiny.update_page(page);
    }
@@ -114,19 +126,18 @@ class JGGShiny {
   }
   #setSideIcons(value, side) {
       let id = "#jgg_" + side + "_side";
-      if (value == 0 && !jQuery(id).hasClass('jgg_side_none'))
-          jQuery(id).addClass('jgg_side_none');
-      if (value != 0)
-          jQuery(id).removeClass('jgg_side_none');
+      if (value == 0) jQuery(id).addClass('jgg_button_side_hide');
+      if (value != 0) jQuery(id).removeClass('jgg_button_side_hide');
 
-       id = id + "_open"
-       if (value = 1) {
-           jQuery(id).removeClass("jgg_side_closed");
-           jQuery(id).addClass   ("jgg_side_open");
+       const idOpen  = id + "_open"
+       const idClose = id + "_close"
+       if (value == 1) { // Is open
+           jQuery(idClose).removeClass("jgg_button_side_hide");
+           jQuery(idOpen).addClass    ("jgg_button_side_hide");
        }
-       if (value = -1) {
-           jQuery(id).removeClass("jgg_side_open");
-           jQuery(id).addClass   ("jgg_side_closed");
+       if (value == -1) {
+           jQuery(idOpen).removeClass("jgg_button_side_hide");
+           jQuery(idClose).addClass  ("jgg_button_side_hide");
        }
   }
 

@@ -25,7 +25,6 @@ custom_js = function(jsFiles) {
 document_ready_script = function(jsInit, title) {
     # This is the javascript to execute on document ready
     code =              "jQuery(document).ready(function() {\n"
-#    code = paste0(code, "   alert('EN READY');  \n")
     code = paste0(code, "   globalThis.jggshiny = new JGGShiny();  \n")
     code = paste(code, "    jggshiny.init('", title, "');   \n")
     if (!is.null(jsInit)) {
