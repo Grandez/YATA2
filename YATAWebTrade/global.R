@@ -16,27 +16,28 @@ suppressMessages(library(tidyr, warn.conflicts = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE))
 
 # YATA
-suppressMessages(library(YATABase,      warn.conflicts = FALSE))
+suppressMessages(library(JGGShiny,       warn.conflicts = FALSE))
+suppressMessages(library(YATABase,       warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 suppressMessages(library(YATAWebWidgets, warn.conflicts = FALSE))
-suppressMessages(library(JGGShiny,       warn.conflicts = FALSE))
+
 # suppressMessages(library(YATADT))
 
 # Shiny
 library(shiny)
 library(shinyjs)
-suppressMessages(library(shinydashboard,     warn.conflicts = FALSE))
-suppressMessages(library(shinydashboardPlus, warn.conflicts = FALSE))
-suppressMessages(library(shinyWidgets,       warn.conflicts = FALSE))
-library(bslib)
-library(shinycookie)
-library(shinybusy)
+#suppressMessages(library(shinydashboard,     warn.conflicts = FALSE))
+#suppressMessages(library(shinydashboardPlus, warn.conflicts = FALSE))
+#suppressMessages(library(shinyWidgets,       warn.conflicts = FALSE))
+suppressMessages(library(bslib,              warn.conflicts = FALSE))
+# library(shinycookie)
+# library(shinybusy)
 
 # General
 # library(data.table)
 
-library(reactable)
+#library(reactable)
 
 # Plots
 suppressMessages(library(ggplot2,   warn.conflicts = FALSE))
@@ -59,6 +60,7 @@ options( warn = -1
 
 plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
+cat(paste(Sys.time(), " - Before files\n"), file="P:/R/YATA2/web.log", append=TRUE)
 ######################################
 ### Carga de fuentes
 ### En R busca subdirectorios
@@ -67,9 +69,10 @@ plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeB
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
+cat(paste(Sys.time(), " - Before WEB\n"), file="P:/R/YATA2/web.log", append=TRUE)
 WEB = YATAWebEnv$new()
-YATAWEB = YATAWebEnv$new()
 
+cat(paste(Sys.time(), " - Before future\n"), file="P:/R/YATA2/web.log", append=TRUE)
 if (.Platform$OS.type != "windows") {
    future::plan(strategy="sequential")    
 } else {
@@ -78,6 +81,7 @@ if (.Platform$OS.type != "windows") {
 }
 
 onStart = function() {
+    cat(paste(Sys.time(), " - Starting\n"), file="P:/R/YATA2/web.log", append=TRUE)
       cat("Doing application setup\n")
 }
 onStop(function() {

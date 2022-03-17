@@ -5,24 +5,21 @@
 #          32 - Imprimir mensajes de detalle de nievl 3 y resumen de nivel 2
 
 
-YATABATCH = R6::R6Class("OBJ.BATCH"
+YATABatch = R6::R6Class("OBJ.BATCH"
     ,cloneable  = FALSE
     ,portable   = FALSE
     ,lock_class = TRUE
     ,public = list(
         codes = NULL
+       ,fact  = NULL
+       ,log   = NULL
         # Return codes
        ,OK  = 0
        ,NODATA = 4
-
-       ,fact  = NULL
-       ,initialize = function () {
-           message("Creando YATABATCH Object")
+       ,initialize = function (process=NULL, output=1, loglevel=0) {
            self$codes = YATACore::YATACODES$new()
            self$fact  = YATACore::YATAFACTORY$new()
-           lvl = Sys.getenv("YATA.VERBOSE")
-           if (nchar(lvl) > 0) setVerbose(lvl)
-           self$begin()
+           self$log   = YATALogger$new(process, output, loglevel)
        }
        ,setVerbose = function(verbose) {
            if (!missing(verbose)) {
@@ -32,14 +29,14 @@ YATABATCH = R6::R6Class("OBJ.BATCH"
            }
            invisible(self)
        }
-       ,log = function(level, txt, ...) {
-           if (level > 0 && level <= msgDet) {
-               prfx = paste0(rep("   ",level), collapse="")
-               txt = paste0(prfx,txt, collapse="")
-               msg(sprintf(txt, ...))
-           }
-           invisible(self)
-        }
+       # ,log = function(level, txt, ...) {
+       #     if (level > 0 && level <= msgDet) {
+       #         prfx = paste0(rep("   ",level), collapse="")
+       #         txt = paste0(prfx,txt, collapse="")
+       #         msg(sprintf(txt, ...))
+       #     }
+       #     invisible(self)
+       #  }
        ,warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }
        ,info = function(txt, ...) { msg(.msg("INFO   :", txt, ...), out=stdout()) }
        ,err  = function(txt, ...) { msg(.msg("ERROR  :", txt, ...), out=stderr()) }

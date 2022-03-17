@@ -1,37 +1,32 @@
+# Los codigos van al final [nnnnn]
+# 2006 - Se ha ido
+# 1205 - Tablas bloqueadas por transaccion
+#
 MARIADB = R6::R6Class("YATA.DB.MYSQL"
    ,inherit    = YATA.DB
    ,portable   = FALSE
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,public = list(
-        connRead   = NULL   # Conexion para leer datos
-       ,connTran   = NULL   # Conexion para actualizar datos
-       ,initialize = function(data) {
-           private$dbInfo = data
-           self$engine    = dbInfo$engine
-           self$name      = dbInfo$name
-           self$connRead  = connect()
-           self$connTran  = connect()
+        initialize = function(data) {
+           private$base     = YATABase$new()
+           private$map      = base$map()
+           private$dbInfo   = data
+           self$engine      = dbInfo$engine
+           self$name        = dbInfo$name
+           private$connRead = connect()
        }
       ,finalize = function() {
-          if (!is.null(connTran)) {
-              commit()
-              disconnect(connTran)
-          }
-          if (!is.null(connRead)) {
-             disconnect(connRead)
-          }
+          message("Finalizing YATADB")
+          if (!is.null(connTran)) commit()
+          disconnect(connTran)
+          disconnect(connRead)
        }
       ,print      = function() {
-          db = ifelse(is.null(self$connRead), "No Connection", paste0(dbInfo$name, " (", dbInfo$dbname, ")"))
+          db = ifelse(is.null(connRead), "No Connection", paste0(dbInfo$name, " (", dbInfo$dbname, ")"))
           message(db, ": MariaDB Database")
       }
       ,isValid = function(conn) { RMariaDB::dbIsValid(conn) }
-      ,restoreConnection = function(conn) {
-         if (isValid(conn)) return (conn)
-         disconnect(conn)
-         connect()
-      }
       ,connect    = function ()     {
           tryCatch({conn = RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
                                                ,username = dbInfo$user
@@ -41,32 +36,44 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                                                ,dbname   = dbInfo$dbname
                     )
           },error = function(cond) {
-              YATABase$cond$SQL("Connection error", origin=cond, action="connect") })
+              YATABase:::SQL("Connection error", origin=cond, action="connect")
+          })
       }
       ,disconnect = function(conn) {
+          if (is.null(conn)) return (NULL)
           if (isValid(conn))  {
               tryCatch({ RMariaDB::dbDisconnect(conn) }
                         ,error = function(cond) {
                               message("ERROR en disconnect")
                       })
           }
-          invisible(self)
+          NULL
       }
       ,begin      = function() {
-          if (!isValid(connTran)) self$connTran = restoreConnection(connTran)
-          if (!private$trx) RMariaDB::dbBegin   (connTran)
-          private$trx = TRUE
-          invisible(connTran)
+          if (!is.null(connTran)) {
+              YATABase:::SQL("Transacciones activas", origin=NULL, action="begin")
+          }
+          private$connTran = connect()
+          RMariaDB::dbBegin(connTran)
+          invisible(self)
       }
       ,commit     = function() {
-          if (private$trx) RMariaDB::dbCommit   (connTran)
-          private$trx = FALSE
-          invisible(connTran)
+          if (is.null(private$connTran)) {
+              warning("Commit sin transaccion")
+              return (invisible(self))
+          }
+          RMariaDB::dbCommit(connTran)
+          private$connTran = disconnect(connTran)
+          invisible(self)
       }
       ,rollback   = function() {
-          if (private$trx) RMariaDB::dbRollback   (connTran)
-          private$trx = FALSE
-          invisible(connTran)
+          if (is.null(private$connTran)) {
+              warning("Rollback sin transaccion")
+              return (invisible(self))
+          }
+          RMariaDB::dbRollback   (connTran)
+          private$connTran = disconnect(connTran)
+          invisible(self)
       }
       ,query      = function(qry, params=NULL) {
           if (!is.null(params)) names(params) = NULL
@@ -74,7 +81,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
               RMariaDB::dbGetQuery(getConn(), qry, param=params) }
                     ,error = function (cond) {
                         browser()
-                       YATABase$cond$SQL("QUERY Error", origin=cond, action="query", )
+                       YATABase:::SQL("QUERY Error", origin=cond, action="query", )
                     })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
@@ -87,11 +94,12 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                     },warning = function(cond) {
                         browser()
                        if (isolated) rollback()
-                       YATABase$cond$SQL("EXECUTE", origin=cond, sql=qry, action="execute")
+                       YATABase:::SQL("EXECUTE", origin=cond, sql=qry, action="execute")
                     },error = function (cond) {
                         browser()
+                        if (grep("1205", cond$message)) isolated = TRUE
                        if (isolated) rollback()
-                       YATABase$cond$SQL("EXECUTE", origin=cond, sql=qry, action="execute")
+                       YATABase:::SQL("EXECUTE", origin=cond, sql=qry, action="execute")
                     })
       }
       ,write      = function(table, data, append=TRUE, isolated=FALSE) {
@@ -131,18 +139,13 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
     )
    ,private = list(
        dbInfo    = NULL
-      # ,connRead  = NULL   # Conexion para leer datos
-      # ,connTran  = NULL   # Conexion para actualizar datos
-      ,trx       = FALSE
+      ,connRead  = NULL   # Conexion para leer datos
+      ,connTran  = NULL   # Conexion para actualizar datos
+      ,map       = NULL
+      ,base      = NULL
       ,getConn   = function(isolated=FALSE) {
          if (isolated) return (begin())
-         if (private$trx) {
-             self$connTran = restoreConnection(connTran)
-             connTran
-         } else {
-             self$connRead = restoreConnection(connRead)
-             connRead
-         }
+         private$connRead
       }
    )
 )

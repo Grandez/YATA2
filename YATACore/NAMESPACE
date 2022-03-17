@@ -8,9 +8,11 @@ import(YATABase)
 import(YATADB)
 import(YATAProviders)
 
+export(getFactory)
+
 export(YATACODES)
-export(YATAFACTORY)
+export(YATAFactory)
 exportPattern("YATA.*")
 exportPattern("OBJ.*")
-export(YATADEF)
+
 

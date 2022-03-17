@@ -3,15 +3,16 @@
 #' @param console Se ejecuta en una consola (interactivo)
 #' @param log     Nivel de detalle de los mensajes
 #'
-updateCurrencies = function(console=FALSE, log=1) {
-    browser()
-   logger = YATABase::YATALogger$new("currencies", console, log)
+updateCurrencies = function(console=1, log=1) {
+   browser()
+   begin = as.numeric(Sys.time())
+   logger = YATABase::YATALogger$new("Currencies", console, log)
    logger$process(1, "Retrieving currencies from CoinMarketCap")
 
    beg   = 1
-   begin = as.numeric(Sys.time())
+
    codes = YATACore::YATACODES$new()
-   fact  = YATACore::YATAFACTORY$new()
+   fact  = YATACore::YATAFactory$new()
    prov  = fact$getProviderBase()
    tbl   = fact$getTable(codes$tables$currencies)
 
@@ -52,7 +53,7 @@ updateCurrencies = function(console=FALSE, log=1) {
               16
       })
 
-      logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
+      logger$executed(rc, begin, "Executed")
 }
 #' Obtiene la cotizacion de las monedas en el momento actual
 #'
@@ -109,90 +110,68 @@ updateTickers = function(max=0, console=FALSE, log=1) {
 
       logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
 }
-#' Realiza la carga inicial o recarga de la tabla de monedas
-#'
-#' @param console Se ejecuta en una consola (interactivo)
-#' @param log     Nivel de detalle de los mensajes
-#'
-updateCurrencies = function(console=FALSE, log=1) {
-   logger = YATABase::YATALogger$new("currencies", console, log)
-   logger$process(1, "Retrieving currencies from CoinMarketCap")
+updateIconsCurrency = function(maximum, force=FALSE, console=1, log=1) {
+    browser()
+   batch  = YATABatch$new("icons", console, log)
+   begin  = as.numeric(Sys.time())
+   logger = batch$log
 
-   beg   = 1
-   begin = as.numeric(Sys.time())
-   codes = YATACore::YATACODES$new()
-   fact  = YATACore::YATAFACTORY$new()
-   prov  = fact$getProviderBase()
-   tbl   = fact$getTable(codes$tables$currencies)
-
-   logger$info(2,"Retrieving currencies from %d", beg)
-   df = prov$getCurrencies(beg, 500)
-
-   rc = tryCatch({
-      process = TRUE
-      while (process) {
-         if (nrow(df) < 500) process = FALSE
-         logger$info(2,"Updating currencies: %d", beg)
-         for (row in 1:nrow(df)) {
-              if (row %% 100 == 1) tbl$db$begin()
-              tbl$select(id=df[row,"id"])
-              if (!is.null(tbl$current)) {
-                  tbl$set(slug=df[row,"slug"], rank=df[row,"rank"], active=df[row,"active"])
-                  tbl$apply()
-               } else {
-                  tbl$add(as.list(df[row,]))
-               }
-               if (row %% 100 == 0) tbl$db$commit()
-         }
-         tbl$db$commit()
-         beg = beg + nrow(df)
-
-         if (is.null(df) || nrow(df) == 0) process = FALSE
-         if (process) {
-             logger$info(2,"Retrieving currencies from %d", beg)
-             df   = prov$getCurrencies(beg, 500)
-         }
-      }
-         0
-      }, YATAERROR = function (cond) {
-              browser()
-              16
-      }, error = function (cond) {
-              browser()
-              16
-      })
-
-      logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
-}
-updateIcons = function(maximum, force=FALSE, console=FALSE, log=1) {
-   logger = YATABase::YATALogger$new("currencies", console, log)
-   logger$process(1, "Retrieving icons from CoinMarketCap")
-
-   beg   = 1
-   begin = as.numeric(Sys.time())
-   codes = YATACore::YATACODES$new()
-   fact  = YATACore::YATAFACTORY$new()
-   prov  = fact$getProviderBase()
-   tbl   = fact$getTable(codes$tables$currencies)
-
-   if (missing(maximum)) maximum = tbl$max("id")
-   prov$getIcons(maximum, force)
+   logger$process(1, "Updating icons for currencies")
+   .updateIconsTable(batch)
+   browser()
+   .createURLList(batch)
    logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
 }
-#' Realiza la carga inicial o recarga de la tabla de monedas
-#'
-#' @param console Se ejecuta en una consola (interactivo)
-#' @param log     Nivel de detalle de los mensajes
-#'
-getSlug = function(console=FALSE, log=1) {
-   logger = YATABase::YATALogger$new("currencies", console, log)
-   logger$process(1, "Retrieving currencies from CoinMarketCap")
-   fact  = YATACore::YATAFACTORY$new()
-   codes = YATACore::YATACODES$new()
-   tbl   = fact$getTable(codes$tables$currencies)
+.updateIconsTable = function(batch) {
+   begin  = as.numeric(Sys.time())
+   tbl    = batch$fact$getTable(batch$codes$tables$currencies)
 
-   df = tbl$table()
-   cat(paste(df[,"slug"], "\n"))
+   df     = tbl$table()
+   count  = 0  # Hacemos commit cada 50
+   tbl$db$begin()
+   batch$log$process(2, "Updating icons field on %d currencies", nrow(df))
+   for (row in 1:nrow(df)) {
+       batch$log$process(5, "Parsing currency", df[nrow, "name"])
+       if (!is.na(df[row, "icon"]) && difftime(df[row,"tms"], Sys.time(), unit="days") < 7) next
+       resp = YATABase$http$get(paste0("https://coinmarketcap.com/currencies/", df[row,"slug"]))
+       if (resp$status_code != 200) {
+            YATABase$cond$HTTP(paste("Retrieving currency", df[row,"slug"]),
+                               action="GET", origin=resp$status_code)
+       }
+       content = YATABase$http$content(resp)
+       g = regexpr("200x200/[0-9a-zA-Z]+\\.png", content)
+       if (g != -1) {
+           tbl$select(id = df[row,"id"]) # Existe
+           tbl$setField("icon", substr(content, g[1] + 8, g[1] + attr(g, "match.length")[1] - 1))
+           tbl$apply()
+           count = count + 1
+       }
+       if ((count %% 50) == 0) {
+           tbl$db$commit()
+           tbl$db$begin()
+       }
+    }
+    tbl$db$commit()
+}
+.createURLList = function (batch) {
+    batch$log$process(2, "Generating URL List")
+    url = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
+    f   = paste0(Sys.getenv("HOME"), "/icons_url.txt")
+    suppressWarnings(file.remove(f))
+    root = paste0(Sys.getenv("YATA_SITE"), "/YATAExternal/icons")
+    if(.Platform$OS.type == "windows") root = "P:/R/YATA2/YATAExternal/icons"
+    tbl = batch$fact$getTable(batch$codes$tables$currencies)
+    df  = tbl$table()
+    for (row in 1:nrow(df)) {
+        nfo = file.info(paste0(root, "/", df[row,"icon"]))
+        if (is.na(nfo[1,"size"])) { # No existe
+            cat(paste0(url,df[row,"icon"], "\n"), file=f, append=TRUE)
+            next
+        }
+        if (nfo[1,"size"] < 1000) { # Malo
+            cat(paste0(url,df[row,"icon"], "\n"), file=f, append=TRUE)
+        }
+    }
 }
 
 #' Hay dos procesos

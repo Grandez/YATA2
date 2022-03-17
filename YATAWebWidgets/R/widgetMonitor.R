@@ -7,11 +7,10 @@
 
 WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
   ,portable   = FALSE
-  ,cloneable  = FALSE
   ,lock_class = TRUE
   ,public = list(
       initialize = function(id, pnl, env) {
-          private$monitors = HashMap$new()
+          private$monitors = YATABase$map
           private$idDiv = paste0("#", id)
           private$pnl = pnl
           private$env = env
@@ -59,6 +58,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
       ,clsLbl   = "yata_cell_label"
       ,clsData  = "yata_cell_data"
       ,initMonitors  = function() {
+          browser()
           createMonitor = function(sym, dfPos, dfLast, names) {
               mon         = as.list(dfLast[dfLast$symbol == sym,])
               mon$name    = names[[sym]]
@@ -79,7 +79,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           private$session = pnl$factory$getObject("Session")
           private$pos     = pnl$factory$getObject("Position")
           dfs             = session$getLatest(ctc)
-          names           = YATAWEB$getCTCLabels(ctc, type="name")
+          names           = WEB$getCTCLabels(ctc, type="name")
           lapply(ctc, function(sym) createMonitor(sym, df, dfs, names))
       }
       ,renderData    = function(first=FALSE) {
@@ -174,6 +174,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
     }
 
     ,updateMonitor = function(mon, last) {
+        browser()
         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", last$symbol, "_")
         vcost = ((last$price / mon$cost)    - 1) * 100
         vsess = ((last$price / mon$session) - 1) * 100

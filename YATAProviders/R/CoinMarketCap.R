@@ -84,22 +84,23 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
       }
       ,getTickers    = function(max = 0, from = 1) {
           url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
-          count =   0
-          until = 501
+          until = from + 500
           dfc   = NULL
           parms = list( start=from, limit=500, convert = "EUR"
                        ,cryptoType="all", tagType="all")
-
-          while (count < until) {
-               if (count > 0) Sys.sleep(1)
+          resp = list(total=0, from=0, count=0)
+          while (parms$start < until) {
+               if (parms$start > 1) Sys.sleep(1)
                data = request(url, parms)
-               if (is.null(data)) break
+               if (is.null(data) || length(data) == 0) break
+               data2 = data[[1]]
+               resp$total = data$totalCount
+               resp$from  = parms$start
+               resp$count = length(data2)
                until = ifelse (max == 0, data$totalCount, max)
-               data = data[[1]]
-               count = length(data)
-               parms$start = parms$start + count
+               parms$start = parms$start + length(data2)
 
-               lst = lapply(data, function(x) {
+               lst = lapply(data2, function(x) {
                       quote = x$quotes[[1]]
                       list( id=x$id
                            ,symbol=x$symbol
@@ -128,8 +129,10 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                df$id = as.integer(df$id)
                for (idx in 3:15) df[,idx] = as.numeric(df[,idx])
                dfc = rbind(dfc, df)
+
           }
-          dfc
+          resp$df = dfc
+          resp
       }
 
 
@@ -342,6 +345,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
              page = httr::GET(url, add_headers(.headers=headers), query=parms)
           }
          resp = httr::content(page, type="application/json")
+
          if (http_error(page) || resp$status$error_code != 0) {
              data = resp$status
              status=list(code=data$error_code,message=data$error_message)

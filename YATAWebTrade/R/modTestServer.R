@@ -20,8 +20,8 @@ modTestServer <- function(id, full, pnlParent, parent=NULL) {
    )
     moduleServer(id, function(input, output, session) {
        message("Ejecutando server para Test")
-      pnl = YATAWEB$getPanel(id)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTest$new(id, pnlParent, session))
+      pnl = WEB$getPanel(id)
+      if (is.null(pnl)) pnl = WEB$addPanel(PNLTest$new(id, pnlParent, session))
 
       observeEvent(input$cboBlk1, {
          session$sendCustomMessage('yataShowBlock',list(ns=id,row=1,col=0,block=input$cboBlk1))

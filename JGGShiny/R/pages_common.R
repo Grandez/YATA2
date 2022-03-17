@@ -2,6 +2,8 @@ custom_css = function(cssFiles) {
     base = tagList(
          tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jggshiny.css")
         ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/template.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/skin_bootstrap_default.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/skin_default.css")
     )
     cssLink = NULL
     if (!is.null(cssFiles)) {
@@ -11,18 +13,21 @@ custom_css = function(cssFiles) {
     tagList(base, cssLink)
 }
 custom_js = function(jsFiles) {
-    base = tags$script(src='jggshiny/jggapp.js')
+    base = tagList(tags$script(src='jggshiny/jggapp.js'))
     jsLink = NULL
-    if (!is.null(jsFiles)) {
-         jsLink = lapply(jsFiles, function (js) tags$script(src=js))
+    if (is.null(jsFiles)) return (tagList(base))
+    if (!is.null(jsFiles$shiny)) {
+        extendShinyjs(script=jsFiles$shiny$script, functions=jsFiles$shiny$functions)
     }
+    jsLink = lapply(jsFiles$js, function (js) tags$script(src=js))
     tagList(base, jsLink)
 }
 document_ready_script = function(jsInit, title) {
     # This is the javascript to execute on document ready
-    code = "jQuery(document).ready(function() {\n"
-    #code = paste0(code, "alert('Iniciado documento');\n")
-    code = paste(code, "   $.jggshiny.init('", title, "');\n")
+    code =              "jQuery(document).ready(function() {\n"
+#    code = paste0(code, "   alert('EN READY');  \n")
+    code = paste0(code, "   globalThis.jggshiny = new JGGShiny();  \n")
+    code = paste(code, "    jggshiny.init('", title, "');   \n")
     if (!is.null(jsInit)) {
         for (js in jsInit) {
              txt = paste0("   $.", js, ".init();")

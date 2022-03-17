@@ -2,7 +2,7 @@ modOperRegInput = function(id, title) {
     
    ns = NS(id)
    main = tagList(  
-   yataRow(align="center", h2(YATAWEB$MSG$get("TITLE.REGULARIZATION")))
+   yataRow(align="center", h2(WEB$MSG$get("TITLE.REGULARIZATION")))
    ,fluidRow(column(3)
       ,column(3
          ,yataFormTable(

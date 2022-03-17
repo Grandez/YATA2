@@ -35,7 +35,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
           df = self$position$getGlobalPosition()
-          ids = YATAWEB$getCTCID(df$currency)
+          ids = WEB$getCTCID(df$currency)
           if (!is.null(ids)) {
               self$data$dfPosGlobal = inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")    
           }
@@ -52,7 +52,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,getOpenCurrencies = function() {
          df = self$data$dfPosGlobal
          df = df[!df$currency %in% private$fiats, c("currency", "id")]
-         labels = unlist(YATAWEB$getCTCLabels(df$currency))
+         labels = unlist(WEB$getCTCLabels(df$currency))
          df$label = labels[df$currency]
          df
       }
@@ -86,20 +86,20 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
-   YATAWEB$setSession(session)    
-   if (YATAWEB$errorLevel > 0) {
-       if (YATAWEB$errorLevel == 99) 
-           return (yataErrGeneral(0, YATAWEB$getMsg("ERR.REST.DOWN"),  input, output, session))
-       return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
+   WEB$setSession(session)  
+   if (WEB$errorLevel > 0) {
+       if (WEB$errorLevel == 99) 
+           return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
+       return (yataErrGeneral(0, WEB$txtError, input, output, session))
    }
 
 
-   pnl = YATAWEB$getPanel("server")
-   if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLTradeMain$new("server", NULL, session))
-   factory = pnl$factory
+   pnl = WEB$getPanel("server")
+   if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
+
    closePanel = function() { shinyjs::hide("yata-main-err") }
    output$app_title = renderText({ 
-      name = factory$getDBName()
+      name = pnl$factory$getDBName()
       if (is.null(name)) name = "Sin conexion"
       paste("YATA", name, sep = "-")
    })
@@ -113,7 +113,7 @@ function(input, output, session) {
       oldDB = factory$getDBID()
       if (input$lstDB != oldDB) {
           factory$changeDB(input$lstDB)
-          output$appTitle = updLabelText(self$factory$getDBName())
+          output$appTitle = updLabelText(factory$getDBName())
       }
       message(factory$getDBName())
       closePanel()
@@ -130,24 +130,12 @@ function(input, output, session) {
 #       PUT("begin")
        })
   observeEvent(input$app_title, {
-      browser()
       data = frmChangeDBInput()
       output$form = renderUI({data})
-      output$lblDBCurrent    = updLabelText(self$factory$getDBName())
+      output$lblDBCurrent    = updLabelText(factory$getDBName())
       shinyjs::show("yata-main-err")
   })
    
-#   if (.Platform$OS.type != "windows") {
-       # En este observer, cargamos la posicion y las cotizaciones
-   if (.Platform$OS.type == "windows") {
-       observe({
-          message("SERVER Update")
-          WEB$REST$PUT("update")
-          invalidateLater(pnl$interval * 60000)       
-          #invalidateLater(1000)   
-       })
-   }
-#   }
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
       # cat("Shiny Session stopped\n")

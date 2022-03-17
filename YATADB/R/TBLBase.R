@@ -31,7 +31,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,base      = NULL
       ,initialize  = function(name, fields, key=c("id"), db=NULL)    {
           self$name       = name
-          self$base       = YATABASE$new()
+          self$base       = YATABase$new()
           private$tblName = getTblName(name)
           private$fields  = fields
           private$key     = key
@@ -103,7 +103,10 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,getField = function(name)         { self$current[[name]] }
       ,addField = function(name, value)  { self$current[[name]] = self$current[[name]] + value }
       ,select   = function(..., create=FALSE, limit=0)  {
-         # selecciona un registro o conjunto, segun los parametros (solo equal)
+          # selecciona un registro o conjunto, segun los parametros (solo equal)
+          # Devuelve si se ha creado o no y activa current
+         created = FALSE
+
          reset()
          filter = mountWhere(...)
          qry = paste("SELECT * FROM ", tblName, filter$sql)
@@ -115,12 +118,13 @@ YATATable <- R6::R6Class("YATA.TABLE"
 
          if (nrow(df) == 0 && !create) return (FALSE)
          if (nrow(df) == 0 &&  create) {
+             created = TRUE
              self$add(list(...))
              select(..., create, limit)
          }
          self$dfCurrent    = setColNames(df)
          self$current      = as.list(self$dfCurrent[1,])
-         TRUE
+         created
       }
       ,delete   = function(...)  {
          filter = mountWhere(list(...))

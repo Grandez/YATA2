@@ -1,7 +1,13 @@
-jgg_dashboard_full = function( title       = NULL,  id      = NULL, ...
-                              ,theme = bs_theme()
-                              ,cssFiles    = NULL,  jsFiles = NULL, jsInit = NULL
-                              ,titleActive = FALSE, lang    = NULL) {
+JGGDashboardFull = function( title    = NULL
+                              ,id       = NULL
+                              ,theme    = bs_theme()
+                              ,paths    = NULL
+                              ,cssFiles = NULL
+                              ,jsFiles  = NULL
+                              ,jsInit = NULL
+                              ,titleActive = FALSE
+                              ,lang    = NULL
+                              ,...) {
   # Quitamos:
   # position = c("static-top", "fixed-top", "fixed-bottom")
   #            static-top
@@ -10,14 +16,21 @@ jgg_dashboard_full = function( title       = NULL,  id      = NULL, ...
   # collapsible = TRUE, fluid = TRUE,
   # window_title = NA,
   #   Ya tenemos title
-
+  #jsFiles es una lista de listas:
+  # shiny
+  #   source
+  #   functions
     pathShiny = normalizePath(system.file("extdata/www", package = packageName()))
     shiny::addResourcePath("jggshiny", pathShiny)
 
-    page = jgg_bslib_navs_bar(webtitle = title, titleActive = titleActive, id = id, ... )
+    if (!is.null(paths)) {
+        lapply(names(paths), function(path) shiny::addResourcePath(path, paths[[path]]))
+    }
+    page = jgg_bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
 
+    jsshiny = parseJGGShinyJS()
     heads = tags$head(
-               extendShinyjs(script="jggshiny/jggshiny.js", functions=c("init", "jgg_set_page"))
+               extendShinyjs(script="jggshiny/jggshiny.js", functions=jsshiny)
                ,custom_css(cssFiles)
               ,custom_js(jsFiles)
               ,document_ready_script(jsInit, title)
@@ -28,138 +41,15 @@ jgg_dashboard_full = function( title       = NULL,  id      = NULL, ...
                                       ,heads
                                       ,page
               )
-
-    # bspage = shiny::bootstrapPage(
-    #      shinyjs::useShinyjs()
-    #     ,shiny::bootstrapLib("cosmo")
-    #     ,tags$head(
-    #         tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jggshiny.css")
-    #        ,tags$script(src="jggshiny/jggshiny.js")
-    #     )
-    #     ,page
-    #     ,title = title
-    #     ,theme = theme
-    #     ,lang = lang
-    # )
-    #jgg_dashboard_deps(shiny::tags$body(bspage),md = FALSE)
     bspage
+   addDeps(shiny::tags$body(bspage))
 }
-jgg_dashboard_bslib_page <- function(..., title = NULL, theme = bs_theme(), lang = NULL) {
-#JGG Para debug
-
-data = shiny::bootstrapPage(..., title = title, theme = theme, lang = lang)
-  jgg_bslib_as_page(data)
-
-  # bslib_as_page(
-  #   shiny::bootstrapPage(..., title = title, theme = theme, lang = lang)
-  # )
-}
-jgg_bslib_as_page <- function(x) {
-  class(x) <- c("bslib_page", class(x))
-  x
+jgg_dashboard_bslib_page = function(..., title = NULL, theme = bs_theme(), lang = NULL) {
+   data = shiny::bootstrapPage(..., title = title, theme = theme, lang = lang)
+   class(data) <- c("bslib_page", class(data))  # bslib_as_page
+   data
 }
 
-jgg_bslib_navs_bar = function (webtitle, titleActive, id, ...) {
-    webtitle=NULL
-    tabset = jgg_bslib_navbarPage_(id, ...)
-
-    containerDiv = div(class = "container-fluid"
-                       ,div(class = "navbar-header"
-                            ,span(class = "navbar-brand", webtitle)
-                        )
-                       , tabset$navList)
-
-    containerClass = "navbar navbar-default"
-    nav = tags$nav(class = containerClass, role = "navigation", containerDiv)
-
-    # content = div(class = containerClass)
-    # content = tagAppendChild(content, tabset$content)
-
-    jgg_make_container(nav, tabset$content, titleActive)
-}
-
-# -----------------------------------------------------------------------
-# 'Internal' tabset logic that was pulled directly from shiny/R/bootstrap.R
-#  (with minor modifications)
-# -----------------------------------------------------------------------
-
-jgg_bslib_navbarPage_ <- function(id, ...) {
-
-  # navbar class based on options
-  navbarClass <- "navbar navbar-default navbar-static-top"
-  # position <- match.arg(position)
-  # if (!is.null(position)) navbarClass <- paste0(navbarClass, " navbar-", position)
-  # if (inverse)            navbarClass <- paste(navbarClass, "navbar-inverse")
-  #if (!is.null(id))       selected <- shiny::restoreInput(id = id, default = selected)
-
-  # build the tabset
-  tabset = bslib_buildTabset(..., ulClass = "nav navbar-nav", textFilter=NULL, id = id,
-                             selected = NULL, foundSelected = FALSE)
-  # Aqui tenemos las dos partes
-  tabset
-
-  # containerClass <- paste0("container", if (fluid) "-fluid")
-  #
-  # # built the container div dynamically to support optional collapsibility
-  # if (collapsible) {
-  #   navId <- paste0("navbar-collapse-", bslib_p_randomInt(1000, 10000))
-  #   containerDiv <- div(
-  #     class = containerClass,
-  #     div(
-  #       class = "navbar-header",
-  #       tags$button(
-  #         type = "button",
-  #         class = "navbar-toggle collapsed",
-  #         `data-toggle` = "collapse",
-  #         `data-target` = paste0("#", navId),
-  #         # data-bs-* is for BS5+
-  #         `data-bs-toggle` = "collapse",
-  #         `data-bs-target` = paste0("#", navId),
-  #         span(class="sr-only", "Toggle navigation"),
-  #         span(class = "icon-bar"),
-  #         span(class = "icon-bar"),
-  #         span(class = "icon-bar")
-  #       ),
-  #       span(class = "navbar-brand", pageTitle)
-  #     ),
-  #     div(
-  #       class = "navbar-collapse collapse",
-  #       id = navId, tabset$navList
-  #     )
-  #   )
-  # } else {
-  #   containerDiv <- div(
-  #     class = containerClass,
-  #     div(
-  #       class = "navbar-header",
-  #       span(class = "navbar-brand", pageTitle)
-  #     ),
-  #     tabset$navList
-  #   )
-  # }
-  #
-  # # Bootstrap 3 explicitly supported "dropup menus" via .navbar-fixed-bottom,
-  # # but BS4+ requires .dropup on menus with .navbar.fixed-bottom
-  # if (position == "fixed-bottom") {
-  #   containerDiv <- tagQuery(containerDiv)$
-  #     find(".dropdown-menu")$
-  #     parent()$
-  #     addClass("dropup")$
-  #     allTags()
-  # }
-  #
-  # # build the main tab content div
-  # contentDiv <- div(class = containerClass)
-  # if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", header))
-  # contentDiv <- tagAppendChild(contentDiv, tabset$content)
-  # if (!is.null(footer)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
-  #
-  # # *Don't* wrap in bootstrapPage() (shiny::navbarPage()) does that part
-  # tagList(
-  #   tags$nav(class = navbarClass, role = "navigation", containerDiv),
-  #   contentDiv
-  # )
-}
 
 
 
@@ -305,4 +195,14 @@ old_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
   }
   return(list(liTag = liTag, divTag = divTag))
 }
-
+parseJGGShinyJS = function() {
+    jsfile = system.file("extdata/www/jggshiny.js", package=packageName())
+    lines = readLines(jsfile)
+    resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
+    lens = attr(resp, "match.length")
+    res = lapply(which(resp != -1), function(idx) {
+        txt = substr(lines[idx], resp[idx], lens[idx] - 1)
+        substr(trimws(txt), 9, nchar(txt))
+    })
+    unlist(res)
+}

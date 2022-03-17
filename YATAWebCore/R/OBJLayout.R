@@ -26,7 +26,7 @@ OBJLayout = R6::R6Class("YATA.WEB.LAYOUT"
                  cbo = paste("cboLayout",r,c, sep="_")
                  tgt = layout[r,c]
                  updateSelectInput(session, cbo, selected = tgt)
-                 shinyjs::js$yataUpdateLayout(ns(cbo), tgt)
+                 shinyjs::js$yata_layout(ns(cbo), tgt)
              }
          }
      }

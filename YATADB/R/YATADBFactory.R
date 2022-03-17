@@ -7,12 +7,14 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
    ,public = list(
        print      = function()     { message("Databases Factory") }
       ,initialize = function(base, data) {
+          private$yatabase = YATABase$new()
           if (missing(base)) {
                sf   = system.file("extdata", "yatadb.ini", package=packageName())
-               cfg  = YATABase$ini(sf)
+               cfg  = yatabase$ini(sf)
                base = cfg$getSection("base")
                data = cfg$getSection("data")
           }
+          private$objects = yatabase$map()
           private$dbBase  = connect(base)
           private$dbData  = connect(data)
        }
@@ -28,12 +30,14 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           if (missing(info)) stop("Se ha llamado a setDB sin datos")
           if (!is.null(dbAct)) dbAct$disconnect()
           private$dbAct   = connect(info)
-          private$objects = YATABase$map
+          private$objects = yatabase$map()
           private$dbID = info$id
           invisible(self)
       }
       ,getID      = function()     { private$dbID   }
-      ,getTable   = function(name, force = FALSE) { get(name, force) }
+      ,getTable   = function(name, force = FALSE) {
+          message("YATADB con ", name)
+          get(name, force) }
       ,get        = function(name, force = FALSE) {
          # force obliga a crear el objeto sin cachearlo
          prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")
@@ -48,11 +52,12 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
       }
    )
    ,private = list(
-       dbBase  = NULL
-      ,dbData  = NULL
-      ,dbAct   = NULL
-      ,dbID    = NULL
-      ,objects = YATABase$map
+       dbBase   = NULL
+      ,dbData   = NULL
+      ,dbAct    = NULL
+      ,dbID     = NULL
+      ,yatabase = NULL
+      ,objects  = NULL
       ,connect = function(info) {
           if (info$engine == "MariaDB") {
               MARIADB$new(info)

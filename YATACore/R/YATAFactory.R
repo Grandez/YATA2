@@ -2,37 +2,57 @@
 # Los dejamos en lazy para no crear referencias circulares con los
 # singletons YATABase.
 
-YATAFACTORY = R6::R6Class("YATA.FACTORY"
+YATAFactory = R6::R6Class("YATA.FACTORY"
    ,portable  = FALSE
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
-       codes  = NULL
+       CODES  = NULL
       ,parms  = NULL
       ,MSG    = NULL  # Like WEB
       ,delete_flag = FALSE
+      ,created = NULL
+       ,id = 0
       # Ponemos init y clear para manejar fuera de initialize y finalize
       # auto se usa para el CI
-      ,initialize = function(auto=TRUE) { init(auto, FALSE) }
-      ,finalize   = function() { clear()     }
+      ,initialize = function(auto=TRUE) {
+          init(auto, FALSE)
+       }
+      ,finalize   = function() {
+          message("Finalize ", id , created)
+          clear()
+      }
+      ,valid = function() {
+          if (.valid) {
+              tryCatch({
+                  MSG$get("TEST")
+              }, error = function(e) {
+                  private$.valid = FALSE
+              })
+          }
+          .valid
+      }
+      ,remove = function() {
+          message("Removing")
+      }
       ,delete     = function(){
-          browser()
-          pf = parent.frame()
-          self$delete_flag = TRUE
-          insts = sapply(ls(pf), function(i) {class(get(i, envir = pf))[1] == "YATA.FACTORY"})
-
-          this = ls(pf)[insts][sapply(mget(ls(pf)[insts], envir = pf),
-                        function(x) x$delete_flag)]
-          rm(list = this, envir = pf)
-               message("demo object deleted!")
+          message("Deleting Factory")
+          # pf = parent.frame()
+          # self$delete_flag = TRUE
+          # insts = sapply(ls(pf), function(i) {class(get(i, envir = pf))[1] == "YATA.FACTORY"})
+          #
+          # this = ls(pf)[insts][sapply(mget(ls(pf)[insts], envir = pf),
+          #               function(x) x$delete_flag)]
+          # rm(list = this, envir = pf)
+          #      message("demo object deleted!")
        }
       ,clear     = function(){
-          message("Deleting factory")
-         if (!is.null(DBFactory))   DBFactory$finalize()
-         if (!is.null(ProvFactory)) ProvFactory$finalize()
-         self$parms = NULL
-         self$MSG  = NULL
-         private$objects = NULL
+          message("Clearing factory")
+         # if (!is.null(DBFactory))   DBFactory$finalize()
+         # if (!is.null(ProvFactory)) ProvFactory$finalize()
+         # self$parms = NULL
+         # self$MSG  = NULL
+         # private$objects = NULL
 #         gc(verbose=FALSE)
       }
       ,getDBName = function() {
@@ -50,7 +70,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
        }
       ,changeDB  = function(id) {
           connInfo = parms$getDBInfo(id)
-         private$objects = YATABase$map
+         private$objects = base$map()
          parms$setLastOpen(id)
          setDB(connInfo)
       }
@@ -62,6 +82,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,getProviderBase = function() { ProvFactory$get() }
 
       ,getObject   = function(name, force = FALSE) {
+         # Pasamos la propia factoria como referencia
          if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
          if (is.null(objects$get(name))) private$objects$put(name,
                                          eval(parse(text=paste0("OBJ", name, "$new(self)"))))
@@ -86,6 +107,8 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,objects     = NULL
       ,classes     = NULL
       ,cfg         = NULL
+      ,base        = NULL
+      ,.valid      = TRUE
       ,setProvFactory = function() {
          # Le pasamos los datos de parametros a la factoria
          ProvFactory$setOnlineInterval (parms$getOnlineInterval())
@@ -97,15 +120,15 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
 
-          self$codes  = YATACore::YATACODES$new()
-
-          private$objects     = YATABase$map
-          private$classes     = YATABase$map
+          self$CODES  = YATACore::YATACODES$new()
+          private$base        = YATABase$new()
+          private$objects     = base$map()
+          private$classes     = base$map()
           private$DBFactory   = YATADB::YATADBFactory$new()
           private$ProvFactory = YATAProviders::ProviderFactory$new()
 
-          self$parms  = OBJParms$new   (self$codes, private$DBFactory)
-          self$MSG    = OBJMessages$new(self$codes, private$DBFactory)
+          self$parms  = OBJParms$new   (private$DBFactory, self$CODES$tables$parameters)
+          self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)
 
           if (auto) {
               if (parms$autoConnect()) {

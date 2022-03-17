@@ -16,18 +16,17 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
          ,initialize    = function(session) {
              private$defaultValues()
              super$initialize(id, pnlParent, session, ns)
-             self$position  = self$factory$getObject(self$codes$object$position)
-             self$cameras   = self$factory$getObject(self$codes$object$cameras)
-             self$session   = self$factory$getObject(self$codes$object$session)
+             self$position  = Factory$getObject(self$codes$object$position)
+             self$cameras   = Factory$getObject(self$codes$object$cameras)
+             self$session   = Factory$getObject(self$codes$object$session)
              self$data$lstHist = list()
              private$makePlots()
          }
          ,loadData = function() {
-             browser()
              self$vars$sessionChanged = FALSE
              private$loadPosition()
            
-             self$monitors = WDGMonitor$new(ns("monitor"), self, YATAWEB)
+#             self$monitors = WDGMonitor$new(ns("monitor"), self, WEB)
              if (!is.null(self$data$dfGlobal)) {
                  ctc = self$data$dfGlobal$currency
                  self$data$dfSession = self$session$getSessionPrices(ctc)
@@ -102,7 +101,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$data$dfGlobal = NULL
         }
        ,loadPosition = function() {
-           browser()
            df = self$getGlobalPosition()
            if (is.null(df)) return()
            df = cbind(df, day=0, week=0, month=0)
@@ -154,7 +152,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
    prepareBest = function(df, table) {
       if (is.null(df)) return (NULL)
       df =  df %>% select(symbol, price, hour, day, week, month)
-      df$symbol = YATAWEB$getCTCLabels(df$symbol)
+      df$symbol = WEB$getCTCLabels(df$symbol)
       data = list(df = df, cols=NULL, info=NULL)
       data$info=list( event=ns("tableBest"), target=table
                      ,types=list(pvl = c("Hour", "Day", "Week", "Month"), imp=c("Price"))
@@ -163,10 +161,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       data
     }
     moduleServer(id, function(input, output, session) {
-       #YATAWEB$beg("Position Server")
-       pnl = YATAWEB$getPanel(id)
-       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPos$new(session))
-
+       #WEB$beg("Position Server")
+       pnl = WEB$getPanel(id)
+       if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(session))
        flags = reactiveValues(
             position  = FALSE
            ,best      = FALSE
@@ -180,7 +177,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            ,tab       = FALSE
        )
        initPage = function() {
-          #YATAWEB$beg("initPage")
+          #WEB$beg("initPage")
           renderUIPosition()    # Preparar tabla posiciones
           updNumericInput("numInterval", pnl$cookies$interval)
           output$dtLast = updLabelDate({Sys.time()})
@@ -189,7 +186,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           updNumericInput("numInterval", value = pnl$cookies$interval)
           updNumericInput("numHistory",  value = pnl$cookies$history)
           updRadio("radPosition",        selected = pnl$cookies$position)
-          pnl$monitors$render() 
+#          pnl$monitors$render() 
 
           # Este es el que tarda por que es Windows
           df = pnl$data$dfGlobal
@@ -201,7 +198,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
               dat = paste(df[,"currency"], df[,"id"], sep="-")
               lapply(dat, function(x) getHistorical(x))
           }
-          #YATAWEB$end("initPage")
+          #WEB$end("initPage")
        }
        
        ###########################################################
@@ -209,7 +206,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ###########################################################
 
        observeEvent(flags$position, ignoreInit = TRUE, {
-           #YATAWEB$beg("flags$position")
+           #WEB$beg("flags$position")
            if (is.null(pnl$data$dfGlobal)) return()
            pnl$cookies$position = flags$position
           if (input$radPosition == "Cameras") {
@@ -238,10 +235,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                       }
                })
            }
-           #YATAWEB$end("flags$position")
+           #WEB$end("flags$position")
        })       
        observeEvent(flags$best, ignoreInit = TRUE, {
-           #YATAWEB$beg("flags$best")
+           #WEB$beg("flags$best")
           from = as.numeric(input$cboBestFrom)
           if (is.na(from)) return() 
           if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
@@ -249,29 +246,29 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           pnl$cookies$best$top  = input$numBestTop
           pnl$updateBest()
           renderBestTables()
-          #YATAWEB$end("flags$best")
+          #WEB$end("flags$best")
        })
        observeEvent(flags$refresh, ignoreInit = TRUE, { 
-          #YATAWEB$beg("refresh")
-          pnl$monitors$update() 
+          #WEB$beg("refresh")
+#          pnl$monitors$update() 
           flags$position = isolate(!flags$position)
           renderBestTables()
           renderPlotSession()
-          #YATAWEB$end("refresh")
+          #WEB$end("refresh")
        })
        observeEvent(flags$update, ignoreInit = TRUE, { 
-          #YATAWEB$beg("update")
+          #WEB$beg("update")
           pnl$updateData()
           flags$refresh = isolate(!flags$refresh)
-          #YATAWEB$end("update")
+          #WEB$end("update")
        })
        observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
-           #YATAWEB$beg("history")
+           #WEB$beg("history")
           if (is.na(flags$history)) return()
           if (flags$history != pnl$cookies$history) {
               pnl$cookies$history = flags$history
           }
-           #YATAWEB$end("history")
+           #WEB$end("history")
        })
        observeEvent(flags$table, ignoreInit = TRUE, {
            table = pnl$vars$table$target
@@ -348,7 +345,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
        observeEvent(flags$plotsBest, ignoreInit = TRUE, {
-           #YATAWEB$beg("plotsBest")
+           #WEB$beg("plotsBest")
            table = pnl$vars$table
            plot = pnl$getPlot(paste0("plot", table$target))
            sym = table$symbol
@@ -362,10 +359,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            if (table$target == "Best") output$plotBest = plot$render()
            if (table$target == "Top")  output$plotTop  = plot$render()
            if (table$target == "Fav")  output$plotFav  = plot$render()
-           #YATAWEB$end("plotsBest")
+           #WEB$end("plotsBest")
        })
        observeEvent(flags$plotPos, ignoreInit = TRUE, {
-           #YATAWEB$beg("plotPos")
+           #WEB$beg("plotPos")
            plot = pnl$plots[["plotHist"]]
            plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
            name = flags$plotPos
@@ -376,7 +373,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                }
            }
            output$plotHist = plot$render("plotHist")    
-           #YATAWEB$end("plotPos")
+           #WEB$end("plotPos")
        })
 
        ###########################################################
@@ -384,7 +381,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ###########################################################
 
        renderUIPosition = function() {
-           #YATAWEB$beg("renderUIPosition")
+           #WEB$beg("renderUIPosition")
           cameraUI = function(camera) {
              suffix  = YATABase$str$titleCase(camera)
              cam     = pnl$cameras$getCameraName(camera)
@@ -412,10 +409,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              }
           }
           insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)           
-          #YATAWEB$end("renderUIPosition")
+          #WEB$end("renderUIPosition")
       }
        renderBestTables = function() {
-          #YATAWEB$beg("renderBest")
+      #WEB$beg("renderBest")
           period = c("Hora", "Dia", "Semana", "Mes")
           lbl = period[as.integer(input$cboBestFrom)]
 
@@ -429,7 +426,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           if (!is.null(data2$df)) output$tblTop = updTableMultiple(data2)
           data3 = prepareBest(pnl$data$dfFav, "Fav")
           if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
-          #YATAWEB$end("renderBest")
+          #WEB$end("renderBest")
        }
        renderPlotSession = function(uiPlot) {
 #          if (pnl$vars$sessionChanged) {
@@ -502,9 +499,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           }
       })
       observeEvent(input$numHistory,  ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
-      observeEvent(input$chkMonitors, ignoreInit = TRUE, { 
+      observeEvent(input$chkMonitors, ignoreInit = TRUE, {
          pnl$cookies$monitor = input$chkMonitors
-         shinyjs::toggle("monitor", anim=TRUE) 
+         #JGGshinyjs::toggle("monitor", anim=TRUE)
       })
       observeEvent(input$btnLayoutOK, {
           pnl$setCookies()
@@ -517,11 +514,11 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
 
      carea = pnl$getCommarea()  
      if (!pnl$loaded || carea$position) {
-          yuiLoading()
+          #yuiLoading()
           pnl$loadData()
           if (!carea$position) initPage()
           pnl$setCommareaItems(position=FALSE)
-          yuiLoaded()
+          #yuiLoaded()
      }       
      
      flags$refresh = isolate(!flags$refresh)
@@ -537,6 +534,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
      })
 
       
-    #YATAWEB$end("Position Server")
+    #WEB$end("Position Server")
    })
 }    

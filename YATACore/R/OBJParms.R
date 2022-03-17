@@ -7,17 +7,13 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     ,public = list(valid = TRUE
         ,err = NULL
         ,print = function() { message("YATA Parameters")}
-        ,initialize = function(codes, dbf) {
+        ,initialize = function(dbf, table) {
+            if (missing(table)) table = YATACODES$new()$tables$parameters
             tryCatch({
-                private$tblParms = dbf$getTable(codes$tables$parameters)
+                private$tblParms = dbf$getTable(table)
                 private$db       = dbf$getDBBase()
              }, error = function(cond) {
-                 browser()
-                     self$err   = cond
-                     self$valid = FALSE
-                     stop(errorCondition("Error de inicializacion de YATABase",
-                                      class=c("YATAErr", "error")))
-
+                 YATABase:::error("Error de inicializacion de OBJParms", subclass=NULL, origin="OBJParms", cond)
             })
         }
         ,get         = function(group, subgroup, id) { tblParms$table(group=group, subgroup=subgroup,id=id) }

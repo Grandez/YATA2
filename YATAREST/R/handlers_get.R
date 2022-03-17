@@ -3,7 +3,7 @@
     ifelse(is.null(p), dafult, p)
 }
 handler_alive = function(.req, .res) {
-    cat("Recibe Alive")
+    cat("Recibe Alive\n")
    .res$set_status_code(200)
    .res$set_body("OK")
 }

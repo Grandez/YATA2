@@ -6,16 +6,13 @@ OBJSession = R6::R6Class("OBJ.SESSION"
 # Viene a ser como un provider pero mas especifico
     ,public = list(
         print       = function() { message("Session Object")}
-       ,initialize = function(factory) {
-           super$initialize(factory)
-           name = "session"
-           #JGG Especial
-           private$provider      = factory$getProvider("MKTCAP", "MarketCap")
-           private$prtSession    = factory$getTable(codes$tables$session)
-           private$tblCurrencies = factory$getTable(codes$tables$currencies)
-           #private$lastGet       = as.integer(prtSession$getLastUpdate())
+       ,initialize = function(Factory) {
+           super$initialize(Factory)
+           #JGG Especial (Solo usamos MarketCap)
+           private$provider      = Factory$getProvider("MKTCAP", "MarketCap")
+           private$prtSession    = Factory$getTable(self$codes$tables$session)
+           private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
            private$interval      = 15
-#           private$dfLast        = prtSession$getLatest()
        }
        ,setInterval   = function(interval) { private$interval = interval }
        ,getBest       = function(top=10, from=7, group=0) {
@@ -28,7 +25,11 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            if (!prtSession$select(symbol=currency,limit = 1)) return (0)
            prtSession$current$price
        }
-
+       ,getLatest = function(currencies = NULL) {
+           df = prtSession$getLatest()
+           if (!is.null(currencies)) df = df[df$symbol %in% currencies,]
+           df
+        }
        # ,getHistorical = function(base, idCurrency, from, to, period=24) {
        #     id = suppressWarnings(as.numeric(idCurrency))
        #     if (is.na(id)) id = tblCurrencies$getID(idCurrency)
@@ -42,12 +43,6 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        #  }
        #  ,getLast   = function(currencies) {
        #      df = private$dfLast
-       #      if (!missing(currencies)) df = df[df$symbol %in% currencies,]
-       #      df
-       #  }
-       #  ,getLatest = function(currencies) {
-       #      df = private$dfLast
-       #      if (nrow(df) == 0) df = updateLatest(TRUE)
        #      if (!missing(currencies)) df = df[df$symbol %in% currencies,]
        #      df
        #  }
@@ -69,30 +64,48 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        #     }
        #     dfp
        # }
-       ,getSessionPrices = function(currencies) {
-           df = getPrices(currencies)
-           df[df$tms > as.POSIXct(Sys.Date()),]
+       ,getSessionPrices = function(currencies = NULL) {
+           df = getLatest(currencies)
+           # df = getPrices(currencies)
+           # df[df$tms > as.POSIXct(Sys.Date()),]
+           df
        }
 
-       ,updateLatest = function(isolated=FALSE) {
-           last = format(as.POSIXct(Sys.time()), format = "%Y-%m-%d-%H:%M:%S")
+       ,updateLatest = function(max = 0) {
+           # Evitamos procesar todo de golpe y posibles bloqueos
+           posix = as.POSIXct(Sys.time(), tz="GMT")
+           last = format(posix, format = "%Y-%m-%d-%H:%M:%S")
+           tms = prtSession$getLastUpdate()
+           # Se ha llamado en el mismo timestamp (minuto)
+           if (abs(as.integer(posix) - tms) < 60) return (invisible(self))
 
-           df = provider$getTickers()
-           df[,c("name", "slug")] = NULL
+           data = provider$getTickers(500, 1)
+           if (max == 0) max = data$total
 
-           # Puede haber symbol repetidos (no por id)
-           # Se han cambiado en la tabla de currencies
-           df1 = df[,c("id", "symbol")]
-           ctc = tblCurrencies$table()
-           df2 = ctc[,c("id", "symbol")]
-           dfs = inner_join(df1, df2, by="id")
-           df2 = dfs[,c(1,3)]
-           df  = inner_join(df, df2, by="id")
-           df$symbol = df$symbol.y
-           df        = df[,-ncol(df)]
+           repeat {
+              df = data$df
+              df[,c("name", "slug")] = NULL
 
-           df$last = last
-           prtSession$update(df,isolated)
+              # Puede haber symbol repetidos (no por id)
+              # Se han cambiado en la tabla de currencies
+              df1 = df[,c("id", "symbol")]
+              ctc = tblCurrencies$table()
+              df2 = ctc[,c("id", "symbol")]
+              dfs = inner_join(df1, df2, by="id")
+              df2 = dfs[,c(1,3)]
+              df  = inner_join(df, df2, by="id")
+              df$symbol = df$symbol.y
+              df        = df[,-ncol(df)]
+
+              df$last = last
+              prtSession$db$begin()
+              prtSession$update(df)
+              prtSession$db$commit()
+              start = data$from + data$count
+              if (start >= max) break;
+              data = provider$getTickers(500, start)
+           }
+           invisible(self)
        }
     )
     ,private = list(
@@ -101,7 +114,6 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,provider   = NULL
        ,lastGet    = NULL
        ,interval   = NULL
-       ,dfLast     = NULL
        ,getBestDF = function(df, top, from, group) {
            groups = c(25, 150)
            col = ""

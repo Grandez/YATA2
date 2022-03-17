@@ -1,5 +1,6 @@
 DELETE FROM MESSAGES;
 
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TEST"                  ,"XX", "XX"     , "Test"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TXT.BID"               ,"XX", "XX"     , "Bid"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TXT.ASK"               ,"XX", "XX"     , "Ask"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TXT.BUY"               ,"XX", "XX"     , "Comprar"                                   );

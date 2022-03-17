@@ -4,8 +4,8 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Locale Messages")}
-       ,initialize     = function(codes, dbf) {
-           private$tblMsg = dbf$getTable(codes$tables$messages)
+       ,initialize     = function(tblMessages, dbf) {
+           private$tblMsg = dbf$getTable(tblMessages)
            private$db     = dbf$getDBBase()
        }
        ,setLang = function(lang, region) {
@@ -45,10 +45,15 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
        ,cache  = list()
        ,size   = 20      # Long. de la cache
        ,getMessage = function(code) {
+           txt="ERROR"
           if (code %in% names(cache)) return(cache[[code]])
-          txt = tblMsg$get(code, lang, region)
-          private$cache[[code]] = txt
-          if (length(cache) > size) private$cache[1] = NULL
+           tryCatch({
+              txt = tblMsg$get(code, lang, region)
+              private$cache[[code]] = txt
+              if (length(cache) > size) private$cache[1] = NULL
+           }, error = function(cond){
+               # Nothing
+           })
           txt
        }
     )

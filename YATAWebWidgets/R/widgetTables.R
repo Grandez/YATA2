@@ -221,7 +221,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
       }
       ,setColumnHeader = function(data) {
            if (is.null(colNames) || colNames == "asis") return
-         # if (private$colNames == "title") colnames(data) = titleCase(colnames(data))
+         # if (private$colNames == "title") colnames(data) = YATABase$str$titleCase(colnames(data))
          # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
          # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
          # browser()
@@ -372,7 +372,7 @@ updTableSelection = function(table, sel) { updateReactable(table, selected = sel
    info    = data$info
    columns = df$columns
 
-   colnames(df) = titleCase(colnames(df))
+   #colnames(df) = YATABase$str$titleCase(colnames(df))
     if (!is.null(info)) click = .makeScript(info)
     df  = .yataSetClasses(df, info$types)
     df  = .adjustValues(df)
@@ -423,7 +423,8 @@ updTableSelection = function(table, sel) { updateReactable(table, selected = sel
      data = cbind(df, dfb)
      cols = colnames(data)
      cols[length(cols)] = ""
-     colnames(data) = titleCase(cols)
+     #colnames(data) = YATABase$str$titleCase(cols)
+     colnames(data) = cols
      data
 }
 .getOptions = function(df, ...) {
@@ -489,7 +490,7 @@ yuiRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
         colnames(dfb) = ""
         data = cbind(df, dfb)
     }
-    colnames(data) = titleCase(colnames(data))
+    #colnames(data) = YATABase$str$titleCase(colnames(data))
     data
 }
 .getOptions = function(df, ...) {
@@ -522,14 +523,14 @@ yuiRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
 
 # updTablePosition = function(df, ...) {
 #     if (is.null(df)) return (NULL)
-#     colnames(df) = titleCase(colnames(df))
+#     colnames(df) = YATABase$str$titleCase(colnames(df))
 #     yataDataTable({df}, type="position")
 # }
 
 # updTableOperations = function(df, buttons=NULL, ...) {
 #   yataDTButtons
 #    if (!is.null(buttons)) df = .updTableButtons(df, buttons)
-#    colnames(df) = titleCase(colnames(df))
+#    colnames(df) = YATABase$str$titleCase(colnames(df))
 #
 #    dt =  yataDT({df}, type="operation")
 #    # dt = dt %>%  YATADT::formatStyle("Value", color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
@@ -544,7 +545,7 @@ yuiRenderTablePaged = function(df, type, page=15, buttons=NULL, ...) {
 #    yataDTRender(dt)
 # }
 updTableBest = function(df) {
-    colnames(df) = titleCase(colnames(df))
+    #colnames(df) = YATABase$str$titleCase(colnames(df))
     dt = yataDT({df}, type="best", selection="single")
     dt = YATADT::formatStyle(dt, colnames(df)[3:6], color = DT::styleInterval(cuts=c(-Inf,0,+Inf)
                             , values=c("red","darkred","darkgreen","green")))

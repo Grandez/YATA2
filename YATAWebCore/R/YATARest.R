@@ -5,11 +5,16 @@ YATARest = R6::R6Class("YATA.REST"
   ,portable   = FALSE
   ,public = list(
      initialize = function(type) {
-        fact  = YATACore::YATAFACTORY$new()
-        servers = fact$parms$getServers()
-        if (missing(type)) type = "REST"
-        private$parms = servers[[type]]
-        private$.url = paste0(parms$url, ":", parms$port, "/")
+         tryCatch({
+            fact  = YATACore::getFactory()
+            servers = fact$parms$getServers()
+            if (missing(type)) type = "REST"
+            private$parms = servers[[type]]
+            private$.url = paste0(parms$url, ":", parms$port, "/")
+         }, error = function(cond) {
+            YATABase:::error( "Error initializing object"
+                            ,subclass=NULL, origin=cond, action="YATARest")
+         })
      }
      ,check = function() {
          tryCatch({
@@ -21,11 +26,15 @@ YATARest = R6::R6Class("YATA.REST"
       }
      ,PUT   = function(endpoint, ...) { # PUT No devuelve datos
          url = paste0(.url, endpoint)
-         future({ httr::GET(url, query = args2list(...)) })
+         cat(paste(Sys.time(), "PUT", url), file="P:/R/YATA2/web.log", append=TRUE)
+         #future({ httr::GET(url, query = args2list(...)) })
+          httr::GET(url, query = args2list(...))
       }
      ,POST   = function(endpoint, ...) { # PUT No devuelve datos
          url = paste0(.url, endpoint)
-         future({ httr::GET(url, query = args2list(...)) })
+cat(paste(Sys.time(), "POST", url), file="P:/R/YATA2/web.log", append=TRUE)
+         #future({ httr::GET(url, query = args2list(...)) })
+          httr::GET(url, query = args2list(...))
       }
      ,PUTSync = function(endpoint, ...) {
          url = paste0(.url, endpoint)

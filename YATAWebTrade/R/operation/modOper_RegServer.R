@@ -35,7 +35,7 @@ modOperRegServer = function(id, full, pnl, parent) {
                                     ,amount=input$impAmount
                                     ,currency=input$cboCurrency)
           
-          if (res) output$msg = updMessageKO(full, YATAWEB$MSG$get("XFER.KO"))
+          if (res) output$msg = updMessageKO(full, WEB$MSG$get("XFER.KO"))
           if (!res) {
               yataMsgSuccess(ns2("operMsg"), pnl$MSG$get("XFER.OK"))
              reset()

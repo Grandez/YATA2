@@ -2,10 +2,10 @@ modLogInput = function(id, title="") {
     ns = NS(id)
     targets = c("General"="gral", "Moneda"="currency", "Operacion"="oper", "Notas"="note")
     targets2 = c("Todo"="all",targets)
-    lblFilter = YATAWEB$MSG$get("LABEL.BTN.APPLY")
-    lblTitle = YATAWEB$MSG$get("TITLE.TITLE")
-    lblDetail  = YATAWEB$MSG$get("TITLE.DETAIL")
-    lblApply   = YATAWEB$MSG$get("SUBT.APPLY")
+    lblFilter = WEB$MSG$get("LABEL.BTN.APPLY")
+    lblTitle = WEB$MSG$get("TITLE.TITLE")
+    lblDetail  = WEB$MSG$get("TITLE.DETAIL")
+    lblApply   = WEB$MSG$get("SUBT.APPLY")
     
     left = tagList(
          yuiTitle(5, "Filter")
@@ -34,34 +34,34 @@ modLogInput = function(id, title="") {
                             )
         )
 ,yuiBox(id=ns("posts0"), "Box with user comment",
-  tags$div(id=ns("posts")),
-  userPost(
-    id = 1,
-      image=NULL,
-#    src = "https://adminlte.io/themes/AdminLTE/dist/img/user1-128x128.jpg",
-    author = "Jonathan Burke Jr.",
-    description = "Shared publicly - 7:30 PM today",
-    "Lorem ipsum represents a long-held tradition for designers, 
-              typographers and the like. Some people hate it and argue for 
-              its demise, but others ignore the hate as they create awesome 
-              tools to help create filler text for everyone from bacon 
-              lovers to Charlie Sheen fans.",
-    # userPostToolItemList(
-    #   userPostToolItem(dashboardLabel("item 1")),
-    #   userPostToolItem(dashboardLabel("item 2", status = "danger"), side = "right")
-    # )
-  ),
-  userPost(
-    id = 2, image=NULL,
-#    src = "https://adminlte.io/themes/AdminLTE/dist/img/user6-128x128.jpg",
-    author = "Adam Jones",
-    description = "Shared publicly - 5 days ago",
-    # userPostMedia(src = "https://adminlte.io/themes/AdminLTE/dist/img/photo2.png"),
-    userPostTagItems(
-      userPostTagItem(dashboardLabel("item 1", status = "danger")),
-      userPostTagItem(dashboardLabel("item 2", status = "danger"), side = "right")
-    )
-  )
+  tags$div(id=ns("posts"))
+#     ,userPost(
+#     id = 1,
+#       image=NULL,
+# #    src = "https://adminlte.io/themes/AdminLTE/dist/img/user1-128x128.jpg",
+#     author = "Jonathan Burke Jr.",
+#     description = "Shared publicly - 7:30 PM today",
+#     "Lorem ipsum represents a long-held tradition for designers, 
+#               typographers and the like. Some people hate it and argue for 
+#               its demise, but others ignore the hate as they create awesome 
+#               tools to help create filler text for everyone from bacon 
+#               lovers to Charlie Sheen fans.",
+#     # userPostToolItemList(
+#     #   userPostToolItem(dashboardLabel("item 1")),
+#     #   userPostToolItem(dashboardLabel("item 2", status = "danger"), side = "right")
+#     # )
+#   ),
+#   userPost(
+#     id = 2, image=NULL,
+# #    src = "https://adminlte.io/themes/AdminLTE/dist/img/user6-128x128.jpg",
+#     author = "Adam Jones",
+#     description = "Shared publicly - 5 days ago",
+#     # userPostMedia(src = "https://adminlte.io/themes/AdminLTE/dist/img/photo2.png"),
+#     userPostTagItems(
+#       userPostTagItem(dashboardLabel("item 1", status = "danger")),
+#       userPostTagItem(dashboardLabel("item 2", status = "danger"), side = "right")
+#     )
+#   )
 
 )        
     )

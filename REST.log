@@ -1,0 +1,220 @@
+Initializing YATAREST
+Init hecho{"timestamp":"2022-03-14 18:54:06.702966","level":"INFO","name":"Application","pid":3164,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=3164), 2 server(s) --
+(This session will block until Rserve is shut down)
+Recibe Alive
+Recibe Alive
+Recibe UPDATE
+UPDATE ERROR
+Recibe UPDATE
+1647280899 UPDATE OK
+Recibe UPDATE
+1647281228 UPDATE OK
+Recibe UPDATE
+1647281557 UPDATE OK
+Recibe UPDATE
+1647281885 UPDATE OK
+Recibe UPDATE
+UPDATE ERROR
+Recibe UPDATE
+1647282518 UPDATE OK
+Recibe UPDATE
+1647282846 UPDATE OK
+Recibe UPDATE
+1647283174 UPDATE OK
+Recibe UPDATE
+1647283503 UPDATE OK
+Recibe UPDATE
+UPDATE ERROR
+Recibe UPDATE
+1647284138 UPDATE OK
+Recibe UPDATE
+1647284468 UPDATE OK
+Recibe UPDATE
+1647284797 UPDATE OK
+Recibe UPDATE
+1647285125 UPDATE OK
+Recibe UPDATE
+1647285455 UPDATE OK
+Recibe UPDATE
+1647285785 UPDATE OK
+Recibe UPDATE
+UPDATE ERROR
+Initializing YATAREST
+Init hecho{"timestamp":"2022-03-14 20:29:53.452408","level":"INFO","name":"Application","pid":8740,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=8740), 2 server(s) --
+(This session will block until Rserve is shut down)
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe UPDATE
+1647289263 UPDATE OK
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Initializing YATAREST
+Initializing YATAREST
+Init hecho{"timestamp":"2022-03-15 16:29:53.565545","level":"INFO","name":"Application","pid":13500,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=13500), 2 server(s) --
+(This session will block until Rserve is shut down)
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Initializing YATAREST
+Init hecho{"timestamp":"2022-03-17 10:01:23.798634","level":"INFO","name":"Application","pid":14128,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=14128), 2 server(s) --
+(This session will block until Rserve is shut down)
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive

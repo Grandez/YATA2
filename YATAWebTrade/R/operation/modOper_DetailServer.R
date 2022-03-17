@@ -2,7 +2,6 @@ modOperDetailServer = function(id, full, pnl, parent) {
    ns = NS(id)
    ns2 = NS(full)
    moduleServer(id, function(input, output, session) {
-      YATAWEB$beg("modHist_Detail")
 
       prepareSession = function() {
          dff =  pnl$act$flows[,c("amount", "price", "tms")]
@@ -133,6 +132,5 @@ modOperDetailServer = function(id, full, pnl, parent) {
           getHistorical()
       }
       
-      YATAWEB$end("modHist_Detail")
    })
 }

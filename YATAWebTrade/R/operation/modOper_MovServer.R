@@ -23,7 +23,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                }
                ,error = function(cond) {
                    browser()
-                   return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
+                   return (yataErrGeneral(0, WEB$txtError, input, output, session))
                    TRUE
                  }
                )
@@ -40,8 +40,8 @@ modOperMovServer = function(id, full, pnlParent, parent) {
    
 
    moduleServer(id, function(input, output, session) {
-        pnl = YATAWEB$getPanel(id)
-        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOperMov$new(id, pnlParent, session))
+        pnl = WEB$getPanel(id)
+        if (is.null(pnl)) pnl = WEB$addPanel(PNLOperMov$new(id, pnlParent, session))
 
       validate = function() {
           if (is.null(input$cboOper)     || nchar(trimws(input$cboOper)) == 0)

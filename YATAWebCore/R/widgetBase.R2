@@ -70,9 +70,9 @@ updLabelText = function(txt) {
 # yuiLabelText = function(id, label=NULL, inline=TRUE) {
 #   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 # }
-yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
-}
+#yuiLabelNumber = function(id, label=NULL, inline=TRUE) {
+#  html#Output(outputId=id, inline=TRUE, class="yataTextRight")
+#}
 
 yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
@@ -176,9 +176,9 @@ yuiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
                 ,onStatus = "success" ,offStatus = "danger"
                 , value = value, width="auto")
 }
-yuiCheck = function(id, value=TRUE) {
-  awesomeCheckbox(id, NULL, value = value)
-}
+# yuiCheck = function(id, value=TRUE) {
+#   awesomeCheckbox(id, NULL, value = value)
+# }
 
 yuiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
 #                                values
@@ -227,9 +227,9 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   lbl = paste0("<span class='", cls, "'>",text,"</span>")
   renderUI({HTML(lbl)})
 }
-yuiRadio = function(id, label=NULL, choices, selected=NULL) {
-   shinyWidgets::awesomeRadio(id,label,choices,selected,inline = TRUE,checkbox = TRUE)
-}
-updRadio = function(id, selected=NULL) {
-   shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)
-}
+# yuiRadio = function(id, label=NULL, choices, selected=NULL) {
+#    shinyWidgets::awesomeRadio(id,label,choices,selected,inline = TRUE,checkbox = TRUE)
+# }
+# updRadio = function(id, selected=NULL) {
+#    shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)
+# }

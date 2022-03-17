@@ -5,11 +5,11 @@ OBJBlog = R6::R6Class("OBJ.BLOG"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Cameras")}
-       ,initialize     = function(factory) {
-           super$initialize(factory)
-           private$tblBlog   = factory$getTable(factory$codes$tables$Blog)
-           # private$tblExchanges = factory$getTable(factory$codes$tables$Exchanges)
-           # private$icons        = factory$getClass("Icons")
+       ,initialize     = function(Factory) {
+           super$initialize(Factory)
+           private$tblBlog   = Factory$getTable(YATACodes$tables$Blog)
+           # private$tblExchanges = Factory$getTable(YATACodes$tables$Exchanges)
+           # private$icons        = Factory$getClass("Icons")
        }
        ,add = function(data) {
           data$id = YATABase$getID()

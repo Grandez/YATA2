@@ -1,0 +1,69 @@
+## Iconos
+
+Proceso:
+
+1. Actualizar el campo ICON en la tabla mediante un proceso Batch de larga duracion
+   Para permitir rearranques chequeamos TMS
+2. En otro proceso Batch, mirar ese campo
+   2.1 Si es NULL se añade a la lista
+   2.2 Si no existe el fichero se añade a la lista
+   2.3 Si existe y no tiene tamaño (0 bytes) o error (243 bytes) se añade a la lista
+3. Pasarlo al gestor de descarga
+
+El paso 1 si lo podemos hacer desde R con curl
+El paso 2 tambien
+
+
+Para obtener los iconos de las monedas, camaras, etc. seguimos el siguiente proceso
+
+En la tabla correspondiente marcamos el campo **ICON** a **NULL**, estos registros seran los que se analizen.
+
+1. Generamos un fichero de texto con los **slug** asociados; es decir, que combinado con la URL nos da la direccion de la pagina correspondiente
+
+2. Descargamos la URL con **curl** a una pagina de texto
+3. Buscamos el patron que nos indica la imagen, actualmente buscamos `"200x200/[0-9]+"` que se corresponde con parte de la url de la imagen
+4. Si ha encontrado ese patron:
+   - Generamos la URL completa en un fichero de lista de URLs
+   - Generamos la asociacion slug-id_icon en un fichero de _pares_
+5. Descargamos la lista de URLs con JDownloader (o similar)
+6. **Copiamos** la imagen descargada a su destino de imagenes respetando el descargador con su fichero descargado para que no se repita el proceso
+7. Actualizamos los iconos asociados con el fichero de _pares_
+
+### Notas
+
+- El proceso de coger la imagen con curl falla por que hace un segundo GET de favicon que falla, pero esto no ocurre con JDownloader
+
+- El proceso es un script: `geticons.sh` que ejecuta el proceso Batch `getSlug` 
+
+- Es importante indicar al gestor de descargas que las serialize (de una en una) e indicarle un directorio especifico distinto del de uso general 
+
+- Puede ocurrir, y de hecho ocurre, que Coinmarketcap detecte un exceso de peticiones y nos bloquee temporalmente, en esos casos procesamos lo que hayamos podido y tras un tiempo prudencial repetimos el proceso, que logicamente  no incluye los iconos ya descargados
+
+### Script
+
+rm icons_url.txt 2> /dev/null
+rm slug.txt      2> /dev/null
+rm pairs.txt     2> /dev/null
+Rscript --default-packages="YATABatch" -e "getSlug()" > slug.txt
+
+while read -r line ; do
+   slug=${line##*()}
+   echo -n Retrieving page for ${slug}   
+   page=https://coinmarketcap.com/currencies/${slug}
+   curl --silent $page -o page.txt
+   rc=$?
+   if [ $rc -ne 0 ] ; then
+      echo " KO - " $rc
+   else
+      echo " OK"
+      grep -o -E "200x200/[0-9]+" page.txt > grep.txt
+      if [ $? -eq 0 ] ; then
+         read -r icon < grep.txt # Puede que haya dos o tres
+         echo https://s2.coinmarketcap.com/static/img/coins/${icon}.png >> icons_url.txt
+         echo "${slug};${icon}" >> pairs.txt
+      fi
+   fi
+done < slug.txt
+
+Tenemos icons_url.txt para el gestor 
+y pairs.txt para actualizar la tabla (que se puede hacer sin la descarga) 

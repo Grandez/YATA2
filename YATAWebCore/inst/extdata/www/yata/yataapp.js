@@ -1,7 +1,44 @@
-if (typeof jQuery === "undefined") { throw new Error("YATA requires jQuery"); }
-// En general, si el parametro es data
-// Viene de shinyjs en un array; es decir, el objeto es data[0]
+/*  Functions to integrate en shiny */
 
+shinyjs.yata_layout = function (data) {
+  //CHECKED
+   alert("yataUpdataeLayout: \n" + data);
+   return;
+   let id = data[0];
+   let tgt = data[1];
+   let idParent = id.replace("cboLayout", "block");
+   let col = idParent[idParent.length - 1];
+
+   let toks = id.split("-");
+   let item = toks.pop();
+   const panel = toks.join("-");
+
+   let pat = idParent.substr(0, idParent.length - 1);
+   let diva = document.getElementById(pat + "a");
+   let divb = document.getElementById(pat + "b");
+   let div1 = document.getElementById(pat + "1");
+   let div2 = document.getElementById(pat + "2");
+   let blocks = document.getElementById(panel + "-blocks");
+
+   diva.style.display = (tgt == "none") ? ""     : "none";
+   divb.style.display = (tgt == "none") ? "none" : "";
+
+   if (tgt == "none" || diva.children.length > 0) {
+       let div  = (col == "1")    ? div2 : div1;
+       let from = (tgt == "none") ? div  : diva;
+       let to   = (tgt == "none") ? diva : div;
+       _yataMoveChildren(from, to);
+   }
+   if (tgt != "none") {
+       let parent = document.getElementById(id.replace("cboLayout", "block"));
+       let child  = document.getElementById(panel + "-" + tgt);
+       _yataMoveChildren(parent, blocks);
+       parent.appendChild(child);
+   }
+   let nfo = id.split("_");
+   let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
+   Shiny.setInputValue(panel + "-layout", evt);
+}
 $.yata = {
     page: undefined
    ,panels: new Map()
@@ -9,6 +46,7 @@ $.yata = {
        leftSideTag: "[data-toggle='yataoffcanvas']"
       ,menuTag:     "[data-toggle='tab']"
    }
+/*
    ,init: function() {
       $(document).on('click', this.options.leftSideTag, {yata: this}, this._listenerSidebarLeft);
       $(document).on('click', this.options.menuTag,     {yata: this}, this._listenerMenuTabs);
@@ -147,6 +185,7 @@ $.yata = {
              element.addEventListener('change', function (event) { $.yata.layoutNotify(event) });
        });
   }
+*/
   /*
      La pagina es del modo mod1-mod2- ... - modn
      La raiz esta en el padre y es raiz-container_left
@@ -155,6 +194,7 @@ $.yata = {
         si no                se quita hijo (salvo null) hijo-left a hijo-container_left
         insertar panel y actualizar padre hijo-left a root-container_left
   */
+/*
    ,_checkSidebars: function() {
       if (this.page.left == 0) {
           $("#left_side").addClass("yata_side_none");
@@ -204,7 +244,7 @@ $.yata = {
         to.appendChild(hijo);
     }
 }
-
+*/
 }; // END yata
 
 /* *****************************************
@@ -249,7 +289,7 @@ function yataUpdateLayout(data) {
    let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
    Shiny.setInputValue(panel + "-layout", evt);
 }
-*/
+
 
 function yataShowBlock(data) {
     // Pone y quita bloques
@@ -278,11 +318,15 @@ function yataShowBlock(data) {
 
 function yataTableclick (rowInfo, colInfo, evt, tgt) {
   //CHECKED
+*/
   /* Botones en reactable
 
     window.alert('YATATableClick Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id);
                                    //if (colInfo.id !== 'details') { return }
-*/                         window.alert('Details: row ' + rowInfo.index + 'col: ' + colInfo.id);
+*/
+//window.alert('Details: row ' + rowInfo.index + 'col: ' +
+/*
+colInfo.id);
      if (window.Shiny) {
          Shiny.setInputValue(evt, { row: rowInfo.index + 1
                                    ,colName: colInfo.id
@@ -306,44 +350,6 @@ function listenerTabClosable() {
 
 /////////////////////////////////////////////
 
-function yataUpdateLayout(data) {
-  //CHECKED
-   //alert("yataUpdataeLayout: \n" + data);
-   let id = data[0];
-   let tgt = data[1];
-   let idParent = id.replace("cboLayout", "block");
-   let col = idParent[idParent.length - 1];
-
-   let toks = id.split("-");
-   let item = toks.pop();
-   const panel = toks.join("-");
-
-   let pat = idParent.substr(0, idParent.length - 1);
-   let diva = document.getElementById(pat + "a");
-   let divb = document.getElementById(pat + "b");
-   let div1 = document.getElementById(pat + "1");
-   let div2 = document.getElementById(pat + "2");
-   let blocks = document.getElementById(panel + "-blocks");
-
-   diva.style.display = (tgt == "none") ? ""     : "none";
-   divb.style.display = (tgt == "none") ? "none" : "";
-
-   if (tgt == "none" || diva.children.length > 0) {
-       let div  = (col == "1")    ? div2 : div1;
-       let from = (tgt == "none") ? div  : diva;
-       let to   = (tgt == "none") ? diva : div;
-       _yataMoveChildren(from, to);
-   }
-   if (tgt != "none") {
-       let parent = document.getElementById(id.replace("cboLayout", "block"));
-       let child  = document.getElementById(panel + "-" + tgt);
-       _yataMoveChildren(parent, blocks);
-       parent.appendChild(child);
-   }
-   let nfo = id.split("_");
-   let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
-   Shiny.setInputValue(panel + "-layout", evt);
-}
 function yataLayoutChanged(event) {
    $.yata.shinyUpdateLayout([event.currentTarget.id, event.target.value]);
 }
@@ -402,6 +408,7 @@ function listenerButtonInTable(mode) {
       element.addEventListener('click', function (event) { yatabtnClickable(event) });
     });
 }
+*/
 /*
 function listenerLayout() {
   alert("yatashiny listenerLayout");
@@ -413,14 +420,10 @@ function listenerLayout() {
     });
 }
 */
+/*
 function yatabtnClickable(event) {
   alert("yatashiny yatabtnClickable");
   alert("Click en el menu " + event.target.id);
-  /*
-  id = event.target.id;
-  if (id == tabActive) return;
-  var tag = "#";
-  */
 }
 
 function _yataMoveChildren(from, to) {
@@ -444,6 +447,7 @@ jQuery(document).ready(function() {
   //CHECKED alert( "JQuery Documento listo" );
 	$.yata.init();
 });
+*/
 /*
 jQuery(document).on('shiny:connected', function(event) {
     alert("Connected");

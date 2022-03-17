@@ -49,6 +49,6 @@ yataErrGeneral = function(type, data, input, output, session) {
     output$jgg_main_img_err = renderImage({
                     list(src = sf, contentType = 'image/png', width = 400, height = 400, alt = "Fatal Error")
                     }, deleteFile = FALSE)
-    output$jgg_main_text_err = renderText({data})
+    output$jgg_main_text_err = renderText({data[1]})
     shinyjs::show("jgg_main_err")
 }

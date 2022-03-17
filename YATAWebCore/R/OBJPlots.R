@@ -71,9 +71,9 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            render(ui,info,type)
         }
        ,render = function(ui=NULL, info=NULL, type=NULL) {
-           browser()
-           if (!private$generatePlot(ui, info, type)) return (NULL)
-           plotly::renderPlotly({plot}) # %>% event_register("plotly_legendclick")
+           # browser()
+           # if (!private$generatePlot(ui, info, type)) return (NULL)
+           # plotly::renderPlotly({plot}) # %>% event_register("plotly_legendclick")
        }
        ,calcType = function(type) {
           # Define el tipo de plot a hacer

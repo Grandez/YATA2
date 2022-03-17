@@ -6,6 +6,21 @@
     min-height: 100%;
     position: relative;
 }
+.jgg_page_left {
+/*   width: 200px; */
+  height: 100%;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+.jgg_page_right {
+/*   width: 200px; */
+  height: 100%;
+  background-color: #222;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
 .jgg_header {
 /*   width: 100%; */
    height: 42px;
@@ -29,6 +44,10 @@
    display: flex;
    justify-content: center;
    align-items: center;
+}
+.jgg_tab_content {
+    display: flex;
+    flex-flow: row;
 }
 .jgg_panel_err_container {
    margin: 0;
@@ -60,7 +79,7 @@
 }
 /* Iconos de abrir/cerrar paneles */
 .jgg_side_none {
-  visibility: hidden;
+  display: none;
 }
 
 .jgg_side_open {

@@ -20,8 +20,8 @@ modAdminServer <- function(id, full, pnlParent, parent=NULL) {
    )
     moduleServer(id, function(input, output, session) {
        message("Ejecutando server para Admin")
-      pnl = YATAWEB$getPanel(id)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLAdmin$new(id, pnlParent, session))
+      pnl = WEB$getPanel(id)
+      if (is.null(pnl)) pnl = WEB$addPanel(PNLAdmin$new(id, pnlParent, session))
 
   })
 }    

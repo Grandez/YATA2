@@ -23,7 +23,7 @@ modOperXferServer = function(id, full, pnlParent, parent) {
             ,cboCurrencies = function (camera) {
                 df = private$position$getCameraPosition(camera, available = TRUE)
                 private$cameraIn = df
-                YATAWEB$getCTCLabels(as.vector(df$currency), invert = TRUE)
+                WEB$getCTCLabels(as.vector(df$currency), invert = TRUE)
             }
             ,getAvailable = function (currency) {
                 df = private$cameraIn[private$cameraIn$currency == currency,]
@@ -53,15 +53,15 @@ modOperXferServer = function(id, full, pnlParent, parent) {
         )
    )       
    moduleServer(id, function(input, output, session) {
-      pnl = YATAWEB$getPanel(id)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOperXfer$new(id, pnlParent, session))
+      pnl = WEB$getPanel(id)
+      if (is.null(pnl)) pnl = WEB$addPanel(PNLOperXfer$new(id, pnlParent, session))
        
       validate = function() {
           if (input$impAmount <= 0) 
-              return (yataMsgError(ns2("msg"),YATAWEB$MSG$get("MSG.AMOUNT.NEGATIVE"))) 
+              return (yataMsgError(ns2("msg"),WEB$MSG$get("MSG.AMOUNT.NEGATIVE"))) 
           
           if (input$impAmount > pnl$available) 
-              return (yataMsgError(ns2("msg"),YATAWEB$MSG$get("MSG.AMOUNT.EXCESS")))
+              return (yataMsgError(ns2("msg"),WEB$MSG$get("MSG.AMOUNT.EXCESS")))
           FALSE 
        }
        updCombo("cboFrom",    choices=pnl$cboCamerasFrom(all=TRUE))

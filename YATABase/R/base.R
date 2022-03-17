@@ -1,4 +1,4 @@
-YATABASE = R6::R6Class("YATA.BASE.BASE"
+YATABase = R6::R6Class("YATA.BASE.BASE"
    ,portable  = FALSE
    ,cloneable = FALSE
    ,lock_class = TRUE
@@ -7,7 +7,7 @@ YATABASE = R6::R6Class("YATA.BASE.BASE"
       ,cond  = function(value) { invisible(.cond) }
       ,str   = function(value) { invisible(.str)  }
       ,dates = function(value) { invisible(.dat)  }
-      ,map   = function(value) { invisible(YATABaseMap$new()) }
+      ,http  = function(value) { invisible(.http) }
       ,id    = function(value) { self$getID() }
    )
    ,public = list(
@@ -16,9 +16,12 @@ YATABASE = R6::R6Class("YATA.BASE.BASE"
          private$.dat  = YATABaseDat$new()
          private$.str  = YATABaseStr$new()
          private$.cond = YATABaseCond$new()
+         private$.http = YATAHTTP$new()
       }
       ,print = function() { message("Common tools and utilities for YATA")}
       ,ini   = function(iniFile) { YATABaseIni$new(iniFile) }
+      ,map   = function() { invisible(YATABaseMap$new()) }
+      ,ID    = function() { self$getID() }
 # Genera un identificador unico
 # El EPOCH UNix da los segundos (rounded) desde 1970-01-01
 # Quitamos Desde una fecha dada
@@ -30,7 +33,6 @@ YATABASE = R6::R6Class("YATA.BASE.BASE"
 # 16665400 (El 3 pasa a 4) pero ese numero no se puede repetir por que en el siguiente
 # segundo el id daria 102, con lo que seria 16665501
 # Estos ID se pueen guardar en un int de 4 bytes sin signo:  	2147483647/4294967295
-
     ,getID = function() {
         epoch = as.integer(Sys.time()) - 1577836860 # Restamos el epoch desde 2020-01-01
         epoch = (epoch %% 1000000)                  # Quitamos el digito significativo
@@ -55,6 +57,7 @@ YATABASE = R6::R6Class("YATA.BASE.BASE"
       ,.str  = NULL
       ,.dat  = NULL
       ,.cond = NULL
+      ,.http = NULL
       ,.cnt = 0
    )
 )

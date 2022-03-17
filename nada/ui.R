@@ -5,9 +5,9 @@ my_theme <- bs_theme(bootswatch = "default",
     "sans-serif", "Apple Color Emoji", "Segoe UI Emoji"), 
     font_scale = NULL
     )
-JGGDashboardFull(title="Navbar!", id = "mainMenu", 
+#JGGDashboardFull(title="Navbar!", id = "mainMenu", 
 #bslib_page_navbar(title="Navbar!", id = "mainMenu", 
-#bslib_page_navbar(
+navbarPage(
 
 
   tabPanel("Plot",
@@ -52,6 +52,6 @@ JGGDashboardFull(title="Navbar!", id = "mainMenu",
   )
 #, theme =  bs_theme(),lang = NULL
     #, theme = bslib::bs_theme(bootswatch="default") ,lang = NULL
-    , titleActive = TRUE, theme =  my_theme,lang = NULL
+    , title = TRUE, theme =  my_theme,lang = NULL
 )
 

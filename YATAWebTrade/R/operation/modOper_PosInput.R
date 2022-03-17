@@ -1,11 +1,11 @@
 modOperPosInput = function(id, title="") {
     ns = NS(id)
-    noOpen   = YATAWEB$getMsg("OPER.OPEN.NONE")
-    noAccept = YATAWEB$getMsg("OPER.ACCEPT.NONE")
-    noExec   = YATAWEB$getMsg("OPER.EXECUTE.NONE")
-    boxOpen  = YATAWEB$getMsg("BOX.OPER.OPEN")
-    boxPend  = YATAWEB$getMsg("BOX.OPER.PEND")
-    boxExec  = YATAWEB$getMsg("BOX.OPER.EXEC")
+    noOpen   = WEB$getMsg("OPER.OPEN.NONE")
+    noAccept = WEB$getMsg("OPER.ACCEPT.NONE")
+    noExec   = WEB$getMsg("OPER.EXECUTE.NONE")
+    boxOpen  = WEB$getMsg("BOX.OPER.OPEN")
+    boxPend  = WEB$getMsg("BOX.OPER.PEND")
+    boxExec  = WEB$getMsg("BOX.OPER.EXEC")
     blocks = c("Plot" = "plotOpen", "Data"="data", "None"="none")
     left = tagList(
          fluidRow(column(4, "Up"),   column(8, guiCombo(ns("cboUp"), choices=blocks, selected="plot")))

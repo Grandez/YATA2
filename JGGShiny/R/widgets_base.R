@@ -29,6 +29,17 @@ guiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
 }
+guiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
+    lbl = NULL
+    choice = c("")
+    if (!is.null(label))   lbl    = label
+    if (!is.null(choices)) choice = choices
+    selectInput(id,lbl,choice, size=size, selectize=FALSE,...)
+}
+
+updListBox = function(id, choices, selected=NULL, session=getDefaultReactiveDomain()) {
+    updateSelectInput(session, id, choices = choices, selected = selected)
+}
 guiNumericInput = function(id, label=NULL, value=0, step, min, max) {
   st = NA ; if (!missing(step)) st=step
   mn = NA ; if (!missing(min))  mn=min
@@ -53,9 +64,6 @@ updIntegerInput = function(id, value, session=getDefaultReactiveDomain()) {
   shiny::updateNumericInput(session, id, value = value)
 }
 
-guiLabelNumber = function(id, label=NULL, inline=TRUE) {
-  textOutput(id) %>% tagAppendAttributes(class = 'jgg_number')
-}
 guiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = NULL,
     cols = NULL, rows = NULL, placeholder = NULL, resize = NULL) {
     value <- restoreInput(id = inputId, default = value)

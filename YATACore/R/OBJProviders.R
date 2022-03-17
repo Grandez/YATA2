@@ -6,21 +6,21 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
     ,lock_class = TRUE
     ,public = list(
         print       = function() { message("Providers Object")}
-       ,initialize  = function(factory) {
-           super$initialize(factory)
-           private$providers    = YATABase$map
-           private$tblProviders = factory$getTable(codes$tables$providers)
+       ,initialize  = function(Factory) {
+           super$initialize(Factory)
+           private$providers    = YATABase$new()$map()
+           private$tblProviders = Factory$getTable(YATACodes$tables$providers)
            self$id              = parms$getOnlineProvider()
 
-           private$dfProviders  = tblProviders$table(active = codes$flag$active)
+           private$dfProviders  = tblProviders$table(active = YATACodes$flag$active)
            if (nrow(private$dfProviders) == 0) stop("No hay proveedores activos")
            prov = dfProviders[dfProviders$id == self$id,]
 
            #JGG Especial
-           private$mktcap = factory$getProvider("MKTCAP", "MarketCap")
+           private$mktcap = Factory$getProvider("MKTCAP", "MarketCap")
 
            self$name = prov[1,"name"]
-          # private$provider = factory$getProvider(self$id, prov[1,"object"])
+          # private$provider = Factory$getProvider(self$id, prov[1,"object"])
            private$provider = private$mktcap
            private$providers$put(self$id, private$provider)
 

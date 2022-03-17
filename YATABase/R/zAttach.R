@@ -1,3 +1,3 @@
 .onAttach = function(libname, pkgname) {
-   assign("YATABase", YATABASE$new(), envir = .GlobalEnv)
+   assign("YATABase", YATABase$new(), envir = .GlobalEnv)
 }

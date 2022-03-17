@@ -7,6 +7,7 @@ YATAENV = R6::R6Class("YATA.ENV"
        ,lastErr   = NULL
        ,print      = function() { message("Global environment for YATA")}
        ,initialize = function() {
+           stop("Que es esta clase??????")
            message("Creando Entorno")
             # tryCatch({ private$base = YATABASE$new()
             #            initEnv()

@@ -19,3 +19,6 @@ html, body {
     padding: 0;
     margin-bottom: 0;
 }
+.navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
+	margin-bottom: 0 !important;
+}

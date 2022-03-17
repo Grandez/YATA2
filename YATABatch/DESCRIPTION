@@ -9,5 +9,5 @@ Description: Procesos Batch
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Depends: YATABase
+Depends: YATABase, YATACore
 import: dplyr, stringr, YATABase, YATACore

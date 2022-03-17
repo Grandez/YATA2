@@ -24,21 +24,27 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,log      = NULL
      ,initialize = function() {
          tryCatch({
-            self$factory = YATACore::YATAFACTORY$new()
+            base = YATABase$new()
+            private$panels = base$map()
+            self$factory = YATACore::getFactory(TRUE)
             self$MSG     = factory$MSG
-            logger = YATALogger$new("WEB",console=interactive())
-            self$log     = YATALogger$new("WEB",console=interactive(), log=.logLevel)
-            # private$tblCurrencies = factory$getTable("Currencies")
+            self$log     = YATALogger$new("WEB")
             # private$tblCameras    = factory$getTable("Cameras")
-            private$hID   = YATABase$map
-            private$hSym  = YATABase$map
-            private$hCam  = YATABase$map
-            self$REST = YATARest$new()
+            private$hID   = base$map()
+            private$hSym  = base$map()
+            private$hCam  = base$map()
+            self$REST       = YATARest$new()
             self$errorLevel = REST$check()
+            # Tablas de uso comun
+            private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
 #            loadFiats()
-         }, error = function(e) {
+         }, YATAERROR = function (cond) {
+             browser()
+             self$errorLevel = 97
+             self$txtError = cond
+         }, error = function(cond) {
             self$errorLevel = 98
-            self$txtError = e
+            self$txtError = cond
          })
      }
      ,finalize = function() {
@@ -47,7 +53,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          private$hID    = NULL
          private$hSym   = NULL
          private$hCam   = NULL
-         factory$clear()
+      #   factory$clear()
      }
      # ,log = function(tpl, ...) {
      #   message(paste(as.integer(Sys.time()), "-", sprintf(tpl, ...)))
@@ -60,17 +66,14 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          invisible(self)
       }
      ,getPanel = function(name, loading=FALSE)  {
-         # Devuelve el objeto asociado al panel si existe
-         # Actualiza javascript jggshiny con la pagina activa
-         # if (loading) message(paste("Carga panel ", name))
-         shinyjs::js$jgg_set_page(list(name=name))
-         private$panels$get(name)
+         panel = private$panels$get(name)
+         if (!is.null(panel)) shinyjs::js$jgg_set_page(name)
+         panel
       }
      ,addPanel = function(panel) {
-       private$panels$put(panel$name, panel)
-       # Notificamos a js que cargue la pagina
-       shinyjs::js$jgg_set_page(panel$getDef())
-       self$getPanel(panel$name, loading=TRUE)
+         private$panels$put(panel$name, panel)
+         shinyjs::js$jgg_add_page(panel$name)
+         self$getPanel(panel$name, loading=TRUE)
      }
     ,getMsg      = function(code, ...) { MSG$get(code, ...) }
     ,getCookies  = function(id) { private$cookies[[id]] }
@@ -125,7 +128,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 # Cada objeto representa una pagina
 # De esta forma se gestiona la inicializacion de la pagina
 # Y guardamos los datos temporales
-      panels  = YATABase$map
+      panels  = NULL
      ,.logLevel = 0
      ,tblCurrencies = NULL
      ,tblCameras    = NULL
@@ -152,7 +155,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          else                  tblCurrencies$select(symbol=code)
 
          info = list()
-         if (!tblCurrencies$selected()) {
+         if (is.null(tblCurrencies$current)) {
            info$id     = code
            info$symbol = code
            info$name   = code

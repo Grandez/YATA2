@@ -1,99 +1,91 @@
 if (typeof jQuery === "undefined") { throw new Error("jQuery is required"); }
-$.jggshiny = {
-    page: undefined  // Active page
-//   ,panels: new Map()
-   ,options: {
+
+class JGGShiny {
+   #page; // : undefined  // Active page
+   #panels; // : new Map()
+   #leftSideIcon =  "[data-toggle='jgg_left_button']";
+   #rightSideIcon = "[data-toggle='jgg_right_button']";
+   #menuTag       = "[data-toggle='tab']";
+
+/*
+   #options: {
        leftSideIcon:  "[data-toggle='jgg_left_button']"
       ,rightSideIcon: "[data-toggle='jgg_right_button']"
       ,menuTag:       "[data-toggle='tab']"
    }
-   ,init: function(title) {
-    //   alert("Initializing JGG code");
-       $("#app_title").text(title);
-       $(document).on('click', this.options.leftSideIcon,  {jgg: this}, this.sidebarLeft);
-       $(document).on('click', this.options.rightSideIcon, {jgg: this}, this.sidebarRight);
-       /*
-       $(document).on('click', '#mainmenu', {jgg: this}, this.mainmenu_click);
-       $('a.nav-link').click({jgg: this}, this.mainmenu_click);
-       $('.nav-link').on('click', function(evt) { alert("Pulsado"); });
-       $("#mainMenu").on("click", ".searchterm", function(event){
-    alert('clicked');
-});
 */
+   constructor() {
+      this.#page = undefined;
+      this.#panels = new Map();
    }
-   ,set_page: function(name) {
-       this.page = this.panels.get(name);
-       if (this.page  === undefined) return;
-       let div    = "#jgg_left_side";
-       let cls    = "jgg_side_none";
-       let hasCls = $(div).hasClass(cls);
-       if (this.page.left) {
-           if (hasCls) $(div).removeClass(cls);
-       } else {
-           if (!hasCls) $(div).addClass(cls);
-       }
-       div = "#jgg_right_side";
-       hasCls = $(div).hasClass(cls);
-       if (this.page.right) {
-           if (hasCls) $(div).removeClass(cls);
-       } else {
-           if (!hasCls) $(div).addClass(cls);
-       }
+   init(title) {
+       alert("Initializing JGG code");
+       jQuery("#app_title").text(title);
+       jQuery(document).on('click', this.#leftSideIcon,  {jggshiny: this}, jggshiny.sidebarLeft);
+       jQuery(document).on('click', this.#rightSideIcon, {jggshiny: this}, jggshiny.sidebarRight);
+   }
+   set_page(data) {
+       /* Called from shinyjs, parameter is an array */
+//       alert("SET PAGE " + data[0]);
+       this.#page = this.#panels.get(data[0]);
+       if (this.#page  === undefined) return;
+       this.#setSideIcons(this.#page.left,  "left");
+       this.#setSideIcons(this.#page.right, "right");
     }
-   ,add_page: function(name) {
-       res = this.panels.get(name);
+   add_page(data) {
+       /* Called from shinyjs, parameter is an# array */
+       // Inserta la pagina en el map de paginas
+       // Busca los id -left y -right para marcarlos y moverlos
+       const name = data[0];
+//       alert("ADD PAGE " + name);
+       const res = this.#panels.get(name);
        if (res !== undefined) return;
 
        let panel = {
             name:  name
-           ,left:  true
-           ,right: true
-           ,openLeft: false
-           ,openRight: false
+           ,left:  0  // 0 - No hay, 1 - Open, -1 - Closed
+           ,right: 0
        };
-       let divBase = name + "_container";
+       let divBase = "#" + name + "_container";
        let div = divBase + "_left";
-       let obj = $(div);
-       if (obj === undefined) panel.left = false;
+       let obj = jQuery(div);
+       if (obj.length > 0) panel.left = -1;
        div = divBase + "_right";
-       obj = $(div);
-       if (obj === undefined) panel.right = false;
-       this.panels.put(name, panel);
-       this.set_page(name);
+       obj = jQuery(div);
+       if (obj.length > 0) panel.right = -1;
+       this.#panels.set(name, panel);
+       // this.set_page(name);
   }
-
-   ,mainmenu_click: function(evt) {
+   update_page(page) {
+      this.#page = page;
+      this.#panels.set(page.name, page);
+   }
+   mainmenu_click(evt) {
        alert("mainmenu");
    }
-   ,sidebarLeft: function(evt) {
-       alert(evt.data.jgg);
-       if (evt.data.jgg.page === undefined) return;
-       // Se ha hecho click en el menu de abrir/cerrar panel
-       // Icono del panel lateral clickado
-       let page = evt.data.yata.page.id;
+   sidebarLeft(evt) {
+      // Se ha hecho click en el menu de abrir/cerrar panel
+      // Icono del panel lateral clickado
+      // No se por que, pero no hace el this
+      let page = jggshiny.#page;
+      if (page === undefined) return; // Se ha activado antes de insertarla
 
-       // Se ha activado la pagina antes de insertarla
-       if (this.page.left === undefined) this.page = this.panels.get(page);
-       if (page === null) return;
-       // Cuando son hijos
-       page = page.split('-');
-       page = page[0];
-       let id = "#" + page + "-container_left";
-       if ($(id).hasClass('yata_side_closed')) {
-           $(id).removeClass('yata_side_closed').trigger('expanded.pushMenu');
-           $("#left_side_closed").addClass("yata_side_closed");
-           $("#left_side_open").removeClass("yata_side_closed");
-           this.page.left = 1; // Open
+       let id = "#" + page.name + "_container_left";
+       if (jQuery(id).hasClass('jgg_side_closed')) {
+           jQuery(id).removeClass('jgg_side_closed').trigger('expanded.pushMenu');
+           jQuery("#left_side_closed").addClass("jgg_side_closed");
+           jQuery("#left_side_open").removeClass("jgg_side_closed");
+           page.left = 1; // Open
        } else {
-           $(id).addClass('yata_side_closed').trigger('collapsed.pushMenu');
-           $("#left_side_closed").removeClass("yata_side_closed");
-           $("#left_side_open").addClass("yata_side_closed");
-           this.page.left = -1; // Closed
+           jQuery(id).addClass('jgg_side_closed').trigger('collapsed.pushMenu');
+           jQuery("#left_side_closed").removeClass("jgg_side_closed");
+           jQuery("#left_side_open").addClass("jgg_side_closed");
+           page.left = -1; // Closed
        }
-
+       jggshiny.update_page(page);
    }
-   ,sidebarRight: function(evt) {
-       alert(evt.data.jgg);
+   sidebarRight(evt) {
+//       alert(evt.data.jgg);
        if (evt.data.jgg.page === undefined) return;
 
        // Se ha hecho click en el menu de abrir/cerrar panel
@@ -101,25 +93,41 @@ $.jggshiny = {
        let page = evt.data.yata.page.id;
 
        // Se ha activado la pagina antes de insertarla
-       if (this.page.left === undefined) this.page = this.panels.get(page);
+       if (this.#page.right === undefined) this.#page = this.#panels.get(page);
        if (page === null) return;
        // Cuando son hijos
        page = page.split('-');
        page = page[0];
-       let id = "#" + page + "-container_left";
-       if ($(id).hasClass('yata_side_closed')) {
-           $(id).removeClass('yata_side_closed').trigger('expanded.pushMenu');
-           $("#left_side_closed").addClass("yata_side_closed");
-           $("#left_side_open").removeClass("yata_side_closed");
-           this.page.left = 1; // Open
+       let id = "#" + page + "-container_right";
+       if (jQuery(id).hasClass('yata_side_closed')) {
+           jQuery(id).removeClass('yata_side_closed').trigger('expanded.pushMenu');
+           jQuery("#right_side_closed").addClass("yata_side_closed");
+           jQuery("#right_side_open").removeClass("yata_side_closed");
+           this.page.right = 1; // Open
        } else {
-           $(id).addClass('yata_side_closed').trigger('collapsed.pushMenu');
-           $("#left_side_closed").removeClass("yata_side_closed");
-           $("#left_side_open").addClass("yata_side_closed");
+           jQuery(id).addClass('yata_side_closed').trigger('collapsed.pushMenu');
+           jQuery("#left_side_closed").removeClass("yata_side_closed");
+           jQuery("#left_side_open").addClass("yata_side_closed");
            this.page.left = -1; // Closed
        }
 
   }
+  #setSideIcons(value, side) {
+      let id = "#jgg_" + side + "_side";
+      if (value == 0 && !jQuery(id).hasClass('jgg_side_none'))
+          jQuery(id).addClass('jgg_side_none');
+      if (value != 0)
+          jQuery(id).removeClass('jgg_side_none');
 
+       id = id + "_open"
+       if (value = 1) {
+           jQuery(id).removeClass("jgg_side_closed");
+           jQuery(id).addClass   ("jgg_side_open");
+       }
+       if (value = -1) {
+           jQuery(id).removeClass("jgg_side_open");
+           jQuery(id).addClass   ("jgg_side_closed");
+       }
+  }
 
-};
+}

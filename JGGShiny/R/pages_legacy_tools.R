@@ -1,10 +1,97 @@
+# -----------------------------------------------------------------------
+# 'Internal' tabset logic that was pulled directly from shiny/R/bootstrap.R
+#  (with minor modifications)
+# -----------------------------------------------------------------------
+
+jgg_bslib_navbarPage_ <- function(id, ...) {
+
+  navbarClass <- "navbar navbar-default navbar-static-top"
+  tabset = bslib_buildTabset( ...
+                             ,ulClass = "nav navbar-nav", textFilter=NULL, id = id
+                             ,selected = NULL, foundSelected = FALSE)
+  # Aqui tenemos las dos partes
+
+  contentDiv = div(id="jgg_tab_content", class = c("container-fluid", "jgg_tab_content"))
+  contentDiv = tagAppendChild(contentDiv, tabset$content)
+
+  tagList( navList=tags$nav(class = navbarClass, role = "navigation", tabset$navList)
+          ,content=contentDiv
+  )
+
+}
+jgg_bslib_navs_bar_full = function (webtitle, titleActive, id, ...) {
+    # Tiene Panel derecho y panel izquiero
+    webtitle=NULL
+    tabset = jgg_bslib_navbarPage_(id, ...)
+
+    containerDiv = div(class = "container-fluid"
+                       ,div(class = "navbar-header"
+                            ,span(class = "navbar-brand", webtitle)
+                        )
+                       , tabset$navList)
+
+    containerClass = "navbar navbar-default"
+    nav = tags$nav(class = containerClass, role = "navigation", containerDiv)
+
+    # content = div(class = containerClass)
+    # content = tagAppendChild(content, tabset$content)
+
+    jgg_make_container_full(nav, tabset$content, titleActive)
+}
+jgg_make_container_full = function (nav, content, titleActive) {
+   contentDiv = shiny::tags$div(id="jgg_page")
+   divHeader  = shiny::tags$div(id="jgg_page_header", class="jgg_header row" )
+   divBody    = shiny::tags$div(id="jgg_page_body",   class="jgg_body container-fluid"   )
+   divFooter  = shiny::tags$div(id="jgg_page_footer", class="jgg_footer" )
+
+   divHeader = jgg_make_page_header(divHeader, nav, titleActive)
+
+   divMain  = shiny::tags$div(id="jgg_page_main",  class="jgg_page_main"  )
+   divLeft  = shiny::tags$div( id="jgg_page_left"
+                              ,class="w-25 h-100 jgg_page_left jgg_side_none"  )
+
+   divRight = shiny::tags$div( id="jgg_page_right"
+                              ,class="w-25 h-100 jgg_page_right jgg_side_none" )
+
+   divFooter = tagAppendChild(divFooter, tags$span("YATA - Grandez"))
+
+  #  children = content$children
+  #  children = children[[1]]$children
+  #  pages = content$children
+  #  for (idx in 1:length(pages)) {
+  #      page = pages[[idx]]$children[[1]] # Aqui son 5
+  #      if (!is.null(page$left))  divLeft  = tagAppendChild(divLeft,  page$left)
+  #      if (!is.null(page$right)) divRight = tagAppendChild(divRight, page$right)
+  #      page$left  = NULL
+  #      page$right = NULL
+  #      divMain    = tagAppendChild(divMain, page)
+  #  }
+
+  # contentDiv <- div(class = containerClass)
+  # if (!is.null(header))
+  #   contentDiv <- tagAppendChild(contentDiv, div(class = "row", header))
+  # contentDiv <- tagAppendChild(contentDiv, tabset$content)
+  # if (!is.null(footer))
+  #   contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
+
+   divBody   = tagAppendChildren(divBody, content) # divLeft, divMain, divRight)
+   page = tags$div(class="jgg_page", divHeader, divBody, divFooter)
+   tags$div(id="jgg_container", class="jgg_container", page, .mainFormError())
+}
+
 jgg_make_container = function (nav, content, titleActive) {
+    browser()
    contentDiv = shiny::tags$div(id="jgg_page")
    divHeader  = shiny::tags$div(id="jgg_page_header", class="jgg_header row" )
    divBody    = shiny::tags$div(id="jgg_page_body",   class="jgg_body"   )
    divFooter  = shiny::tags$div(id="jgg_page_footer", class="jgg_footer" )
 
    divHeader = jgg_make_page_header(divHeader, nav, titleActive)
+
+   divLeft  = shiny::tags$div(id="jgg_page_left",  class="jgg_page_left"  )
+   divMain  = shiny::tags$div(id="jgg_page_main",  class="jgg_page_main"  )
+   divRight = shiny::tags$div(id="jgg_page_right", class="jgg_page_right" )
+
    divBody   = tagAppendChild(divBody, content)
    divFooter = tagAppendChild(divFooter, tags$span("YATA - Grandez"))
 

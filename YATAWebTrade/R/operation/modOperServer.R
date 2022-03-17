@@ -17,10 +17,10 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            ,idOper       = NULL    
            ,initialize     = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
-               self$cameras    = self$factory$getObject("Cameras")
-               self$operations = self$factory$getObject("Operation")
-               self$currencies = self$factory$getObject("Currencies")
-               self$position   = self$factory$getObject("Position")
+               self$cameras    = self$factory$getObject(self$codes$object$cameras)
+               self$operations = self$factory$getObject(self$codes$object$operation)
+               self$currencies = self$factory$getObject(self$codes$object$currencies)
+               self$position   = self$factory$getObject(self$codes$object$position)
                self$session    = self$factory$getObject(self$codes$object$session)
                self$cameras$loadCameras()               
                self$vars$inForm  = FALSE
@@ -61,7 +61,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            }    
            ,cboCurrency  = function(camera, available) {
                if (missing(camera)) {
-                   private$asCombo(YATAWEB$getCurrencyNames())
+                   private$asCombo(WEB$getCurrencyNames())
                }
                else {
                   if (camera == "CASH") {
@@ -72,7 +72,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                       #JGG Por ahora solo EUR
                      # df = self$cameras$getCameraPosition(camera, available = available) 
                      # if (nrow(df) > 0) {
-                         YATAWEB$getCTCLabels("EUR", invert = TRUE)
+                         WEB$getCTCLabels("EUR", invert = TRUE)
                      # }
                   }
                }
@@ -89,7 +89,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            #     }
            #     ,error = function(cond) {
            #         browser()
-           #         return (yataErrGeneral(0, YATAWEB$txtError, input, output, session))
+           #         return (yataErrGeneral(0, WEB$txtError, input, output, session))
            #         TRUE
            #       }
            #     )
@@ -109,8 +109,8 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
         )
    )   
     moduleServer(id, function(input, output, session) {
-        pnl = YATAWEB$getPanel(id)
-        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLOper$new(id, pnlParent, session))
+        pnl = WEB$getPanel(id)
+        if (is.null(pnl)) pnl = WEB$addPanel(PNLOper$new(id, pnlParent, session))
         
         flags = reactiveValues(
             commarea  = FALSE

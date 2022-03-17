@@ -60,8 +60,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
             self$data$camera = self$cameras$current
             self$data$names = list()
             self$data$names$camera  = self$cameras$current$name
-            self$data$names$base    = YATAWEB$getCTCLabel(self$data$base, "medium")
-            self$data$names$counter = YATAWEB$getCTCLabel(self$data$counter, "medium")
+            self$data$names$base    = WEB$getCTCLabel(self$data$base, "medium")
+            self$data$names$counter = WEB$getCTCLabel(self$data$counter, "medium")
             row
          }
         ,getOpenCurrency = function() { self$data$dfOpen[,c("counter", "tms")] }
@@ -88,9 +88,9 @@ modOperPosServer = function(id, full, pnlParent, parent) {
             df$deadline = today + df$deadline
             df[df$deadline == today, "deadline"] = NA
 
-            labels     = YATAWEB$getCTCLabels(unique(df$currency), type="full")
+            labels     = WEB$getCTCLabels(unique(df$currency), type="full")
             df$currency = labels[df$currency]
-            cameras = YATAWEB$getCameraNames(unique(df$camera))
+            cameras = WEB$getCameraNames(unique(df$camera))
             df$camera = cameras[df$camera]
       # df$cost = df$price
       # 
@@ -120,9 +120,9 @@ modOperPosServer = function(id, full, pnlParent, parent) {
             colnames(df) = c("camera", "currency", "amount", "price")
             df$value = df$price * df$amount
 
-            labels     = YATAWEB$getCTCLabels(unique(df$currency), type="full")
+            labels     = WEB$getCTCLabels(unique(df$currency), type="full")
             df$currency = labels[df$currency]
-            cameras = YATAWEB$getCameraNames(unique(df$camera))
+            cameras = WEB$getCameraNames(unique(df$camera))
             df$camera = cameras[df$camera]
             df
         }
@@ -136,8 +136,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
    )
    
    moduleServer(id, function(input, output, session) {
-      pnl = YATAWEB$getPanel(full)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLPosOper$new(full, pnlParent, session))
+      pnl = WEB$getPanel(full)
+      if (is.null(pnl)) pnl = WEB$addPanel(PNLPosOper$new(full, pnlParent, session))
 
        flags = reactiveValues(
             opClose   = FALSE
@@ -221,7 +221,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
 # https://plotly-r.com/linking-views-with-shiny.html#shiny-plotly-inputs                  
 
        getHistorical = function(symbol,since) {
-           id = YATAWEB$getCTCID(symbol)
+           id = WEB$getCTCID(symbol)
            if (id == 0) return()
            to = Sys.Date()
            from = since - as.difftime(7, unit="days")
@@ -230,7 +230,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                   then ( function(df) {
                          if (is.data.frame(df)) renderPlot(df, symbol)
                          }, function(err)    {
-                          YATAWEB$log$message("hist resp: %d - %s - %s", id,from,to)
+                          WEB$log$message("hist resp: %d - %s - %s", id,from,to)
                           browser()
                           message("ha ido mal 3") ; message(err)
                       })
@@ -339,10 +339,10 @@ modOperPosServer = function(id, full, pnlParent, parent) {
 
       formChangeInit = function() {
          title = ""
-         if (pnl$vars$nextAction == pnl$codes$status$accepted) title = YATAWEB$MSG$title("OPER.ACCEPT")
-         if (pnl$vars$nextAction == pnl$codes$status$executed) title = YATAWEB$MSG$title("OPER.EXECUTE")
-         if (pnl$vars$nextAction == pnl$codes$status$rejected) title = YATAWEB$MSG$title("OPER.REJECT")
-         if (pnl$vars$nextAction == pnl$codes$status$closed)   title = YATAWEB$MSG$title("OPER.CLOSE")
+         if (pnl$vars$nextAction == pnl$codes$status$accepted) title = WEB$MSG$title("OPER.ACCEPT")
+         if (pnl$vars$nextAction == pnl$codes$status$executed) title = WEB$MSG$title("OPER.EXECUTE")
+         if (pnl$vars$nextAction == pnl$codes$status$rejected) title = WEB$MSG$title("OPER.REJECT")
+         if (pnl$vars$nextAction == pnl$codes$status$closed)   title = WEB$MSG$title("OPER.CLOSE")
          
          output$formLblOper    = updLabelText( title )
          output$formLblCamera  = updLabelText( pnl$data$names$camera  )
@@ -360,7 +360,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       }
       observeEvent(input$btnTablePending, {
           browser()
-          YATAWEB$log$beg("Table Pending")
+          WEB$log$beg("Table Pending")
           pnl$selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
               pnl$vars$nextAction = pnl$codes$status$accepted
@@ -382,17 +382,17 @@ modOperPosServer = function(id, full, pnlParent, parent) {
               output$form = renderUI({data})
               formChangeInit()
           }
-          YATAWEB$log$end("Table Pending")
+          WEB$log$end("Table Pending")
       }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableAccepted, {
            browser()
-          YATAWEB$log$beg("Table Accepted")
+          WEB$log$beg("Table Accepted")
           pnl$selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
           pnl$vars$nextAction = pnl$codes$status$executed
           data = yuiFormUI(ns2("form"), "OperChange", data=pnl$data)
           output$form = renderUI({data})
           formChangeInit()
-          YATAWEB$log$end("Table Accepted")
+          WEB$log$end("Table Accepted")
        }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTable, {
          browser()

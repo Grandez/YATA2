@@ -5,9 +5,9 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
     ,lock_class = TRUE
     ,public = list(
         print           = function() { message("Position")}
-       ,initialize      = function(factory) {
-           super$initialize(factory)
-           private$tblPosition = factory$getTable(codes$tables$position)
+       ,initialize      = function(Factory) {
+           super$initialize(Factory)
+           private$tblPosition = Factory$getTable(YATACodes$tables$position)
        }
        ,getCameras = function() {
           df = tblPosition$getCameras()
@@ -30,7 +30,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
-           oper = factory$getObject(codes$object$operation)
+           oper = factory$getObject(YATACodes$object$operation)
            cIn  = oper$getOperations(base="EXT")
            cOut = oper$getOperations(counter="EXT")
            inv  = getGlobalPosition()

@@ -22,14 +22,13 @@ bslib_page_navbar <- function(..., title = NULL, id = NULL, selected = NULL,
   # }
 
 #JGG END
-  browser()
     mpage = bslib_navs_bar(
       ..., title = title, id = id, selected = selected,
       position = match.arg(position), header = header,
       footer = footer, bg = bg, inverse = inverse,
       collapsible = collapsible, fluid = fluid
     )
-browser()
+
   bslib_page(
     title = window_title,
     theme = theme,
@@ -155,7 +154,7 @@ bslib_navbarPage_ <- function(title,
   if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", header))
   contentDiv <- tagAppendChild(contentDiv, tabset$content)
   if (!is.null(footer)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
-browser()
+
   # *Don't* wrap in bootstrapPage() (shiny::navbarPage()) does that part
   tagList(
     tags$nav(class = navbarClass, role = "navigation", containerDiv),
@@ -252,7 +251,7 @@ bslib_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
     return(bslib_buildDropdown(divTag, tabset))
   }
 
-  if (isTabPanel(divTag)) {
+  if (bslib_isTabPanel(divTag)) {
     return(bslib_buildNavItem(divTag, tabsetId, index))
   }
 
@@ -292,14 +291,14 @@ bslib_buildNavItem <- function(divTag, tabsetId, index) {
   # https://github.com/rstudio/shiny/issues/3352
   title <- divTag$attribs[["title"]]
   value <- divTag$attribs[["data-value"]]
-  active <- isTabSelected(divTag)
+  active <- bslib:::isTabSelected(divTag)
   divTag <- tagAppendAttributes(divTag, class = if (active) "active")
   divTag$attribs$id <- id
   divTag$attribs$title <- NULL
   list(
     divTag = divTag,
     liTag = htmltools::tagAddRenderHook(
-      liTag(id, title, value, attr(divTag, "_shiny_icon")),
+      bslib:::liTag(id, title, value, attr(divTag, "_shiny_icon")),
       function(x) {
         if (isTRUE(bslib_getCurrentThemeVersion() >= 4)) {
           tagQuery(x)$
@@ -327,12 +326,11 @@ bslib_markTabAsSelected <- function(x) {
 #JGG ESTA
 # This function is called internally by navbarPage, tabsetPanel
 # and navlistPanel
-bslib_buildTabset <- function(..., ulClass, textFilter = NULL, id = NULL,
+bslib_buildTabset = function(..., ulClass, textFilter = NULL, id = NULL,
                         selected = NULL, foundSelected = FALSE) {
-
-  tabs <- dropNulls(list2(...))
-  res <- findAndMarkSelectedTab(tabs, selected, foundSelected)
-  tabs <- res$tabs
+  tabs = bslib_dropNulls(rlang::list2(...))
+  res = bslib:::findAndMarkSelectedTab(tabs, selected, foundSelected)
+  tabs = res$tabs
   foundSelected <- res$foundSelected
 
   # add input class if we have an id
@@ -436,7 +434,7 @@ bslib_is_tag <- function(x) {
 }
 
 bslib_containsSelectedTab <- function(tabs) {
-  any(vapply(tabs, isTabSelected, logical(1)))
+  any(vapply(tabs, bslib:::isTabSelected, logical(1)))
 }
 # Copy of shiny::bslib_getCurrentThemeVersion()
 # (copied to avoid >1.6.0 dependency)
@@ -462,7 +460,7 @@ bslib_as_fragment <- function(x, page = page_fluid) {
 #' @export
 bslib_page <- function(..., title = NULL, theme = bs_theme(), lang = NULL) {
 #JGG Para debug
-browser()
+
 data = shiny::bootstrapPage(..., title = title, theme = theme, lang = lang)
   bslib_as_page(data)
 
@@ -473,4 +471,8 @@ data = shiny::bootstrapPage(..., title = title, theme = theme, lang = lang)
 bslib_as_page <- function(x) {
   class(x) <- c("bslib_page", class(x))
   x
+}
+
+bslib_dropNulls <- function(x) {
+  x[!vapply(x, is.null, FUN.VALUE=logical(1))]
 }

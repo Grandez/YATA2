@@ -10,4 +10,4 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: shiny, bslib, shinyjs
-Depends: shinyjs
+Depends: shinyjs, shinyWidgets, shinydashboard

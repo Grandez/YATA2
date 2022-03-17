@@ -15,7 +15,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
      name       = NULL
     ,parent     = NULL  # Puntero al padre
     ,loaded     = FALSE # Flag de carga
-    ,factory    = NULL  # Puntero a Factory
+    ,factory    = NULL  # factory Singleton
     ,codes      = NULL  # short code to factory$codes
     ,parms      = NULL  # short code to factory$parms
     ,MSG        = NULL  # short code to factory$msgs
@@ -27,19 +27,20 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,initialize = function(id, parent, session, ns) {
         self$name         = id
         self$parent       = parent
-        if (!is.null(private$definition)) private$definition$id = id
+        web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})
+        self$factory = web$factory
+        #if (!is.null(private$definition)) private$definition$id = id
         # Typos
-        self$factory = YATAWEB$factory
-        self$codes   = self$factory$codes
+        self$codes   = self$factory$CODES
         self$parms   = self$factory$parms
         self$MSG     = self$factory$MSG
 #        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
-        private$loadCookies()
+#JGG        private$loadCookies()
         private$root = self$getRoot()
-        if (!missing(ns) && !is.null(self$cookies$layout)) {
-            self$layout = OBJLayout$new(ns)
-            self$layout$update(session, self$cookies$layout)
-        }
+        # if (!missing(ns) && !is.null(self$cookies$layout)) {
+        #     self$layout = OBJLayout$new(ns)
+        #     self$layout$update(session, self$cookies$layout)
+        # }
     }
     ,isRoot      = function() { FALSE }
     ,getParent = function(name) {
@@ -73,7 +74,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     # }
 #    ,getCookie = function(key) { self$vars$cookies[[key]] }
     ,setCookies = function() {
-        YATAWEB$setCookies(self$name, self$cookies)
+#        WEB$setCookies(self$name, self$cookies)
         invisible(self)
     }
     #   browser()
@@ -84,7 +85,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     #        } else {
     #            self$vars$cookies = list.merge(self$vars$cookies, data)
     #        }
-    #        YATAWEB$setCookies(self$name, self$vars$cookies)
+    #        WEB$setCookies(self$name, self$vars$cookies)
     #    }
     # }
     ,invalidate = function(panel) {
@@ -98,11 +99,11 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         if (!is.null(self$parent)) self$parent$reset(self$name)
         invisible(self)
     }
-    ,getDef = function() {
-       if (is.null(private$definition))
-           return (list(id=self$name, left=-1, right=-1, son=NULL, submodule=FALSE))
-        private$definition
-     }
+    # ,getDef = function() {
+    #    if (is.null(private$definition))
+    #        return (list(id=self$name, left=-1, right=-1, son=NULL, submodule=FALSE))
+    #     private$definition
+    #  }
     ##########################################################
     ### Acceso a root
     ##########################################################
@@ -130,8 +131,8 @@ YATAPanel = R6::R6Class("YATA.PANEL"
       ,root   = NULL
       ,.inEvent = FALSE
       ,loadCookies = function() {
-          cookies = YATAWEB$getCookies(self$name)
-          if (!is.null(cookies)) self$cookies = list.merge(self$cookies, cookies)
+          # cookies = WEB$getCookies(self$name)
+          # if (!is.null(cookies)) self$cookies = list.merge(self$cookies, cookies)
       }
   )
 )

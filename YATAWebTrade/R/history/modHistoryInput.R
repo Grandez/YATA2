@@ -1,7 +1,7 @@
 modHistInput = function(id, title) {
     ns = NS(id)
-    titCTC   = YATAWEB$getMsg("TITLE.CURRENCIES")
-    titPlots= YATAWEB$getMsg("TITLE.PLOTS")
+    titCTC   = WEB$getMsg("TITLE.CURRENCIES")
+    titPlots= WEB$getMsg("TITLE.PLOTS")
     choices  = c("None" = "", "Session" = "session", "Value" = "price", "Volume"="volume", "Capitalization"="cap")
     
     left = tagList(
@@ -24,8 +24,8 @@ modHistInput = function(id, title) {
     )
 
     pnl1 = tabsetPanel( id=ns("tabHist")
-                      ,tabPanel("Summary",   value=ns("summ"),  YATAModule(ns("summ")))
-                      ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
+                      ,tabPanel("Summary",   value=ns("summ"),  JGGModule(ns("summ")))
+                      ,tabPanel("",   value=ns("detail"),       JGGSubModule(ns("detail")))
                       ,tabPanel("",   value=ns("dummy"),     "")
           )
     pnl2 = YATATabPanel(ns("tabDetail"))

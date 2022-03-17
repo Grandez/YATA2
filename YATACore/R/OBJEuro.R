@@ -1,14 +1,14 @@
 # Maneja los cambios EUR, USD, USDC, USDT
-OBJEuro = R6::R6Class("OBJ.EURO"
+xOBJEuro = R6::R6Class("OBJ.EURO"
     ,inherit    = OBJBase
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
         print           = function() { message("Clearings Object")}
-       ,initialize      = function(factory) {
-           super$initialize(factory)
-           private$tblEuro = YATAFactory$getTable(YATACodes$tables$Sessions)
+       ,initialize      = function(Factory) {
+           super$initialize(Factory)
+           private$tblEuro = Factory$getTable(YATACodes$tables$Sessions)
        }
        ,lastExchange  = function(base, counter) {
            # Caso especial de USDC y USDT

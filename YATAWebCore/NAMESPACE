@@ -22,6 +22,7 @@ import(markdown)
 # import(DT)
 
 # YATA
+import(YATABase)
 
 exportPattern("YATA.*")
 exportPattern("yata.*")

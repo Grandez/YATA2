@@ -36,7 +36,7 @@ CREATE TABLE HISTORY  (
 DROP TABLE  IF EXISTS SESSION;
 CREATE TABLE SESSION  (
     ID        INTEGER       NOT NULL
-   ,SYMBOL    VARCHAR(18)   NOT NULL
+   ,SYMBOL    VARCHAR(64)   NOT NULL
    ,PRICE     DOUBLE   
    ,VOLUME    DOUBLE   
    ,RANK      INTEGER
@@ -53,9 +53,8 @@ CREATE TABLE SESSION  (
    ,TURNOVER  DOUBLE
    ,TMS       TIMESTAMP     NOT NULL
    ,LAST      TIMESTAMP     NOT NULL   
-   ,PRIMARY KEY (ID, TMS DESC)
-   ,INDEX       (SYMBOL)
-   ,INDEX       (LAST)
+   ,PRIMARY KEY (ID, LAST DESC)
+   ,INDEX       (SYMBOL, LAST DESC)
 );
 
 
@@ -63,11 +62,12 @@ CREATE TABLE SESSION  (
 -- Contiene la ultima vez que se acutalizo session
 -- Nos evita hacer una query 
 -- Evita que haya monedas con diferentes tms
+-- OJO Hay problemas con los time zone en timestamp
 -- ----------------------------------------------------------
 DROP TABLE  IF EXISTS SESSION_CTRL;
 CREATE TABLE SESSION_CTRL  (
-     ID        INTEGER       NOT NULL
-    ,TMS       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+     ID        INTEGER  NOT NULL
+    ,TMS       BIGINT   DEFAULT 0
    ,PRIMARY KEY (ID)
 );
 
