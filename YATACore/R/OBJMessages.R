@@ -35,6 +35,11 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           }
           map
       }
+      ,getBlockAsVector = function(block) {
+          df = tblMsg$table(block = block)
+          c(df$msg)
+      }
+
       ,title    = function(code)  { getMessage(paste0("TITLE.", code)) }
     )
     ,private = list(

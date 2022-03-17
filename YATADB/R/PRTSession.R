@@ -11,7 +11,7 @@ PRTSession = R6::R6Class("PART.SESION"
          ,getLastUpdate = function() {
              tblControl$select(id=1)
              if (is.null(tblControl$current)) return (0)
-             tblControl$current$tms
+             as.numeric(tblControl$current$tms)
          }
          ,update = function(data, isolated = FALSE) {
              if (nrow(data) == 0) return (invisible(self))
@@ -22,9 +22,7 @@ PRTSession = R6::R6Class("PART.SESION"
              invisible(self)
          }
          ,getLatest     = function() {
-             last = getLastUpdate()
-             if (is.null(last)) return (data.frame())
-             table(last=last)
+             table(last=max("last"))
          }
      )
      ,private = list (

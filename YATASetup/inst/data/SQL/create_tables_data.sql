@@ -39,7 +39,7 @@ CREATE TABLE SESSION  (
    ,SYMBOL    VARCHAR(64)   NOT NULL
    ,PRICE     DOUBLE   
    ,VOLUME    DOUBLE   
-   ,RANK      INTEGER
+   ,RANK      INTEGER     DEFAULT 1001 -- Required to filter
    ,VAR01     DOUBLE
    ,VAR24     DOUBLE
    ,VAR07     DOUBLE

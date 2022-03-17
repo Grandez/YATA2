@@ -102,8 +102,9 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
                lst = lapply(data2, function(x) {
                       quote = x$quotes[[1]]
-                      list( id=x$id
-                           ,symbol=x$symbol
+                      list( id     = x$id
+                           ,rank   = as.integer(x$cmcRank)
+                           ,symbol = x$symbol
                            ,price  = ifelse(is.null(quote$price),            0, quote$price)
                            ,volume = ifelse(is.null(quote$volume24),         0, quote$volume24)
                            ,vol24  = ifelse(is.null(quote$volume24),         0, quote$volume24)

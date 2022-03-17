@@ -241,3 +241,32 @@ Recibe Alive
 Recibe Alive
 Recibe Alive
 Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Initializing YATAREST
+Init hecho{"timestamp":"2022-03-17 22:03:54.806658","level":"INFO","name":"Application","pid":12364,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=12364), 2 server(s) --
+(This session will block until Rserve is shut down)
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive
+Recibe Alive

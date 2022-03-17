@@ -15,6 +15,7 @@ TBLSession = R6::R6Class("TBL.SESSION"
          fields = list(
              id        = "ID"
             ,symbol    = "SYMBOL"
+            ,rank      = "RANK"
             ,price     = "PRICE"
             ,hour      = "VAR01"
             ,day       = "VAR24"

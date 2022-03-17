@@ -36,6 +36,7 @@ YATACODES = R6::R6Class("YATA.CODES"
         ,sessionCtrl    = "SessionCtrl"
         ,blog           = "Blog"
         ,history        = "History"
+        ,favorites      = "Favorites"
     )
     ,flag = list(inactive=0, active=1, parent=2)
     ,oper = list( oper  =  0

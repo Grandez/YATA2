@@ -73,11 +73,11 @@ OBJSession = R6::R6Class("OBJ.SESSION"
 
        ,updateLatest = function(max = 0) {
            # Evitamos procesar todo de golpe y posibles bloqueos
-           posix = as.POSIXct(Sys.time(), tz="GMT")
-           last = format(posix, format = "%Y-%m-%d-%H:%M:%S")
+           now = lubridate::now("UTC")
+           last = format(now, format = "%Y-%m-%d-%H:%M:%S")
            tms = prtSession$getLastUpdate()
            # Se ha llamado en el mismo timestamp (minuto)
-           if (abs(as.integer(posix) - tms) < 60) return (invisible(self))
+           if ((as.integer(now) - tms) < 60) return (invisible(self))
 
            data = provider$getTickers(500, 1)
            if (max == 0) max = data$total

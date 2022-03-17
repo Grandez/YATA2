@@ -132,6 +132,12 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1,  "6"        ,
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1, "10"        ,"XX", "XX"     , "Regularizacion"  );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1, "16"        ,"XX", "XX"     , "Cierre"          );
 
+-- 2 = Periodos. Code numerico para ordenar 
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2,  "1"  ,"XX", "XX"     , "Hora"             );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2,  "2"  ,"XX", "XX"     , "Dia"              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2,  "3"  ,"XX", "XX"     , "Semana"           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2,  "4"  ,"XX", "XX"     , "Mes"              );
+
 -- 10 Monitores
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.CTC.COST"        ,"XX", "XX"     , "Coste"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 10, "MON.CTC.SESSION"     ,"XX", "XX"     , "Sesion"                                       );

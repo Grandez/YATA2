@@ -19,3 +19,16 @@ prfx-container
 Donde `prfx` es el id del panel
 
 Para evitar abstracciones y complejidades innecesarias, asumiremos que en tiempo de diseño se conoce si una determinada pagina puede tener un panel lateral con uno o dos componentes, el del "padre" y el propio.
+
+### Paneles laterales
+
+La parte derecha 
+
+jgg_page_header
+    jgg_page_brand
+       jgg_left_side
+          jgg_open_left_open
+          jgg-open_left_close
+          
+jgg_left_side aparece si la pagina no tiene left = 0          
+    

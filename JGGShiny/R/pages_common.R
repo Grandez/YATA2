@@ -3,6 +3,8 @@ custom_css = function(cssFiles) {
          tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jggshiny.css")
         ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/template.css")
         ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/skin_bootstrap_default.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_dashboard.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_reactable.css")
         ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/skin_default.css")
     )
     cssLink = NULL

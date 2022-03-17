@@ -263,7 +263,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
           filter = mountWhere(..., inValues=inValues)
           sql = paste("SELECT MAX(", fields[field], ") FROM ", tblName, filter$sql)
           df = db$query(sql, params=filter$values)
-          as.numeric(df[1,1])
+          if (nrow(df) == 0) return (NULL)
+          df[1,1]
        }
 
       ,update  = function(lstValues, ..., isolated=FALSE) {

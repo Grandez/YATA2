@@ -1,0 +1,6 @@
+/*********************************/
+/* Sobreescribe reactable        */
+/*********************************/
+.rt-compact .rt-td, .rt-compact .rt-th {
+	padding: 0;
+}

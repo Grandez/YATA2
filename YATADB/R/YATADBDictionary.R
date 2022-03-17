@@ -30,6 +30,7 @@ DBDict = list(
       ,Flows          = "FLOWS"
       ,Blog           = "BLOG"
       ,Transfers      = "TRANSFERS"
+      ,Favorites      = "FAVORITES"
     )
     ,fields = list(
          active    = "ACTIVE"

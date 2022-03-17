@@ -78,6 +78,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
          }
           
          ,updateBest = function() {
+             #JGG 0,26,101 son numeros de rango
+             #JGG 0 - todos
+             #JGG 26 Serian los de mejor rango
+             #JGG 101 Pendiente de favoritoss
             df = self$session$getLatest()
             self$data$dfBest = private$sortBest(df,   0)
             self$data$dfTop  = private$sortBest(df,  26)
@@ -154,9 +158,14 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       df =  df %>% select(symbol, price, hour, day, week, month)
       df$symbol = WEB$getCTCLabels(df$symbol)
       data = list(df = df, cols=NULL, info=NULL)
+      buttons = list( Button_buy=yuiBtnIconBuy("Comprar")
+                     ,Button_fav=ifelse(table == "Fav",
+                         yuiBtnIconFavDel("Eliminar"),
+                         yuiBtnIconFavAdd("Favorito")
+                         ))
       data$info=list( event=ns("tableBest"), target=table
                      ,types=list(pvl = c("Hour", "Day", "Week", "Month"), imp=c("Price"))
-                     ,buttons = list(Button_buy=yuiBtnIconBuy("Comprar"))
+                     ,buttons = buttons # list(Button_buy=yuiBtnIconBuy("Comprar"))
                     )
       data
     }
@@ -413,12 +422,15 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       }
        renderBestTables = function() {
       #WEB$beg("renderBest")
-          period = c("Hora", "Dia", "Semana", "Mes")
+           browser()
+          period = pnl$MSG$getBlockAsVector(2)
+          #period = c("Hora", "Dia", "Semana", "Mes")
           lbl = period[as.integer(input$cboBestFrom)]
 
           output$lblBest = updLabelText(paste("Mejores", lbl))
           output$lblTop  = updLabelText(paste("Top:  Mejores", lbl))
           output$lblFav  = updLabelText(paste("Favoritos: Mejores", lbl))
+          browser()
           # WATCH Lazy evaluation
           data1 = prepareBest(pnl$data$dfBest, "Best")
           if (!is.null(data1$df)) output$tblBest = updTableMultiple(data1)
