@@ -1,5 +1,4 @@
 getLatest = function(console=1, log=1) {
-    browser()
     count = 0
     begin = as.numeric(Sys.time())
     rc = tryCatch({

@@ -158,11 +158,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       df =  df %>% select(symbol, price, hour, day, week, month)
       df$symbol = WEB$getCTCLabels(df$symbol)
       data = list(df = df, cols=NULL, info=NULL)
-      buttons = list( Button_buy=yuiBtnIconBuy("Comprar")
-                     ,Button_fav=ifelse(table == "Fav",
-                         yuiBtnIconFavDel("Eliminar"),
-                         yuiBtnIconFavAdd("Favorito")
-                         ))
+      buttons = list( Button_buy=yuiBtnIconBuy("Comprar"))
+      if (table == "Fav") buttons$Button_fav = yuiBtnIconFavDel("Eliminar")
+      if (table != "Fav") buttons$Button_fav = yuiBtnIconFavAdd("Favorito")          
+      
       data$info=list( event=ns("tableBest"), target=table
                      ,types=list(pvl = c("Hour", "Day", "Week", "Month"), imp=c("Price"))
                      ,buttons = buttons # list(Button_buy=yuiBtnIconBuy("Comprar"))
@@ -170,7 +169,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       data
     }
     moduleServer(id, function(input, output, session) {
-       #WEB$beg("Position Server")
        pnl = WEB$getPanel(id)
        if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(session))
        flags = reactiveValues(
@@ -186,7 +184,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            ,tab       = FALSE
        )
        initPage = function() {
-          #WEB$beg("initPage")
           renderUIPosition()    # Preparar tabla posiciones
           updNumericInput("numInterval", pnl$cookies$interval)
           output$dtLast = updLabelDate({Sys.time()})
@@ -195,7 +192,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           updNumericInput("numInterval", value = pnl$cookies$interval)
           updNumericInput("numHistory",  value = pnl$cookies$history)
           updRadio("radPosition",        selected = pnl$cookies$position)
-#          pnl$monitors$render() 
 
           # Este es el que tarda por que es Windows
           df = pnl$data$dfGlobal
@@ -390,7 +386,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ###########################################################
 
        renderUIPosition = function() {
-           #WEB$beg("renderUIPosition")
+           browser()
           cameraUI = function(camera) {
              suffix  = YATABase$str$titleCase(camera)
              cam     = pnl$cameras$getCameraName(camera)
@@ -418,27 +414,22 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              }
           }
           insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)           
-          #WEB$end("renderUIPosition")
       }
        renderBestTables = function() {
-      #WEB$beg("renderBest")
-           browser()
           period = pnl$MSG$getBlockAsVector(2)
-          #period = c("Hora", "Dia", "Semana", "Mes")
           lbl = period[as.integer(input$cboBestFrom)]
 
           output$lblBest = updLabelText(paste("Mejores", lbl))
           output$lblTop  = updLabelText(paste("Top:  Mejores", lbl))
           output$lblFav  = updLabelText(paste("Favoritos: Mejores", lbl))
           browser()
-          # WATCH Lazy evaluation
+
           data1 = prepareBest(pnl$data$dfBest, "Best")
           if (!is.null(data1$df)) output$tblBest = updTableMultiple(data1)
           data2 = prepareBest(pnl$data$dfTop, "Top")
           if (!is.null(data2$df)) output$tblTop = updTableMultiple(data2)
           data3 = prepareBest(pnl$data$dfFav, "Fav")
           if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
-          #WEB$end("renderBest")
        }
        renderPlotSession = function(uiPlot) {
 #          if (pnl$vars$sessionChanged) {
@@ -512,10 +503,12 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       })
       observeEvent(input$numHistory,  ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
       observeEvent(input$chkMonitors, ignoreInit = TRUE, {
+          browser()
          pnl$cookies$monitor = input$chkMonitors
          #JGGshinyjs::toggle("monitor", anim=TRUE)
       })
       observeEvent(input$btnLayoutOK, {
+          browser()
           pnl$setCookies()
           session$sendCustomMessage(type = 'closeLeftSide',message = "close")
       })

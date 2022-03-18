@@ -30,10 +30,7 @@ document_ready_script = function(jsInit, title) {
     code = paste0(code, "   globalThis.jggshiny = new JGGShiny();  \n")
     code = paste(code, "    jggshiny.init('", title, "');   \n")
     if (!is.null(jsInit)) {
-        for (js in jsInit) {
-             txt = paste0("   $.", js, ".init();")
-             code = paste(code, txt, sep="\n")
-        }
+        for (js in jsInit) code = paste(code, js, sep="\n")
     }
     code = paste0(code, "\n});\n")
     tags$script(code)

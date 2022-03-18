@@ -4,7 +4,7 @@ JGGDashboardFull = function( title    = NULL
                               ,paths    = NULL
                               ,cssFiles = NULL
                               ,jsFiles  = NULL
-                              ,jsInit = NULL
+                              ,jsInit   = NULL
                               ,titleActive = FALSE
                               ,lang    = NULL
                               ,...) {

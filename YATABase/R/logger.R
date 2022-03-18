@@ -69,7 +69,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,executed  = function(rc, begin, fmt, ...) {
           diff = as.numeric(Sys.time()) - begin
           pattern = paste0("%d;%f;", fmt)
-          println(self$PROCESS, 0, .mountMessage(pattern, rc, diff, ...))
+          .println(self$PROCESS, 0, .mountMessage(pattern, rc, diff, ...))
            if (.logLevel > 0) {
                .toConsole(self$SUMMARY, 1, paste("Elapsed time:", diff))
                .toConsole(self$SUMMARY, 1, paste("Return code :", rc))

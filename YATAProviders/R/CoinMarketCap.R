@@ -123,7 +123,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                      })
                df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
                                ,stringsAsFactors=FALSE)
-               colnames(df) = c( "id",        "symbol", "price"
+               colnames(df) = c( "id",        "rank", "symbol", "price"
                                 ,"volume",    "volday", "volweek", "volmonth"
                                 ,"hour",      "day",    "week",    "month",   "bimonth", "quarter"
                                 ,"dominance", "turnover", "tms")
