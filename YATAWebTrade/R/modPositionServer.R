@@ -419,7 +419,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)           
       }
        renderBestTables = function() {
-           browser()
           period = pnl$MSG$getBlockAsVector(2)
           lbl = period[as.integer(input$cboBestFrom)]
 

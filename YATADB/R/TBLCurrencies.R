@@ -46,6 +46,7 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
               ,icon    = "ICON"
               ,since   = "SINCE"
               ,active  = "ACTIVE"
+              ,mktcap  = "MKTCAP"
               ,tms     = "TMS"
           )
          ,hMap = NULL
