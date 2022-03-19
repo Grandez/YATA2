@@ -14,6 +14,7 @@ YATACODES = R6::R6Class("YATA.CODES"
      ,session    = "Session"
      ,blog       = "Blog"
      ,history    = "History"
+     ,favorites = "Favorites"
      ,SVG        = "SVG"
     )
     ,tables = list(

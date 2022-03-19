@@ -23,6 +23,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              private$makePlots()
          }
          ,loadData = function() {
+             browser()
              self$vars$sessionChanged = FALSE
              private$loadPosition()
            
@@ -32,10 +33,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                  self$data$dfSession = self$session$getSessionPrices(ctc)
                  self$vars$sessionChanged = TRUE
              }
-             
+             self$monitors$render()
              self$updateBest()
-             self$loaded = TRUE
              js$jgg_set_layout(id)
+             self$loaded = TRUE
              invisible(self)
          }
          ,updateData = function() {
@@ -418,6 +419,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)           
       }
        renderBestTables = function() {
+           browser()
           period = pnl$MSG$getBlockAsVector(2)
           lbl = period[as.integer(input$cboBestFrom)]
 

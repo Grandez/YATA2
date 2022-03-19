@@ -7,7 +7,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
         print           = function() { message("Position")}
        ,initialize      = function(Factory) {
            super$initialize(Factory)
-           private$tblPosition = Factory$getTable(YATACodes$tables$position)
+           private$tblPosition = Factory$getTable(self$codes$tables$position)
        }
        ,getCameras = function() {
           df = tblPosition$getCameras()
@@ -30,12 +30,14 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
-           oper = factory$getObject(YATACodes$object$operation)
-           cIn  = oper$getOperations(base="EXT")
-           cOut = oper$getOperations(counter="EXT")
-           inv  = getGlobalPosition()
-           inv  = inv[inv$currency != fiat,]
-           list(total = sum(cIn$amount), reimb=sum(cOut$amount) * -1, invest=sum(inv$balance * inv$priceBuy))
+           df = tblPosition$getCurrencyPosition("FIAT")
+           # oper = Factory$getObject(self$codes$object$operation)
+           # cIn  = oper$getOperations(base="EXT")
+           # cOut = oper$getOperations(counter="EXT")
+           # inv  = getGlobalPosition()
+           # inv  = inv[inv$currency != fiat,]
+           # list(total = sum(cIn$amount), reimb=sum(cOut$amount) * -1, invest=sum(inv$balance * inv$priceBuy))
+list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
       }
        ,getHistoryCurrencies = function() {
          df = tblPosition$table()

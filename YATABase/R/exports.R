@@ -16,6 +16,5 @@ args2list = function(...) {
   }
   args
 }
-map = function() {
-   YATABaseMap$new()
-}
+map = function() { YATABaseMap$new() }
+str = function() { YATABaseStr$new() }

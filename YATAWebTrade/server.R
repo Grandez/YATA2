@@ -106,7 +106,11 @@ function(input, output, session) {
    # Vamos a usar req para evitar cargar todo
    # "test"
    observeEvent(input$mainMenu,{
-        eval(parse(text=paste0("mod", YATABase$str$titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, parent=session)")))
+        eval(parse(text=paste0( "mod"
+                               ,YATABase$str$titleCase(input$mainMenu)
+                               ,"Server(input$mainMenu
+                               ,''
+                               ,pnl, parent=session)")))
     })
    observeEvent(input$btnKO, { closePanel() })
    observeEvent(input$btnDBChanged, { 

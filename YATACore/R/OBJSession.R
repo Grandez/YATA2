@@ -27,7 +27,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        }
        ,getLatest = function(currencies = NULL) {
            df = prtSession$getLatest()
-           if (!is.null(currencies)) df = df[df$symbol %in% currencies,]
+           if (!is.null(currencies)) df = df[df$id %in% currencies,]
            df
         }
        # ,getHistorical = function(base, idCurrency, from, to, period=24) {

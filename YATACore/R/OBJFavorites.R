@@ -1,0 +1,29 @@
+OBJFavorites = R6::R6Class("OBJ.FAVORITES"
+    ,inherit    = OBJBase
+    ,portable   = FALSE
+    ,cloneable  = FALSE
+    ,lock_class = TRUE
+    ,public = list(
+        print          = function() { message("Favorites")}
+       ,initialize     = function(Factory) {
+           super$initialize(Factory)
+           private$tblFavorites  = Factory$getTable(self$codes$tables$favorites)
+           private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
+       }
+       ,add     = function(data, isolated=FALSE) {
+           stop("Pendiente de implementar")
+       }
+       ,remove   = function(data, isolated=FALSE) {
+           stop("Pendiente de implementar")
+       }
+       ,get  = function() {
+           dff = tblFavorites$table()
+           dfc = tblCurrencies$table(inValues=list(id=as.vector(dff$id)))
+           inner_join(dff,dfc,by=c("id", "symbol"))
+        }
+    )
+    ,private = list(
+         tblFavorites = NULL
+        ,tblCurrencies = NULL
+    )
+)

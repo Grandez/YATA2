@@ -11,7 +11,6 @@ YATAWEBDEF = list (
     ,iconDef   = 'icons2/YATA.png'      # Icono por defecto si no encontrado
     ,iconSize  = "60px"                 # Size of icons
     ,iconSizeMedium = "48px"                 # Size of icons
-    ,jsapp     = "$.yata"                 # Objecto Javascript YATA
     ,lang      = "es"
 )
 

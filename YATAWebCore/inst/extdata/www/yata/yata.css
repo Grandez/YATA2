@@ -9,3 +9,69 @@
    max-height: 10px;
    overflow: hidden;
 }
+
+/*********************************/
+/* Monitor                       */
+/*********************************/
+
+.yata_monitors {
+    padding-bottom: 1em;
+    font-size: 1.25em;
+    display: flex;
+    flex-direction: row;
+    padding-top: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+.yata_monitor_container {
+    padding-right: 6px;
+}
+.yata_tbl_monitor {
+    border: 1px solid blue;
+    border-spacing: 0;
+    line-height: 14px;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+.yata_tbl_monitor_fiat {
+    margin-left: auto;
+    padding-bottom: 1em;
+    font-size: 1.25em;
+    padding-top: 3px;
+}
+.yata_cell_icon {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.yata_cell_label {
+    text-align: left;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+}
+.yata_cell_data {
+    text-align: right;
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    vertical-align: middle;
+    min-width: 5em;
+    font-weight: bold;
+}
+.yata_cell_data_up   { color: green; }
+.yata_cell_data_down { color: red;   }
+
+.yata_cell_ctc {
+    text-align: center;
+    padding: 2px 0.5em 0 0.5em;
+    margin: 0;
+    font-weight: bold;
+}
+
+.yata_cell_group {
+    padding-top: 6px;
+    vertical-align: middle;
+}
+
+.yataIconDelta {
+    display: flex;
+}

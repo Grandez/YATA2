@@ -47,7 +47,7 @@ modPosInput = function(id, title) {
                      ,hidden(tags$div(id=ns("PosCameras")))
             )
     )
-    main = tagList( fluidRow(id=ns("monitor")), wdgLayout$getBody(blocks))
+    main = tagList( guiRow(id=ns("monitor"), class="yata_monitors"), wdgLayout$getBody(blocks))
     
     list(left=left, main=main, right=NULL)           
 }

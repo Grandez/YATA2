@@ -4,9 +4,7 @@ guiTitle = function(level, txt, ...) {
 }
 
 guiRow = function(id=NULL, style=NULL, class=NULL, ...) {
-  if (!is.null(id)) res = shiny::fluidRow(id=id,...)
-  else              res = shiny::fluidRow(...)
-  res
+  tags$div(id=id,style=style,class=c("row", class),...)
 }
 guiColumn = function(width, ...) {
     if (!is.numeric(width) || (width < 1) || (width > 12)) stop("column width must be between 1 and 12")
