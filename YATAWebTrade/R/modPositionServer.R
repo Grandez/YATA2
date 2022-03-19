@@ -26,7 +26,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$vars$sessionChanged = FALSE
              private$loadPosition()
            
-#             self$monitors = WDGMonitor$new(ns("monitor"), self, WEB)
+             self$monitors = WDGMonitor$new(ns("monitor"), self, WEB)
              if (!is.null(self$data$dfGlobal)) {
                  ctc = self$data$dfGlobal$currency
                  self$data$dfSession = self$session$getSessionPrices(ctc)
@@ -35,6 +35,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              
              self$updateBest()
              self$loaded = TRUE
+             js$jgg_set_layout(id)
              invisible(self)
          }
          ,updateData = function() {
@@ -100,7 +101,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$cookies$interval = 15
              self$cookies$best = list(top = 10, from = 2)
              self$cookies$history = 15
-             self$cookies$layout = matrix(c("plotHist","blkTop","plotSession","Position"),ncol=2)
+             # Default widgets
+             widgets = c("plotHist","blkTop","plotSession","Position")
+             self$cookies$layout = matrix(widgets,ncol=2)
              self$cookies$position = "Global"
              self$data$dfGlobal = NULL
         }
@@ -386,7 +389,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ###########################################################
 
        renderUIPosition = function() {
-           browser()
           cameraUI = function(camera) {
              suffix  = YATABase$str$titleCase(camera)
              cam     = pnl$cameras$getCameraName(camera)
@@ -422,7 +424,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           output$lblBest = updLabelText(paste("Mejores", lbl))
           output$lblTop  = updLabelText(paste("Top:  Mejores", lbl))
           output$lblFav  = updLabelText(paste("Favoritos: Mejores", lbl))
-          browser()
 
           data1 = prepareBest(pnl$data$dfBest, "Best")
           if (!is.null(data1$df)) output$tblBest = updTableMultiple(data1)

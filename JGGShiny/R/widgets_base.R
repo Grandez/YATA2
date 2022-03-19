@@ -1,3 +1,8 @@
+guiTitle = function(level, txt, ...) {
+  data = sprintf(txt, ...)
+  eval(parse(text=paste0("h", level, "(class='jgg_title_", level, "', '", data, "')")))
+}
+
 guiRow = function(id=NULL, style=NULL, class=NULL, ...) {
   if (!is.null(id)) res = shiny::fluidRow(id=id,...)
   else              res = shiny::fluidRow(...)
@@ -83,4 +88,22 @@ guiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = 
 }
 updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain()) {
   updateTextAreaInput(session, id, label=label, value=text)
+}
+
+# Cambiamos selectInput para añadir la clase yata_layout
+guiLayoutSelect = function (inputId, choices, selected = NULL, full=TRUE) {
+   cls = "form-control"
+   if (full) cls = paste(cls, "jgg_layout")
+   else      cls = paste(cls, "jgg_layout_notify")
+
+   selected = restoreInput(id = inputId, default = selected)
+   choices = shiny:::choicesWithNames(choices)
+   if (is.null(selected)) selected = shiny:::firstChoice(choices)
+   else                   selected = as.character(selected)
+
+   selectTag <- tags$select( id = inputId, class = cls, size = NULL
+                            ,shiny:::selectOptions(choices, selected, inputId, FALSE))
+   div( class = "form-group shiny-input-container"
+       ,style = css(width = validateCssUnit("auto"))
+       ,shiny:::shinyInputLabel(inputId, NULL), div(selectTag))
 }

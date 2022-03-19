@@ -10,7 +10,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
   ,lock_class = TRUE
   ,public = list(
       initialize = function(id, pnl, env) {
-          private$monitors = YATABase$map
+          private$monitors = YATABase::map()
           private$idDiv = paste0("#", id)
           private$pnl = pnl
           private$env = env
@@ -58,7 +58,6 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
       ,clsLbl   = "yata_cell_label"
       ,clsData  = "yata_cell_data"
       ,initMonitors  = function() {
-          browser()
           createMonitor = function(sym, dfPos, dfLast, names) {
               mon         = as.list(dfLast[dfLast$symbol == sym,])
               mon$name    = names[[sym]]
@@ -76,8 +75,8 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           ctc = unique(c(df$currency, "BTC", "ETH"))
           if (length(ctc) > 6) ctc = ctc[1:6]
 
-          private$session = pnl$factory$getObject("Session")
-          private$pos     = pnl$factory$getObject("Position")
+          private$session = pnl$factory$getObject(pnl$codes$object$session)
+          private$pos     = pnl$factory$getObject(pnl$codes$object$position)
           dfs             = session$getLatest(ctc)
           names           = WEB$getCTCLabels(ctc, type="name")
           lapply(ctc, function(sym) createMonitor(sym, df, dfs, names))

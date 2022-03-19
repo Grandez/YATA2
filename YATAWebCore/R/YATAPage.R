@@ -28,7 +28,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
     customCSS = list("yata/yata.css")
     jsInit = c( "   globalThis.yata = new YATA();"
                ,"   yata.init();"
-               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"
+#               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"
               )
 
     JGGDashboardFull( title,  id

@@ -18,136 +18,10 @@ class YATA {
 //      this.#panels = new Map();
    }
    init() {
-       this.#add_listeners();
+//       this.#add_listeners();
    }
 
-show_block(data) {
-    // Pone y quita bloques
-    alert('SHOW BLOCK');
-    var idParent    = data.ns + "-block_" + data.row;
-    if (data.col !== 0) idParent = idParent + "_" + data.col;
-    const parent = document.getElementById(idParent);
-    const child  = document.getElementById(data.ns + "-" + data.block);
-    const blocks = document.getElementById(data.ns + "-blocks");
-    var childs   = parent.children;
-
-    if (data.block == "none") {
-        parent.style.display = "none";
-    } else {
-        parent.appendChild(child);
-        parent.style.display = "";
-        for (var i = 0; i < childs.length - 1; i++) {
-             const hijo =  document.getElementById(childs[i].id);
-             blocks.appendChild(hijo);
-        }
-    }
-}
-
-layout_update = function (data) {
-   alert("yataUpdataeLayout: \n" + data);
-   return;
-   let id = data[0];
-   let tgt = data[1];
-   let idParent = id.replace("cboLayout", "block");
-   let col = idParent[idParent.length - 1];
-
-   let toks = id.split("-");
-   let item = toks.pop();
-   const panel = toks.join("-");
-
-   let pat = idParent.substr(0, idParent.length - 1);
-   let diva = document.getElementById(pat + "a");
-   let divb = document.getElementById(pat + "b");
-   let div1 = document.getElementById(pat + "1");
-   let div2 = document.getElementById(pat + "2");
-   let blocks = document.getElementById(panel + "-blocks");
-
-   diva.style.display = (tgt == "none") ? ""     : "none";
-   divb.style.display = (tgt == "none") ? "none" : "";
-
-   if (tgt == "none" || diva.children.length > 0) {
-       let div  = (col == "1")    ? div2 : div1;
-       let from = (tgt == "none") ? div  : diva;
-       let to   = (tgt == "none") ? diva : div;
-       this.#moveLayout(from, to);
-   }
-   if (tgt != "none") {
-       let parent = document.getElementById(id.replace("cboLayout", "block"));
-       let child  = document.getElementById(panel + "-" + tgt);
-       this.#moveLayout(parent, blocks);
-       parent.appendChild(child);
-   }
-   let nfo = id.split("_");
-   let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
-   Shiny.setInputValue(panel + "-layout", evt);
-}
-  layout_changed(event) {
-      alert('layout changed');
-      this.shiny_update_layout([event.currentTarget.id, event.target.value]);
-   }
-  layout_notify(evt) {
-    //CHECKED
-      toks = evt.target.id.split("_");
-      let data = {"value": evt.target.value, "row": toks[1]};
-      if (toks.length > 2) {
-          data.col = toks[2];
-          if (toks.length > 3) data.colZ = toks[3];
-      }
-      Shiny.setInputValue(toks[0], data);
-
-   }
-  shiny_update_layout(data) {
-    //CHECKED
-   alert("yataUpdataeLayout: \n" + data);
-   let id = data[0];
-   let tgt = data[1];
-
-//      let id = event.currentTarget.id;
-//      let tgt = event.target.value;
-
-     let idParent = id.replace("cboLayout", "block");
-     let col = idParent[idParent.length - 1];
-
-     let toks = id.split("-");
-     let item = toks.pop();
-     const panel = toks.join("-");
-
-     let pat = idParent.substr(0, idParent.length - 1);
-     let diva = document.getElementById(pat + "a");
-     let divb = document.getElementById(pat + "b");
-     let div1 = document.getElementById(pat + "1");
-     let div2 = document.getElementById(pat + "2");
-     let blocks = document.getElementById(panel + "-blocks");
-
-     diva.style.display = (tgt == "none") ? ""     : "none";
-     divb.style.display = (tgt == "none") ? "none" : "";
-
-     if (tgt == "none" || diva.children.length > 0) {
-         let div  = (col == "1")    ? div2 : div1;
-         let from = (tgt == "none") ? div  : diva;
-         let to   = (tgt == "none") ? diva : div;
-         this._moveChildren(from, to);
-     }
-     if (tgt != "none") {
-         let parent = document.getElementById(id.replace("cboLayout", "block"));
-         let child  = document.getElementById(panel + "-" + tgt);
-         this._moveChildren(parent, blocks);
-         parent.appendChild(child);
-     }
-     let nfo = id.split("_");
-     let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
-     Shiny.setInputValue(panel + "-layout", evt);
-  }
-
-#moveLayout(from, to) {
-   //CHECKED
-   // Called from yataUpdateLayout
-   let   childs   = from.children;
-   for (let i = 0; i < childs.length; i++) {
-        let hijo =  document.getElementById(childs[i].id);
-        to.appendChild(hijo);
-    }
-}
+/*
 #add_listeners() {
    // Listener a los combos del layout
    let elements = document.getElementsByClassName("yata_layout");
@@ -159,7 +33,7 @@ layout_update = function (data) {
          element.addEventListener('change', function (event) { yata.layout_notify(event) });
    });
 }
-
+*/
 }
 
 $.yata = {

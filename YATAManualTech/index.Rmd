@@ -10,12 +10,12 @@ link-citations: yes
 
 # Prerequisites
 
-```{r eval=FALSE}
-install.packages("bookdown")
-library(abind)
-library(png)
-library(grid)
-library(fontawesome)
+```{r eval=FALSE, echo=FALSE}
+library("bookdown")
+#library(abind)
+#library(png)
+#library(grid)
+#library(fontawesome)
 
 # or the development version
 # devtools::install_github("rstudio/bookdown")

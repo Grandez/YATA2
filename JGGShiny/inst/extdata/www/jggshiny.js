@@ -6,7 +6,6 @@ shinyjs.init = function() {
   // $(document).keypress(function(e) { alert('Key pressed: ' + e.which); });
 };
 
-// Marca la pagina como activa
-shinyjs.jgg_set_page = function(name) { jggshiny.set_page(name); };
-// Pagina cargada
-shinyjs.jgg_add_page = function(name) { jggshiny.add_page(name); };
+shinyjs.jgg_set_page   = function(name) { jggshiny.set_page(name); }; // Pagina activa
+shinyjs.jgg_add_page   = function(name) { jggshiny.add_page(name); }; // Pagina cargada
+shinyjs.jgg_set_layout = function(id)   { jggshiny.layout_set(id); }; // Hace layout

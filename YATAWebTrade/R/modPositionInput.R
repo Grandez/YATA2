@@ -9,11 +9,11 @@ modPosInput = function(id, title) {
     vals = c("plotHist", "plotSession", "blkBest", "Position")
     mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", guiCheck(ns("chkMonitors"))))
 
-#   objLayout = OBJLayout$new(ns, c(2,2), blocks, values=vals, top = mon)
-       objLayout = OBJLayout$new(ns, c(2,2), blocks, values=vals)
+#   wdgLayout = wdgLayout$new(ns, c(2,2), blocks, values=vals, top = mon)
+       wdgLayout = WDGLayout$new(ns, c(2,2), blocks, values=vals)
    left = tagList(
          fluidRow(column(4, "Updated:"),column(8, guiLabelDate(ns("dtLast"))))
-        ,objLayout$getConfig()
+        ,wdgLayout$getConfig()
         ,fluidRow(column(4, "Interval"),column(8, guiNumericInput(ns("numInterval"))))
         ,fluidRow(column(4, "History") ,column(8, guiNumericInput(ns("numHistory"), value=15,step=1,min=7,max=90)))
         ,hr() 
@@ -47,7 +47,7 @@ modPosInput = function(id, title) {
                      ,hidden(tags$div(id=ns("PosCameras")))
             )
     )
-    main = tagList( fluidRow(id=ns("monitor")), objLayout$getBody(blocks))
+    main = tagList( fluidRow(id=ns("monitor")), wdgLayout$getBody(blocks))
     
     list(left=left, main=main, right=NULL)           
 }

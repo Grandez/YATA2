@@ -29,7 +29,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
       }
       ,getBlockAsMap = function(block) {
           df = tblMsg$table(block = block)
-          map = YATABase$map
+          map = YATABase::map()
           if (nrow(df) > 0) {
              lapply(1:nrow(df), function(row) map$put(df[row, "code"], df[row, "msg"]))
           }

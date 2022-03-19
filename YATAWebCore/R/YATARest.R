@@ -18,7 +18,7 @@ YATARest = R6::R6Class("YATA.REST"
      }
      ,check = function() {
          tryCatch({
-             httr::GET(paste0(.url,"alive"))
+             httr::GET(paste0(.url,"alive"), timeout(2))
              0
             },error = function(e) {
              99

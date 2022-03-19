@@ -16,3 +16,6 @@ args2list = function(...) {
   }
   args
 }
+map = function() {
+   YATABaseMap$new()
+}

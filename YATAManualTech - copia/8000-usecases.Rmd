@@ -1,0 +1,13 @@
+# Casos de uso
+
+## Introducción
+
+En esta sección tenemos diferentes casos de uso, condicionantes y "problemas"
+
+
+```{r, echo=FALSE}
+files = list.files("usecases", "*.Rmd", full.names=TRUE)
+```
+
+```{r,child=files}
+```

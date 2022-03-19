@@ -9,9 +9,10 @@
 .jgg_page_left {
 /*   width: 200px; */
   height: 100%;
-  background-color: #111;
+  background-color: lightskyblue;
   overflow-x: hidden;
   transition: 0.5s;
+  float: left;
 }
 .jgg_page_right {
 /*   width: 200px; */
@@ -36,7 +37,7 @@
    background-color: black;
    position: fixed;
    bottom: 0;
-/*   width: 100%; */
+   width: 100%;
    height: 32px;
    color: white;
 }
@@ -89,6 +90,73 @@
     cursor: pointer;
 }
 
+/*********************************/
+/* Basico                        */
+/*********************************/
+.jgg-title {
+  text-align: center;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 30px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+.jgg-title-1 {
+  text-align: center;
+}
+
+.jgg-title-2 {
+  text-align: center;
+}
+
+.jgg-title-3 {
+  text-align: center;
+}
+
+.jgg-title-4 {
+  text-align: center;
+}
+
+/*************************************
+ LAYOUT
+**************************************/
+.jgg_blocks_container {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  max-height: 10px;
+}
+
+.jgg_layout_table {
+    border: 1px solid navy;
+    border-collapse: collapse;
+    margin: 6px;
+    width: 95%;
+}
+.jgg_layout_row {
+    border-bottom: 1px solid navy;
+    border-collapse: collapse;
+}
+.jgg_layout_left {
+    border-right: 1px solid navy;
+    border-collapse: collapse;
+}
+.jgg_block_hide {
+    display: none;
+}
+
+/*************************************
+ END LAYOUT
+ **************************************/
+
+#jgg_tab_content {
+    padding: 0;
+    margin: 0;
+}
 #jgg_left_side {
     color: rgb(255,255,255);
 }
@@ -99,4 +167,8 @@
 
 .jgg_number {
   text-align: right;
+}
+
+.jgg_layout_row  .form-group {
+    margin-bottom: 0;
 }

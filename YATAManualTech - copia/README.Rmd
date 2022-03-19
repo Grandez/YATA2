@@ -1,0 +1,13 @@
+---
+title: YATA2 (Yet Another Trading Algorrithm)
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## YATADB
+
+This is the package encapsulating the persistence layer

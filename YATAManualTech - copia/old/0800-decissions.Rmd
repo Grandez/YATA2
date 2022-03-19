@@ -1,0 +1,78 @@
+# DATATABLE
+
+El problema de datatable es que usa unos estilos que crea dinamicamente
+se pueden saltar si se usa _style=auto_ y existe un tema **bslib** pero me ha fallado en el paquete (aunque me funcionaba en el codigo fuente)
+
+Por otro lado necesitamos diferentes tipos de tablas (moendas, posiciones,datos, etc)
+
+## Solucion
+- Creamos una instancia propia de DT (lease, clonamos el codigo): YATADataTable
+- Añadimos un parametro nuevo a renderDataTable: **type**. es el que no dara los estilos personalizados
+- Los estilos de cada tipo se definen en bslib como `table.display.__type__ items` 
+
+Siempre podemos usar DT
+
+## Samples
+
+Opciones de tabla:
+
+- tickers: Informacion de cotiaciones
+- accounts: Informacion de cuentas
+...
+
+## Implementacion
+
+1. Simplemente replicar el codigo de DT desde: `https://github.com/rstudio/DT.git`
+2. Cmabiar la funcion renderDatatable de datatables.R a YATARenderDataTable
+2. Modificar DESCRIPTION: `Package: YATADataTable`
+3. Modificar NAMESPACE para exportar el nuevo nombre de renderdata table
+3. en datatables.R, funcion datatable, añadir el parametro `type=NULL`
+4. en shiny.R cambiar enderDataTable por YATARenderDataTable (para que se exporte)
+5. Crear los estilos table.display.xxx cosas
+
+
+# Instalacion y configuracion
+
+El problema es que herramienta utilizar para instalar y configurar el sistema
+se puede hacer:
+1. A mano
+2. Script
+3. Programa
+4. Otro lenguaje
+
+La primera conclusion es que debe ser automatizado y por bloques; es decir, contemplar si es una instalacion limpia, o una actualizacion de software o una de datos o ...
+
+## Problemas
+
+### A mano
+
+Obliga a ejecutar un monton de comandos y de forma repetitiva
+Proclive a errores
+
+## Script
+
+En modo texto queda "pobre", con dialog es un poco limitado
+
+## programa
+
+Que programa usar? En C? Demasiado esfuerzo y complejo, al final se trata de ejecutar un conjunto de comandos 
+
+
+## Solucion
+
+La instalacion de la maquina inevitablemente tiene una parte manual:
+
+1. Configurar la red, usuarios, etc
+2. Instalar los paquetes minimos necesarios para luego ejecutar los scripts
+
+
+Podemos usar **Python** como lenguaje de scripting
+
+Hacer dos versiones:
+
+- Modo texto
+- Modo GUI
+
+El modo GUI usa el modo texto
+El modo texto es mas facil de testear y probar
+

@@ -11,7 +11,7 @@ jgg_bslib_navbarPage_ <- function(id, ...) {
                              ,selected = NULL, foundSelected = FALSE)
   # Aqui tenemos las dos partes
 
-  contentDiv = div(id="jgg_tab_content", class = c("container-fluid", "jgg_tab_content"))
+  contentDiv = div(id="jgg_tab_content", class = c("container-fluid"))
   contentDiv = tagAppendChild(contentDiv, tabset$content)
 
   tagList( navList=tags$nav(class = navbarClass, role = "navigation", tabset$navList)

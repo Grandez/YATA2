@@ -22,3 +22,24 @@ html, body {
 .navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
 	margin-bottom: 0 !important;
 }
+.container-fluid {
+    padding: 0;
+}
+.tmp_color_1 {
+    background-color: aliceblue;
+}
+.tmp_color_2 {
+    background-color: blueviolet;
+}
+.tmp_color_3 {
+    background-color: coral;
+}
+.tmp_color_4 {
+    background-color: cyan;
+}
+.tmp_color_5 {
+    background-color: darkblue;
+}
+.tmp_color_6 {
+    background-color: gray;
+}

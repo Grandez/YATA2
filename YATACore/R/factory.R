@@ -9,5 +9,6 @@ getFactory = function(force = FALSE) {
        assign("Factory",   fact,       envir=.GlobalEnv)
        assign("YATACodes", fact$CODES, envir=.GlobalEnv)
    }
+    message("DONE getFactory")
    Factory
 }
