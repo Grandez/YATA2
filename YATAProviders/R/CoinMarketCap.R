@@ -9,12 +9,11 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
    ,public = list(
        initialize = function(code, eurusd) { # }, dbf) {
           super$initialize  (code, "CoinMarketCap", eurusd) #, dbf)
+          private$base    = YATABase$new()
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
-          private$hID     = YATABase$map
-          #getLatest()
+          private$hID     = base$map()
        }
       ,getIcons = function(maximum, force=FALSE) {
-          browser()
           urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
           urlbase2 = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
           if (missing(maximum)) maximum=9999
@@ -60,7 +59,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                lst = lapply(data, function(x) {
                       since = ifelse(is.null(x$dateAdded), x$lastUpdated, x$dateAdded)
                       since = paste(substr(since,1,10),substr(since,12,19), sep="-")
-                      if (nchar(x$symbol) > 20) x$symbol = substr(x$symbol,1,20)
+                      if (nchar(x$symbol) > 64) x$symbol = substr(x$symbol,1,64)
                       list( id=as.integer(x$id)
                            ,name=x$name
                            ,symbol=x$symbol
@@ -103,8 +102,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                lst = lapply(data2, function(x) {
                       quote = x$quotes[[1]]
                       list( id     = x$id
-                           ,rank   = as.integer(x$cmcRank)
                            ,symbol = x$symbol
+                           ,rank   = x$cmcRank
                            ,price  = ifelse(is.null(quote$price),            0, quote$price)
                            ,volume = ifelse(is.null(quote$volume24),         0, quote$volume24)
                            ,vol24  = ifelse(is.null(quote$volume24),         0, quote$volume24)
@@ -123,20 +122,26 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                      })
                df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
                                ,stringsAsFactors=FALSE)
-               colnames(df) = c( "id",        "rank", "symbol", "price"
-                                ,"volume",    "volday", "volweek", "volmonth"
-                                ,"hour",      "day",    "week",    "month",   "bimonth", "quarter"
+               colnames(df) = c( "id",        "symbol",  "rank", "price"
+                                ,"volume",    "volday",   "volweek", "volmonth"
+                                ,"hour",      "day",      "week",    "month"
+                                ,"bimonth",   "quarter"
                                 ,"dominance", "turnover", "tms")
-               df$id = as.integer(df$id)
-               for (idx in 3:15) df[,idx] = as.numeric(df[,idx])
+
+               names = colnames(df)
+               for (idx in 1:ncol(df)) {
+                   if (names[idx] == "id")     { df[,idx] = as.numeric(df[,idx]); next }
+                   if (names[idx] == "rank")   { df[,idx] = as.numeric(df[,idx]); next }
+                   if (names[idx] == "symbol") { next }
+                   if (names[idx] == "tms")    { df[,idx] = as.POSIXct(df[,idx]); next }
+                   df[,idx] = as.numeric(df[,idx])
+               }
                dfc = rbind(dfc, df)
 
           }
           resp$df = dfc
           resp
       }
-
-
       ,loadTickers = function() {
            if (difftime(Sys.time(), lastGet, unit="mins") < interval) return (invisible(self))
            private$lastGet = Sys.time()
@@ -155,77 +160,9 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
 
        }
-      ,getLatest2 = function(start=1, max=1000) {
-         browser()
-          limit = 1000 # Max items per connection
-          max = start + max
-          dfl = NULL
-
-          while(start < max) {
-             lst = requestLatest(start, 1000)
-             if (is.null(lst)) break;
-             df = as.data.frame(matrix(unlist(lst), nrow=length(lst), byrow=TRUE))
-             if (nrow(df) == 0) {
-                 status=list(code=400,message="No data received")
-                 break;
-             }
-             colnames(df) = names(lst[[1]])
-             if (is.null(dfl)) {
-                 dfl = df
-             } else {
-                dfl = rbind(dfl, df)
-             }
-             start = start + limit
-          }
-          # Puede haber avisos de NULL o NA
-          dfl[] = suppressWarnings(lapply(dfl, function(x) ifelse(is.na(as.numeric(x)),x,as.numeric(x))))
-          if (nrow(dfl) > 0) {
-              tms = rep(Sys.time(), nrow(dfl))
-              dfl$tms = tms
-          }
-          # CAmbiamos los nombres de las columnas
-          colnames(dfl) = c( "id", "name", "symbol", "slug", "rank", "price"
-                            ,"volume", "volday", "volweek", "volmonth"
-                            ,"hour", "day", "week", "month", "bimonth", "quarter"
-                            ,"dominance", "turnover", "tms")
-          dfl
-      }
       ,unloadCurrencies = function(from, limit) {
          getLatest(from, limit)
       }
-
-       ,getCurrencies2 = function(page) {
-          url = urlbase
-          if (!missing(page)) url = paste0(url, "?page=", page)
-          page = tryCatch({
-              browser()
-              read_html(url)
-          }
-              , error = function(cond) {
-                  browser()
-                  NULL })
-          if (is.null(page)) return (NULL)
-          tab = page %>% html_nodes("table")
-          rows = tab %>% html_nodes("tr")
-          data = lapply(rows, function(row) row %>% html_nodes("td"))
-
-          # Coger las filas correctas
-          cols = lapply(data, function(x) length(x))
-          mask = (cols == 11)
-          data = data[mask]
-
-          # col 1 - Estrella
-          # col 2 - orden
-          # col 3 - Icono, nombre y simbolo
-          # La columna 3 tiene nombre y simbolo en div o en span
-
-          # Si busco img me da los 100 elementos
-         sims = lapply(data, function(item) extractName(item[[3]]))
-         df = as.data.frame(sims, optional=T)
-         df = data.table::transpose(df)
-         colnames(df) = c("name", "id")
-         df
-       }
       ,getHistorical = function(idCurrency, from, to ) {
           if (is.null(idCurrency)) return(NULL)
           url = "https://web-api.coinmarketcap.com/v1/cryptocurrency/ohlcv/historical"
@@ -241,8 +178,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          parms = list(
              convert    = "EUR"
             ,id         = idCurrency
-            ,time_start = asUnix(from)
-            ,time_end   = asUnix(to)
+            ,time_start = as.numeric(as.POSIXct(from))
+            ,time_end   = as.numeric(as.POSIXct(to))
          )
 
          page = GET(url, add_headers(.headers=headers), query=parms)
@@ -250,9 +187,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          # 1 - Header response / 2 - Data
          resp = httr::content(page, type="application/json")
          if (http_error(page)) {
-            msg = paste("ERROR EN EL GET: ", resp[[1]]$error_code, "message: ", resp[[1]]$error_message)
-            message(msg)
-            return (NULL)
+             base:::HTTP( "ERROR GET HISTORICAL", action="GET"
+                         ,origin=resp$error_code, message=resp[[1]]$error_message)
          }
 
          body = resp[[2]]
@@ -267,17 +203,14 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
          df = as.data.frame(df)
          if (nrow(df) == 0) return (NULL)
          # La ultima columna es el timestamp
-         df1 = df[,1:ncol(df) - 1]
-         # sapply falla cuando es uno
-         # df1 = as.data.frame(sapply(df1,as.numeric))
-         for (col in 1:ncol(df1)) df1[,col] = as.numeric(df1[,col])
-         tms = anytime::anytime(df[,ncol(df)])
-         cbind(tms=tms,df1)
+         df[,"timestamp"] = paste(substr(df[,"timestamp"],1,10),substr(df[,"timestamp"],12,19), sep="-")
+         df
       }
    )
    ,private = list(
        urlbase = "https://coinmarketcap.com/"
       ,hID     = NULL
+      ,base    = NULL
       ,headers = c( `User-Agent`      = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
                    ,`Accept-Language` = "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"
                    ,Accept          = "application/json, text/plain, */*"
