@@ -1,4 +1,4 @@
-## Shiny
+## JGGShiny
 
 Los patrones de paginas los creamos en el paquete JGGShiny
 La idea es customizar las paginas que ofrece shiny como templates

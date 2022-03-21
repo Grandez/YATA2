@@ -1,6 +1,10 @@
 # WEB 
 
-Aqui va los datos de la web
+Los sistemas WEB estan basados en el paquete JGGShiny, que es agnostico con respecto a la aplicacion pero encapsula las plantillas de las paginas y provee widgets personalizados
+
+Cada aplicacion Web se basa en YATAWEBCore que extiende y especializa las aplicaciones Web
+
+
 ```{r, echo=FALSE}
 files = list.files("web", "[0-9]+.+.Rmd", full.names=TRUE)
 files
