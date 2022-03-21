@@ -23,14 +23,13 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              private$makePlots()
          }
          ,loadData = function() {
-             browser()
              self$vars$sessionChanged = FALSE
              private$loadPosition()
-           
              self$monitors = WDGMonitor$new(ns("monitor"), self, WEB)
              if (!is.null(self$data$dfGlobal)) {
-                 ctc = self$data$dfGlobal$currency
-                 self$data$dfSession = self$session$getSessionPrices(ctc)
+                 ids = self$data$dfGlobal$id
+                 browser()
+                 self$data$dfSession = self$session$getSessionPrices(ids)
                  self$vars$sessionChanged = TRUE
              }
              self$monitors$render()
@@ -84,7 +83,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              #JGG 0 - todos
              #JGG 26 Serian los de mejor rango
              #JGG 101 Pendiente de favoritoss
-            df = self$session$getLatest()
+            df = self$session$getLatest(self$cookies$selective)
             self$data$dfBest = private$sortBest(df,   0)
             self$data$dfTop  = private$sortBest(df,  26)
             self$data$dfFav  = private$sortBest(df, 101)                        
@@ -102,6 +101,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$cookies$interval = 15
              self$cookies$best = list(top = 10, from = 2)
              self$cookies$history = 15
+             self$cookies$selective = 0
              # Default widgets
              widgets = c("plotHist","blkTop","plotSession","Position")
              self$cookies$layout = matrix(widgets,ncol=2)
@@ -149,9 +149,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
    #####################################################################   
    preparePosition = function(df, table) {
       types = list(dat = c("Since"), pvl = c("Day", "Week", "Month"))
-      df =  df %>% select(currency,balance, priceBuy, priceSell, price, day, week, month, since)
-      df$since = as.Date(df$since)
-      colnames(df) = c("currency", "balance", "cost", "return", "net", "day", "week", "month", "since")
+      df =  df %>% select(currency,balance, buyNet, sellNet, value, profit, day, week, month, last)
+      df$last = as.Date(df$last)
+      colnames(df) = c("currency", "balance", "cost", "return", "net", "profit", "day", "week", "month", "since")
 #      yataDT(df,opts=list(types=types,color=list(var=c("Day", "Week", "Month"))))
       data = list(df = df, cols=NULL, info=NULL)
       data$info=list( event=ns("tablePos"), target=table,types=types)
@@ -200,8 +200,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           # Este es el que tarda por que es Windows
           df = pnl$data$dfGlobal
           if (is.null(df)) return()
-          df = df[df$id != 0,]
-          
+
           # Si usamos for, no se evaluan los datos
           if (nrow(df) > 0) {
               dat = paste(df[,"currency"], df[,"id"], sep="-")
@@ -251,8 +250,8 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           from = as.numeric(input$cboBestFrom)
           if (is.na(from)) return() 
           if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
-          pnl$cookies$best$from = from
-          pnl$cookies$best$top  = input$numBestTop
+          pnl$cookies$best$from      = from
+          pnl$cookies$best$top       = input$numBestTop
           pnl$updateBest()
           renderBestTables()
           #WEB$end("flags$best")
@@ -327,6 +326,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            updTableSelection(paste0("tbl", table),c(which(df$currency %in% sel)))
 
            # Update plots
+           browser()
            plot = pnl$plots[["plotSession"]]
            data = plot$getSourceNames()
            names = plot$getColumnNames(data)
@@ -405,7 +405,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           cams =names(pnl$data$position)
           if(length(cams)) {
              for (camera in cams) {
-                  suffix  = YATABAse$str$titleCase(camera)
+                  suffix  = YATABase$str$titleCase(camera)
                   cam     = pnl$cameras$getCameraName(camera)
                   nstable = paste0("tblPos", suffix)
                   divCam = tags$div( id=paste0("divPos", suffix)
@@ -434,10 +434,12 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
        }
        renderPlotSession = function(uiPlot) {
+           browser()
 #          if (pnl$vars$sessionChanged) {
               plot = pnl$plots[["plotSession"]]
               plot$setType("Marker")
-              plot$setData(pnl$data$dfSession, "session", TRUE)
+              browser()
+              plot$setData(pnl$data$dfSession[,c("last", "price")], "session", TRUE)
               output$plotSession = plot$render()
 #          }
        }
@@ -503,14 +505,13 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
               pnl$cookies$interval = input$numInterval              
           }
       })
-      observeEvent(input$numHistory,  ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
+      observeEvent(input$numHistory,   ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
+      observeEvent(input$numSelective, ignoreInit = TRUE, { flags$refresh = isolate(!flags$refresh)   })
       observeEvent(input$chkMonitors, ignoreInit = TRUE, {
-          browser()
          pnl$cookies$monitor = input$chkMonitors
          #JGGshinyjs::toggle("monitor", anim=TRUE)
       })
       observeEvent(input$btnLayoutOK, {
-          browser()
           pnl$setCookies()
           session$sendCustomMessage(type = 'closeLeftSide',message = "close")
       })

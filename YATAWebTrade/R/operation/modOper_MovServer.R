@@ -17,7 +17,6 @@ modOperMovServer = function(id, full, pnlParent, parent) {
            ,cboReasons    = function(type)      { self$makeCombo(private$oper$getReasons(type)) } 
            ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
            ,operation     = function(data)      {
-               browser()
                tryCatch({private$oper$add(data$type, data)
                          FALSE
                }
@@ -60,13 +59,20 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           if (input$impGas    <  0) 
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NEG.GAS")))
 
+          if (pnl$vars$buy) {
+              total = input$impValue
+              if (total == 0) total = input$impAmount * input$impPrice
+              if (total > pnl$vars$available) {
+                  return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AVAILABLE")))
+              }
+          }
           FALSE          
       }
       xlateCode = function (code) {
           code = as.integer(code)
           if (code == 10) return (pnl$codes$oper$bid)
-          if (code == 11) return (pnl$codes$oper$buy)
-          if (code == 20) return (pnl$codes$oper$ask)
+          if (code == 11) return (pnl$codes$oper$ask)
+          if (code == 20) return (pnl$codes$oper$buy)
           if (code == 21) return (pnl$codes$oper$sell)
           pnl$codes$oper$oepr
       }
@@ -159,6 +165,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
       }
       observeEvent(input$cboOper, { 
           pnl$vars$oper = input$cboOper
+          pnl$vars$buy = ifelse((as.integer(input$cboOper) %% 2) == 0, TRUE, FALSE)
           updatecboCurrency()
       }, ignoreNULL = TRUE)
 
@@ -176,7 +183,8 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"balance"]
           if (length(pnl$vars$fiat) == 0) pnl$vars$fiat = 0
           if (length(pnl$vars$ctc)  == 0) pnl$vars$ctc  = 0
-          currency = ifelse(input$cboOper == 3, input$cboCurrency, "FIAT")
+
+          currency = ifelse(pnl$vars$buy, "FIAT", input$cboCurrency)
           pnl$vars$available = dfPos[dfPos$currency == currency,"available"]
 
           output$lblAvailable = updLabelNumber(pnl$vars$available)
@@ -211,7 +219,8 @@ modOperMovServer = function(id, full, pnlParent, parent) {
               pnl$vars$value = input$impAmount * input$impPrice
               updNumericInput("impValue", pnl$vars$value)    
           } else {
-              pnl$vars$amount = ceiling(input$impValue / input$impPrice)
+              #pnl$vars$amount = ceiling(input$impValue / input$impPrice)
+              pnl$vars$amount = input$impValue / input$impPrice
               updNumericInput("impAmount", pnl$vars$amount)
           }
           updateSummary()
@@ -220,13 +229,13 @@ modOperMovServer = function(id, full, pnlParent, parent) {
       observeEvent(input$btnCalcValue, {
           if (input$impValue == 0 || input$impPrice == 0) return()
           pnl$vars$value = input$impValue
-          pnl$vars$amount = ceiling(input$impValue / input$impPrice)
+          #pnl$vars$amount = ceiling(input$impValue / input$impPrice)
+          pnl$vars$amount = input$impValue / input$impPrice
           updNumericInput("impAmount", pnl$vars$amount)
           updateSummary()
       })
       
       observeEvent(input$btnOK, {
-          browser()
         # A veces se generan dos triggers (debe ser por los renderUI)
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {

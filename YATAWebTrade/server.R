@@ -47,7 +47,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,getGlobalPosition = function(fiat=FALSE) { 
          if (fiat) return (self$data$dfPosGlobal)
          df = self$data$dfPosGlobal
-         df[! df$currency %in% private$fiats,]
+         df[df$id != 0,]
       }
       ,getOpenCurrencies = function() {
          df = self$data$dfPosGlobal

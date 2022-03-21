@@ -9,6 +9,7 @@ modOperMovInput = function(id, title) {
      ,WEB$getMsg("TXT.CLOSE.POS") 
       
   )
+  # Match against YATACodes$oper
   operTypes = list(10, 11, 20, 21, 30, 31)
   names(operTypes) = labels
   

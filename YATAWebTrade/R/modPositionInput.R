@@ -14,8 +14,9 @@ modPosInput = function(id, title) {
    left = tagList(
          fluidRow(column(4, "Updated:"),column(8, guiLabelDate(ns("dtLast"))))
         ,wdgLayout$getConfig()
-        ,fluidRow(column(4, "Interval"),column(8, guiNumericInput(ns("numInterval"))))
-        ,fluidRow(column(4, "History") ,column(8, guiNumericInput(ns("numHistory"), value=15,step=1,min=7,max=90)))
+        ,fluidRow(column(4, "Selective"),column(8, guiNumericInput(ns("numSelective"))))       
+        ,fluidRow(column(4, "Interval"), column(8, guiNumericInput(ns("numInterval"))))
+        ,fluidRow(column(4, "History") , column(8, guiNumericInput(ns("numHistory"), value=15,step=1,min=7,max=90)))
         ,hr() 
         
         ,yuiTitle(5, "Show")
