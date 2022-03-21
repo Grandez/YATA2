@@ -234,5 +234,21 @@ CREATE TABLE FAVORITES  (
    ,PRIMARY KEY ( ID, PRTY DESC )
 );
 
+-- Tabla de alertas
+DROP TABLE  IF EXISTS ALERTS CASCADE;
+CREATE TABLE ALERTS     (
+    ID       INT UNSIGNED      NOT NULL -- Identificador de la alerta
+   ,TYPE     TINYINT           DEFAULT 0 -- Tipo de alerta (moneda, operacion, fecha, etc.)
+   ,SUBJECT  VARCHAR(64)       NOT NULL   -- ID del sujeto de la alerta 
+   ,MATCHER  CHAR(2)           NOT NULL   -- Operador (EQ, GT, LT, etc)
+   ,TARGET   VARCHAR(64)       NOT NULL   -- Objetivo de la alerta
+   ,STATUS   TINYINT           DEFAULT 0  -- Estado de la alerta
+   ,ACTIVE   TINYINT           DEFAULT 1  -- Flag
+   ,TMS      TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
+                        ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
+   ,PRIMARY KEY ( ID )
+   ,INDEX (ACTIVE, TYPE)
+);
+
 INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "FIAT", 10000, 10000);
 COMMIT;
