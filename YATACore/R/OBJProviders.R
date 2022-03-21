@@ -9,10 +9,10 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
        ,initialize  = function(Factory) {
            super$initialize(Factory)
            private$providers    = YATABase$new()$map()
-           private$tblProviders = Factory$getTable(YATACodes$tables$providers)
+           private$tblProviders = Factory$getTable(self$codes$tables$providers)
            self$id              = parms$getOnlineProvider()
 
-           private$dfProviders  = tblProviders$table(active = YATACodes$flag$active)
+           private$dfProviders  = tblProviders$table(active = self$codes$flag$active)
            if (nrow(private$dfProviders) == 0) stop("No hay proveedores activos")
            prov = dfProviders[dfProviders$id == self$id,]
 
@@ -60,7 +60,12 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
        ,getLatests  = function(base, counter) {
            df = provider$getLatest()
            df %>% filter(symbol %in% counter)
+       }
+       ,getHistory  = function(id, from, to) {
+           if (missing(to)) to = as.Date(Sys.time())
+           provider$getHistorical(id,from, to)
         }
+
     )
     ,private = list(
         provider     = NULL  # Porvider por defecto

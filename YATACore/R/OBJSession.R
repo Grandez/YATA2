@@ -22,13 +22,11 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             getBestDF(session, top, from, group)
        }
        ,getPrice = function(currency) {
-           if (!prtSession$select(symbol=currency,limit = 1)) return (0)
-           prtSession$current$price
+           prtSession$select(symbol=currency,limit = 1)
+           ifelse(is.null(prtSession$current), 0, prtSession$current$price)
        }
-       ,getLatest = function(currencies = NULL) {
-           df = prtSession$getLatest()
-           if (!is.null(currencies)) df = df[df$id %in% currencies,]
-           df
+       ,getLatest = function(rank=0, currencies = NULL) {
+           prtSession$getLatest(rank, currencies)
         }
        # ,getHistorical = function(base, idCurrency, from, to, period=24) {
        #     id = suppressWarnings(as.numeric(idCurrency))
@@ -65,10 +63,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        #     dfp
        # }
        ,getSessionPrices = function(currencies = NULL) {
-           df = getLatest(currencies)
-           # df = getPrices(currencies)
-           # df[df$tms > as.POSIXct(Sys.Date()),]
-           df
+           prtSession$getSessionData(currencies)
        }
 
        ,updateLatest = function(max = 0) {

@@ -55,6 +55,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
          # private$objects = NULL
 #         gc(verbose=FALSE)
       }
+      ,getID     = function() { base$getID() }
       ,getDBName = function() {
           db = getDB()
           if (!is.null(db)) db$name

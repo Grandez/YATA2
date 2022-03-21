@@ -31,10 +31,9 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             if (full) df$name = paste(df$id, df$name, sep=" - ")
             df
         }
-        ,getDF                 = function(...) { tblCurrencies$table(...) }
-        ,getActiveCurrencies   = function() { updIcons(tblCurrencies$getTable()) }
-        ,getInactiveCurrencies = function() { updIcons(tblCurrencies$table(active=YATACodes$flag$inactive)) }
-        ,getAllCurrencies      = function() { updIcons(tblCurrencies$table())                               }
+        ,getDF                 = function(...) { tblCurrencies$table(...)      }
+        ,getActiveCurrencies   = function()    { tblCurrencies$table(active=1) }
+        ,getInactiveCurrencies = function()    { tblCurrencies$table(active=0) }
         ,getCameras   = function(counter) {
             df = tblExchanges$getCameras(counter)
             if (nrow(df) == 0) return (NULL)
@@ -49,7 +48,11 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             tblCameras$table(inValues=list(id=df$camera))
         }
         ,getCurrencies = function(currencies) {
-            tblCurrencies$table(inValues=list(symbol=currencies))
+            if (missing(currencies)) {
+                tblCurrencies$table()
+            } else {
+               tblCurrencies$table(inValues=list(symbol=currencies))
+            }
         }
         ,addBulk = function(data) { tblCurrencies$bulkAdd(data)}
     )

@@ -9,17 +9,15 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
         ,print = function() { message("Currencies")}
         ,initialize = function(Factory) {
             super$initialize(Factory)
-            tbl = Factory$getTable(YATACodes$tables$Currencies)
-            private$tblCurrencies = Factory$getTable(YATACodes$tables$Currencies)
-            private$tblHistory    = Factory$getTable(YATACodes$tables$History)
+            private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
+            private$tblHistory    = Factory$getTable(self$codes$tables$history)
         }
-        ,getRanges = function() {
-            browser()
-            rng = tblHistory$getRange()
-            ctc = tblCurrencies$table()
-            #JGG No se qe pasa con los dos campos ultimos
-            ctc = ctc[,1:9]
-            left_join(ctc, rng, by="symbol")
+        ,getRanges = function(idList) {
+            tblHistory$getRange(idList)
+            # ctc = tblCurrencies$table()
+            # #JGG No se qe pasa con los dos campos ultimos
+            # ctc = ctc[,1:9]
+            # left_join(ctc, rng, by="symbol")
         }
         ,getActiveCurrencies = function() {
             ctc = tblCurrencies$table()
@@ -28,8 +26,8 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
         ,getSessionDays = function(symbol) {
             tblHistory$getDates(symbol)
         }
-        ,addBulk = function(df) {
-            tblHistory$bulkAdd(df, isolated=TRUE)
+        ,add = function(df, isolated=TRUE) {
+            tblHistory$bulkAdd(df, isolated)
         }
     )
     ,private = list(

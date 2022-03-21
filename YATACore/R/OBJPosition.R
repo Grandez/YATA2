@@ -30,7 +30,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
-           df = tblPosition$getCurrencyPosition("FIAT")
+           df = tblPosition$getCurrencyPosition("$FIAT")
            # oper = Factory$getObject(self$codes$object$operation)
            # cIn  = oper$getOperations(base="EXT")
            # cOut = oper$getOperations(counter="EXT")
@@ -41,7 +41,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
       }
        ,getHistoryCurrencies = function() {
          df = tblPosition$table()
-         df = df[!df$currency == "FIAT",]
+         df = df[!df$currency == "$FIAT",]
          df = df %>% group_by(currency) %>% summarise(currency, min(since))
          colnames(df) = c("symbol", "since")
          df
@@ -178,7 +178,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
            tblPosition$select(camera=data$camera, currency=data$base, create=TRUE)
            self$current  = tblPosition$current
 
-           if (data$base == "FIAT") return (.updateBaseFiat(data))
+           if (data$base == "$FIAT") return (.updateBaseFiat(data))
 
            if (current$sellLow == 0)  self$current$sellLow = data$price + 1
 
@@ -215,7 +215,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$select(camera=data$camera, currency=data$counter, create=TRUE)
           self$current  = tblPosition$current
 
-          if (data$counter == "FIAT") return (.updateCounterFiat(data))
+          if (data$counter == "$FIAT") return (.updateCounterFiat(data))
 
           if (current$buyLow == 0)  self$current$buyLow = data$price + 1
 

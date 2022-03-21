@@ -357,7 +357,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
        ,addFlow        = function(type, currency, amount, price) {
            data = list(
               idOper   = current$idOper
-             ,idFlow   = YATABase$getID()
+             ,idFlow   = Factory$getID()
              ,type     = type
              ,currency = currency
              ,amount   = amount
@@ -377,7 +377,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
            tblPos  = Factory$getTable(YATACodes$tables$transfer)
            tblXfer = Factory$getTable(YATACodes$tables$transfer)
-           idXfer = YATABase$getID()
+           idXfer = Factory$getID()
            xfer = list(
                id        = idXfer
               ,cameraIn  = current$to
@@ -388,8 +388,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            )
            tblXfer$add(xfer)
 
-           idOut = YATABase$getID()
-           idIn  = YATABase$getID()
+           idOut = Factory$getID()
+           idIn  = Factory$getID()
            data = list(
                 id      = idOut
                ,camera  = current$from
@@ -416,7 +416,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
            flow = list(
                 idOper   = idOut
-               ,idFlow   = YATABase$getID()
+               ,idFlow   = Factory$getID()
                ,type     = YATACodes$flow$xferOut
                ,currency = current$currency
                ,amount   = current$amount * -1
@@ -432,12 +432,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            self$current$idOper = idXfer
        }
        ,addNoTran   = function(type, ...) {
+           browser()
             # Se llama desde add y desde close
             # Genera una operacion, devuelve el id
             # Si hay error devuelve TRUE
             self$current        = args2list(...)
             self$current$type   = type
-            self$current$id     = YATABase$getID()
+            self$current$id     = Factory$getID()
             self$current$idOper = self$current$id
             # if (type %in% c(YATACodes$oper$sell, YATACodes$oper$close)) {
             #     self$current$amount = current$amount * -1
@@ -465,7 +466,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            self$current$dtAlert = Sys.Date() + lubridate::days(days)
            self$current$alert   = YATACodes$flag$active
 
-#           amount = ifelse(current$base == "FIAT", current$amount, current$value)
+#           amount = ifelse(current$base == "$FIAT", current$amount, current$value)
            #JGG Temporal mientras no procesemos el flujo de request/accept/execute
            self$current$amountIn  = current$amount
            self$current$amountOut = current$amount
@@ -511,13 +512,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       ,addRegulatization = function(camera, currency) {
             # Genera el registro de regularizacion
 
-            self$current$idOper = YATABase$getID()
+            self$current$idOper = Factory$getID()
             if (is.null(tblReg)) private$tblReg = Factory$getTable(YATACodes$tables$regularization)
 
             objPos$getPosition(camera=camera, currency=currency)
 
             position        = objPos$current
-            position$id     = YATABase$getID()
+            position$id     = Factory$getID()
             position$date   = as.POSIXct(Sys.time())
             position$period = getRegularizationPeriod(camera, currency, objPos$current$tms)
             position$idOper = current$idOper
@@ -536,7 +537,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 ,status   = YATACodes$status$executed
                 ,camera   = camera
                 ,base     = currency
-                ,counter  = "FIAT"
+                ,counter  = "$FIAT"
                 ,value    = position$profit
                 ,amount   = position$sell
                 ,price    = price
@@ -568,7 +569,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
             objPos$updatePosition(position)
 
-            addFlow(YATACodes$flow$input,  "FIAT",   value, price)
+            addFlow(YATACodes$flow$input,  "$FIAT",   value, price)
             addFlow(YATACodes$flow$output, currency, sell,  price)
 
             current$idOper
