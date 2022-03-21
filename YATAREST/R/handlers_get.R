@@ -30,7 +30,7 @@ hist_handler = function(.req, .res) {
     to   = .req$parameters_query[["to"]]
 #    cat(paste("hist    id: ", id, "from: ", from, "to: ", to, "\n"))
     tryCatch({
-       fact = YATACore::YATAFACTORY$new()
+       fact = YATACore::YATAFactory$new()
        sess = fact$getObject(fact$codes$object$session)
        df   = sess$getHistorical("EUR", id,from,to)
       .df_handler(df, .res)
