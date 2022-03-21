@@ -21,9 +21,28 @@ PRTSession = R6::R6Class("PART.SESION"
              super$update(data)
              invisible(self)
          }
-         ,getLatest     = function() {
-             table(last=max("last"))
+         ,getLatest     = function(rank=o, currencies = NULL) {
+             last=max("last")
+             if (is.null(currencies)) {
+                 df = table(last=last)
+             } else {
+                 df = table(last=last, inValues=list(id=currencies))
+             }
+             if (rank > 0) df = df[df$rank <= rank,]
+             df
          }
+        ,getSessionData = function(currencies = NULL) {
+            from = as.Date(Sys.time())
+            parms = list(tms=as.POSIXct(from, tz="UTC"))
+            qry = paste("SELECT * FROM ", tblName, "WHERE TMS > ?")
+            if (!is.null(currencies)) {
+                marks = rep(",?", length(currencies))
+                marks = substr(marks, 2, nchar(marks))
+                qry = paste(qry, "AND ID IN (", marks, ")")
+                parms$id = currencies
+            }
+            queryRaw(qry, parms)
+        }
      )
      ,private = list (
          tblControl = NULL

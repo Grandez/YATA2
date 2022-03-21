@@ -80,7 +80,6 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           tryCatch({
               RMariaDB::dbGetQuery(getConn(), qry, param=params) }
                     ,error = function (cond) {
-                        browser()
                        YATABase:::SQL("QUERY Error", origin=cond, action="query", )
                     })
       }
@@ -92,11 +91,9 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
            tryCatch({res = RMariaDB::dbExecute(getConn(isolated), qry, params=params)
                      if (isolated) commit()
                     },warning = function(cond) {
-                        browser()
                        if (isolated) rollback()
                        YATABase:::SQL("EXECUTE", origin=cond, sql=qry, action="execute")
                     },error = function (cond) {
-                        browser()
                         if (grep("1205", cond$message)) isolated = TRUE
                        if (isolated) rollback()
                        YATABase:::SQL("EXECUTE", origin=cond, sql=qry, action="execute")
@@ -108,7 +105,6 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                     res = RMariaDB::dbWriteTable(conn, table, data, append=append, overwrite=over)
                     if (isolated) commit()
                   },warning = function(cond) {
-                     browser()
 #                       yataWarning("Warning SQL", cond, "SQL", "WriteTable", cause=tab#le)
                      stop(paste("Aviso en DB Write: ", cond))
                   },error   = function(cond) {
