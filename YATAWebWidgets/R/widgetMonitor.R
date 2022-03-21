@@ -38,7 +38,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
              }
          }
          lapply(ctc, function(sym) updateData(sym))
-         data = pos$getFiatPosition("EUR")
+         data = pos$getFiatPosition("$FIAT")
          data$invest = round(data$invest)
          updateFiat(data)
 
@@ -67,7 +67,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
               mon$session = mon$price
               if (!is.null(dfPos)) {
                   pos         = dfPos[dfPos$id == id,]
-                  mon$cost    = ifelse(nrow(pos) > 0,pos[1,"price"], mon$price)
+                  mon$cost    = ifelse(nrow(pos) > 0,pos[1,"value"], mon$price)
               }
               else {
                   mon$cost = mon$price
@@ -83,11 +83,10 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           df  = pnl$getGlobalPosition()
           dff = favorites$get()
           ctc = unique(c(df$currency, dff$symbol, "BTC", "ETH"))
-          if (length(ctc) > 8) ctc = ctc[1:8]
+          if (length(ctc) > 7) ctc = ctc[1:7]
           dfc = currencies$getCurrencies(ctc)
           dfc = dfc[,c("id", "icon")]
-
-          dfs   = session$getLatest(dfc$id)
+          dfs   = session$getLatest(0, dfc$id)
           dfs   = inner_join(dfs,dfc, by=c("id"))
 
           names = WEB$getCTCLabels(dfs$id, type="name")
@@ -109,7 +108,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
          tags$table(class="yata_tbl_monitor"
            ,tags$tr(
               tags$td(rowspan="6", class="yata_cell_icon",
-                     img( src=paste0("icons/", data$icon)
+                     img( src=paste0("icons/currencies/", data$icon)
                          ,width  = YATAWEBDEF$iconSize
                          ,height = YATAWEBDEF$iconSize,
                      onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$icon, ";")))
@@ -147,7 +146,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
          tags$table(class="yata_tbl_monitor"
            ,tags$tr(
               tags$td(rowspan="6", class="yata_cell_icon",
-                     img(src=YATAWEBDEF$iconMain,width=YATAWEBDEF$iconSize, height=YATAWEBDEF$iconSize,
+                     img(src="icons/fiat/EUR.png",width=YATAWEBDEF$iconSize, height=YATAWEBDEF$iconSize,
                      onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$iconDef, ";")))
              ,tags$td(class=clsLbl, msg$get("MON.FIAT.TOTAL"))
              ,tags$td(class=clsData,  id=paste0(base,"total"))
@@ -188,6 +187,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", last$symbol, "_")
         vcost = ((last$price / mon$cost)    - 1) * 100
         vsess = ((last$price / mon$session) - 1) * 100
+
         updateRow(paste0(idMon,"cost_delta"),    mon$cost,    vcost,      TRUE)
         updateRow(paste0(idMon,"session_delta"), mon$session, vsess,      TRUE)
         updateRow(paste0(idMon,"hour_delta"),    mon$hour,    last$hour,  TRUE)
