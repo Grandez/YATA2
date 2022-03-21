@@ -146,7 +146,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
          tags$table(class="yata_tbl_monitor"
            ,tags$tr(
               tags$td(rowspan="6", class="yata_cell_icon",
-                     img(src="icons/fiat/EUR.png",width=YATAWEBDEF$iconSize, height=YATAWEBDEF$iconSize,
+                     img(src="icons/currencies/EUR.png",width=YATAWEBDEF$iconSize, height=YATAWEBDEF$iconSize,
                      onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$iconDef, ";")))
              ,tags$td(class=clsLbl, msg$get("MON.FIAT.TOTAL"))
              ,tags$td(class=clsData,  id=paste0(base,"total"))

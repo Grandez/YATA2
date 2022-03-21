@@ -25,6 +25,7 @@ best_handler = function(req, .res) {
     })
 }
 hist_handler = function(.req, .res) {
+    #JGG Ahi que ir a History
     id   = .req$parameters_query[["id"]]
     from = .req$parameters_query[["from"]]
     to   = .req$parameters_query[["to"]]
