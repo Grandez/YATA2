@@ -28,7 +28,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$monitors = WDGMonitor$new(ns("monitor"), self, WEB)
              if (!is.null(self$data$dfGlobal)) {
                  ids = self$data$dfGlobal$id
-                 browser()
                  self$data$dfSession = self$session$getSessionPrices(ids)
                  self$vars$sessionChanged = TRUE
              }
@@ -326,7 +325,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            updTableSelection(paste0("tbl", table),c(which(df$currency %in% sel)))
 
            # Update plots
-           browser()
            plot = pnl$plots[["plotSession"]]
            data = plot$getSourceNames()
            names = plot$getColumnNames(data)
@@ -434,11 +432,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
        }
        renderPlotSession = function(uiPlot) {
-           browser()
 #          if (pnl$vars$sessionChanged) {
               plot = pnl$plots[["plotSession"]]
               plot$setType("Marker")
-              browser()
               plot$setData(pnl$data$dfSession[,c("last", "price")], "session", TRUE)
               output$plotSession = plot$render()
 #          }

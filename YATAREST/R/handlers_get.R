@@ -3,7 +3,7 @@
     ifelse(is.null(p), dafult, p)
 }
 handler_alive = function(.req, .res) {
-    cat("Recibe Alive\n")
+    cat(paste(Sys.time(),"Recibe Alive\n"))
    .res$set_status_code(200)
    .res$set_body("OK")
 }
@@ -28,7 +28,7 @@ hist_handler = function(.req, .res) {
     id   = .req$parameters_query[["id"]]
     from = .req$parameters_query[["from"]]
     to   = .req$parameters_query[["to"]]
-#    cat(paste("hist    id: ", id, "from: ", from, "to: ", to, "\n"))
+    cat(paste(Sys.time(), " - HIST: ", id, "from: ", from, "to: ", to, "\n"))
     tryCatch({
        fact = YATACore::YATAFactory$new()
        sess = fact$getObject(fact$codes$object$session)
@@ -36,6 +36,7 @@ hist_handler = function(.req, .res) {
       .df_handler(df, .res)
     }, error = function(e) {
         message("HIST ERROR")
+        print(e)
       .res$set_status_code(500)
       .res$set_content_type("text/html")
       .res$set_body("KO")

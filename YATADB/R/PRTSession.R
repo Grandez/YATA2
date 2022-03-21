@@ -41,7 +41,7 @@ PRTSession = R6::R6Class("PART.SESION"
                 qry = paste(qry, "AND ID IN (", marks, ")")
                 parms$id = currencies
             }
-            queryRaw(qry, parms)
+            setColNames(queryRaw(qry, parms))
         }
      )
      ,private = list (

@@ -1,113 +1,13 @@
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
+2022-03-21 22:41:09 Recibe Alive
 Initializing YATAREST
-Init hecho{"timestamp":"2022-03-18 17:14:56.829319","level":"INFO","name":"Application","pid":11376,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
--- running Rserve in this R session (pid=11376), 2 server(s) --
+Init hecho{"timestamp":"2022-03-21 22:48:57.953969","level":"INFO","name":"Application","pid":15136,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=15136), 2 server(s) --
 (This session will block until Rserve is shut down)
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
-Recibe Alive
+2022-03-21 22:49:00 Recibe Alive
+2022-03-21 22:52:11 Recibe Alive
+2022-03-21 22:59:52  - HIST:  1 from:  2022-03-06 to:  2022-03-21 
+<simpleError in private$hmap[[as.character(key)]]: argumentos incorrectos para obtención de subconjuntos de un ambiente>
+2022-03-21 23:00:05 Recibe Alive
+2022-03-21 23:01:21  - HIST:  1 from:  2022-03-06 to:  2022-03-21 
+<simpleError in private$hmap[[as.character(key)]]: argumentos incorrectos para obtención de subconjuntos de un ambiente>
+2022-03-21 23:01:29 Recibe Alive

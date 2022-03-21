@@ -45,7 +45,6 @@ YATAPlot = R6::R6Class("YATA.PLOT"
        ,id      = NULL
        ,print      = function() { message("Plotly Object")}
        ,initialize = function(id, ...) {
-           browser()
            self$id = id
            private$info$object = id
            args = list(...)
@@ -72,7 +71,6 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            render(ui,info,type)
         }
        ,render = function(ui=NULL, info=NULL, type=NULL) {
-           browser()
            if (!private$generatePlot(ui, info, type)) return (NULL)
            plotly::renderPlotly({plot}) # %>% event_register("plotly_legendclick")
        }
@@ -244,7 +242,6 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            self$plot
         }
         ,applyScale = function(x) {
-            browser()
            if (is.null(scale)) return(x)
            if (scale == "date") return (as.Date(x))
            if (scale == "time") return (as.POSIXct(x, format="%H:%M:%S"))
@@ -266,7 +263,6 @@ YATAPlot = R6::R6Class("YATA.PLOT"
                          )
         }
        ,prepareData = function(idx) {
-           browser()
            dat = data[[idx]]
            df = dat$data
            df[,xAxis] = applyScale(df[,xAxis])
@@ -298,7 +294,6 @@ YATAPlot = R6::R6Class("YATA.PLOT"
        ### MODEBAR                                                        ###
        ######################################################################
       ,getSVGGroup = function() {
-          browser()
           modes = c("Log", "Variation", "Value")
           values = c("Line", "Marker", "Bar", "Point")
           if (info$datasource != "session") buttons = values
@@ -310,7 +305,6 @@ YATAPlot = R6::R6Class("YATA.PLOT"
           c(btn0, btn1)
       }
        ,getButton = function(name) {
-           browser()
            btn = svg$get(name)
            if (is.null(btn)) {
                btn = eval(parse(text=paste0("svg", name, "(name)")))
