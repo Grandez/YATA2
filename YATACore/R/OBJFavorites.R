@@ -18,6 +18,7 @@ OBJFavorites = R6::R6Class("OBJ.FAVORITES"
        }
        ,get  = function() {
            dff = tblFavorites$table()
+           if (nrow(df) == 0) return (NULL)
            dfc = tblCurrencies$table(inValues=list(id=as.vector(dff$id)))
            inner_join(dff,dfc,by=c("id", "symbol"))
         }
