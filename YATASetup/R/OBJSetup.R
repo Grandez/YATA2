@@ -66,9 +66,15 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            FALSE
         }
        ,.retrieveRepo   = function() {
+           count = 0 # A veces da fallo el PULL
+           rc = 0
            base$msg$lblProcess1("Retrieving repository")
-           res = .git$pull()
-           if (res$status == 0) return (base$msg$ok())
+           while (count < 5) {
+              res = .git$pull()
+              if (res$status == 0) return (base$msg$ok())
+              Sys.sleep(2)
+              count = count + 1
+           }
            base$msg$ko()
            YATABase$cond$EXEC( "EXEC", action="run"
                                 ,command = "git pull"
