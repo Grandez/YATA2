@@ -187,8 +187,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
          df
       }
       ,tableInterval   = function(from=NULL, to=NULL, ..., inValues=NULL, includeKeys = TRUE) {
-          from = if (is.null(from)) as.POSIXct(1, origin="1970-01-01")
-          to   = if (is.null(to))   as.POSIXct(Sys.time())
+          if (is.null(from)) from = as.POSIXct("2020-01-01", tz="UTC")
+          if (is.null(to))   to   = as.POSIXct(Sys.time(), tz="UTC")
           # Recupera los datos de la tabla completa en funcion de los parms y between tms
          filter = mountWhere(..., inValues=inValues)
          if (is.null(filter$sql)) {

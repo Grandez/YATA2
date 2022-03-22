@@ -28,44 +28,9 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,getLatest = function(rank=0, currencies = NULL) {
            prtSession$getLatest(rank, currencies)
         }
-       # ,getHistorical = function(base, idCurrency, from, to, period=24) {
-       #     id = suppressWarnings(as.numeric(idCurrency))
-       #     if (is.na(id)) id = tblCurrencies$getID(idCurrency)
-       #     if (is.null(id)) return (NULL)
-       #     provider$getHistorical(id,from,to)
-       #  }
-       #  ,updateCurrencies = function(max=3000) {
-       #      df = provider$getLatest(max)
-       #      df = df[,c("id", "name", "symbol", "slug", "rank",)]
-       #      df
-       #  }
-       #  ,getLast   = function(currencies) {
-       #      df = private$dfLast
-       #      if (!missing(currencies)) df = df[df$symbol %in% currencies,]
-       #      df
-       #  }
-       # ,getPrices = function(currencies) {
-       #     data = lapply(currencies, function(x) {
-       #         if (x != "EUR") {
-       #             df = prtSession$table(symbol=x)
-       #             df = df[,c("tms", "price")]
-       #             colnames(df) = c("tms", x)
-       #             df
-       #         }
-       #     })
-       #     if (length(data) == 0) return (NULL)
-       #     dfp = data[[1]]
-       #     if (length(data) > 1) {
-       #         for (idx in 2:length(data)) {
-       #             if (!is.null(data[[idx]])) dfp = full_join(dfp, data[[idx]], by="tms")
-       #         }
-       #     }
-       #     dfp
-       # }
        ,getSessionPrices = function(currencies = NULL) {
            prtSession$getSessionData(currencies)
        }
-
        ,updateLatest = function(max = 0) {
            # Evitamos procesar todo de golpe y posibles bloqueos
            now = lubridate::now("UTC")

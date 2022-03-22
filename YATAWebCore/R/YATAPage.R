@@ -25,7 +25,8 @@ YATAPage = function( title="YATA", id = "mainMenu"
     jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
 
     customJS  = list(shiny=jsShiny,js=("yata/yataapp.js"))
-    customCSS = list("yata/yata.css")
+    customCSS = list( "yata/yata.css"             # Base
+                     ,"yata/yata_reactable.css")  # Paquete reactable
     jsInit = c( "   globalThis.yata = new YATA();"
                ,"   yata.init();"
 #               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"

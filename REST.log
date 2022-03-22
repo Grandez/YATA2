@@ -1,13 +1,44 @@
-2022-03-21 22:41:09 Recibe Alive
 Initializing YATAREST
-Init hecho{"timestamp":"2022-03-21 22:48:57.953969","level":"INFO","name":"Application","pid":15136,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
--- running Rserve in this R session (pid=15136), 2 server(s) --
+Init hecho{"timestamp":"2022-03-22 11:11:29.823143","level":"INFO","name":"Application","pid":2608,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=2608), 2 server(s) --
 (This session will block until Rserve is shut down)
-2022-03-21 22:49:00 Recibe Alive
-2022-03-21 22:52:11 Recibe Alive
-2022-03-21 22:59:52  - HIST:  1 from:  2022-03-06 to:  2022-03-21 
+2022-03-22 11:11:40 Recibe Alive
+2022-03-22 11:14:53 Recibe Alive
+2022-03-22 11:18:14 Recibe Alive
+Initializing YATAREST
+Init hecho{"timestamp":"2022-03-22 11:30:14.770740","level":"INFO","name":"Application","pid":18240,"msg":"","context":{"http_port":4005,"endpoints":{"POST":["/begin","/end"],"HEAD":["/alive","/best","/hist","/latest","/update"],"GET":["/alive","/best","/hist","/latest","/update"]}}}
+-- running Rserve in this R session (pid=18240), 2 server(s) --
+(This session will block until Rserve is shut down)
+2022-03-22 11:30:19 Recibe Alive
+2022-03-22 11:37:46  - HIST:  1 from:  2022-03-07 to:  2022-03-22 
 <simpleError in private$hmap[[as.character(key)]]: argumentos incorrectos para obtención de subconjuntos de un ambiente>
-2022-03-21 23:00:05 Recibe Alive
-2022-03-21 23:01:21  - HIST:  1 from:  2022-03-06 to:  2022-03-21 
+2022-03-22 11:37:53 Recibe Alive
+2022-03-22 11:43:59  - HIST:  1 from:  2022-03-07 to:  2022-03-22 
 <simpleError in private$hmap[[as.character(key)]]: argumentos incorrectos para obtención de subconjuntos de un ambiente>
-2022-03-21 23:01:29 Recibe Alive
+2022-03-22 11:44:34 Recibe Alive
+2022-03-22 11:47:14 Recibe Alive
+2022-03-22 12:04:39  - HIST:  1 from:  2022-03-07 to:  2022-03-22 
+<simpleError in private$hmap[[as.character(key)]]: argumentos incorrectos para obtención de subconjuntos de un ambiente>
+2022-03-22 12:05:01 Recibe Alive
+2022-03-22 12:12:19 Recibe Alive
+2022-03-22 12:12:41 Recibe Alive
+2022-03-22 12:13:08 Recibe Alive
+2022-03-22 12:14:08 Recibe Alive
+2022-03-22 12:14:26 Recibe Alive
+2022-03-22 12:15:27 Recibe Alive
+2022-03-22 12:18:45 Recibe Alive
+2022-03-22 12:22:43 Recibe Alive
+2022-03-22 12:31:22 Recibe Alive
+2022-03-22 12:34:20 Recibe Alive
+2022-03-22 12:34:58 Recibe Alive
+2022-03-22 12:35:33 Recibe Alive
+2022-03-22 12:36:07 Recibe Alive
+2022-03-22 12:38:14 Recibe Alive
+2022-03-22 12:43:25 Recibe Alive
+2022-03-22 12:44:37 Recibe Alive
+2022-03-22 12:45:40 Recibe Alive
+2022-03-22 12:46:09 Recibe Alive
+2022-03-22 12:47:24 Recibe Alive
+2022-03-22 12:48:52 Recibe Alive
+2022-03-22 12:49:45 Recibe Alive
+2022-03-22 12:50:46 Recibe Alive

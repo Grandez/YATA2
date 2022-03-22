@@ -14,4 +14,3 @@ Depends:
    ,shiny           (>= 1.6)
    ,YATABase
    ,YATACore        (>= 1.0) 
-   ,YATAWebWidgets  (>= 1.0) 

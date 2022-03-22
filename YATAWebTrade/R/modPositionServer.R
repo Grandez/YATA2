@@ -11,6 +11,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           position    = NULL
          ,cameras     = NULL
          ,session     = NULL
+         ,history     = NULL
          ,monitors    = NULL
          ,plots = list()
          ,initialize    = function(session) {
@@ -19,6 +20,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$position  = Factory$getObject(self$codes$object$position)
              self$cameras   = Factory$getObject(self$codes$object$cameras)
              self$session   = Factory$getObject(self$codes$object$session)
+             self$history   = Factory$getObject(self$codes$object$history)
              self$data$lstHist = list()
              private$makePlots()
          }
@@ -60,10 +62,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              if (nrow(self$data$dfSession) == lastr && ncol(self$data$dfSession) == lastc) 
                  self$vars$sessionChanged = FALSE
          }
-         ,loadHistory = function(id, symbol, df) {
-             if (!is.data.frame(df)) return()
-             if (nrow(df) == 0)      return()
-             df$tms = as.Date(df$tms)
+         ,loadHistory = function(id, symbol) {
+             to = Sys.Date()
+             from = to - as.difftime(self$cookies$history, unit="days")
+             df = self$history$getHistory(id, from, to) 
              self$data$lstHist[[symbol]] = list(id=id,symbol=symbol, df=df)
          }
          ,getHistory = function(symbol) { self$data$lstHist[[symbol]]$df }
@@ -207,7 +209,19 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           }
           #WEB$end("initPage")
        }
-       
+
+       getHistorical = function(data, plot=NULL) {
+           toks = strsplit(data, "-")[[1]]
+           id = as.integer(toks[2])
+           symbol = toks[1]
+           if (id == 0) return()
+           
+           pnl$loadHistory(id, symbol)
+           if (is.null(plot))  flags$plotPos = symbol
+           if (!is.null(plot)) flags$plotsBest = isolate(!flags$plotsBest)
+      } 
+
+
        ###########################################################
        ### Reactives
        ###########################################################
@@ -245,7 +259,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            #WEB$end("flags$position")
        })       
        observeEvent(flags$best, ignoreInit = TRUE, {
-           #WEB$beg("flags$best")
           from = as.numeric(input$cboBestFrom)
           if (is.na(from)) return() 
           if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
@@ -253,29 +266,22 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           pnl$cookies$best$top       = input$numBestTop
           pnl$updateBest()
           renderBestTables()
-          #WEB$end("flags$best")
        })
        observeEvent(flags$refresh, ignoreInit = TRUE, { 
-          #WEB$beg("refresh")
-#          pnl$monitors$update() 
+          pnl$monitors$update() 
           flags$position = isolate(!flags$position)
           renderBestTables()
           renderPlotSession()
-          #WEB$end("refresh")
        })
        observeEvent(flags$update, ignoreInit = TRUE, { 
-          #WEB$beg("update")
           pnl$updateData()
           flags$refresh = isolate(!flags$refresh)
-          #WEB$end("update")
        })
        observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
-           #WEB$beg("history")
           if (is.na(flags$history)) return()
           if (flags$history != pnl$cookies$history) {
               pnl$cookies$history = flags$history
           }
-           #WEB$end("history")
        })
        observeEvent(flags$table, ignoreInit = TRUE, {
            table = pnl$vars$table$target
@@ -352,7 +358,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
        observeEvent(flags$plotsBest, ignoreInit = TRUE, {
-           #WEB$beg("plotsBest")
            table = pnl$vars$table
            plot = pnl$getPlot(paste0("plot", table$target))
            sym = table$symbol
@@ -366,10 +371,8 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            if (table$target == "Best") output$plotBest = plot$render()
            if (table$target == "Top")  output$plotTop  = plot$render()
            if (table$target == "Fav")  output$plotFav  = plot$render()
-           #WEB$end("plotsBest")
        })
-       observeEvent(flags$plotPos, ignoreInit = TRUE, {
-           #WEB$beg("plotPos")
+       observeEvent(flags$plotPos, { 
            plot = pnl$plots[["plotHist"]]
            plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
            name = flags$plotPos
@@ -380,7 +383,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                }
            }
            output$plotHist = plot$render("plotHist")    
-           #WEB$end("plotPos")
        })
 
        ###########################################################
@@ -440,28 +442,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
 #          }
        }
        
-      #####################################################
-      ### REST                                          ###
-      #####################################################
-
-       getHistorical = function(data, plot=NULL) {
-           toks = strsplit(data, "-")[[1]]
-           id = as.integer(toks[2])
-           symbol = toks[1]
-           if (id == 0) return()
-           to = Sys.Date()
-           from = to - as.difftime(pnl$cookies$history, unit="days")
-           WEB$REST$DF("hist",id=id,from=from,to=to)  %>% then(
-                function(df) {
-#           df = restdfSync("hist",id=id,from=from,to=to)
-                    if (is.data.frame(df)) {
-                        pnl$loadHistory(id, symbol, df)
-                        if (is.null(plot))  flags$plotPos = isolate(symbol)
-                        if (!is.null(plot)) flags$plotsBest = isolate(!flags$plotsBest)
-                    }
-                  }, function(err) { })
-      } 
-
       #####################################################
       ### Observers                                     ###
       #####################################################

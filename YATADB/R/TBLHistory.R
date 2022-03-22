@@ -26,21 +26,30 @@ TBLHistory = R6::R6Class("TBL.HISTORY"
             df
         }
         ,getDates = function(symbol) {
+            stop("TBLHIstory - getDates - DESDE DONDE SE LLAMA")
             "SELECT "
             query2(fields$tms, symbol=symbol)
+        }
+        ,getHistory = function(symbol, from, to) {
+            if (is.numeric(symbol)) {
+                tableInterval(from=from, to=to, id=symbol)
+            } else {
+                tableInterval(from=from, to=to, symbol=symbol)
+            }
         }
      )
      ,private = list (
          fields = list(
-             id     = "ID"
-            ,symbol = "SYMBOL"
-            ,open   = "OPEN"
-            ,close  = "CLOSE"
-            ,high   = "HIGH"
-            ,low    = "LOW"
-            ,volume = "VOLUME"
+             id         = "ID"
+            ,symbol     = "SYMBOL"
+            ,open       = "OPEN"
+            ,close      = "CLOSE"
+            ,high       = "HIGH"
+            ,low        = "LOW"
+            ,volume     = "VOLUME"
             ,market_cap = "MKTCAP"
-            ,timestamp    = "TMS"
+            ,timestamp  = "TMS"
+            ,tms        = "TMS"
           )
          ,key    = c("id", "tms")
      )

@@ -1,21 +1,28 @@
+# Common
 import(tidyr)
 import(rlist)
 import(zoo)
+
+# Shiny
+import(shiny)
+import(shinyjs)
+import(bslib)
+import(shinydashboardPlus)
+import(htmltools)
+import(shinyWidgets)
+import(shinyBS)          # Botones yataBtn
+
+# Widgets
+import(plotly)
+import(reactable)
+
+#import(shinycookie)
 
 # async
 import(httr)
 import(jsonlite)
 import(future)
 
-# Shiny
-import(shiny)
-import(shinyjs)
-import(shinyBS)          # Botones yataBtn
-import(shinydashboardPlus)
-import(htmltools)
-import(shinyWidgets)
-import(bslib)
-import(shinycookie)
 
 # import(reactable)
 import(markdown)
@@ -25,16 +32,22 @@ import(markdown)
 import(YATABase)
 
 exportPattern("YATA.*")
-exportPattern("yata.*")
+exportPattern("WDG.*")
 exportPattern("yui.*")
-exportPattern("blk.*")
 exportPattern("upd.*")
-exportPattern("plt*")
-exportPattern("prepare*")
-exportPattern("rest.*")
-exportPattern("OBJ.*")
-exportPattern("rmd.*")
-export(isPlot)
-exportPattern("PUT.*")
-exportPattern("GET.*")
-export(YATAWEBDEF)
+exportPattern("yata.*")
+
+
+
+
+#exportPattern("blk.*")
+
+#exportPattern("plt*")
+#exportPattern("prepare*")
+#exportPattern("rest.*")
+#exportPattern("OBJ.*")
+#exportPattern("rmd.*")
+#export(isPlot)
+#exportPattern("PUT.*")
+#exportPattern("GET.*")
+#export(YATAWEBDEF)

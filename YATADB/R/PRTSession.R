@@ -21,7 +21,7 @@ PRTSession = R6::R6Class("PART.SESION"
              super$update(data)
              invisible(self)
          }
-         ,getLatest     = function(rank=o, currencies = NULL) {
+         ,getLatest     = function(rank=0, currencies = NULL) {
              last=max("last")
              if (is.null(currencies)) {
                  df = table(last=last)
@@ -34,7 +34,7 @@ PRTSession = R6::R6Class("PART.SESION"
         ,getSessionData = function(currencies = NULL) {
             from = as.Date(Sys.time())
             parms = list(tms=as.POSIXct(from, tz="UTC"))
-            qry = paste("SELECT * FROM ", tblName, "WHERE TMS > ?")
+            qry = paste("SELECT * FROM ", tblName, "WHERE LAST > ?")
             if (!is.null(currencies)) {
                 marks = rep(",?", length(currencies))
                 marks = substr(marks, 2, nchar(marks))

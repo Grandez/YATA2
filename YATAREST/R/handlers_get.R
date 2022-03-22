@@ -32,8 +32,10 @@ hist_handler = function(.req, .res) {
     cat(paste(Sys.time(), " - HIST: ", id, "from: ", from, "to: ", to, "\n"))
     tryCatch({
        fact = YATACore::YATAFactory$new()
-       sess = fact$getObject(fact$codes$object$session)
-       df   = sess$getHistorical("EUR", id,from,to)
+       hist = fact$getObject(fact$codes$object$history)
+       df   = hist$getHistory(id, from, to)
+       message("HIST OK")
+       message(df)
       .df_handler(df, .res)
     }, error = function(e) {
         message("HIST ERROR")

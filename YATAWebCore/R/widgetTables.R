@@ -27,20 +27,20 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
         args = args2list(...)
         if (is.null(private$coldDefs[[colName]])) { # Does not exist
             if (is.null(args$replace) || args$replace == FALSE) {
-                colDef = private$attrColDef
+                mcolDef = private$attrColDef
             } else {
-              colDef = list()
+              mcolDef = list()
             }
         } else {
           if (!is.null(args$replace) && args$replace) {
-             colDef = list()
+             mcolDef = list()
           }
         }
-        colDef    = list.merge(colDef, args)
-        colDef    = setColumnAlign(colDef)
-        colDef$id = colName
+        mcolDef    = list.merge(mcolDef, args)
+        mcolDef    = setColumnAlign(mcolDef)
+        mcolDef$id = colName
 
-        private$attrCols[[colName]] = colDef
+        private$attrCols[[colName]] = mcolDef
      }
     ,setColumnsDef = function(...) {
       # Establece los datos de columnas como named list
@@ -200,14 +200,14 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
           click = paste0(click, "  }")
           click = paste0(click, "}")
 
-          private$attrTable$onClick = JS(click)
+          private$attrTable$onClick = reactable::JS(click)
           private$attrTable$event   = NULL
           private$attrTable$target  = NULL
       }
       ,prepareData = function (data) {
           setColumnHeader(data)
           private$attrCols = lapply(attrCols, function(col) prepareColumn(col))
-          lapply(attrCols, function(item) do.call(colDef, item))
+          lapply(attrCols, function(item) do.call(reactable::colDef, item))
 #         private$attrTable$columns = lapply(attrCols, function(col) prepareColumn(col))
 
       }
@@ -228,11 +228,11 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
 #         private$dfWork
 
       }
-      ,setColumnAlign = function (colDef) {
-         if (is.null(colDef$type)) return (colDef)
-         if (colDef$type == "date") colDef$align = "right"
-         if (colDef$type == "time") colDef$align = "right"
-         colDef
+      ,setColumnAlign = function (mcolDef) {
+         if (is.null(mcolDef$type)) return (mcolDef)
+         if (mcolDef$type == "date") mcolDef$align = "right"
+         if (mcolDef$type == "time") mcolDef$align = "right"
+         mcolDef
       }
   )
 )
@@ -282,7 +282,7 @@ WDGTableButtoned = R6::R6Class("YATA.WEB.TABLE"
       .buttons = NULL
      ,.createButtons = function(btns) {
           private$.buttons = lapply(btns, function(btn) {
-                                   do.call(colDef, list( name = "", sortable = FALSE
+                                   do.call(reactable::colDef, list( name = "", sortable = FALSE
                                                 ,width = 48
                                                 ,style=list(`text-align` = "center")
                                                 ,cell = function() btn))
@@ -349,12 +349,12 @@ WDGTableButtoned = R6::R6Class("YATA.WEB.TABLE"
 # //     }
 # }
 
-yuiTable          = function(id)   { reactableOutput(id) }
-updTable          = function(data) { renderReactable({ .updTable(data, NULL)       })}
-updTableSingle    = function(data) { renderReactable({ .updTable(data, "single")   })}
-updTableMultiple  = function(data) { renderReactable({ .updTable(data, "multiple") })}
+yuiTable          = function(id)   { reactable::reactableOutput(id) }
+updTable          = function(data) { reactable::renderReactable({ .updTable(data, NULL)       })}
+updTableSingle    = function(data) { reactable::renderReactable({ .updTable(data, "single")   })}
+updTableMultiple  = function(data) { reactable::renderReactable({ .updTable(data, "multiple") })}
 updTbl            = function(data) { .updTable(data, "multiple") }
-updTableSelection = function(table, sel) { updateReactable(table, selected = sel) }
+updTableSelection = function(table, sel) { reactable::updateReactable(table, selected = sel) }
 .updTable = function(data, selection) {
    click = NULL
    .makeScript = function(info) {
@@ -382,7 +382,7 @@ updTableSelection = function(table, sel) { updateReactable(table, selected = sel
     # Botones
     if (!is.null(info$buttons) && length(info$buttons) > 0) {
         buttons = lapply(info$buttons, function(btn) {
-                         do.call(colDef, list( name = "", sortable = FALSE
+                         do.call(reactable::colDef, list( name = "", sortable = FALSE
                                               ,width = 48
                                               ,style=list(`text-align` = "center")
                                               ,cell = function() btn))
@@ -400,11 +400,11 @@ updTableSelection = function(table, sel) { updateReactable(table, selected = sel
     }
     if (length(cols) >  0 && length(buttons) > 0) cols = list.merge(cols, buttons)
     if (length(cols) == 0 && length(buttons) > 0) cols = buttons
-    reactable(df, striped = TRUE, compact=TRUE
+    reactable::reactable(df, striped = TRUE, compact=TRUE
                                   , pagination=FALSE
                                   , selection = selection
                                   , wrap = FALSE
-                                  , onClick = JS(click)
+                                  , onClick = reactable::JS(click)
                                   , columns = cols
     )
 }
@@ -607,7 +607,7 @@ updTableBest = function(df) {
     for (idx in 1:ncol(df)) {
          item = list()
          if ( "type_percentage" %in% class(df[,idx])) {
-              item$format = colFormat(percent=TRUE, separators = TRUE, digits=YATAWEBDEF$scale,locales = "es-ES")
+              item$format = reactable::colFormat(percent=TRUE, separators = TRUE, digits=YATAWEBDEF$scale,locales = "es-ES")
               item$style = function(value) {
                    if (value > 0) color = "#008000" else if (value < 0) color = "#e00000"  else color <- "#777"
                    bold = ifelse (abs(value) > 0.02, "bold", "normal")
@@ -616,7 +616,7 @@ updTableBest = function(df) {
 
          }
          if ( "type_price" %in% class(df[,idx])) {
-              item$format = colFormat(separators = TRUE, locales = "es-ES")
+              item$format = reactable::colFormat(separators = TRUE, locales = "es-ES")
          }
          colname = colnames(df)[idx]
          if (!is.null(fmt[[colname]]) && length(fmt[[colname]]) > 0) {
@@ -628,7 +628,7 @@ updTableBest = function(df) {
              }
          }
     }
-    lapply(fmt, function(item) do.call(colDef, item))
+    lapply(fmt, function(item) do.call(reactable::colDef, item))
 }
 .adjustValues = function (df) {
     if (nrow(df) > 0) {

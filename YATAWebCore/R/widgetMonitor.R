@@ -27,7 +27,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
      }
      ,update = function(first=FALSE) {
          ctc = monitors$keys()
-         private$last = session$getLatest(ctc)
+         private$last = session$getLatest(0, ctc)
          updateData = function(sym) {
              if (nrow(private$last[private$last$id == sym,]) == 1) {
                  last = as.list(private$last[private$last$id == sym,])
@@ -86,6 +86,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           if (length(ctc) > 7) ctc = ctc[1:7]
           dfc = currencies$getCurrencies(ctc)
           dfc = dfc[,c("id", "icon")]
+
           dfs   = session$getLatest(0, dfc$id)
           dfs   = inner_join(dfs,dfc, by=c("id"))
 

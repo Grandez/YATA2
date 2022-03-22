@@ -3,7 +3,6 @@ unloadNamespace("YATACore")
 unloadNamespace("YATADT")
 unloadNamespace("YATAProviders")
 unloadNamespace("YATADB")
-unloadNamespace("YATAWebWidgets")
 unloadNamespace("YATABase")
 
 # Core
@@ -20,13 +19,12 @@ suppressMessages(library(JGGShiny,       warn.conflicts = FALSE))
 suppressMessages(library(YATABase,       warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
-suppressMessages(library(YATAWebWidgets, warn.conflicts = FALSE))
 
 # suppressMessages(library(YATADT))
 
 # Shiny
 library(shiny)
-library(shinyjs)
+suppressMessages(library(shinyjs             ,warn.conflicts = FALSE))
 #suppressMessages(library(shinydashboard,     warn.conflicts = FALSE))
 #suppressMessages(library(shinydashboardPlus, warn.conflicts = FALSE))
 #suppressMessages(library(shinyWidgets,       warn.conflicts = FALSE))
@@ -40,27 +38,26 @@ suppressMessages(library(bslib,              warn.conflicts = FALSE))
 #library(reactable)
 
 # Plots
-suppressMessages(library(ggplot2,   warn.conflicts = FALSE))
-suppressMessages(library(gridExtra, warn.conflicts = FALSE))
-suppressMessages(library(plotly,    warn.conflicts = FALSE))
+#suppressMessages(library(ggplot2,   warn.conflicts = FALSE))
+#suppressMessages(library(gridExtra, warn.conflicts = FALSE))
+#suppressMessages(library(plotly,    warn.conflicts = FALSE))
 #library(RColorBrewer)
 
 # Async
-suppressMessages(library(jsonlite, warn.conflicts = FALSE))
+#suppressMessages(library(jsonlite, warn.conflicts = FALSE))
 suppressMessages(library(promises, warn.conflicts = FALSE))
 suppressMessages(library(future,   warn.conflicts = FALSE))
 
 options( warn = -1
-        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
+#        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
         ,java.parameters = "-Xmx2048m"
           # ,shiny.reactlog=TRUE
           # ,shiny.trace=TRUE
 )
 
 
-plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
+# plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
-cat(paste(Sys.time(), " - Before files\n"), file="P:/R/YATA2/web.log", append=TRUE)
 ######################################
 ### Carga de fuentes
 ### En R busca subdirectorios
@@ -69,10 +66,9 @@ cat(paste(Sys.time(), " - Before files\n"), file="P:/R/YATA2/web.log", append=TR
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
-cat(paste(Sys.time(), " - Before WEB\n"), file="P:/R/YATA2/web.log", append=TRUE)
+#cat(paste(Sys.time(), " - Before WEB\n"), file="P:/R/YATA2/web.log", append=TRUE)
 WEB = YATAWebEnv$new()
 
-cat(paste(Sys.time(), " - Before future\n"), file="P:/R/YATA2/web.log", append=TRUE)
 if (.Platform$OS.type != "windows") {
    future::plan(strategy="sequential")    
 } else {

@@ -26,6 +26,13 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
         ,getSessionDays = function(symbol) {
             tblHistory$getDates(symbol)
         }
+        ,getHistory = function(symbol, from, to) {
+            df = tblHistory$getHistory(symbol, from, to)
+            nm = colnames(df)
+            nm[length(nm)] = "tms"
+            colnames(df) = nm
+            df[order(df$tms, decreasing = TRUE),]
+        }
         ,add = function(df, isolated=TRUE) {
             tblHistory$bulkAdd(df, isolated)
         }
