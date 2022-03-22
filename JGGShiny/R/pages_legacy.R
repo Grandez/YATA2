@@ -33,7 +33,7 @@ JGGDashboardFull = function( title    = NULL
                extendShinyjs(script="jggshiny/jggshiny.js", functions=jsshiny)
                ,custom_css(cssFiles)
               ,custom_js(jsFiles)
-              ,document_ready_script(jsInit, title)
+              ,document_ready_script(jsInit, title, id)
             )
 
     bspage = jgg_dashboard_bslib_page( title = title, theme = theme, lang = lang

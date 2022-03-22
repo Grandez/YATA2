@@ -15,7 +15,8 @@ custom_css = function(cssFiles) {
     tagList(base, cssLink)
 }
 custom_js = function(jsFiles) {
-    base = tagList(tags$script(src='jggshiny/jggapp.js'))
+    base = tagList( tags$script(src='jggshiny/jggapp.js')
+                   ,tags$script(src='jggshiny/js_cookie.js'))
     jsLink = NULL
     if (is.null(jsFiles)) return (tagList(base))
     if (!is.null(jsFiles$shiny)) {
@@ -24,11 +25,11 @@ custom_js = function(jsFiles) {
     jsLink = lapply(jsFiles$js, function (js) tags$script(src=js))
     tagList(base, jsLink)
 }
-document_ready_script = function(jsInit, title) {
+document_ready_script = function(jsInit, title, id) {
     # This is the javascript to execute on document ready
-    code =              "jQuery(document).ready(function() {\n"
-    code = paste0(code, "   globalThis.jggshiny = new JGGShiny();  \n")
-    code = paste(code, "    jggshiny.init('", title, "');   \n")
+    code = paste( " jQuery(document).ready(function() {\n")
+    code = paste0(code, "   globalThis.jggshiny = new JGGShiny('YATA');  \n")
+    code = paste0(code, "    jggshiny.init('", title, "','", id, "');   \n")
     if (!is.null(jsInit)) {
         for (js in jsInit) code = paste(code, js, sep="\n")
     }

@@ -6,15 +6,27 @@ class JGGShiny {
    #leftSideIcon =  "[data-toggle='jgg_left_button']";
    #rightSideIcon = "[data-toggle='jgg_right_button']";
    #menuTag       = "[data-toggle='tab']";
-   constructor()  {
-      this.#page = undefined;
+   #app
+   constructor(app)  {
+      this.#page   = undefined;
       this.#panels = new Map();
+      this.#app    = app;
    }
-   init(title)    {
+   init(title, id)    {
        jQuery("#app_title").text(title);
        jQuery(document).on('click', this.#leftSideIcon,  {jggshiny: this}, jggshiny.sidebarLeft);
        jQuery(document).on('click', this.#rightSideIcon, {jggshiny: this}, jggshiny.sidebarRight);
        this.#add_listeners();
+   }
+   send_cookies() {
+      let res = Cookies.get();
+      Shiny.setInputValue('cookies', res);
+   }
+   window_resize(evt) {
+      Cookies.set('window_width',  window.innerWidth,  { SameSite: "Strict"});
+      Cookies.set('window_height', window.innerHeight, { SameSite: "Strict"});
+      Shiny.setInputValue('resize', Cookies.get());
+
    }
    set_page(data) {
        /* Called from shinyjs, data is an array */
@@ -182,6 +194,15 @@ class JGGShiny {
             $(container).append(document.getElementById(childs[i].id));
        }
        $(tgt).append(document.getElementById(ns + "-" + obj));
+
+       // Caso especial plots con plotly
+       // NO FUNCIONA
+       // if (obj.startsWith("plot")) {
+       //   let w = $(tgt).width();
+       //       let plt = $(tgt).children(0).children(0).children(0);
+       //       plt.width(w + "px");
+       // }
+
 /*
       let nfo = id.split("_");
       let evt = {"value": id, "row": nfo[nfo.length - 2], "col":nfo[nfo.length - 1]};
@@ -212,6 +233,8 @@ class JGGShiny {
        }
    }
    #add_listeners() {
+      window.addEventListener('resize', jggshiny.window_resize );
+
       // Listener a los combos del layout
       let elements = document.getElementsByClassName("jgg_layout");
       Array.from(elements).forEach(function(element) {

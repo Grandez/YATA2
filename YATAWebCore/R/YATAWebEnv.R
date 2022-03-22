@@ -22,6 +22,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,factory  = NULL
      ,session  = NULL
      ,log      = NULL
+     ,window  = list(width = 0, height = 0)
      ,initialize = function() {
          tryCatch({
             base = YATABase$new()
@@ -54,6 +55,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          private$hSym   = NULL
          private$hCam   = NULL
       #   factory$clear()
+     }
+     ,setWindow = function(data) {
+         self$window$width  = data$window_width
+         self$window$height = data$window_height
      }
      # ,log = function(tpl, ...) {
      #   message(paste(as.integer(Sys.time()), "-", sprintf(tpl, ...)))

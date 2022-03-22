@@ -127,7 +127,11 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
             info  = list(type="Line", observer=ns("modebar"), scale="date")
             plots = c("plotHist","plotTop","plotBest","plotFav")
              
-            self$plots[["plotSession"]] = YATAPlot$new("plotSession", info=info, scale="time", title="Current session") 
+            self$plots[["plotSession"]] = YATAPlot$new("plotSession"
+                                                       ,info=info
+                                                       ,scale="time"
+                                                       ,title="Current session"
+                                                       ,width = WEB$window$width) 
             for (plt in plots) self$plots[[plt]] = YATAPlot$new(plt, info=info) 
         }
        ,sortBest = function(df, first) {
