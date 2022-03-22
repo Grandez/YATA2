@@ -62,6 +62,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
       ,clsData  = "yata_cell_data"
       ,initMonitors  = function() {
           createMonitor = function(id, dfPos, dfLast, names) {
+
               mon         = as.list(dfLast[dfLast$id == id,])
               mon$name    = names[[as.character(id)]]
               mon$session = mon$price
@@ -78,11 +79,12 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           private$session   = pnl$factory$getObject(pnl$codes$object$session)
           private$pos       = pnl$factory$getObject(pnl$codes$object$position)
           private$favorites = pnl$factory$getObject(pnl$codes$object$favorites)
+
           currencies = pnl$factory$getObject(pnl$codes$object$currencies)
 
-          df  = pnl$getGlobalPosition()
+          dfp = pnl$getGlobalPosition()
           dff = favorites$get()
-          ctc = unique(c(df$currency, dff$symbol, "BTC", "ETH"))
+          ctc = unique(c(dfp$currency, dff$symbol, "BTC", "ETH"))
           if (length(ctc) > 7) ctc = ctc[1:7]
           dfc = currencies$getCurrencies(ctc)
           dfc = dfc[,c("id", "icon")]
@@ -91,7 +93,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           dfs   = inner_join(dfs,dfc, by=c("id"))
 
           names = WEB$getCTCLabels(dfs$id, type="name")
-          lapply(dfs$id, function(id) createMonitor(id, df, dfs, names))
+          lapply(dfs$id, function(id) createMonitor(id, dfp, dfs, names))
       }
       ,renderData    = function(first=FALSE) {
           render = function(key) {

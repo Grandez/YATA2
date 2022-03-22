@@ -24,7 +24,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,cookies    = list() # Variables con estado
     ,layout     = NULL
     ,print      = function() { message(paste("Panel object for", self$name)) }
-    ,initialize = function(id, parent, session, ns) {
+    ,initialize = function(id, parent, session, ns = NULL) {
         self$name         = id
         self$parent       = parent
         web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})

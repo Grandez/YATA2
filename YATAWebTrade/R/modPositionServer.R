@@ -1,6 +1,5 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
-
 modPosServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLPos = R6::R6Class("PNL.OPER"
@@ -14,9 +13,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
          ,history     = NULL
          ,monitors    = NULL
          ,plots = list()
-         ,initialize    = function(session) {
-             private$defaultValues()
+         ,initialize    = function(id, pnlParent, session, ns) {
              super$initialize(id, pnlParent, session, ns)
+             private$defaultValues(ns)             
              self$position  = Factory$getObject(self$codes$object$position)
              self$cameras   = Factory$getObject(self$codes$object$cameras)
              self$session   = Factory$getObject(self$codes$object$session)
@@ -27,7 +26,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
          ,loadData = function() {
              self$vars$sessionChanged = FALSE
              private$loadPosition()
-             self$monitors = WDGMonitor$new(ns("monitor"), self, WEB)
+             self$monitors = WDGMonitor$new(private$ns("monitor"), self, WEB)
              if (!is.null(self$data$dfGlobal)) {
                  ids = self$data$dfGlobal$id
                  self$data$dfSession = self$session$getSessionPrices(ids)
@@ -91,14 +90,15 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           }
     )
     ,private = list(
-        cboplots = c( "Position"  = "Hist", "Session"  = "Session"
+         ns = NULL
+        ,cboplots = c( "Position"  = "Hist", "Session"  = "Session"
                      ,"Best Info" = "Best", "Top Info" = "Top"
         )
         ,tables = c( "Position"    = "Position", "Best"              = "Best"
                     ,"Best of Top" = "Top"     , "Best of favorites" = "Fav"
          )
         ,definition = list(id = "", left=-1, right=0, son=NULL, submodule=FALSE)
-        ,defaultValues = function() {
+        ,defaultValues = function(ns) {
              self$cookies$interval = 15
              self$cookies$best = list(top = 10, from = 2)
              self$cookies$history = 15
@@ -108,6 +108,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
              self$cookies$layout = matrix(widgets,ncol=2)
              self$cookies$position = "Global"
              self$data$dfGlobal = NULL
+             private$ns = ns
         }
        ,loadPosition = function() {
            df = self$getGlobalPosition()
@@ -149,6 +150,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        }
       )
     )
+   
    #####################################################################
    ### FUNCTIONS                                                     ###
    #####################################################################   
@@ -177,9 +179,10 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
                     )
       data
     }
+   
     moduleServer(id, function(input, output, session) {
        pnl = WEB$getPanel(id)
-       if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(session))
+       if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
        flags = reactiveValues(
             position  = FALSE
            ,best      = FALSE
