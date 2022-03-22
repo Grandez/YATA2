@@ -8,7 +8,8 @@ YATABase = R6::R6Class("YATA.BASE.BASE"
       ,str   = function(value) { invisible(.str)  }
       ,dates = function(value) { invisible(.dat)  }
       ,http  = function(value) { invisible(.http) }
-      ,id    = function(value) { self$getID() }
+      ,id    = function(value) { self$getID()     }
+
    )
    ,public = list(
       initialize = function() {
