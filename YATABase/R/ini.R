@@ -17,7 +17,11 @@ YATABaseIni = R6::R6Class("YATA.BASE.INI"
       ,add = function (fini) {
           if (file.exists(fini)) {
               data = ini::read.ini(fini)
-              private$.cfg = list.merge(.cfg, data)
+              if (is.null(private$.cfg)) {
+                 private$.cfg = data
+              } else {
+                private$.cfg = list.merge(.cfg, data)
+              }
           }
           invisible(self)
       }
