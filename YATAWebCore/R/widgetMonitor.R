@@ -84,7 +84,8 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
 
           dfp = pnl$getGlobalPosition()
           dff = favorites$get()
-          ctc = unique(c(dfp$currency, dff$symbol, "BTC", "ETH"))
+          prefixed = c("BTC", "ETH", "USDT", "BNB", "XRP", "LUNA", "CARDANO", "SOLANA")
+          ctc = unique(c(dfp$currency, dff$symbol, prefixed))
           if (length(ctc) > 7) ctc = ctc[1:7]
           dfc = currencies$getCurrencies(ctc)
           dfc = dfc[,c("id", "icon")]

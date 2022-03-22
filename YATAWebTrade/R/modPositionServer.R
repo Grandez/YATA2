@@ -112,7 +112,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
         }
        ,loadPosition = function() {
            df = self$getGlobalPosition()
-           if (is.null(df)) return()
+           if (is.null(df) || nrow(df) == 0) return()
            df = cbind(df, day=0, week=0, month=0)
            self$data$dfGlobal = df
            self$vars$selected[["PosGlobal"]] = df$currency

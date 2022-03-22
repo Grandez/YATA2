@@ -23,7 +23,7 @@ PRTSession = R6::R6Class("PART.SESION"
          }
          ,getLatest     = function(rank=0, currencies = NULL) {
              last=max("last")
-             if (is.null(currencies)) {
+             if (is.null(currencies) || length(currencies) == 0) {
                  df = table(last=last)
              } else {
                  df = table(last=last, inValues=list(id=currencies))
