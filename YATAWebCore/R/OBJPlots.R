@@ -64,7 +64,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
       ,getPlot = function() {
           if (!generated) generatePlot()
           #self$plot %>% layout(showlegend = FALSE)
-          self$plot %>% layout(showlegend = FALSE, autosize = TRUE, responsive = TRUE, width="900px")
+          self$plot %>% layout(showlegend = FALSE, autosize = TRUE, responsive = TRUE, width=900)
        }
        ,setObserver = function(observer) { private$info$observer = observer }
        ,setTitle    = function(title)    { private$title = title }
@@ -209,7 +209,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
         ,svg   = NULL
         ,scale = NULL
         ,title = NULL
-        ,width = "700px"
+        ,width = 900
         ,generated = FALSE # Flag para si insertamos datos
         ,xAxis = 1     # Que columna es el eje X?
         ,xLines = NULL
@@ -220,7 +220,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
             #  src = ifelse(is.missing(id), "A", info$plotly)
             p = plot_ly(source=id)
             p = config(p)
-            plotly::layout(p, autosize=TRUE, responsive = TRUE, width="900px", legend = list(orientation = 'h'))
+            plotly::layout(p, autosize=TRUE, responsive = TRUE, width=900, legend = list(orientation = 'h'))
         }
         ,trace = function(df, type, mode, name, ...) {
             if (!is.null(private$current$visible) && !private$current$visible) return (self$plot)
@@ -288,7 +288,8 @@ YATAPlot = R6::R6Class("YATA.PLOT"
                if (!is.null(ui)) private$info$ui = ui
                buttons = getSVGGroup()
                if (!is.null(buttons))       self$plot = plotly::config(plot, modeBarButtonsToAdd = buttons)
-               if (!is.null(private$title)) self$plot = plotly::layout(plot, autosize = TRUE, responsive = TRUE, title = private$title)
+               if (!is.null(private$title))
+                   self$plot = plotly::layout(plot, autosize = TRUE, responsive = TRUE, width=900, title = private$title)
                private$generated = TRUE
            }
            private$generated
