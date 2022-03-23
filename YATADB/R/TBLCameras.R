@@ -24,16 +24,14 @@ TBLCameras = R6::R6Class("TBL.CAMERAS"
      ,private = list (
            key = c("id")
           ,fields = list(
-              id     = "CAMERA"
-             ,name   = "NAME"
-             ,active = "ACTIVE"
-             ,maker  = "MAKER"
-             ,taker  = "TAKER"
+              id       = "CAMERA"
+             ,desc     = "DESCR"
+             ,exchange = "EXCHANGE"
+             ,active   = "ACTIVE"
              ,token  = "TOKEN"
              ,usr    = "USR"
              ,pwd    = "PWD"
-             ,icon   = "ICON"
-             ,url    = "URL"
+             ,CC     = "cc"
           )
 
      )

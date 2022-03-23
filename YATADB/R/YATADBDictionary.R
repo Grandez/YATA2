@@ -12,12 +12,14 @@ DBDict = list(
       ,Parms        = "PARMS"
     )
     ,data = list(
-       AllCameras   = "GLOBAL_CAMERAS"
-      ,Currencies   = "CURRENCIES"
-      ,History      = "HISTORY"
-      ,Session      = "SESSION"
-      ,Exchanges    = "EXCHANGES"
-      ,SessionCtrl  = "SESSION_CTRL"
+       AllCameras    = "GLOBAL_CAMERAS"
+      ,Currencies    = "CURRENCIES"
+      ,History       = "HISTORY"
+      ,Session       = "SESSION"
+      ,Exchanges     = "EXCHANGES"
+      ,ExchangesFiat = "EXCHANGES_FIAT"
+      ,ExchangesCtc  = "EXCHANGES_CTC"
+      ,SessionCtrl   = "SESSION_CTRL"
     )
     ,tables = list(
        Cameras        = "CAMERAS"
