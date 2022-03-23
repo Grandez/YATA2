@@ -383,13 +383,13 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            plot = pnl$plots[["plotHist"]]
            plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
            name = flags$plotPos
-           if(!plot$hasSource(flags$plotPos)) {
-               df = pnl$getHistory(name)
-               if (!is.null(df)) {
-                   plot$addData(df, name, "pepe")
-               }
-           }
-           output$plotHist = plot$render("plotHist")    
+           # if(!plot$hasSource(flags$plotPos)) {
+           #     df = pnl$getHistory(name)
+           #     if (!is.null(df)) {
+           #         plot$addData(df, name, "pepe")
+           #     }
+           # }
+           # output$plotHist = plot$render("plotHist")    
        })
 
        ###########################################################
