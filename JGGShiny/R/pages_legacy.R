@@ -8,7 +8,6 @@ JGGDashboardFull = function( title    = NULL
                               ,titleActive = FALSE
                               ,lang    = NULL
                               ,...) {
-    browser()
   # Quitamos:
   # position = c("static-top", "fixed-top", "fixed-bottom")
   #            static-top
