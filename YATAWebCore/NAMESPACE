@@ -4,8 +4,8 @@ import(rlist)
 import(zoo)
 
 # Shiny
-import(shiny)
-import(shinyjs)
+import(shiny,   except=c(runExample))
+import(shinyjs, except=c(runExample, alert))
 import(bslib)
 import(shinydashboardPlus)
 import(htmltools)

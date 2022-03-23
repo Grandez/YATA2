@@ -1,4 +1,5 @@
 add_shiny_resources = function() {
+    browser()
   # tags$link  (rel="stylesheet", type="text/css", href="yata/yatabootstrap.css")
   #  message("Loading YATAWebCore")
     if (Sys.info()[["sysname"]] == "Windows") {

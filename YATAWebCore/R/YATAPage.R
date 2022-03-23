@@ -18,9 +18,9 @@ YATAPage = function( title="YATA", id = "mainMenu"
              # ,tags$script(makeMessageHandler(YATAMSG$setPage))
              # ,tags$script(makeMessageHandler(YATAMSG$showBlock))
              # ,tags$script(makeMessageHandler(YATAMSG$movePanel))
-
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
+      ,icons = normalizePath(c(Sys.getenv("YATA_SITE"), "YATAExternal/icons"))
     )
     jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
 
