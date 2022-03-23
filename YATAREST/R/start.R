@@ -1,4 +1,5 @@
 start = function(port) {
+    browser()
     if (.Platform$OS.type != "windows") {
         sink("/tmp/yata_rest.log", append=TRUE)
     } else {
@@ -13,5 +14,5 @@ start = function(port) {
         port = YATARest$getPort()
     }
     backend = BackendRserve$new()
-    backend$start(YATARest, http_port = port)
+    backend$start(YATARest, http_port = port, background = FALSE)
 }
