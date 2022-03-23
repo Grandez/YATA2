@@ -3,8 +3,8 @@
 # Author: Grandez
 #
 # Se llama como script paquete puerto accion
-local PKG=$1
-local PORT=$2
+PKG=$1
+PORT=$2
 shift 2
 
 function checkport {
