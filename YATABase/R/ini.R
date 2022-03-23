@@ -4,6 +4,7 @@ YATABaseIni = R6::R6Class("YATA.BASE.INI"
    ,portable   = FALSE
    ,public = list(
       initialize    = function(iniFile) {
+
          if (!missing(iniFile)) private$.cfg = ini::read.ini(iniFile)
       }
       ,load = function(iniFile) {
