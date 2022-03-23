@@ -62,7 +62,6 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
       ,clsData  = "yata_cell_data"
       ,initMonitors  = function() {
           createMonitor = function(id, dfPos, dfLast, names) {
-
               mon         = as.list(dfLast[dfLast$id == id,])
               mon$name    = names[[as.character(id)]]
               mon$session = mon$price
@@ -91,7 +90,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           dfc = dfc[,c("id", "icon")]
 
           dfs   = session$getLatest(0, dfc$id)
-          dfs   = inner_join(dfs,dfc, by=c("id"))
+          dfs   = left_join(dfc,dfs, by=c("id"))
 
           names = WEB$getCTCLabels(dfs$id, type="name")
           lapply(dfs$id, function(id) createMonitor(id, dfp, dfs, names))
