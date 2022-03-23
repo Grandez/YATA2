@@ -1,3 +1,5 @@
+
+
 INSERT INTO CURRENCIES  (ID, SYMBOL, MKTCAP,  NAME,    RANK, ICON,       SINCE,        ACTIVE) 
             VALUES      (0, "$FIAT", "$FIAT", "Euro", 99999, "YATA.png", "2020-01-01",     0);
 
