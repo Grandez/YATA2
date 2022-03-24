@@ -37,4 +37,6 @@ INSERT INTO FIATS(ID, SYMBOL, NAME, ICON) VALUES("USD", "USD", "US Dolar"       
 INSERT INTO FIATS(ID, SYMBOL, NAME, ICON) VALUES("XAG", "XAG", "Plata troy"            , "XAG_01.png"  );
 INSERT INTO FIATS(ID, SYMBOL, NAME, ICON) VALUES("XAU", "XAU", "Oro troy"              , "XAU_01.png"  );
 
+-- Tabla de control
+
 INSERT INTO CONTROL(ID, TMS, TOTAL) VALUES (1, "2020-01-01 00:00:00", 0);          
