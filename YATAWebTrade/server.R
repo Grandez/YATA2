@@ -138,10 +138,8 @@ function(input, output, session) {
    observeEvent(input$disconnected, { 
 #       PUT("end")
        })
-   observeEvent(input$initialized, { 
-#       PUT("begin")
-       })
-  observeEvent(input$app_title, {
+  observeEvent(input$initialized, { PUT("begin") })
+  observeEvent(input$app_title,   {
       data = frmChangeDBInput()
       output$form = renderUI({data})
       output$lblDBCurrent    = updLabelText(factory$getDBName())

@@ -18,3 +18,24 @@ update_handler = function(.req, .res) {
     })
     .res
 }
+put_begin = function(.req, .res) {
+    root = Sys.getenv("YATA_SITE")
+    interval = .req$parameters_query[["interval"]]
+    alive    = .req$parameters_query[["alive"]]
+    if (is.null(interval)) interval = ""
+    if (is.null(alive))    alive    = ""
+
+    if (.Platform$OS.type != "windows") {
+        processx::run(paste0(root, '/bin/yata_mqcli'), c("start", interval, alive), FALSE)
+    }
+   .res$set_status_code(200)
+   .res$set_body("OK")
+}
+put_end = function(.req, .res) {
+    root = Sys.getenv("YATA_SITE")
+    if (.Platform$OS.type != "windows") {
+        processx::run( paste0(root, '/bin/yata_mqcli'), "stop", FALSE)
+    }
+   .res$set_status_code(200)
+   .res$set_body("OK")
+}

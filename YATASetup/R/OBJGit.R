@@ -5,7 +5,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
    ,public = list(
        pull = function() {
           res = processx::run("git", c("pull"), FALSE, Sys.getenv("YATA_ROOT"))
-          private$gitout = res$stdout
+          private$gitout = strsplit(res$stdout, "\n")
           res
        }
        # Friendly functions
