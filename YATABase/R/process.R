@@ -1,4 +1,4 @@
-YATARUN = R6::R6Class("YATA.R6.RUN"
+YATAExec = R6::R6Class("YATA.R6.RUN"
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,portable   = FALSE
@@ -70,7 +70,19 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
                file.copy(from, to, overwrite=TRUE, recursive = TRUE)
            })
        }
-
+       ,import = function(file, database, columns) {
+            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/YATAExternal/tmp")
+            args = list( "--local"
+                        , "--replace"
+                        ,"--fields-terminated-by=;"
+                        ,"--user=YATA"
+                        ,"--password=yata"
+                        ,paste0("--columns=",paste(columns, collapse=","))
+                        ,database
+                        ,file
+                  )
+           .run("mysqlimport", args)
+       }
     )
    ,private = list(
        .wd = NULL
@@ -88,7 +100,13 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
        }
        ,.run = function(cmd, ...) {
            lst  = list(...)
-           args  = as.character(lst)
+           if (length(lst) > 0) {
+              if (is.list(lst[[1]])) {
+                 args = unlist(lst[[1]])
+              } else {
+                 args  = as.character(lst)
+              }
+           }
 
            res = tryCatch({
               processx::run(cmd, args, FALSE, .wd)

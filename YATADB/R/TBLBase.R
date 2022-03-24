@@ -37,9 +37,13 @@ YATATable <- R6::R6Class("YATA.TABLE"
           private$key     = key
           self$db         = db
       }
-      ,print       = function() { cat(self$name)                              }
-      ,getDB       = function() { self$db }  # Para debug
-      ,getColNames = function() { private$fields }
+      ,print          = function() { cat(self$name)  }
+      ,getDB          = function() { self$db         }
+      ,getDBTableName = function() { return(tblName) }
+      ,getColNames = function(yataNames) {
+          pos = match(yataNames, names(fields))
+          unlist(fields[pos])
+       }
       ,selected    = function() { .selected }
       ,loadAll     = function() {
          private$dfa = table()
@@ -93,7 +97,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
                  private$changed[field] = TRUE
              } else {
                  if (current[[field]] != value) {
-                     self$current[field] = value
+                     self$current[[field]] = value
                      private$changed[field] = TRUE
                  }
              }

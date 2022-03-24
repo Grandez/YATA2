@@ -61,6 +61,9 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
            df = provider$getLatest()
            df %>% filter(symbol %in% counter)
        }
+       ,getTickers = function(max = 0, from = 1) {
+           mktcap$getTickers(max,from)
+       }
        ,getHistory  = function(id, from, to) {
            if (missing(to)) to = as.Date(Sys.time())
            provider$getHistorical(id,from, to)

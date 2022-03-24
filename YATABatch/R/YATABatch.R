@@ -1,3 +1,5 @@
+# Objeto comun para los procesos Batch
+# Carga la factoria, el objeto base, logger,etc.
 # Para los Logs usaremos un numero de dos digitos
 # el primero, para el detalle
 # el segundo parael sumario
@@ -13,13 +15,15 @@ YATABatch = R6::R6Class("OBJ.BATCH"
         codes = NULL
        ,fact  = NULL
        ,log   = NULL
+       ,base  = NULL
         # Return codes
        ,OK  = 0
        ,NODATA = 4
        ,initialize = function (process=NULL, output=1, loglevel=0) {
            self$codes = YATACore::YATACODES$new()
-           self$fact  = YATACore::YATAFACTORY$new()
+           self$fact  = YATACore::YATAFactory$new()
            self$log   = YATALogger$new(process, output, loglevel)
+           self$base  = YATABase$new()
        }
        ,setVerbose = function(verbose) {
            if (!missing(verbose)) {

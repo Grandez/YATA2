@@ -12,4 +12,4 @@ exportPattern("init.*")
 #exportPattern("unload.*")
 #export(recreatePosi#tion)
 #export(checkMissingDays)
-export(getLatest)
+

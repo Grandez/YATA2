@@ -3,77 +3,57 @@ OBJSession = R6::R6Class("OBJ.SESSION"
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = TRUE
-# Viene a ser como un provider pero mas especifico
     ,public = list(
         print       = function() { message("Session Object")}
        ,initialize = function(Factory) {
            super$initialize(Factory)
-           #JGG Especial (Solo usamos MarketCap)
-           private$provider      = Factory$getProvider("MKTCAP", "MarketCap")
-           private$prtSession    = Factory$getTable(self$codes$tables$session)
-           private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
-           private$interval      = 15
+           .getTables(Factory)
        }
-       ,setInterval   = function(interval) { private$interval = interval }
-       ,getBest       = function(top=10, from=7, group=0) {
-            session = prtSession$getLatest()
+       ,getDBTableName = function()         { tblSession$getDBTableName() }
+       ,getLastUpdate  = function() {
+           tblControl$select(id = 1)
+           tms = as.POSIXct("2020-01-01 00:00:00", tz="UTC")
+           if (!is.null(tblControl$current)) tms = tblControl$current$tms
+           tms
+       }
+       ,updateLastUpdate = function(tms, total) {
+           tblControl$db$begin()
+           tblControl$select(id = 1)
+           if (!is.character(tms)) tms = strptime(tms, "%Y-%m-%d %H:%M:%S", tz="UTC")
+           tblControl$set(tms = tms, total = total)
+           tryCatch({
+              tblControl$apply()
+              tblControl$db$commit()
+           }, YATAERROR = function (cond) {
+              tblControl$db$rollback()
+              YATABase:::propagateError(cond)
+           })
+           invisible(self)
+       }
+       ,getBest        = function(top=10, from=7, group=0) {
+            session = tblSession$getLatest()
             if (nrow(session) == 0) session = updateLatest(TRUE)
             session = session[session$volume > 10,] # Solo los que se mueven
             getBestDF(session, top, from, group)
        }
        ,getPrice = function(currency) {
-           prtSession$select(symbol=currency,limit = 1)
-           ifelse(is.null(prtSession$current), 0, prtSession$current$price)
+           tblSession$select(symbol=currency,limit = 1)
+           ifelse(is.null(tblSession$current), 0, tblSession$current$price)
        }
        ,getLatest = function(rank=0, currencies = NULL) {
-           prtSession$getLatest(rank, currencies)
+           tblSession$getLatest(rank, currencies)
         }
        ,getSessionPrices = function(currencies = NULL) {
-           prtSession$getSessionData(currencies)
+           tblSession$getSessionData(currencies)
        }
-       ,updateLatest = function(max = 0) {
-           # Evitamos procesar todo de golpe y posibles bloqueos
-           now = lubridate::now("UTC")
-           last = format(now, format = "%Y-%m-%d-%H:%M:%S")
-           tms = prtSession$getLastUpdate()
-           # Se ha llamado en el mismo timestamp (minuto)
-           if ((as.integer(now) - tms) < 60) return (invisible(self))
-
-           data = provider$getTickers(500, 1)
-           if (max == 0) max = data$total
-
-           repeat {
-              df = data$df
-              df[,c("name", "slug")] = NULL
-
-              # Puede haber symbol repetidos (no por id)
-              # Se han cambiado en la tabla de currencies
-              df1 = df[,c("id", "symbol")]
-              ctc = tblCurrencies$table()
-              df2 = ctc[,c("id", "symbol")]
-              dfs = inner_join(df1, df2, by="id")
-              df2 = dfs[,c(1,3)]
-              df  = inner_join(df, df2, by="id")
-              df$symbol = df$symbol.y
-              df        = df[,-ncol(df)]
-
-              df$last = last
-              prtSession$db$begin()
-              prtSession$update(df)
-              prtSession$db$commit()
-              start = data$from + data$count
-              if (start >= max) break;
-              data = provider$getTickers(500, start)
-           }
-           invisible(self)
+       ,getColumnNames = function(yataNames) {
+           tblSession$getColNames(yataNames)
        }
     )
     ,private = list(
-        prtSession = NULL
+        tblSession    = NULL
+       ,tblControl    = NULL
        ,tblCurrencies = NULL
-       ,provider   = NULL
-       ,lastGet    = NULL
-       ,interval   = NULL
        ,getBestDF = function(df, top, from, group) {
            groups = c(25, 150)
            col = ""
@@ -85,6 +65,11 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            if (group > 0) df = df[df$rank <= groups[group],]
            dft = df[order(df[col], decreasing = TRUE),]
            dft[1:top,]
+       }
+      ,.getTables = function (Factory) {
+           private$tblSession    = Factory$getTable(self$codes$tables$session)
+           private$tblControl    = Factory$getTable(self$codes$tables$control)
+           private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
        }
     )
 )

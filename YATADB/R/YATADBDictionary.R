@@ -3,7 +3,6 @@
 DBDict = list(
     parts  = list(
        Operations   = "OPERATIONS"
-     , Session      = "SESSION"
     )
     ,base = list(
        Parameters   = "PARMS"
@@ -12,14 +11,13 @@ DBDict = list(
       ,Parms        = "PARMS"
     )
     ,data = list(
-       AllCameras    = "GLOBAL_CAMERAS"
-      ,Currencies    = "CURRENCIES"
+       Currencies    = "CURRENCIES"
       ,History       = "HISTORY"
       ,Session       = "SESSION"
       ,Exchanges     = "EXCHANGES"
       ,ExchangesFiat = "EXCHANGES_FIAT"
       ,ExchangesCtc  = "EXCHANGES_CTC"
-      ,SessionCtrl   = "SESSION_CTRL"
+      ,Control       = "CONTROL"
     )
     ,tables = list(
        Cameras        = "CAMERAS"

@@ -22,7 +22,8 @@ YATABase = R6::R6Class("YATA.BASE.BASE"
       ,print = function() { message("Common tools and utilities for YATA")}
       ,ini   = function(iniFile) { YATABaseIni$new(iniFile) }
       ,map   = function() { invisible(YATABaseMap$new()) }
-      ,ID    = function() { self$getID() }
+      ,ID    = function() { self$getID()   }
+      ,exec  = function() { YATAExec$new() }
 # Genera un identificador unico
 # El EPOCH UNix da los segundos (rounded) desde 1970-01-01
 # Quitamos Desde una fecha dada

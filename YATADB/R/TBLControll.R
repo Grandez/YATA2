@@ -1,4 +1,4 @@
-TBLSessionCtrl = R6::R6Class("TBL.SESSION"
+TBLControl = R6::R6Class("TBL.CONTROL"
     ,inherit    = YATATable
     ,portable   = FALSE
     ,cloneable  = FALSE
@@ -10,8 +10,10 @@ TBLSessionCtrl = R6::R6Class("TBL.SESSION"
      )
      ,private = list (
          fields = list(
-             id   = "ID"
-            ,tms  = "TMS"
+             id    = "ID"
+            ,tms   = "TMS"
+            ,total = "TOTAL"
+            ,last  = "LAST"
           )
      )
 )

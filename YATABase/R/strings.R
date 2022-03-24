@@ -22,7 +22,21 @@ YATABaseStr = R6::R6Class("YATA.BASE.STR"
           txt = format(round(value * 100, dec), nsmall=dec, big.mark=".", decimal.mark=",", mode="character", scientific=FALSE)
           sfx = ifelse(symbol, " %","")
           sprintf("%s%s", txt, sfx)
-       }
+      }
+      ,translate = function(patterns, file=NULL, data) {
+         if (!is.null(file)) data = readLines(file)
+         pat = regexpr("__[0-9a-zA-Z]{1}[0-9a-zA-Z_]*[0-9a-zA-Z]+__", data)
+         ind = which(pat != -1)
+         if (length(pat) == 0 || length(ind) == 0) return (data)
+         attrs = attr(pat, "match.length")
+         for (n in 1:length(ind)) {
+            idx = ind[n]
+            key = substr(data[idx], pat[idx], attrs[idx] + pat[idx] - 1)
+            value = patterns[[substr(key, 3, nchar(key) - 2)]]
+            data = gsub(key, value, data)
+         }
+         data
+      }
    )
    ,private = list(
    )

@@ -12,6 +12,7 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
      ,error = function(msg, subclass, action, origin, ...) {
          data = list(...)
          data$message = msg
+         data$stack   = sys.calls()
          err = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
          stop(err)
      }
@@ -27,7 +28,7 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
      ,logical = function(msg, action=NULL, origin=NULL, ...) {
            self$error(msg, subclass="LOGICAL", action=action,origin=origin, ...)
      }
-     ,propagate = function(cond) {
+     ,propagateError = function(cond) {
         stop(cond)
      }
    )
@@ -50,6 +51,8 @@ Warning = function(msg, action=NULL, subclass=NULL, ...) {
     .error(msg, subclass, origin, ...)
 }
  SQL = function(msg, action=NULL, origin=NULL, ...) {
+      data = list(...)
+      msg = paste0(msg, " (", data$sqlcode, ")")
      .error(msg, subclass="SQL", origin=origin, action=action, ...)
 }
  HTTP = function(msg, action=NULL, origin=NULL, ...) {

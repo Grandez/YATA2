@@ -61,15 +61,18 @@ CREATE TABLE SESSION  (
 
 
 -- ----------------------------------------------------------
--- Contiene la ultima vez que se acutalizo session
+-- Tabla de control de cargas,descargas, actualizaciones
+-- Cada registro se refiere a un objeto
+-- 1 - Datos de session
 -- Nos evita hacer una query 
--- Evita que haya monedas con diferentes tms
--- OJO Hay problemas con los time zone en timestamp
 -- ----------------------------------------------------------
-DROP TABLE  IF EXISTS SESSION_CTRL;
-CREATE TABLE SESSION_CTRL  (
-     ID        INTEGER  NOT NULL
-    ,TMS       BIGINT   DEFAULT 0
+DROP TABLE  IF EXISTS CONTROL;
+CREATE TABLE CONTROL  (
+     ID        INTEGER    NOT NULL
+    ,TMS       TIMESTAMP  NOT NULL
+    ,TOTAL     INTEGER    DEFAULT 0
+    ,LAST      TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP
+                          ON UPDATE CURRENT_TIMESTAMP   
    ,PRIMARY KEY (ID)
 );
 

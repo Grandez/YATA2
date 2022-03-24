@@ -122,7 +122,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                      })
                df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
                                ,stringsAsFactors=FALSE)
-               colnames(df) = c( "id",        "symbol",  "rank", "price"
+               colnames(df) = c( "id",        "symbol",   "rank",    "price"
                                 ,"volume",    "volday",   "volweek", "volmonth"
                                 ,"hour",      "day",      "week",    "month"
                                 ,"bimonth",   "quarter"
@@ -133,7 +133,11 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                    if (names[idx] == "id")     { df[,idx] = as.numeric(df[,idx]); next }
                    if (names[idx] == "rank")   { df[,idx] = as.numeric(df[,idx]); next }
                    if (names[idx] == "symbol") { next }
-                   if (names[idx] == "tms")    { df[,idx] = as.POSIXct(df[,idx]); next }
+                   if (names[idx] == "tms")    {
+                       df[,idx] = as.POSIXct( df[,idx]
+                                             ,format="%Y-%m-%d-%H:%M:%S")
+                       next
+                   }
                    df[,idx] = as.numeric(df[,idx])
                }
                dfc = rbind(dfc, df)
