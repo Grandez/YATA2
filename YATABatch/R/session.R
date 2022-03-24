@@ -47,7 +47,7 @@
     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
     datafile = paste0(datafile, ".dat")
 
-    write.table(df, datafile, dec=".", sep=";", row.names = FALSE, col.names=FALSE)
+    write.table(df, datafile, dec=".", sep=";", quote=FALSE, row.names = FALSE, col.names=FALSE)
     res = YATAExec$new()$import(basename(datafile), "YATAData", colnames)
     file.remove(datafile)
     count
@@ -62,7 +62,7 @@ updateSession = function(max=0, output=1, log=1) {
 
        while (count < 50) { # Para que se pare automaticamente
           batch$log$batch("Retrieving tickers")
-          last = as.POSIXct(Sys.time(), tz="UTC")
+          last = as.POSIXct(Sys.time())
           session$updateLastUpdate(last, 0)
           total = .appendLatest(batch, session, last, max)
           session$updateLastUpdate(last, total)

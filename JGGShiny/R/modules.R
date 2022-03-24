@@ -1,7 +1,7 @@
 JGGModule = function(id, title="",mod=NULL, ...) {
    ns = shiny::NS(id)
    if (is.null(mod)) {
-       modName =  paste0(YATABase$str$titleCase(strsplit(id, "-")[[1]]), collapse="")
+       modName =  paste0(stringr::str_to_title(strsplit(id, "-")[[1]]), collapse="")
        data = eval(parse(text=paste0("mod", modName, "Input('", id, "')"))) #, title, "')")))
    } else {
        data = eval(parse(text=paste0("mod", mod, "Input('", id, "')")))
@@ -43,7 +43,7 @@ JGGSubModule = function(id, title="",mod=NULL, ...) {
 #    message("Ejecutando YATAModule para ", id)
     ns = NS(id)
     if (is.null(mod)) {
-        modName =  paste0(YATABase$str$titleCase(strsplit(id, "-")[[1]]), collapse="")
+        modName =  paste0(stringr::str_to_title(strsplit(id, "-")[[1]]), collapse="")
         data = eval(parse(text=paste0("mod", modName, "Input('", id, "')"))) #, title, "')")))
     } else {
         data = eval(parse(text=paste0("mod", mod, "Input('", id, "')")))

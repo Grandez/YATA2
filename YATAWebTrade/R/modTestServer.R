@@ -19,7 +19,6 @@ modTestServer <- function(id, full, pnlParent, parent=NULL) {
       
    )
     moduleServer(id, function(input, output, session) {
-       message("Ejecutando server para Test")
       pnl = WEB$getPanel(id)
       if (is.null(pnl)) pnl = WEB$addPanel(PNLTest$new(id, pnlParent, session))
 

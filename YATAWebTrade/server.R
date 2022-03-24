@@ -11,7 +11,6 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       ,operations   = NULL
       ,cameras      = NULL
       ,providers    = NULL
-      ,interval     = 15
       ,initialize   = function(id, parent, session) {
           super$initialize(id, parent, session)
           self$position   = self$factory$getObject(self$codes$object$position)
@@ -32,7 +31,6 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           if (length(pos) > 0) private$invalid = private$invalid[-pos]
           invisible(self)
       }
-      ,setInterval = function (interval) { self$interval = interval }
       ,updateData  = function (init = FALSE) {
           df = self$position$getGlobalPosition()
           ids = WEB$getCTCID(df$currency)
@@ -98,11 +96,11 @@ function(input, output, session) {
    if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
 
    js$request_cookies()
-   observeEvent(input$cookies, { 
-       WEB$setWindow(input$cookies)  
+   observeEvent(input$cookies, {
+       WEB$setWindow(input$cookies)
    })
    observeEvent(input$resize, {
-       WEB$setWindow(input$resize)  
+       WEB$setWindow(input$resize)
    })
    
    closePanel = function() { shinyjs::hide("yata-main-err") }
@@ -111,17 +109,15 @@ function(input, output, session) {
       if (is.null(name)) name = "Sin conexion"
       paste("YATA", name, sep = "-")
    })
-   # Vamos a usar req para evitar cargar todo
-   # "test"
    observeEvent(input$mainMenu,{
         eval(parse(text=paste0( "mod"
-                               ,YATABase$str$titleCase(input$mainMenu)
+                               ,str_to_title(input$mainMenu)
                                ,"Server(input$mainMenu
                                ,''
                                ,pnl, parent=session)")))
     })
    observeEvent(input$btnKO, { closePanel() })
-   observeEvent(input$btnDBChanged, { 
+   observeEvent(input$btnDBChanged, {
       oldDB = factory$getDBID()
       if (input$lstDB != oldDB) {
           factory$changeDB(input$lstDB)
@@ -129,23 +125,18 @@ function(input, output, session) {
       }
       message(factory$getDBName())
       closePanel()
-      eval(parse(text=paste0("mod", YATABase$str$titleCase(input$mainMenu), "Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
+      eval(parse(text=paste0( "mod", YATABase$str$titleCase(input$mainMenu)
+                             ,"Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
    })
-   
-   observeEvent(input$connected, { 
-#       PUT("begin")
-       })
-   observeEvent(input$disconnected, { 
-#       PUT("end")
-       })
-  observeEvent(input$initialized, { PUT("begin") })
-  observeEvent(input$app_title,   {
+   observeEvent(input$connected,    { PUT("begin") })
+   observeEvent(input$disconnected, { PUT("end")   })
+   observeEvent(input$initialized,  { PUT("begin") })
+   observeEvent(input$app_title,    {
       data = frmChangeDBInput()
       output$form = renderUI({data})
       output$lblDBCurrent    = updLabelText(factory$getDBName())
       shinyjs::show("yata-main-err")
-  })
-   
+   })
    onclick("appTitle"     , changeDB()  )
    onStop(function() {
       # cat("Shiny Session stopped\n")

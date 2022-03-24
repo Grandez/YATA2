@@ -1,4 +1,5 @@
 import(rlang)
+import(stringr)
 import(shiny,   except=c(runExample))
 import(shinyjs, except=c(runExample, alert))
 import(htmltools)

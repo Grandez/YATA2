@@ -12,15 +12,15 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,getDBTableName = function()         { tblSession$getDBTableName() }
        ,getLastUpdate  = function() {
            tblControl$select(id = 1)
-           tms = as.POSIXct("2020-01-01 00:00:00", tz="UTC")
-           if (!is.null(tblControl$current)) tms = tblControl$current$tms
-           tms
+           last = as.POSIXct("2020-01-01 00:00:00")
+           if (!is.null(tblControl$current)) last = tblControl$current$last
+           last
        }
-       ,updateLastUpdate = function(tms, total) {
+       ,updateLastUpdate = function(last, total) {
            tblControl$db$begin()
            tblControl$select(id = 1)
-           if (!is.character(tms)) tms = strptime(tms, "%Y-%m-%d %H:%M:%S", tz="UTC")
-           tblControl$set(tms = tms, total = total)
+           if (!is.character(last)) last = strptime(last, "%Y-%m-%d %H:%M:%S")
+           tblControl$set(last = last, total = total)
            tryCatch({
               tblControl$apply()
               tblControl$db$commit()
@@ -36,16 +36,23 @@ OBJSession = R6::R6Class("OBJ.SESSION"
             session = session[session$volume > 10,] # Solo los que se mueven
             getBestDF(session, top, from, group)
        }
+       ,getSessionPrices = function(currencies = NULL) {
+           getLatest(0, currencies)
+       }
        ,getPrice = function(currency) {
            tblSession$select(symbol=currency,limit = 1)
            ifelse(is.null(tblSession$current), 0, tblSession$current$price)
        }
        ,getLatest = function(rank=0, currencies = NULL) {
-           tblSession$getLatest(rank, currencies)
+           last = getLastUpdate()
+           df = tblSession$table(last = last)
+           if (!is.null(currencies)) {
+               df = df[df$id %in% currencies,]
+           } else {
+               if (rank > 0) df = df[df$rank <= rank,]
+           }
+           df
         }
-       ,getSessionPrices = function(currencies = NULL) {
-           tblSession$getSessionData(currencies)
-       }
        ,getColumnNames = function(yataNames) {
            tblSession$getColNames(yataNames)
        }
