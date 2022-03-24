@@ -19,6 +19,7 @@ update_handler = function(.req, .res) {
     .res
 }
 put_begin = function(.req, .res) {
+        cat(paste(Sys.time(),"Recibe begin\n"))
     root = Sys.getenv("YATA_SITE")
     interval = .req$parameters_query[["interval"]]
     alive    = .req$parameters_query[["alive"]]
@@ -26,7 +27,8 @@ put_begin = function(.req, .res) {
     if (is.null(alive))    alive    = ""
 
     if (.Platform$OS.type != "windows") {
-        processx::run(paste0(root, '/bin/yata_mqcli'), c("start", interval, alive), FALSE)
+        res = processx::run(paste0(root, '/bin/yata_mqcli'), c("start", interval, alive), FALSE)
+        cat(paste(Sys.time(),"Eejecutado mcli con rc", res$status_code, "\n"))
     }
    .res$set_status_code(200)
    .res$set_body("OK")
