@@ -18,9 +18,9 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
               df
           }
          ,getCurrencyNames = function() {
-             df = table()
-             df = df[,c("rank", "symbol", "name")]
-             colnames(df) = c("rank", "id", "name")
+             df = table(active = 1)
+             df = df[,c("symbol", "name", "rank")]
+             colnames(df) = c("id", "name", "rank")
              df
          }
          ,getID = function (symbol) {

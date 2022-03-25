@@ -19,6 +19,13 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
            self$current = tblCameras$current
            private$selected
        }
+       ,getForCombo = function(exclude=NULL) {
+           df = tblCameras$table()
+           if (!is.null(exclude)) df = df[!(df$camera %in% exclude),]
+           df = df[,c("camera", "desc")]
+           colnames(df) = c("id", "name")
+           df
+       }
        # ,add     = function(data, isolated=FALSE) {
        #         select(id=data$camera)
        #         if (selected) {

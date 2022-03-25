@@ -31,24 +31,20 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            ,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,getCboCameras = function (currency) {
-               if (missing(currency)) {
-                   df = self$cameras$getCameras()
-                   return (self$makeCombo(df))
-               }
+               if (missing(currency)) return(self$makeCombo(self$cameras$getForCombo()))
                df = self$position$getCurrencyPosition(currency)   
-               df = df[df$camera != "CASH",]
+               df = df[df$camera != self$factory$camera,]
                df = df[df$available > 0,]
                df = self$cameras$getCameras(as.vector(df$camera))
+               df = df[,c("camera", "desc")]
+               colnames(df) = c("id", "name")
                self$makeCombo(df)
            }
             
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
            ,cboCameras   = function(exclude) {
-              data = self$cameras$getCameras()
-              if (!missing(exclude)) data = data[!data$id %in% exclude,]
-              data = data[,c("camera", "desc")]
-              colnames(data) = c("id", "name")
-              self$makeCombo(data)
+               excl = ifelse(missing(exclude), NULL, exclude)
+               self$makeCombo(self$cameras$getForcombo(exclude=exclude))
            }
            ,getCurrenciesSell = function() {
                 df = self$position$getGlobalPosition()

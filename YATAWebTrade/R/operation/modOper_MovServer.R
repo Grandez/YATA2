@@ -7,11 +7,13 @@ modOperMovServer = function(id, full, pnlParent, parent) {
         ,lock_class = TRUE
         ,public = list(
             session      = NULL
+           ,fiat = "$FIAT"
            ,initialize    = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
                self$session    = self$factory$getObject(self$codes$object$session)
                private$oper    = self$factory$getObject(self$codes$object$operation)
                private$pos     = self$factory$getObject(self$codes$object$position)
+               self$fiat       = pnlParent$factory$fiat
                self$vars$price = 0
            }
            ,cboReasons    = function(type)      { self$makeCombo(private$oper$getReasons(type)) } 
@@ -21,7 +23,6 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                          FALSE
                }
                ,error = function(cond) {
-                   browser()
                    return (yataErrGeneral(0, WEB$txtError, input, output, session))
                    TRUE
                  }
@@ -140,9 +141,6 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           output$lblFee     = updLabelNumber(round(pnl$vars$fee, 0))
           output$lblGas     = updLabelNumber(pnl$vars$gas)
       }
-      # df = pnl$getCounters()
-      # updCombo("cboCurrency",    choices=pnl$makeCombo(df))
-
       processCommarea = function(index) {
           # 0 - Usa, 1 - Limpia
           carea = pnl$getCommarea()
@@ -171,7 +169,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
 
       observeEvent(input$cboCurrency, {
           op = as.integer(input$cboOper) %% 2 # Impar es venta
-          currency = ifelse(op == 1, input$cboCurrency, "FIAT")
+          currency = ifelse(op == 1, input$cboCurrency, pnl$fiat)
           updCombo("cboCamera", choices=pnl$getCboCameras())
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)      
@@ -179,12 +177,12 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           if (is.null(input$cboOper)) return()
           
           dfPos = pnl$getPosition(input$cboCamera)
-          pnl$vars$fiat = dfPos[dfPos$currency == "FIAT","balance"]
+          pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"balance"]
           if (length(pnl$vars$fiat) == 0) pnl$vars$fiat = 0
           if (length(pnl$vars$ctc)  == 0) pnl$vars$ctc  = 0
 
-          currency = ifelse(pnl$vars$buy, "FIAT", input$cboCurrency)
+          currency = ifelse(pnl$vars$buy, pnl$factory$fiat, input$cboCurrency)
           pnl$vars$available = dfPos[dfPos$currency == currency,"available"]
 
           output$lblAvailable = updLabelNumber(pnl$vars$available)
@@ -257,7 +255,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
          if ((as.integer(input$cboOper) %% 2) == 0) { 
              data$amount  = input$impAmount * input$impPrice
              data$value   = input$impAmount
-             data$base    = "FIAT"
+             data$base    = pnl$fiat
              data$counter = input$cboCurrency
          } else {
              data$amount  = input$impAmount
