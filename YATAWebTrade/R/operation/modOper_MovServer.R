@@ -248,15 +248,14 @@ modOperMovServer = function(id, full, pnlParent, parent) {
             ,reason  = input$cboReasons
             ,alert   = input$alert
          )
+         if (data$amount == 0) data$amount = input$impValue  / input$impPrice
+         if (data$value  == 0) data$value  = input$impAmount * input$impPrice
+         
          # Pares son compras
          if ((as.integer(input$cboOper) %% 2) == 0) { 
-             data$amount  = input$impAmount * input$impPrice
-             data$value   = input$impAmount
              data$base    = pnl$fiat
              data$counter = input$cboCurrency
          } else {
-             data$amount  = input$impAmount
-             data$value   = input$impAmount * input$impPrice
              data$base    = input$cboCurrency
              data$counter = pnl$factory$fiat
          }

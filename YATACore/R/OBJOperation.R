@@ -29,6 +29,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 idOper
             },error = function(cond) {
                 db$rollback()
+                browser()
                 message(cond)
                 0
           })

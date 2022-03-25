@@ -10,9 +10,9 @@ TBLOperLog   = R6::R6Class("TBL.OPER.LOG"
           ,add = function(data) {
               # En la tabla de log solo grabamos si hay informacion util
               if ((!is.null(data$reason) && data$reason != 0) || !is.null(data$comment)) {
-                  data$idLog = YATATools::getID()
                   super$add(data)
               }
+              invisible(self)
           }
      )
      ,private = list (
