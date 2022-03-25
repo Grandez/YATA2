@@ -5,9 +5,6 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
    ,public = list(
        pull = function() {
           res = processx::run("git", c("pull"), FALSE, Sys.getenv("YATA_ROOT"))
-          cat("-- res$stdout\n")
-          cat(res$stdout)
-          cat("-- res$stdout\n")
           private$gitout = strsplit(res$stdout, "\n")
           res
        }
@@ -22,7 +19,6 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
        ,.parseOut = function(expr) {
           greps = NULL
 
-          out = unlist(strsplit(gitout, "\n"))
           res = regexpr(expr, out)
           if (length(res) > 0) {
               len = attr(res, "match.length")
