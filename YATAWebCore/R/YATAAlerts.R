@@ -45,6 +45,9 @@ yataNotify = function(txt) {
 # }
 
 yataErrGeneral = function(type, data, input, output, session) {
+    if (type == 0) {
+        stop(cat(paste("ERROR yataMsgErr\n",data,"\n")))
+    }
     sf = system.file('extdata/www/img/error.png', package=packageName())
     output$jgg_main_img_err = renderImage({
                     list(src = sf, contentType = 'image/png', width = 400, height = 400, alt = "Fatal Error")
