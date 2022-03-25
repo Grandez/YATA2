@@ -90,7 +90,7 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
        ,.stderr = NULL
        ,launchException = function(res, cmd, args, type, su = FALSE) {
              YATABase$cond$EXEC( "EXEC", action="run"
-                                ,command = paste(cmd, arg)
+                                ,command = paste(cmd, args)
                                 ,rc      = res$status
                                 ,type    = type
                                 ,su      = su

@@ -8,6 +8,5 @@ export(YATABase)
 export(YATAExec)
 export(YATANS)   # MIRARA WEBTRADE
 export(YATALogger)
-export(getID)
 export(args2list)
 export(map)
