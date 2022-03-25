@@ -96,7 +96,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            base$msg$lblProcess1("Making binaries and scripts")
            from = .git$getChanges(" YATACLI/[a-rt-z][a-zA-Z0-9_/]+x[a-zA-Z0-9_\\.]+ ")
            if (is.null(from) || length(from) == 0) {
-               base$msg$out("\tNothing to do\n")
+               base$msg$out("    Nothing to do\n")
                return(0)
            }
            site = paste0(Sys.getenv("YATA_SITE"), "/cli")
@@ -122,7 +122,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.manageServices = function() {
            base$msg$lblProcess1("Making services")
            from = .git$getServices()
-           if (length(from) == 0) return (base$msg$out("\tNothing to do\n"))
+           if (length(from) == 0) return (base$msg$out("    Nothing to do\n"))
            .makeServices(from)
            base$msg$ok()
         }
@@ -146,7 +146,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           # Process projects (exclude scripts)
           dirs = .git$getChanges(" YATACode/[a-zA-Z0-9_]+/")
           dirs = dirs [-which(dirs == "YATACode/scripts")]
-          if (length(dirs) == 0) return (base$msg$out("\tNothing to do\n"))
+          if (length(dirs) == 0) return (base$msg$out("    Nothing to do\n"))
 
           now = as.POSIXct(Sys.time())
 
@@ -175,13 +175,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
            changed = list()
            changes = .git$getPackages()
            if (is.null(changes) || length(changes) == 0) {
-               base$msg$out("\tNothing to do\n")
+               base$msg$out("    Nothing to do\n")
                return(changed)
            }
            rpkgs = .ini$getSection("web")
            pkgs = rpkgs[which(rpkgs %in% changes)]
            if (length(pkgs) == 0) {
-               base$msg$out("\tNothing to do\n")
+               base$msg$out("    Nothing to do\n")
                return(changed)
            }
            for (pkg in pkgs) .run$copy2web(pkg)
@@ -190,18 +190,18 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.makePackages   = function(packages) {
            changed = c()
            if (length(packages) == 0) {
-               base$msg$out("\tNothing to do\n")
+               base$msg$out("    Nothing to do\n")
                return(changed)
            }
            rpkgs = .ini$getSection("packages")
            pkgs = rpkgs[which(rpkgs %in% packages)]
            if (length(pkgs) == 0) {
-               base$msg$out("\tNothing to do\n")
+               base$msg$out("    Nothing to do\n")
                return(changed)
            }
            base$msg$out("\n")
            for (pkg in pkgs) {
-               base$msg$out("\t\tMaking %s", pkg)
+               base$msg$out("    Making %s", pkg)
                .run$install(pkg)
                base$msg$ok()
                changed = c(changed, pkg)
