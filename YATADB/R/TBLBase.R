@@ -40,10 +40,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,print          = function() { cat(self$name)  }
       ,getDB          = function() { self$db         }
       ,getDBTableName = function() { return(tblName) }
-      ,getColNames = function(yataNames) {
+      ,getColNames = function(yataNames) { fields    }
+      ,translateColNames = function(yataNames) {
           pos = match(yataNames, names(fields))
           unlist(fields[pos])
-       }
+      }
       ,selected    = function() { .selected }
       ,loadAll     = function() {
          private$dfa = table()

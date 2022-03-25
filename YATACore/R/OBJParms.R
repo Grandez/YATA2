@@ -32,9 +32,8 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ################################################
         ### Metodos friendly
         ################################################
-        ,getDefCurrency    = function() tblParms$getString(DBParms$ids$currency)
-        ,getDefAltCurrency = function() tblParms$getString(DBParms$ids$altCurrency)
-        ,pluginsDirectory  = function() tblParms$getString(DBParms$ids$plugins)
+        ,getFIAT           = function() tblParms$getString(DBParms$ids$fiat)
+        ,getCamera         = function() tblParms$getString(DBParms$ids$camera)
         ,autoConnect       = function() tblParms$getBoolean(DBParms$ids$autoConnect)
         ,getDefaultDbId    = function() tblParms$getInteger(DBParms$ids$DBDefault)
         ,getDBInfo         = function(id) {

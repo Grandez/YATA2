@@ -34,10 +34,6 @@ JGGModule = function(id, title="",mod=NULL, ...) {
            ,err=shinyjs::hidden(divErr)
    )
 
-   # tagList( divContent # data
-   #         ,shinyjs::hidden(divForm)
-   #         ,shinyjs::hidden(divErr)
-   # )
 }
 JGGSubModule = function(id, title="",mod=NULL, ...) {
 #    message("Ejecutando YATAModule para ", id)

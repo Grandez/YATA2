@@ -14,10 +14,11 @@ modOperXferServer = function(id, full, pnlParent, parent) {
                 private$position = self$factory$getObject(objs$position)
                 private$oper     = self$factory$getObject(objs$operation)
             }
-            ,cboCamerasFrom  = function (all)  { 
-              self$parent$cboCameras(all) 
+            ,cboCamerasFrom  = function ()  {
+              self$parent$cboCameras() 
             }
             ,cboCamerasTo    = function (from) { 
+                browser()
               self$parent$cboCameras(exclude = from) 
             }
             ,cboCurrencies = function (camera) {
@@ -63,8 +64,8 @@ modOperXferServer = function(id, full, pnlParent, parent) {
           if (input$impAmount > pnl$available) 
               return (yataMsgError(ns2("msg"),WEB$MSG$get("MSG.AMOUNT.EXCESS")))
           FALSE 
-       }
-       updCombo("cboFrom",    choices=pnl$cboCamerasFrom(all=TRUE))
+      }
+       updCombo("cboFrom",    choices=pnl$cboCamerasFrom())
 
        observeEvent(input$cboFrom, {
            yataMsgReset(ns2("msg"))

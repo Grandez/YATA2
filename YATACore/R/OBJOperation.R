@@ -432,7 +432,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            self$current$idOper = idXfer
        }
        ,addNoTran   = function(type, ...) {
-           browser()
             # Se llama desde add y desde close
             # Genera una operacion, devuelve el id
             # Si hay error devuelve TRUE

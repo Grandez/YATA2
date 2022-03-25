@@ -14,33 +14,35 @@
 DELETE FROM PARMS;
 
 -- ----------------------------------------------------
--- Grupo 1 - General
---   Sub 1 - Configuracion
---           1 - Moneda por defecto
---           2 - Moneda alternativa
---           3 - Directorio de plugins 
---           4 - Monedas por defecto     
---   Sub 2 - Base de datos
+-- Grupo 1 - Configuracion general
+--   Sub 1 - Moneda
+--           1 - Codigo de la moneda en el sistema
+--           2 - Codigo ISO de la moneda por defecto
+--           3 - Clave para convertir cotizacion
+--
+--   Sub 2 - Camara
+--           1 - Camara FIAT (Cuenta corriente real)
+--
+--   Sub 3 - Base de datos
 --           1 - autoOpen
 --           2 - Base de datos de defecto
 --           3 - lastDB
---  Sub  3 - Operaciones
+--  Sub  4 - Operaciones
 --           1 - alert - Dias para la proxima alerta
+-- Sub 
 -- --------------------------------------------------- 
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'currency'    , 'EUR');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 2,  1, 'altcurrency' , 'USD');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 3,  1, 'Plugins'  , 'P:\\R\\YATA2\\YATAExternal');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 4, 10, 'Monedas'  , '1000');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'Code'    , '$FIAT');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 2,  1, 'FIAT'    , 'EUR');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 3,  1, 'convert' , 'eur');
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 1, 20, 'autoOpen' , '1');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 2, 10, 'defaultDB', '2');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 3, 10, 'lastDB'   , '2');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 1,  1, 'camera'  , 'CASH');
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 1, 10, 'alert'    , '1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 1, 20, 'autoOpen' , '1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 2, 10, 'defaultDB', '2');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 3, 10, 'lastDB'   , '2');
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 1,  1, 'url'      , '127.0.0.1');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 2, 10, 'port'     , '4000');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 1, 10, 'alert'    , '1');
 
 -- ----------------------------------------------------
 -- Grupo 2 - Servers

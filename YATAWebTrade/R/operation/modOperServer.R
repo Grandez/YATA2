@@ -17,12 +17,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            ,idOper       = NULL    
            ,initialize     = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
-               self$cameras    = self$factory$getObject(self$codes$object$cameras)
-               self$operations = self$factory$getObject(self$codes$object$operation)
-               self$currencies = self$factory$getObject(self$codes$object$currencies)
-               self$position   = self$factory$getObject(self$codes$object$position)
-               self$session    = self$factory$getObject(self$codes$object$session)
-               self$cameras$loadCameras()               
+               private$createObjects()
                self$vars$inForm  = FALSE
                self$vars$inEvent = FALSE
                self$vars$panel = ""
@@ -48,9 +43,11 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            }
             
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
-           ,cboCameras   = function(exclude, all=FALSE) {
-              data = self$cameras$getCameras(all)
+           ,cboCameras   = function(exclude) {
+              data = self$cameras$getCameras()
               if (!missing(exclude)) data = data[!data$id %in% exclude,]
+              data = data[,c("camera", "desc")]
+              colnames(data) = c("id", "name")
               self$makeCombo(data)
            }
            ,getCurrenciesSell = function() {
@@ -60,12 +57,12 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                 df
            }    
            ,cboCurrency  = function(camera, available) {
-               if (missing(camera)) {
-                   private$asCombo(WEB$getCurrencyNames())
-               }
-               else {
-                  if (camera == "CASH") {
-                      data = data.frame(id="FIAT", name="EUR - EURO")
+               # if (missing(camera)) {
+               #     private$asCombo(WEB$getCurrencyNames())
+               # }
+               # else {
+                  if (camera == self$factory$camera) {
+                      data = data.frame(id=self$factory$fiat, name="EUR - EURO")
                       self$makeCombo(data)
                   }
                   else {
@@ -75,7 +72,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                          WEB$getCTCLabels("EUR", invert = TRUE)
                      # }
                   }
-               }
+               # }
            }
            # ,cboCameraCurrencies  =function (camera) {
            #     private$asCombo(self$getCamerasCurrency(camera))
@@ -88,7 +85,6 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            #               FALSE
            #     }
            #     ,error = function(cond) {
-           #         browser()
            #         return (yataErrGeneral(0, WEB$txtError, input, output, session))
            #         TRUE
            #       }
@@ -106,6 +102,13 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
             opIdx    = list() # Contiene los id de las operaciones
            ,opers    = NULL
            ,definition = list(id = "", left=0, right=0, son=NULL, submodule=FALSE)
+           ,createObjects = function() {
+               self$cameras    = self$factory$getObject(self$codes$object$cameras)
+               self$operations = self$factory$getObject(self$codes$object$operation)
+               self$currencies = self$factory$getObject(self$codes$object$currencies)
+               self$position   = self$factory$getObject(self$codes$object$position)
+               self$session    = self$factory$getObject(self$codes$object$session)
+           }
         )
    )   
     moduleServer(id, function(input, output, session) {
@@ -128,7 +131,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
         
         observeEvent(input$pnlOpType, { 
            act = yataActiveNS(input$pnlOpType)
-           module = paste0("modOper", YATABase$str$titleCase(act),"Server")
+           module = paste0("modOper", str_to_title(act),"Server")
            carea = pnl$getCommarea()
 
            if (is.null(carea$pending) || !carea$pending) {

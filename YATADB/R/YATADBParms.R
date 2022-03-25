@@ -3,12 +3,11 @@
 DBParms = list(
     # Para simplificar la escritura
     ids = list(
-         currency    = "001 001 001"  # Moneda por defecto
-        ,altCurrency = "001 001 002"  # Moneda por defecto
-        ,plugins     = "001 001 003"  # directorio externo
-        ,autoConnect = "001 002 001"  # Auto abrir la ultima BBDD
-        ,DBDefault   = "001 002 002"  # BBDD Default
-        ,lastOpen    = "001 002 003"  # Ultima BBDD abierta
+         fiat        = "001 001 001"  # Moneda por defecto
+        ,camera      = "001 002 001"  # Camera real
+        ,autoConnect = "001 003 001"  # Auto abrir la ultima BBDD
+        ,DBDefault   = "001 003 002"  # BBDD Default
+        ,lastOpen    = "001 003 003"  # Ultima BBDD abierta
         ,alert       = "001 003 001"  # Dias para alerta
         ,rest        = "001 004"      # REST Informacion
         ,online      = "003 001 001"  # Proveedor de informacion Online

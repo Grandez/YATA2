@@ -54,7 +54,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            df
         }
        ,getColumnNames = function(yataNames) {
-           tblSession$getColNames(yataNames)
+           tblSession$translateColNames(yataNames)
        }
     )
     ,private = list(

@@ -40,3 +40,8 @@ INSERT INTO FIATS(ID, SYMBOL, NAME, ICON) VALUES("XAU", "XAU", "Oro troy"       
 -- Tabla de control
 
 INSERT INTO CONTROL(ID, TMS, LAST, TOTAL) VALUES (1, "2020-01-01 00:00:00", "2020-01-01 00:00:00", 0);          
+
+-- Tabla de exchanges
+
+INSERT INTO EXCHANGES(ID, SYMBOL, NAME,   SLUG,   ICON,       RANK, MAKER, TAKER, ACTIVE) 
+            VALUES   ( 0, "YATA", "YATA", "yata", "YATA.png", 99999, 0.0,  0.0,   1);          

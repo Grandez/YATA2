@@ -12,7 +12,9 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,MSG    = NULL  # Like WEB
       ,delete_flag = FALSE
       ,created = NULL
-       ,id = 0
+      ,fiat    = "$FIAT"  # Codigo moneda FIAT
+      ,camera  = "CASH"   # Codigo camara FIAT
+      ,id = 0
       # Ponemos init y clear para manejar fuera de initialize y finalize
       # auto se usa para el CI
       ,initialize = function(auto=TRUE) {
@@ -130,6 +132,8 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
 
           self$parms  = OBJParms$new   (private$DBFactory, self$CODES$tables$parameters)
           self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)
+          self$fiat   = parms$getFIAT()
+          self$camera = parms$getCamera()
 
           if (auto) {
               if (parms$autoConnect()) {

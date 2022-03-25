@@ -28,7 +28,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                )
            } 
         # Inherit
-           ,getCounters   = function()          { self$parent$getCounters() }            
+           ,getCounters   = function()          { self$parent$getCounters() }
            ,getCboCameras = function (currency) { self$parent$getCboCameras(currency)           }            
         )
        ,private = list(

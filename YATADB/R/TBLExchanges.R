@@ -8,6 +8,9 @@ TBLExchanges = R6::R6Class("TBL.EXCHANGES"
         initialize     = function(name, db=NULL) {
            super$initialize(name, fields=private$fields, db=db)
         }
+        ,getExchangesForCameras = function(cameras) {
+            table(inValues=list(id=cameras))
+        }
      )
      ,private = list (
           fields = list(

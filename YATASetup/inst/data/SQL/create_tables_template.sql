@@ -5,7 +5,7 @@ DROP TABLE  IF EXISTS CAMERAS CASCADE;
 CREATE TABLE CAMERAS  (
     CAMERA   VARCHAR(32)  NOT NULL -- Codigo de camara
    ,DESCR    VARCHAR(64)  NOT NULL  
-   ,EXCHANGE INTEGER      NOT NULL         -- Clearing Name
+   ,EXCHANGE INTEGER      NOT NULL -- Pointer to Exchanges
    ,ACTIVE   TINYINT      DEFAULT 1 
 -- Datos de acceso
    ,TOKEN    VARCHAR(255)

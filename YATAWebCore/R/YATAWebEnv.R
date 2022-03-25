@@ -30,15 +30,12 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             self$factory = YATACore::getFactory(TRUE)
             self$MSG     = factory$MSG
             self$log     = YATALogger$new("WEB")
-            # private$tblCameras    = factory$getTable("Cameras")
             private$hID   = base$map()
             private$hSym  = base$map()
             private$hCam  = base$map()
             self$REST       = YATARest$new()
             self$errorLevel = REST$check()
-            # Tablas de uso comun
             private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
-#            loadFiats()
          }, YATAERROR = function (cond) {
              browser()
              self$errorLevel = 97
@@ -60,9 +57,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          self$window$width  = data$window_width
          self$window$height = data$window_height
      }
-     # ,log = function(tpl, ...) {
-     #   message(paste(as.integer(Sys.time()), "-", sprintf(tpl, ...)))
-     # }
      ,setSession = function(session) {
          self$session = session
          private$cookies = list()
