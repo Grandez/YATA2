@@ -40,6 +40,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "ERR.NO.PRICE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "ERR.NEG.FEE"           ,"XX", "XX"     , "Comision no puede ser negativa"            );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "ERR.NEG.GAS"           ,"XX", "XX"     , "Gas no puede ser negativo"                 );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "ERR.NO.AVAILABLE"      ,"XX", "XX"     , "No hay suficiente disponible"              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "ERR.NO.DATA"           ,"XX", "XX"     , "Faltan datos"                              );
 
 -- -------------------------------------------------------------------------------------------------------
 -- Titulos de ventanas, cajas, titulos en si

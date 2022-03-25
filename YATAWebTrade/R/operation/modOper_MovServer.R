@@ -43,7 +43,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
         pnl = WEB$getPanel(id)
         if (is.null(pnl)) pnl = WEB$addPanel(PNLOperMov$new(id, pnlParent, session))
 
-      validate = function() {
+      validate = function(data) {
           if (is.null(input$cboOper)     || nchar(trimws(input$cboOper)) == 0)
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.OPER")))
           if (is.null(input$cboCurrency) || nchar(trimws(input$cboCurrency)) == 0)
@@ -51,10 +51,24 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           if (is.null(input$cboCamera)   || nchar(trimws(input$cboCamera)) == 0)
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.CAMERA")))
           
-          if (input$impAmount <= 0) 
+         data = list(
+             type    = xlateCode(input$cboOper)             
+            ,amount  = input$impAmount
+            ,price   = input$impPrice
+            ,value   = input$impValue
+            ,camera  = input$cboCamera
+            ,reason  = input$cboReasons
+            ,alert   = input$alert
+         )
+          if (data$impAmount < 0) 
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
-          if (input$impPrice  <= 0) 
+          if (data$impPrice  <= 0) 
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.PRICE")))
+          if (data$impAmount == 0 && data$impValue == 0) {
+              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.DATA")))
+          }
+          if (data$impAmount == 0) data$impAmount = data$impValue / data$impPrice
+         
           if (input$impFee    <  0) 
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NEG.FEE")))
           if (input$impGas    <  0) 
@@ -67,7 +81,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                   return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AVAILABLE")))
               }
           }
-          FALSE          
+          data
       }
       xlateCode = function (code) {
           code = as.integer(code)
@@ -240,16 +254,17 @@ modOperMovServer = function(id, full, pnlParent, parent) {
              pnl$vars$inEvent = !pnl$vars$inEvent
              return()
          }
-         if (validate()) return()
-
          data = list(
-             type    = xlateCode(input$cboOper)
-            ,camera  = input$cboCamera
+             type    = xlateCode(input$cboOper)             
             ,amount  = input$impAmount
             ,price   = input$impPrice
+            ,value   = input$impValue
+            ,camera  = input$cboCamera
             ,reason  = input$cboReasons
             ,alert   = input$alert
          )
+         data = validate(data)
+         if (islogical(data)) return() # Ha devuelto un error
 
          # Pares son compras
          if ((as.integer(input$cboOper) %% 2) == 0) { 
