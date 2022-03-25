@@ -1,7 +1,8 @@
 start = function(port) {
     browser()
     if (.Platform$OS.type != "windows") {
-        sink("/tmp/yata_rest.log", append=TRUE)
+        #sink("/tmp/yata_rest.log", append=TRUE)
+        sink("/srv/yata/YATAExternal/log/yata_rst.log")
     } else {
         sink("P:/R/YATA2/REST.log", append=TRUE)
     }
