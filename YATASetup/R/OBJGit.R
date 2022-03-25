@@ -24,7 +24,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
               len = attr(res, "match.length")
               for (idx in 1:length(res)) {
                    if (res[idx] > -1) {
-                       greps = c(greps, substr(out[idx], res[idx] + 1, res[idx] + len[idx] - 2))
+                       greps = c(greps, substr(gitout[idx], res[idx] + 1, res[idx] + len[idx] - 2))
                    }
               }
               greps = unique(greps)
