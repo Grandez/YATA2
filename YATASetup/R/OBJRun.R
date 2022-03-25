@@ -65,6 +65,7 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
            lapply(pkgs, function (pkg) {
                from = file.path(libuser, pkg)
                to   = file.path(libweb, pkg)
+
                file.copy(from, to, overwrite=TRUE, recursive = TRUE)
            })
        }
