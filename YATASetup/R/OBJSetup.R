@@ -34,7 +34,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           rpkgs = .ini$getSection("packages")
           .makePackages(rpkgs)
           rpkgs = .ini$getSection("web")
-          for (pkg in rpkgs) .run$copy2web(pkgs)
+          for (pkg in rpkgs) .run$copy2web(pkg)
           0
       }
       ,updateServices = function(full = FALSE) {

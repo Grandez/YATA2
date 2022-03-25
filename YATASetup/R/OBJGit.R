@@ -18,6 +18,7 @@ YATAGIT = R6::R6Class("YATA.R6.GIT"
         gitout = ""
        ,.parseOut = function(expr) {
           greps = NULL
+
           out = unlist(strsplit(gitout, "\n"))
           res = regexpr(expr, out)
           if (length(res) > 0) {
