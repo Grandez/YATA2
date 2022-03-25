@@ -123,3 +123,44 @@ Init hechodebug at C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#
 }
 debug at C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#16: backend = BackendRserve$new()
 debug at C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#17: backend$start(YATARest, http_port = port, background = FALSE)
+debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#8: fact = YATACore::YATAFactory$new()
+debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#9: assign("Factory", fact, envir = .GlobalEnv)
+debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#10: assign("YATACodes", fact$CODES, envir = .GlobalEnv)
+debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#12: YATARest = YATAREST$new()
+Initializing YATAREST
+Init hechodebug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#13: if (missing(port)) {
+    port = YATARest$getPort()
+}
+debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#16: backend = BackendRserve$new()
+debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATAREST/R/start.R#17: backend$start(YATARest, http_port = port, background = FALSE)
+{"timestamp":"2022-03-24 18:16:42.809192","level":"INFO","name":"Application","pid":12584,"msg":"","context":{"http_port":4005,"endpoints":{"HEAD":["/alive","/best","/hist","/latest","/update","/begin","/end"],"GET":["/alive","/best","/hist","/latest","/update","/begin","/end"]}}}
+-- running Rserve in this R session (pid=12584), 2 server(s) --
+(This session will block until Rserve is shut down)
+2022-03-24 18:17:00 Recibe Alive
+2022-03-24 18:20:27 Recibe Alive
+2022-03-24 18:21:57 Recibe Alive
+2022-03-24 18:23:00 Recibe Alive
+2022-03-24 21:23:38 Recibe Alive
+2022-03-24 21:24:19 Recibe Alive
+2022-03-24 21:25:28 Recibe Alive
+2022-03-24 21:25:41 Recibe Alive
+2022-03-24 21:27:31 Recibe Alive
+2022-03-24 21:32:07 Recibe Alive
+2022-03-24 21:33:42 Recibe Alive
+2022-03-24 21:34:35 Recibe Alive
+2022-03-24 21:35:04 Recibe Alive
+2022-03-24 21:36:00 Recibe Alive
+2022-03-24 21:38:14 Recibe Alive
+2022-03-24 22:13:27 Recibe Alive
+2022-03-24 22:16:11 Recibe Alive
+2022-03-24 22:19:08 Recibe Alive
+2022-03-24 22:21:14 Recibe Alive
+2022-03-24 22:22:26 Recibe Alive
+2022-03-24 22:24:19 Recibe Alive
+2022-03-24 22:25:13 Recibe Alive
+2022-03-24 22:30:32 Recibe Alive
+2022-03-24 22:32:59 Recibe Alive
+2022-03-24 22:35:49 Recibe Alive
+2022-03-24 22:43:14 Recibe Alive
+2022-03-25 11:05:57 Recibe Alive
+2022-03-25 11:08:02 Recibe Alive

@@ -77,7 +77,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               Sys.sleep(1)
               count = count + 1
            }
-           base$msg$ko()
+
            YATABase:::EXEC( "EXEC", action="run"
                                 ,command = "git pull"
                                 ,rc      = res$status
