@@ -281,7 +281,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
          cmt = trimws(input$comment)
          if (nchar(cmt) > 0) {
              data$comment = cmt
-             data$idLog   = getID()
+             data$idLog   = pnl$factory$getID()
          }     
          res = pnl$operation(data)
          if (res) {

@@ -1,10 +1,3 @@
-getID = function() {
-  epoch = as.integer(Sys.time()) - 1577836860 # Restamos el epoch desde 2020-01-01
-  epoch = (epoch %% 1000000)                  # Quitamos el digito significativo
-  epoch = epoch * 100                         # Le damos 2 menos significativos
-  private$.cnt = private$.cnt + 1     # Contador estatico
-  epoch + .cnt
-}
 #' Convierte un conjunto de parametros en una lista nombrada
 args2list = function(...) {
   args = list(...)
