@@ -51,15 +51,13 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           if (is.null(input$cboCamera)   || nchar(trimws(input$cboCamera)) == 0)
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.CAMERA")))
           
-          if (data$impAmount < 0) 
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
-          if (data$impPrice  <= 0) 
+          if (data$price  <= 0) 
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.PRICE")))
-          if (data$impAmount == 0 && data$impValue == 0) {
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.DATA")))
-          }
-          if (data$amount == 0) data$amount = data$value / data$price
-         
+          if (data$amount <= 0) 
+              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
+          if (data$value  <= 0) 
+              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
+          
           if (input$impFee    <  0) 
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NEG.FEE")))
           if (input$impGas    <  0) 
@@ -250,9 +248,6 @@ modOperMovServer = function(id, full, pnlParent, parent) {
             ,reason  = input$cboReasons
             ,alert   = input$alert
          )
-         data = validate(data)
-         if (is.logical(data)) return() # Ha devuelto un error
-
          # Pares son compras
          if ((as.integer(input$cboOper) %% 2) == 0) { 
              data$amount  = input$impAmount * input$impPrice
@@ -265,6 +260,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
              data$base    = input$cboCurrency
              data$counter = pnl$factory$fiat
          }
+         
+         data = validate(data)
+         if (is.logical(data)) return() # Ha devuelto un error
 
          if (input$target   > 0) {
              data$target   = input$target
