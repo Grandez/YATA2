@@ -184,7 +184,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
                base$msg$out("\tNothing to do\n")
                return(changed)
            }
-           for (pkg in pkgs) .run$copy2web(pkgs)
+           for (pkg in pkgs) .run$copy2web(pkg)
            base$msg$ok()
        }
        ,.makePackages   = function(packages) {
