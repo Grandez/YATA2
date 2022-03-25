@@ -13,7 +13,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               .ini$add(file.path(Sys.getenv("HOME"), "yata.cfg"))
           }
       }
-      ,updateYATA  = function() {
+      ,updateGIT  = function() {
           base$msg$lblGroup("Generating/Updating YATA System")
 
           rc = tryCatch({
@@ -29,18 +29,20 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
              cond$rc
           })
       }
+      ,updateYATA = function() {
+          base$msg$lbl("Generating/Updating packages")
+          rpkgs = .ini$getSection("packages")
+          .makePackages(rpkgs)
+          rpkgs = .ini$getSection("web")
+          for (pkg in rpkgs) .run$copy2web(pkgs)
+          0
+      }
       ,updateServices = function(full = FALSE) {
           base$msg$lbl("Generating/Updating services")
           if (full) updateYATA()
           path = file.path(Sys.getenv("YATA_ROOT"), "YATACLI/services")
           .makeServices(list.files(path))
           base$msg$ok()
-          0
-      }
-      ,updatePackages = function() {
-          base$msg$lbl("Generating/Updating packages")
-          rpkgs = .ini$getSection("packages")
-          .makePackages(rpkgs)
           0
       }
       ,fatal = function(fmt, ...) { .fail(16, fmt, ...) }
