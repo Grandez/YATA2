@@ -76,7 +76,7 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
        ,.stdout = NULL
        ,.stderr = NULL
        ,launchException = function(res, cmd, args, type, su = FALSE) {
-             YATABase$cond$EXEC( "EXEC", action="run"
+             YATABase:::EXEC( "EXEC", action="run"
                                 ,command = paste(cmd, arg)
                                 ,rc      = res$status
                                 ,type    = type
