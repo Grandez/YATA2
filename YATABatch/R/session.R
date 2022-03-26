@@ -66,6 +66,7 @@ updateSession = function(max=0, output=1, log=1) {
           session$updateLastUpdate(last, 0)
           total = .appendLatest(batch, session, last, max)
           session$updateLastUpdate(last, total)
+          batch$log$batch("OK")
           Sys.sleep(15 * 60)
           count = count + 1
        }
