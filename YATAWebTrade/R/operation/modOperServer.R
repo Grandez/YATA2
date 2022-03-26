@@ -14,7 +14,8 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            ,counters     = NULL
            ,valid        = FALSE
            ,data         = NULL
-           ,idOper       = NULL    
+           ,idOper       = NULL
+           ,fiat = "$FIAT"
            ,initialize     = function(id, pnlParent, session) {
                super$initialize(id, pnlParent, session)
                private$createObjects()
@@ -28,17 +29,26 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                private$opers$put(id, oper) 
                oper
             }
-           ,getCounters = function() {self$currencies$getCurrencyNames() }
+           #,getCounters = function() {self$currencies$getCurrencyNames() }
            ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,getCboCameras = function (currency) {
-               if (missing(currency)) return(self$makeCombo(self$cameras$getForCombo()))
-               df = self$position$getCurrencyPosition(currency)   
-               df = df[df$camera != self$factory$camera,]
-               df = df[df$available > 0,]
-               df = self$cameras$getCameras(as.vector(df$camera))
-               df = df[,c("camera", "desc")]
-               colnames(df) = c("id", "name")
-               self$makeCombo(df)
+               # Si currency es FIAT es una compra
+               df = self$position$getByCurrency(currency, available = TRUE)
+               self$makeCombo(self$cameras$getForCombo(cameras=df$camera))
+               # if (currency == self$factory$fiat) {
+               #     
+               # } else {
+               #     df = self$position$getByCurrency(currency, available = TRUE)
+               #     return(self$makeCombo(self$cameras$getForCombo(cameras=df$camera)))
+               # }
+               # if (missing(currency)) return(self$makeCombo(self$cameras$getForCombo()))
+               # df = self$position$getCurrencyPosition(currency)   
+               # df = df[df$camera != self$factory$camera,]
+               # df = df[df$available > 0,]
+               # df = self$cameras$getCameras(as.vector(df$camera))
+               # df = df[,c("camera", "desc")]
+               # colnames(df) = c("id", "name")
+               # self$makeCombo(df)
            }
             
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
@@ -46,11 +56,16 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                excl = ifelse(missing(exclude), NULL, exclude)
                self$makeCombo(self$cameras$getForcombo(exclude=exclude))
            }
+           ,getCurrenciesBuy  = function() {
+               self$currencies$getCurrencyNames() 
+             }
            ,getCurrenciesSell = function() {
-                df = self$position$getGlobalPosition()
-                df = df[df$currency != "EUR" & df$available > 0,]
-                if (nrow(df) > 0) df = currencies$getCurrencyNames(df$currency, TRUE)
-                df
+                data = self$position$getCurrencies(available = TRUE)
+                if (length(data) == 0) return (NULL)
+                idx = which(data == self$factory$fiat)
+                if (length(idx)) data = data[-idx]
+                if (length(data) == 0) return (NULL)
+                self$currencies$getCurrencyNames(data)
            }    
            ,cboCurrency  = function(camera, available) {
                # if (missing(camera)) {

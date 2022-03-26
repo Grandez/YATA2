@@ -21,10 +21,10 @@ modOperMovInput = function(id, title) {
                                            #,choices=c(WEB$getMsg("TXT.BID") = 10, "Comprar"=2, "Vender"=3)
                                            #,selected=1))
               ,guiColumn(1,h4(WEB$MSG$get("LBL.CURRENCY")))
-              ,guiColumn(2,guiComboSelect(ns("cboCurrency"),text="Counter"))
+              ,guiColumn(2,disabled(guiComboSelect(ns("cboCurrency"),text="Counter")))
 
               ,guiColumn(1, h4(WEB$MSG$get("LBL.CAMERA")))
-              ,guiColumn(1, guiCombo(ns("cboCamera"), choices=list(" ")))
+              ,guiColumn(1, disabled(guiCombo(ns("cboCamera"), choices=list(" "))))
               #,guiColumn(1)
      )
     ,fluidRow(

@@ -128,9 +128,14 @@ function(input, output, session) {
       eval(parse(text=paste0( "mod", YATABase$str$titleCase(input$mainMenu)
                              ,"Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
    })
-   observeEvent(input$connected,    { PUT("begin") })
+   observeEvent(input$connected,    { 
+       browser()
+       PUT("begin") 
+    })
    observeEvent(input$disconnected, { PUT("end")   })
-   observeEvent(input$initialized,  { PUT("begin") })
+   observeEvent(input$initialized,  { 
+       browser()
+       PUT("begin") })
    observeEvent(input$app_title,    {
       data = frmChangeDBInput()
       output$form = renderUI({data})

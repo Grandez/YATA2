@@ -333,7 +333,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             invisible(self)
         }
         ,getReasons        = function(type) {
-            # JGG Checked
             gral = parms$getSubgroup(DBParms$group$reasons, DBParms$reasons$gral)
             oth  = parms$getSubgroup(DBParms$group$reasons, type)
             df = rbind(gral, oth)

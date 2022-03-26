@@ -14,6 +14,19 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
           df[df$balance != 0,]
           as.list(df[df$camera != "CASH",1])
        }
+       ,getCurrencies = function(balance = FALSE, available= FALSE) {
+           df = tblPosition$table()
+           if (balance)   df = df[df$balance > 0,]
+           if (available) df = df[,available > 0,]
+           unique(df$currency)
+       }
+       ,getByCurrency = function(currency, balance=FALSE, available=FALSE) {
+           df = tblPosition$table(inValues = list(currency = currency))
+           df = df[df$camera != Factory$camera,]
+           if (balance)   df = df[df$balance  > 0,]
+           if (available) df = df[df$available > 0,]
+           df
+       }
        ,getGlobalPosition = function(full = FALSE) {
           df = tblPosition$getGlobalPosition()
           if (!full) df = df[df$balance > 0,]

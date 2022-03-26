@@ -29,8 +29,10 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                )
            } 
         # Inherit
-           ,getCounters   = function()          { self$parent$getCounters() }
-           ,getCboCameras = function (currency) { self$parent$getCboCameras(currency)           }            
+          ,getCurrenciesBuy  = function()          { self$parent$getCurrenciesBuy() }
+          ,getCurrenciesSell = function(currency)  { self$parent$getCurrenciesSell() }            
+          ,getCboCameras     = function (currency) { self$parent$getCboCameras(currency) } 
+
         )
        ,private = list(
            oper = NULL
@@ -87,12 +89,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
       }
       
       updatecboCurrency = function() {
-         pnl$vars$reloadCounter = FALSE 
-         if (input$cboOper != pnl$codes$oper$sell) {
-             data = pnl$makeCombo(pnl$getCounters())
-             tmp = pnl$vars$counter
-             if (is.null(tmp) || tmp == "sell") pnl$vars$reloadCounter = TRUE
-             pnl$vars$counter = "buy"
+         if (!pnl$vars$reload) return()
+         if (pnl$vars$buy) {
+             data = pnl$makeCombo(pnl$getCurrenciesBuy())
          }
          else {
              df = pnl$getCurrenciesSell()
@@ -101,10 +100,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
              } else {
                  data=pnl$makeCombo(df)
              }
-             tmp = pnl$vars$counter
-             if (is.null(tmp) || tmp == "buy") pnl$vars$reloadCounter = TRUE
-             pnl$vars$counter = "sell"
          }
+         # Esto es por si se ha clickado en otro panel para comprar
+         # JGG Revisar, si es asi no cargar el combo Y HACERLO ANTES
          carea = pnl$getCommarea()
          selc = NULL
          selr = 0
@@ -112,27 +110,26 @@ modOperMovServer = function(id, full, pnlParent, parent) {
              selc = carea$data$symbol
              selr = 15
          }
-         if (pnl$vars$reloadCounter) {
-             updCombo("cboCurrency", choices=data, selected=selc)    
-         } else {
-             updCombo("cboCurrency", selected=selc)
-         }
-         
+         # if (pnl$vars$reloadCounter) {
+         #     updCombo("cboCurrency", choices=data, selected=selc)    
+         # } else {
+         #     updCombo("cboCurrency", selected=selc)
+         # }
+         updCombo("cboCurrency", choices=data, selected=selc)
          updCombo("cboReasons", choices = pnl$cboReasons(input$cboOper), selected=selr)
          processCommarea(1)
-          
       }
       updateSummary = function() {
           if (is.null(pnl$vars$price))  pnl$vars$price  = 0
           if (is.null(pnl$vars$amount)) pnl$vars$amount = 0
           if (is.null(pnl$vars$fee))    pnl$vars$fee    = 0
           if (is.null(pnl$vars$gas))    pnl$vars$gas    = 0
-          if (pnl$vars$oper == 3) {
-              ctc  = pnl$vars$ctc - pnl$vars$amount
-              fiat = pnl$vars$fiat + pnl$vars$value
-          } else {
+          if (pnl$vars$buy) {
               ctc  = pnl$vars$ctc  + pnl$vars$amount
               fiat = pnl$vars$fiat - pnl$vars$value
+          } else {
+              ctc  = pnl$vars$ctc - pnl$vars$amount
+              fiat = pnl$vars$fiat + pnl$vars$value
           }
           output$lblTotCtc  = updLabelNumber(ctc)           
           output$lblTotFiat = updLabelNumber(round(fiat, 0))
@@ -161,23 +158,27 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           }
       }
       observeEvent(input$cboOper, { 
-          pnl$vars$oper = input$cboOper
+          enable("cboCurrency")
+          pnl$vars$soper = input$cboOper
+          # Recargar el combo de monedas? Para compras es costoso
+          pnl$vars$reload = FALSE
+          if (is.null(pnl$vars$buy) || !pnl$vars$buy) pnl$vars$reload = TRUE
           pnl$vars$buy = ifelse((as.integer(input$cboOper) %% 2) == 0, TRUE, FALSE)
+          if (!pnl$vars$buy) pnl$vars$reload = TRUE
           updatecboCurrency()
       }, ignoreNULL = TRUE)
 
       observeEvent(input$cboCurrency, {
-          op = as.integer(input$cboOper) %% 2 # Impar es venta
-          currency = ifelse(op == 1, input$cboCurrency, pnl$fiat)
-          updCombo("cboCamera", choices=pnl$getCboCameras())
+          enable("cboCamera")
+          currency = ifelse(pnl$vars$buy, pnl$fiat, input$cboCurrency)
+          updCombo("cboCamera", choices=pnl$getCboCameras(currency))
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
-          if (is.null(input$cboOper)) return()
-          
           dfPos = pnl$getPosition(input$cboCamera)
           pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"balance"]
+          
           if (length(pnl$vars$fiat) == 0) pnl$vars$fiat = 0
           if (length(pnl$vars$ctc)  == 0) pnl$vars$ctc  = 0
 
@@ -197,6 +198,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           pnl$vars$inEvent = FALSE
           updateSummary()
       },ignoreInit = TRUE, ignoreNULL = TRUE)
+      
       ##################################################
       # Buttons to calculate values
       ##################################################

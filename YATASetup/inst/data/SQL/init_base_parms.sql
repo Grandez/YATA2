@@ -39,8 +39,8 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 3,  1, 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 1,  1, 'camera'  , 'CASH');
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 1, 20, 'autoOpen' , '1');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 2, 10, 'defaultDB', '2');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 3, 10, 'lastDB'   , '2');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 2, 10, 'defaultDB', '1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 3, 10, 'lastDB'   , '1');
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 1, 10, 'alert'    , '1');
 
@@ -134,10 +134,12 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 3,   
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   10, ''    , '30');
 
 -- ----------------------------------------------------
--- Grupo 15 - Motivos
---   Sub  0 - Comunes a todas
---   Sub  1 - Para compras/posicion
---   Sub  2 - Para ventas
+-- Grupo 15 - Motivos 
+--  El subgrupo coincide cn el codigo  de la operacion
+--  El text es la clave para REASON.text
+--   Sub   0 - Comunes a todas
+--   Sub  20 - Para compras/posicion
+--   Sub  30 - Para ventas
 --   Sub  3 - Para tomar posicion
 --   Sub  4 - Para cerrar posicion
 --   Sub 99 - Fijos en programa (YATACodes/reasons)
@@ -149,11 +151,11 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0,  0, 
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 98,    1, ''    , 'FAIL'       );
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 99,    1, ''    , 'OTHER'      );
                                                                          
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 11,    1, ''    ,  'UP'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 12,    1, ''    ,  'SUGGEST'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  1, 13,    1, ''    ,  'TOP'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 20, 11,    1, ''    ,  'UP'        );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 20, 12,    1, ''    ,  'SUGGEST'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 20, 13,    1, ''    ,  'TOP'       );
                                                                          
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  2, 21,    1, ''    ,  'DOWN'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 30, 21,    1, ''    ,  'DOWN'      );
 
 
                                                                          
