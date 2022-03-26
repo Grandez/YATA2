@@ -30,7 +30,6 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                oper
             }
            #,getCounters = function() {self$currencies$getCurrencyNames() }
-           ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,getCboCameras = function (currency) {
                # Si currency es FIAT es una compra
                df = self$position$getByCurrency(currency, available = TRUE)
@@ -52,10 +51,10 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            }
             
            ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
-           ,cboCameras   = function(exclude) {
-               excl = ifelse(missing(exclude), NULL, exclude)
-               self$makeCombo(self$cameras$getForcombo(exclude=exclude))
+           ,cboCameras   = function(exclude = NULL) {
+               self$makeCombo(self$cameras$getForCombo(cameras=NULL, exclude=exclude))
            }
+           ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }            
            ,getCurrenciesBuy  = function() {
                self$currencies$getCurrencyNames() 
              }

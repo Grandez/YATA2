@@ -34,7 +34,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$hSym  = base$map()
             private$hCam  = base$map()
             self$REST       = YATARest$new()
-            self$errorLevel = REST$check()
+#            self$errorLevel = REST$check()
             private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
          }, YATAERROR = function (cond) {
              browser()

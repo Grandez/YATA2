@@ -125,10 +125,12 @@ YATATable <- R6::R6Class("YATA.TABLE"
          if (nrow(df) == 0 &&  create) {
              created = TRUE
              self$add(list(...))
-             select(..., create, limit)
+             select(..., create=FALSE, limit=limit)
+
+         } else {
+            self$dfCurrent    = setColNames(df)
+            self$current      = as.list(self$dfCurrent[1,])
          }
-         self$dfCurrent    = setColNames(df)
-         self$current      = as.list(self$dfCurrent[1,])
          created
       }
       ,delete   = function(...)  {

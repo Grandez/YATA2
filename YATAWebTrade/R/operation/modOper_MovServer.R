@@ -235,7 +235,15 @@ modOperMovServer = function(id, full, pnlParent, parent) {
       })
       
       observeEvent(input$btnOK, {
+        # Amount es lo que se mueve (compro o vendo)
+        # Value es el fiat
+          # Ejemplo compro 1 - BTC (amount) por un valor de x
+          #         vendo  1 - BTC (amount) por un valor de x
+        # Luego en funcion de compra o venta
+        # in - entra
+        # out sale  
         # A veces se generan dos triggers (debe ser por los renderUI)
+
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
              pnl$vars$inEvent = !pnl$vars$inEvent
@@ -253,13 +261,17 @@ modOperMovServer = function(id, full, pnlParent, parent) {
          if (data$amount == 0) data$amount = input$impValue  / input$impPrice
          if (data$value  == 0) data$value  = input$impAmount * input$impPrice
          
-         # Pares son compras
+         # Pares son compras. sale de Base y va a counter
          if ((as.integer(input$cboOper) %% 2) == 0) { 
-             data$base    = pnl$fiat
-             data$counter = input$cboCurrency
+             data$base      = pnl$fiat
+             data$counter   = input$cboCurrency
+             data$ctcIn     = data$amount
+             data$ctcOut    = data$value
          } else {
-             data$base    = input$cboCurrency
-             data$counter = pnl$factory$fiat
+             data$base      = input$cboCurrency
+             data$counter   = pnl$factory$fiat
+             data$ctcIn     = data$value
+             data$ctcOut    = data$amount
          }
          
          data = validate(data)

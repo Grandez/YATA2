@@ -62,12 +62,6 @@ if (.Platform$OS.type != "windows") {
 }
 
 onStart = function() {
-    if (.Platform$OS.type != "Windows") {
-        logfile = "/srv/yata/YATAExternal/log/web.log"
-    } else {
-        logfile = "P:/R/YATA2/YATAExternal/log/web.log"
-    }
-    cat(paste(Sys.time(), " - Starting\n"), file=logfile, append=TRUE)
       cat("Doing application setup\n")
 }
 onStop(function() {

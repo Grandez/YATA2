@@ -167,7 +167,6 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
    prepareBest = function(df, table) {
       if (is.null(df)) return (NULL)
       df =  df %>% select(symbol, price, hour, day, week, month)
-      browser()
       df$symbol = WEB$getCTCLabels(df$symbol)
       data = list(df = df, cols=NULL, info=NULL)
       buttons = list( Button_buy=yuiBtnIconBuy("Comprar"))
@@ -234,162 +233,162 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
        ### Reactives
        ###########################################################
 
-       # observeEvent(flags$position, ignoreInit = TRUE, {
-       #     if (is.null(pnl$data$dfGlobal)) return()
-       #     pnl$cookies$position = flags$position
-       #    if (input$radPosition == "Cameras") {
-       #        shinyjs::hide("posGlobal")
-       #    } else {
-       #        shinyjs::show("posGlobal")
-       # 
-       #         data = preparePosition(pnl$data$dfGlobal, "PosGlobal")
-       #         if (!is.null(data$df)) {
-       #             output$tblPosGlobal = updTableMultiple(data)
-       #             sel = c(which(data$df$currency %in% pnl$vars$selected[["PosGlobal"]]))
-       #             updTableSelection("tblPosGlobal", sel)
-       #             #updateReactable("tblPosGlobal", selected = sel)
-       #         }
-       #     }
-       #     cameras = pnl$data$position  
-       #     if (input$radPosition == "Global" || length(cameras) == 0) {
-       #         shinyjs::hide("posCameras")
-       #     } else {
-       #         shinyjs::show("posCameras")
-       #         lapply(names(pnl$data$position), function(camera) {
-       #                if (!is.null(pnl$data$position[[camera]])) {
-       #                    sfx = str_to_title(camera)
-       #                    data  = preparePosition(pnl$data$position[[camera]], paste0("Pos", sfx))
-       #                    eval(parse(text=paste0("output$tblPos", sfx, " = updTable(data)")))
-       #                }
-       #         })
-       #     }
-       # })       
-       # observeEvent(flags$best, ignoreInit = TRUE, {
-       #    from = as.numeric(input$cboBestFrom)
-       #    if (is.na(from)) return() 
-       #    if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
-       #    pnl$cookies$best$from      = from
-       #    pnl$cookies$best$top       = input$numBestTop
-       #    pnl$updateBest()
-       #    renderBestTables()
-       # })
-       # observeEvent(flags$refresh, ignoreInit = TRUE, { 
-       #    pnl$monitors$update() 
-       #    flags$position = isolate(!flags$position)
-       #    renderBestTables()
-       #    renderPlotSession()
-       # })
-       # observeEvent(flags$update, ignoreInit = TRUE, { 
-       #    pnl$updateData()
-       #    flags$refresh = isolate(!flags$refresh)
-       # })
-       # observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
-       #    if (is.na(flags$history)) return()
-       #    if (flags$history != pnl$cookies$history) {
-       #        pnl$cookies$history = flags$history
-       #    }
-       # })
-       # observeEvent(flags$table, ignoreInit = TRUE, {
-       #     table = pnl$vars$table$target
-       #     row   = pnl$vars$table$row
-       #     df    = pnl$getDFTable(table)
-       # 
-       #     # Update table
-       #     symbol = df[row,"symbol"]
-       #     id     = df[row,"id"]
-       #     sel = pnl$vars$selected[[table]]
-       #     if (!is.null(sel)) {
-       #         idx = which(sel == symbol)
-       #         if (length(idx) > 0) sel = sel[-idx]
-       #         else                 sel = c(sel, symbol)
-       #     } else {
-       #         sel = c(symbol)
-       #     }
-       #     pnl$vars$selected[[table]] = sel               
-       #     updateReactable(paste0("tbl", table), selected = c(which(df$symbol == sel)))
-       # 
-       #     # Update plot
-       #     df = pnl$getHistory(symbol)
-       #     pnl$vars$table$symbol = symbol
-       #     if (is.null(df)) {
-       #         getHistorical(paste(symbol, id, sep="-"), table)
-       #     } else {
-       #         flags$plotsBest = isolate(!flags$plotsBest)
-       #     }       
-       # })
-       # observeEvent(flags$tablePos, ignoreInit = TRUE, {
-       #     table = "PosGlobal"
-       #     row   = pnl$vars$table$row
-       #     df    = pnl$data$dfGlobal
-       # 
-       #     # Update table
-       #     symbol = df[row,"currency"]
-       #     id     = df[row,"id"]
-       #     sel = pnl$vars$selected[[table]]
-       #     if (!is.null(sel)) {
-       #         idx = which(sel == symbol)
-       #         if (length(idx) > 0) sel = sel[-idx]
-       #         else                 sel = c(sel, symbol)
-       #     } else {
-       #         sel = c(symbol)
-       #     }
-       #     pnl$vars$selected[[table]] = sel               
-       #     updTableSelection(paste0("tbl", table),c(which(df$currency %in% sel)))
-       # 
-       #     # Update plots
-       #     plot = pnl$plots[["plotSession"]]
-       #     data = plot$getSourceNames()
-       #     names = plot$getColumnNames(data)
-       #     plot$selectColumns("session", pnl$vars$selected[["PosGlobal"]])
-       #     renderPlotSession()
-       #     plot = pnl$plots[["plotHist"]]
-       #     plot$setSourceNames(pnl$vars$selected[["PosGlobal"]])
-       #     output$plotHist = plot$render()
-       # })
-       # 
-       # observeEvent(flags$tab, ignoreInit = TRUE, {
-       #     table = pnl$vars$table$target
-       #     row   = pnl$vars$table$row
-       #     df    = pnl$getDFTable(table)
-       # 
-       #     action = strsplit(pnl$vars$table$colName, "_")[[1]][2]
-       #     
-       #     if (action == "buy") {
-       #         carea = pnl$getCommarea()
-       #         carea$action = action
-       #         carea$pending = TRUE
-       #         carea$data = list(id=df[row,"id"], symbol=df[row,"symbol"], price=df[row,"price"])
-       #         pnl$setCommarea(carea)
-       #         updateTabsetPanel(parent, inputId="mainMenu", selected=panel$oper)
-       #     }
-       # })
-       # observeEvent(flags$plotsBest, ignoreInit = TRUE, {
-       #     table = pnl$vars$table
-       #     plot = pnl$getPlot(paste0("plot", table$target))
-       #     sym = table$symbol
-       #     plotted = plot$hasSource(sym)
-       #     if (!plotted) {
-       #         data =  pnl$data$lstHist[[sym]]
-       #         plot$addData(data$df, sym)
-       #     } else {
-       #         plot$removeData(sym)
-       #     }
-       #     if (table$target == "Best") output$plotBest = plot$render()
-       #     if (table$target == "Top")  output$plotTop  = plot$render()
-       #     if (table$target == "Fav")  output$plotFav  = plot$render()
-       # })
-       # observeEvent(flags$plotPos, { 
-       #     plot = pnl$plots[["plotHist"]]
-       #     plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
-       #     name = flags$plotPos
-       #     # if(!plot$hasSource(flags$plotPos)) {
-       #     #     df = pnl$getHistory(name)
-       #     #     if (!is.null(df)) {
-       #     #         plot$addData(df, name, "pepe")
-       #     #     }
-       #     # }
-       #     # output$plotHist = plot$render("plotHist")    
-       # })
+       observeEvent(flags$position, ignoreInit = TRUE, {
+           if (is.null(pnl$data$dfGlobal)) return()
+           pnl$cookies$position = flags$position
+          if (input$radPosition == "Cameras") {
+              shinyjs::hide("posGlobal")
+          } else {
+              shinyjs::show("posGlobal")
+
+               data = preparePosition(pnl$data$dfGlobal, "PosGlobal")
+               if (!is.null(data$df)) {
+                   output$tblPosGlobal = updTableMultiple(data)
+                   sel = c(which(data$df$currency %in% pnl$vars$selected[["PosGlobal"]]))
+                   updTableSelection("tblPosGlobal", sel)
+                   #updateReactable("tblPosGlobal", selected = sel)
+               }
+           }
+           cameras = pnl$data$position
+           if (input$radPosition == "Global" || length(cameras) == 0) {
+               shinyjs::hide("posCameras")
+           } else {
+               shinyjs::show("posCameras")
+               lapply(names(pnl$data$position), function(camera) {
+                      if (!is.null(pnl$data$position[[camera]])) {
+                          sfx = str_to_title(camera)
+                          data  = preparePosition(pnl$data$position[[camera]], paste0("Pos", sfx))
+                          eval(parse(text=paste0("output$tblPos", sfx, " = updTable(data)")))
+                      }
+               })
+           }
+       })
+       observeEvent(flags$best, ignoreInit = TRUE, {
+          from = as.numeric(input$cboBestFrom)
+          if (is.na(from)) return()
+          if (pnl$cookies$best$from == from && pnl$cookies$best$top == input$numBestTop) return()
+          pnl$cookies$best$from      = from
+          pnl$cookies$best$top       = input$numBestTop
+          pnl$updateBest()
+          renderBestTables()
+       })
+       observeEvent(flags$refresh, ignoreInit = TRUE, {
+          pnl$monitors$update()
+          flags$position = isolate(!flags$position)
+          renderBestTables()
+          renderPlotSession()
+       })
+       observeEvent(flags$update, ignoreInit = TRUE, {
+          pnl$updateData()
+          flags$refresh = isolate(!flags$refresh)
+       })
+       observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
+          if (is.na(flags$history)) return()
+          if (flags$history != pnl$cookies$history) {
+              pnl$cookies$history = flags$history
+          }
+       })
+       observeEvent(flags$table, ignoreInit = TRUE, {
+           table = pnl$vars$table$target
+           row   = pnl$vars$table$row
+           df    = pnl$getDFTable(table)
+
+           # Update table
+           symbol = df[row,"symbol"]
+           id     = df[row,"id"]
+           sel = pnl$vars$selected[[table]]
+           if (!is.null(sel)) {
+               idx = which(sel == symbol)
+               if (length(idx) > 0) sel = sel[-idx]
+               else                 sel = c(sel, symbol)
+           } else {
+               sel = c(symbol)
+           }
+           pnl$vars$selected[[table]] = sel
+           updateReactable(paste0("tbl", table), selected = c(which(df$symbol == sel)))
+
+           # Update plot
+           df = pnl$getHistory(symbol)
+           pnl$vars$table$symbol = symbol
+           if (is.null(df)) {
+               getHistorical(paste(symbol, id, sep="-"), table)
+           } else {
+               flags$plotsBest = isolate(!flags$plotsBest)
+           }
+       })
+       observeEvent(flags$tablePos, ignoreInit = TRUE, {
+           table = "PosGlobal"
+           row   = pnl$vars$table$row
+           df    = pnl$data$dfGlobal
+
+           # Update table
+           symbol = df[row,"currency"]
+           id     = df[row,"id"]
+           sel = pnl$vars$selected[[table]]
+           if (!is.null(sel)) {
+               idx = which(sel == symbol)
+               if (length(idx) > 0) sel = sel[-idx]
+               else                 sel = c(sel, symbol)
+           } else {
+               sel = c(symbol)
+           }
+           pnl$vars$selected[[table]] = sel
+           updTableSelection(paste0("tbl", table),c(which(df$currency %in% sel)))
+
+           # Update plots
+           plot = pnl$plots[["plotSession"]]
+           data = plot$getSourceNames()
+           names = plot$getColumnNames(data)
+           plot$selectColumns("session", pnl$vars$selected[["PosGlobal"]])
+           renderPlotSession()
+           plot = pnl$plots[["plotHist"]]
+           plot$setSourceNames(pnl$vars$selected[["PosGlobal"]])
+           output$plotHist = plot$render()
+       })
+
+       observeEvent(flags$tab, ignoreInit = TRUE, {
+           table = pnl$vars$table$target
+           row   = pnl$vars$table$row
+           df    = pnl$getDFTable(table)
+
+           action = strsplit(pnl$vars$table$colName, "_")[[1]][2]
+
+           if (action == "buy") {
+               carea = pnl$getCommarea()
+               carea$action = action
+               carea$pending = TRUE
+               carea$data = list(id=df[row,"id"], symbol=df[row,"symbol"], price=df[row,"price"])
+               pnl$setCommarea(carea)
+               updateTabsetPanel(parent, inputId="mainMenu", selected=panel$oper)
+           }
+       })
+       observeEvent(flags$plotsBest, ignoreInit = TRUE, {
+           table = pnl$vars$table
+           plot = pnl$getPlot(paste0("plot", table$target))
+           sym = table$symbol
+           plotted = plot$hasSource(sym)
+           if (!plotted) {
+               data =  pnl$data$lstHist[[sym]]
+               plot$addData(data$df, sym)
+           } else {
+               plot$removeData(sym)
+           }
+           if (table$target == "Best") output$plotBest = plot$render()
+           if (table$target == "Top")  output$plotTop  = plot$render()
+           if (table$target == "Fav")  output$plotFav  = plot$render()
+       })
+       observeEvent(flags$plotPos, {
+           plot = pnl$plots[["plotHist"]]
+           plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
+           name = flags$plotPos
+           # if(!plot$hasSource(flags$plotPos)) {
+           #     df = pnl$getHistory(name)
+           #     if (!is.null(df)) {
+           #         plot$addData(df, name, "pepe")
+           #     }
+           # }
+           # output$plotHist = plot$render("plotHist")
+       })
 
        ###########################################################
        ### END Reactives
@@ -452,54 +451,54 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       ### Observers                                     ###
       #####################################################
 
-      # observeEvent(input$tableBest, ignoreInit = TRUE, {
-      #      pnl$vars$table = input$tableBest
-      #      if (!startsWith(input$tableBest$colName, "Button")) {
-      #          flags$table = isolate(!flags$table)
-      #      } else {
-      #          flags$tab = isolate(!flags$tab)
-      #      }
-      #  })
-      # observeEvent(input$tablePos, {
-      #      pnl$vars$table = input$tablePos
-      #      if (!startsWith(input$tablePos$colName, "Button")) {
-      #          flags$tablePos = isolate(!flags$tablePos)
-      #      } else {
-      #          flags$tab = isolate(!flags$tab)
-      #      }
-      #  })
-      #  
-      # observeEvent(input$modebar, {
-      #     info = input$modebar
-      #     pnl$vars$info[[info$render]] = info
-      #     eval(parse(text=paste0("output$", info$ui, "=", info$render, "('", info$ui, "', info)")))
-      # })
+      observeEvent(input$tableBest, ignoreInit = TRUE, {
+           pnl$vars$table = input$tableBest
+           if (!startsWith(input$tableBest$colName, "Button")) {
+               flags$table = isolate(!flags$table)
+           } else {
+               flags$tab = isolate(!flags$tab)
+           }
+       })
+      observeEvent(input$tablePos, {
+           pnl$vars$table = input$tablePos
+           if (!startsWith(input$tablePos$colName, "Button")) {
+               flags$tablePos = isolate(!flags$tablePos)
+           } else {
+               flags$tab = isolate(!flags$tab)
+           }
+       })
+
+      observeEvent(input$modebar, {
+          info = input$modebar
+          pnl$vars$info[[info$render]] = info
+          eval(parse(text=paste0("output$", info$ui, "=", info$render, "('", info$ui, "', info)")))
+      })
 
      #################################################
      ### Panel Izquierdo
      #################################################
 
-      # observeEvent(input$radPosition, ignoreInit = TRUE, { flags$position = isolate(!flags$position) })
-      # observeEvent(input$cboBestFrom, ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
-      # observeEvent(input$numBestTop,  ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
-      # observeEvent(input$numInterval, ignoreInit = TRUE, { 
-      #     if (is.numeric(input$numInterval)) {
-      #         pnl$cookies$interval = input$numInterval              
-      #     }
-      # })
-      # observeEvent(input$numHistory,   ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
-      # observeEvent(input$numSelective, ignoreInit = TRUE, { flags$refresh = isolate(!flags$refresh)   })
-      # observeEvent(input$chkMonitors, ignoreInit = TRUE, {
-      #    pnl$cookies$monitor = input$chkMonitors
-      #    #JGGshinyjs::toggle("monitor", anim=TRUE)
-      # })
-      # observeEvent(input$btnLayoutOK, {
-      #     pnl$setCookies()
-      #     session$sendCustomMessage(type = 'closeLeftSide',message = "close")
-      # })
-      # observeEvent(input$btnLayoutKO, { 
-      #    session$sendCustomMessage(type = 'closeLeftSide',message = "close") 
-      # })
+      observeEvent(input$radPosition, ignoreInit = TRUE, { flags$position = isolate(!flags$position) })
+      observeEvent(input$cboBestFrom, ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
+      observeEvent(input$numBestTop,  ignoreInit = TRUE, { flags$best = isolate(!flags$best)         })
+      observeEvent(input$numInterval, ignoreInit = TRUE, {
+          if (is.numeric(input$numInterval)) {
+              pnl$cookies$interval = input$numInterval
+          }
+      })
+      observeEvent(input$numHistory,   ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
+      observeEvent(input$numSelective, ignoreInit = TRUE, { flags$refresh = isolate(!flags$refresh)   })
+      observeEvent(input$chkMonitors, ignoreInit = TRUE, {
+         pnl$cookies$monitor = input$chkMonitors
+         #JGGshinyjs::toggle("monitor", anim=TRUE)
+      })
+      observeEvent(input$btnLayoutOK, {
+          pnl$setCookies()
+          session$sendCustomMessage(type = 'closeLeftSide',message = "close")
+      })
+      observeEvent(input$btnLayoutKO, {
+         session$sendCustomMessage(type = 'closeLeftSide',message = "close")
+      })
 
 
      carea = pnl$getCommarea()  
@@ -509,16 +508,16 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           pnl$setCommareaItems(position=FALSE)
      }       
      
-     #flags$refresh = isolate(!flags$refresh)
+     flags$refresh = isolate(!flags$refresh)
      
      #####################################################
      ### Timers                                        ###
      ###  Despues de cargar SIEMPRE      
      #####################################################
      
-     # observe({
-     #   invalidateLater(pnl$cookies$interval * 60000)
-     #   flags$update = isolate(!flags$update)   
-     # })
+     observe({
+       invalidateLater(pnl$cookies$interval * 60000)
+       flags$update = isolate(!flags$update)
+     })
    })
 }    

@@ -481,8 +481,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            }
            prtOper$add(current)
 
-           addFlow(YATACodes$flow$output,  current$base,    current$amount * -1, current$price)
-           addFlow(YATACodes$flow$input,   current$counter, current$value,       current$price)
+           addFlow(YATACodes$flow$output,  current$base,    current$ctcOut * -1, current$price)
+           addFlow(YATACodes$flow$input,   current$counter, current$ctcIn,       current$price)
 
            # if (!is.null(current$idParent) && !is.na(current$idParent)) {
            #     select(idParent)

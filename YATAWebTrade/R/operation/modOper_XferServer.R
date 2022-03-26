@@ -14,14 +14,9 @@ modOperXferServer = function(id, full, pnlParent, parent) {
                 private$position = self$factory$getObject(objs$position)
                 private$oper     = self$factory$getObject(objs$operation)
             }
-            ,cboCamerasFrom  = function ()  {
-              self$parent$cboCameras() 
-            }
-            ,cboCamerasTo    = function (from) { 
-                browser()
-              self$parent$cboCameras(exclude = from) 
-            }
-            ,cboCurrencies = function (camera) {
+            ,cboCamerasFrom = function ()       { self$parent$cboCameras()  }
+            ,cboCamerasTo   = function (from)   { self$parent$cboCameras(exclude = from) }
+            ,cboCurrencies  = function (camera) {
                 df = private$position$getCameraPosition(camera, available = TRUE)
                 private$cameraIn = df
                 WEB$getCTCLabels(as.vector(df$currency), invert = TRUE)
