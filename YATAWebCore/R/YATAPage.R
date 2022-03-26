@@ -20,7 +20,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
              # ,tags$script(makeMessageHandler(YATAMSG$movePanel))
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
-      ,icons = paste0(Sys.getenv("YATA_SITE"), "/YATAExternal/icons")
+      ,icons = paste0(Sys.getenv("YATA_SITE"), "/YATAExt/icons")
     )
     jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
 

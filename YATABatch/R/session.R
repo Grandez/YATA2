@@ -43,7 +43,7 @@
     count = nrow(df)
 
     colnames = session$getColumnNames(colnames(df))
-    datafile = file.path(Sys.getenv("YATA_SITE"), "YATAExternal/tmp", session$getDBTableName())
+    datafile = file.path(Sys.getenv("YATA_SITE"), "YATAExt/tmp", session$getDBTableName())
     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
     datafile = paste0(datafile, ".dat")
 

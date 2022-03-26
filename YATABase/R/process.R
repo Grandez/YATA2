@@ -70,8 +70,30 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
                file.copy(from, to, overwrite=TRUE, recursive = TRUE)
            })
        }
+      ,R = function(script, async = TRUE) {
+         site = Sys.getenv("YATA_SITE")
+         root = paste(site,"/YATAExt/scripts/")
+         log =  paste(site,"/YATAData/log/"
+                      )
+
+         rscript = paste0(root, script)
+         script  = substr(script,1, nchar(script) - 1)
+         log = paste0(log, script, "log")
+         args = c( "CMD", "BATCH"
+                  ,"--no-save", "--no-restore"
+                  ,rscript
+                  ,log
+                 )
+         if (async) {
+             processx::process$new("R", args=args)
+         } else {
+            processx::process$new("R", args=args, error_on_status = FALSE)
+         }
+
+      }
+      # DataBases
        ,import = function(file, database, columns) {
-            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/YATAExternal/tmp")
+            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/YATAData/tmp")
             args = list( "--local"
                         , "--replace"
                         ,"--fields-terminated-by=;"
@@ -83,6 +105,23 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
                   )
            .run("mysqlimport", args)
        }
+       ,backup = function(database, filename) {
+            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/YATAData/tmp")
+            args = list( "--local"
+                        , "--replace"
+                        ,"--fields-terminated-by=;"
+                        ,"--user=YATA"
+                        ,"--password=yata"
+                        ,paste0("--columns=",paste(columns, collapse=","))
+                        ,database
+                        ,file
+                  )
+           .run("mysqlimport", args)
+           # 1. Ejecutamos el backup en tmp
+           # 2. Lo comprimimos con zip (ojo al stdout)
+           # zip archivename.zip filename1 filename2 filename3
+       }
+
     )
    ,private = list(
        .wd = NULL

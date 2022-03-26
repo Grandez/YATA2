@@ -190,8 +190,9 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
          # 1 - Header response / 2 - Data
          resp = httr::content(page, type="application/json")
-         if (http_error(page)) {
-             base:::HTTP( "ERROR GET HISTORICAL", action="GET"
+         if (resp$status$error_code == 400) return (NULL)  # No data
+         if (resp$status$error_code != 0) {
+             YATABase:::HTTP( "ERROR GET HISTORICAL", action="GET"
                          ,origin=resp$error_code, message=resp[[1]]$error_message)
          }
 

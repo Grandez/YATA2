@@ -29,6 +29,9 @@ DELETE FROM PARMS;
 --           3 - lastDB
 --  Sub  4 - Operaciones
 --           1 - alert - Dias para la proxima alerta
+--  Sub  5 - Configuracion
+--           1 - Plugins/Extern information
+--           2 - Temporary directory
 -- Sub 
 -- --------------------------------------------------- 
 

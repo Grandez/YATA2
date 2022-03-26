@@ -1,0 +1,28 @@
+---
+title: "Notas"
+author: "Grandez"
+date: "30/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Dynamic positioning
+
+En lugar de poner insertar y quitar
+podemos probar crear todos ocultos
+y mover de un padre a otro con java script
+
+### Idea
+
+div(id=block_1)
+div(id=block_2)
+div(id=block_3)
+hidden(div(id=content))
+       yuiBlock(id, 0, 1, fluidRow(tags$div(id=ns("monitor"), class="yata_monitors")))
+      ,yuiBlock(id, 1, 2, yuiPlot(ns("plot1")), yuiPlot(ns("plot2")))
+      ,yuiBlock(id, 2, 2)
+
+**pero no se pueden tener duplicados**

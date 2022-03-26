@@ -26,8 +26,8 @@ updateIconsExchanges = function(maximum, force=FALSE, console=1, log=1) {
     url = "https://s2.coinmarketcap.com/static/img/exchanges/200x200/"
     f   = paste0(Sys.getenv("HOME"), "/icons_exchanges.txt")
     suppressWarnings(file.remove(f))
-    root = paste0(Sys.getenv("YATA_SITE"), "/YATAExternal/icons")
-    if(.Platform$OS.type == "windows") root = "P:/R/YATA2/YATAExternal/providers"
+    root = paste0(Sys.getenv("YATA_SITE"), "/YATAExt/icons")
+    if(.Platform$OS.type == "windows") root = "P:/R/YATA2/YATAExt/providers"
     for (row in 1:nrow(df)) {
         # nfo = file.info(paste0(root, "/", df[row,"icon"]))
         # if (is.na(nfo[1,"size"])) { # No existe
@@ -47,8 +47,8 @@ updateIconsExchanges = function(maximum, force=FALSE, console=1, log=1) {
 #     url = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
 #     f   = paste0(Sys.getenv("HOME"), "/icons_url.txt")
 #     suppressWarnings(file.remove(f))
-#     root = paste0(Sys.getenv("YATA_SITE"), "/YATAExternal/icons")
-#     if(.Platform$OS.type == "windows") root = "P:/R/YATA2/YATAExternal/icons"
+#     root = paste0(Sys.getenv("YATA_SITE"), "/YATAExt/icons")
+#     if(.Platform$OS.type == "windows") root = "P:/R/YATA2/YATAExt/icons"
 #     tbl = batch$fact$getTable(batch$codes$tables$currencies)
 #     df  = tbl$table()
 #     for (row in 1:nrow(df)) {

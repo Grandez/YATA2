@@ -1,0 +1,38 @@
+
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R es un software libre y viene sin GARANTIA ALGUNA.
+Usted puede redistribuirlo bajo ciertas circunstancias.
+Escriba 'license()' o 'licence()' para detalles de distribucion.
+
+R es un proyecto colaborativo con muchos contribuyentes.
+Escriba 'contributors()' para obtener más información y
+'citation()' para saber cómo citar R o paquetes de R en publicaciones.
+
+Escriba 'demo()' para demostraciones, 'help()' para el sistema on-line de ayuda,
+o 'help.start()' para abrir el sistema de ayuda HTML con su navegador.
+Escriba 'q()' para salir de R.
+
+> YATABatch::updateSession()
+Loading YATAProviders
+Loading YATACore
+Loading YATABatch
+YATADB con Parameters
+YATADB con Messages
+Called from: value[[3L]](cond)
+Warning message:
+In file(file, ifelse(append, "a", "w")) :
+  no fue posible abrir el archivo 'P:/R:/YATA2/YATAExt/log/yata.log': Invalid argument
+Browse[1]> debug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATABatch/R/session.R#78: message(cond)
+Browse[2]> no se puede abrir la conexióndebug en C:/Users/Javier/Documents/DES/PRJ/R/YATA2/YATABatch/R/session.R#79: [1] 16
+Browse[2]> Error in file(file, ifelse(append, "a", "w")) : 
+  no se puede abrir la conexión
+Calls: <Anonymous> -> <Anonymous> -> .println -> .toFile -> cat -> file
+Además: Warning message:
+In file(file, ifelse(append, "a", "w")) :
+  no fue posible abrir el archivo 'P:/R:/YATA2/YATAExt/log/yata.log': Invalid argument
+Ejecución interrumpida
+Finalize 0
+Clearing factory

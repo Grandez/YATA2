@@ -127,8 +127,8 @@ unloadCurrencies = function(max=3000, verbose=25) {
 #      list(id=id, name=name, symbol=symbol, icon=icon)
 # }
 # updData = function(info, verbose) {
-# #    furl = file("P:/R/YATA2/YATAExternal/bin/geticons.bat", open="at",blocking=FALSE)
-#         furl = "P:/R/YATA2/YATAExternal/bin/geticons.bat"
+# #    furl = file("P:/R/YATA2/YATAExt/bin/geticons.bat", open="at",blocking=FALSE)
+#         furl = "P:/R/YATA2/YATAExt/bin/geticons.bat"
 #     # fact = YATACore::YATAFACTORY$new()
 #     # db = fact$getDBBase()
 #     # db$begin()

@@ -55,7 +55,7 @@ Warning = function(msg, action=NULL, subclass=NULL, ...) {
       msg = paste0(msg, " (", data$sqlcode, ")")
      .error(msg, subclass="SQL", origin=origin, action=action, ...)
 }
- HTTP = function(msg, action=NULL, origin=NULL, ...) {
+HTTP = function(msg, action=NULL, origin=NULL, ...) {
      .error(msg, subclass="HTTP", origin=origin, action=action, ...)
 }
 EXEC = function(msg, ...) {
