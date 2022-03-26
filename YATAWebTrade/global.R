@@ -26,23 +26,7 @@ suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 # Shiny
 library(shiny)
 suppressMessages(library(shinyjs             ,warn.conflicts = FALSE))
-#suppressMessages(library(shinydashboard,     warn.conflicts = FALSE))
-#suppressMessages(library(shinydashboardPlus, warn.conflicts = FALSE))
-#suppressMessages(library(shinyWidgets,       warn.conflicts = FALSE))
 suppressMessages(library(bslib,              warn.conflicts = FALSE))
-# library(shinycookie)
-# library(shinybusy)
-
-# General
-# library(data.table)
-
-#library(reactable)
-
-# Plots
-#suppressMessages(library(ggplot2,   warn.conflicts = FALSE))
-#suppressMessages(library(gridExtra, warn.conflicts = FALSE))
-#suppressMessages(library(plotly,    warn.conflicts = FALSE))
-#library(RColorBrewer)
 
 # Async
 #suppressMessages(library(jsonlite, warn.conflicts = FALSE))
@@ -78,7 +62,12 @@ if (.Platform$OS.type != "windows") {
 }
 
 onStart = function() {
-    cat(paste(Sys.time(), " - Starting\n"), file="P:/R/YATA2/web.log", append=TRUE)
+    if (.Platform$OS.type != "Windows") {
+        logfile = "/srv/yata/YATAExternal/log/web.log"
+    } else {
+        logfile = "P:/R/YATA2/YATAExternal/log/web.log"
+    }
+    cat(paste(Sys.time(), " - Starting\n"), file=logfile, append=TRUE)
       cat("Doing application setup\n")
 }
 onStop(function() {
