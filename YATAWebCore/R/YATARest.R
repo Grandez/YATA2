@@ -26,7 +26,7 @@ YATARest = R6::R6Class("YATA.REST"
       }
      ,PUT   = function(endpoint, ...) { # PUT No devuelve datos
          url = paste0(.url, endpoint)
-         cat(paste(Sys.time(), "PUT", url), file="P:/R/YATA2/web.log", append=TRUE)
+         cat(paste(Sys.time(), "PUT", url), file=paste0(sys.getenv("YATA_SITE"), "/YATAData/log/web.log"), append=TRUE)
          #future({ httr::GET(url, query = args2list(...)) })
           httr::GET(url, query = args2list(...))
       }

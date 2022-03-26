@@ -21,6 +21,9 @@ YATAPage = function( title="YATA", id = "mainMenu"
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
       ,icons = paste0(Sys.getenv("YATA_SITE"), "/YATAExt/icons")
+      ,icons2 = normalizePath(system.file("extdata/www/icons", package = packageName()))
+      ,img    = normalizePath(system.file("extdata/www/img", package = packageName()))
+      ,yata   = normalizePath(system.file("extdata/www/yata", package = packageName()))
     )
     jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
 
