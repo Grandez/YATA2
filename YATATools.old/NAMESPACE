@@ -1,6 +1,0 @@
-import(R6)
-import(hash)
-import(stringr)
-import(anytime)
-
-exportPattern("^[[:alpha:]]+")
