@@ -72,9 +72,8 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
        }
       ,R = function(script, async = TRUE) {
          site = Sys.getenv("YATA_SITE")
-         root = paste(site,"/YATAExt/scripts/")
-         log =  paste(site,"/YATAData/log/"
-                      )
+         root = paste0(site,"/YATAExt/scripts/")
+         log =  paste0(site,"/YATAData/log/")
 
          rscript = paste0(root, script)
          script  = substr(script,1, nchar(script) - 1)

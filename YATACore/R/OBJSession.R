@@ -1,3 +1,6 @@
+# esta query funciona aunque haya error en la columna LASt
+# SELECT * FROM SESSION AS A, (SELECT ID AS ID, MAX(LAST) AS LAST FROM SESSION GROUP BY ID) AS B WHERE A.ID = B.ID AND A.LAST = B.LAST
+# Podemos usar una cache para evitar las consultas duplicadas
 OBJSession = R6::R6Class("OBJ.SESSION"
     ,inherit    = OBJBase
     ,portable   = FALSE
@@ -5,9 +8,10 @@ OBJSession = R6::R6Class("OBJ.SESSION"
     ,lock_class = TRUE
     ,public = list(
         print       = function() { message("Session Object")}
-       ,initialize = function(Factory) {
+       ,initialize = function(Factory) {# esta
            super$initialize(Factory)
            .getTables(Factory)
+           .loadCache()
        }
        ,getDBTableName = function()         { tblSession$getDBTableName() }
        ,getLastUpdate  = function() {
@@ -44,8 +48,8 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            ifelse(is.null(tblSession$current), 0, tblSession$current$price)
        }
        ,getLatest = function(rank=0, currencies = NULL) {
-           last = getLastUpdate()
-           df = tblSession$table(last = last)
+           if (.invalidCache()) .loadCache()
+           df = dfLast
            if (!is.null(currencies)) {
                df = df[df$id %in% currencies,]
            } else {
@@ -61,6 +65,9 @@ OBJSession = R6::R6Class("OBJ.SESSION"
         tblSession    = NULL
        ,tblControl    = NULL
        ,tblCurrencies = NULL
+       ,dfLast        = NULL
+       ,lastTMS       = NULL
+       ,lastLast      = NULL
        ,getBestDF = function(df, top, from, group) {
            groups = c(25, 150)
            col = ""
@@ -77,7 +84,24 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            private$tblSession    = Factory$getTable(self$codes$tables$session)
            private$tblControl    = Factory$getTable(self$codes$tables$control)
            private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
-       }
+      }
+      ,.loadCache = function() {
+          private$dfLast = private$tblSession$getLatest()
+          df = tblControl$table(id = 1)
+          private$lastTMS  = df[1,"tms"] # tblControl$currrent$tms
+          private$lastLast = df[1, "last"] # tblControl$currrent$last
+      }
+      ,.invalidCache = function() {
+          df = tblControl$table(id = 1)
+          if (df[1,"tms"]  > lastTMS ||
+              df[1,"last"] > lastLast) {
+              private$lastTMS  = df[1,"tms"] # tblControl$currrent$tms
+              private$lastLast = df[1, "last"] # tblControl$currrent$last
+              TRUE
+          } else {
+              FALSE
+          }
+      }
     )
 )
 

@@ -23,7 +23,7 @@ updateHistory = function(output=1, log=1) {
                    data$id = df[row, "id"]
                    data$symbol = df[row, "symbol"]
                    hist$add(data)
-                   Sys.sleep(1)
+                   if ((row %% 2) == 0) Sys.sleep(1) # Para cada 2
                }
            }
         }, error = function(cond) {

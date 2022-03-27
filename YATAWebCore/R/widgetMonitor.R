@@ -41,7 +41,6 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
          data = pos$getFiatPosition("$FIAT")
          data$invest = round(data$invest)
          updateFiat(data)
-
      }
      ,getLast = function() { private$last }
    )

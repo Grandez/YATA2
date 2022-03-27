@@ -205,18 +205,14 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           updNumericInput("numHistory",  value = pnl$cookies$history)
           updRadio("radPosition",        selected = pnl$cookies$position)
 
-          # Este es el que tarda por que es Windows
           df = pnl$data$dfGlobal
           if (is.null(df)) return()
 
-          # Si usamos for, no se evaluan los datos
           if (nrow(df) > 0) {
               dat = paste(df[,"currency"], df[,"id"], sep="-")
               lapply(dat, function(x) getHistorical(x))
           }
-          #WEB$end("initPage")
        }
-
        getHistorical = function(data, plot=NULL) {
            toks = strsplit(data, "-")[[1]]
            id = as.integer(toks[2])
@@ -224,10 +220,12 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            if (id == 0) return()
            
            pnl$loadHistory(id, symbol)
-           if (is.null(plot))  flags$plotPos = symbol
+           if (is.null(plot))  {
+               pnl$vars$symbol = symbol
+               flags$plotPos   = isolate(!flags$plotPos)
+           }
            if (!is.null(plot)) flags$plotsBest = isolate(!flags$plotsBest)
-      } 
-
+       } 
 
        ###########################################################
        ### Reactives
@@ -317,6 +315,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
        observeEvent(flags$tablePos, ignoreInit = TRUE, {
+           browser()
            table = "PosGlobal"
            row   = pnl$vars$table$row
            df    = pnl$data$dfGlobal
@@ -378,16 +377,15 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            if (table$target == "Fav")  output$plotFav  = plot$render()
        })
        observeEvent(flags$plotPos, {
+           #JGG SUELE FALLAR
            plot = pnl$plots[["plotHist"]]
            plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
-           name = flags$plotPos
-           # if(!plot$hasSource(flags$plotPos)) {
-           #     df = pnl$getHistory(name)
-           #     if (!is.null(df)) {
-           #         plot$addData(df, name, "pepe")
-           #     }
-           # }
-           # output$plotHist = plot$render("plotHist")
+           name = pnl$vars$symbol
+           if(!plot$hasSource(name)) {
+              df = pnl$getHistory(name)
+              if (!is.null(df)) plot$addData(df, name, "parm ui")
+           }
+           output$plotHist = plot$render("plotHist")
        })
 
        ###########################################################
@@ -439,12 +437,12 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
           if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
        }
        renderPlotSession = function(uiPlot) {
-#          if (pnl$vars$sessionChanged) {
+##          if (pnl$vars$sessionChanged) {
               plot = pnl$plots[["plotSession"]]
               plot$setType("Marker")
               plot$setData(pnl$data$dfSession[,c("last", "price")], "session", TRUE)
               output$plotSession = plot$render()
-#          }
+##          }
        }
        
       #####################################################
@@ -452,6 +450,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
       #####################################################
 
       observeEvent(input$tableBest, ignoreInit = TRUE, {
+          browser()
            pnl$vars$table = input$tableBest
            if (!startsWith(input$tableBest$colName, "Button")) {
                flags$table = isolate(!flags$table)
@@ -460,6 +459,7 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
            }
        })
       observeEvent(input$tablePos, {
+          browser()
            pnl$vars$table = input$tablePos
            if (!startsWith(input$tablePos$colName, "Button")) {
                flags$tablePos = isolate(!flags$tablePos)
@@ -500,15 +500,14 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
          session$sendCustomMessage(type = 'closeLeftSide',message = "close")
       })
 
-
      carea = pnl$getCommarea()  
      if (!pnl$loaded || carea$position) {
           pnl$loadData()
           if (!carea$position) initPage()
           pnl$setCommareaItems(position=FALSE)
      }       
-     
-     flags$refresh = isolate(!flags$refresh)
+
+#     flags$refresh = isolate(!flags$refresh) # each time server is called
      
      #####################################################
      ### Timers                                        ###
@@ -516,8 +515,9 @@ modPosServer <- function(id, full, pnlParent, parent=NULL) {
      #####################################################
      
      observe({
-       invalidateLater(pnl$cookies$interval * 60000)
+       invalidateLater(pnl$cookies$interval * 60000) # update page each interval minutes
        flags$update = isolate(!flags$update)
      })
    })
+
 }    

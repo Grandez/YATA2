@@ -236,7 +236,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           if (data$price > current$buyHigh) tblPosition$setField("buyHigh", data$price)
           if (data$price < current$buyLow)  tblPosition$setField("buyLow",  data$price)
 
-          wrk = (current$buy * current$buyNet) + (data$value * data$price)
+          wrk = (current$buy * current$buyNet) + (data$ctcIn * data$price)
           self$current$buyNet = wrk / (current$buy + data$ctcIn)
           tblPosition$setField("buyNet",  current$buyNet)
 

@@ -134,7 +134,9 @@ YATAPlot = R6::R6Class("YATA.PLOT"
            invisible(self)
         }
        ,hasData   = function()     { ifelse(length(private$data) == 0, FALSE, TRUE) }
-       ,hasSource = function(name) { !is.null(data[[name]]) }
+       ,hasSource = function(name) {
+           !is.null(data[[name]])
+        }
        ,setData   = function(df, name, add=FALSE)   {
            if (is.null(df)) return (invisible(self))
            dftype = "Value"

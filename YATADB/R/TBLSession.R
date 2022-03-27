@@ -10,6 +10,16 @@ TBLSession = R6::R6Class("TBL.SESSION"
           ,update    = function(data) {
               bulkAdd(data, append=TRUE)
           }
+          ,getLatest = function() {
+              qry = "SELECT * FROM SESSION AS A"
+              subquery = "(SELECT ID AS ID, MAX(LAST) AS LAST FROM SESSION GROUP BY ID) AS B"
+              where = "WHERE A.ID = B.ID AND A.LAST = B.LAST"
+              query = paste(qry, ",", subquery, where)
+              df = queryRaw(query)
+              df = df[,1:(ncol(df) - 2)]
+              setColNames(df)
+          }
+
      )
      ,private = list (
          fields = list(

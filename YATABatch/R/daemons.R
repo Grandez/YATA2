@@ -1,4 +1,5 @@
 startDaemons = function() {
+    browser()
    work = paste0(Sys.getenv("YATA_SITE"), "/YATAData/wrk/")
 
    exec = YATAExec$new()
