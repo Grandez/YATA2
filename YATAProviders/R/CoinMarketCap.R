@@ -82,6 +82,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           dfc
       }
       ,getTickers    = function(max = 0, from = 1) {
+          #JGG Se capturan los errores de HTTP por lo problemas de red
+          #JGG Habra que verificar el tipo de error
           url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
           until = from + 500
           dfc   = NULL
@@ -90,6 +92,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           resp = list(total=0, from=0, count=0)
           while (parms$start < until) {
                if (parms$start > 1) Sys.sleep(1)
+              tryCatch({
                data = request(url, parms)
                if (is.null(data) || length(data) == 0) break
                data2 = data[[1]]
@@ -141,7 +144,10 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                    df[,idx] = as.numeric(df[,idx])
                }
                dfc = rbind(dfc, df)
+              }, error = function (cond) {
+                  cat(paste("FALLO EN  GETTICKERS -", parms$start, "\n"))
 
+              })
           }
           resp$df = dfc
           resp

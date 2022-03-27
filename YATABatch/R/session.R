@@ -3,30 +3,56 @@
     provider      = batch$fact$getObject(batch$fact$CODES$object$providers)
     tblCurrencies = batch$fact$getTable(batch$fact$CODES$tables$currencies)
 
-    data = provider$getTickers(500, 1)
-    if (max == 0) max = data$total
+    tryCatch({
+       data = provider$getTickers(500, 1)
+       if (max == 0) max = data$total
 
-    repeat {
-       df = data$df
-       df[,c("name", "slug")] = NULL
+       repeat {
+          df = data$df
+          df[,c("name", "slug")] = NULL
 
-       # Puede haber symbol repetidos (no por id)
-       # Se han cambiado en la tabla de currencies
-       df1 = df[,c("id", "symbol")]
-       ctc = tblCurrencies$table()
-       df2 = ctc[,c("id", "symbol")]
-       dfs = inner_join(df1, df2, by="id")
-       df2 = dfs[,c(1,3)]
-       df  = inner_join(df, df2, by="id")
-       df$symbol = df$symbol.y
-       df        = df[,-ncol(df)]
+          # Puede haber symbol repetidos (no por id)
+          # Se han cambiado en la tabla de currencies
+          df1 = df[,c("id", "symbol")]
+          ctc = tblCurrencies$table()
+          df2 = ctc[,c("id", "symbol")]
+          dfs = inner_join(df1, df2, by="id")
+          df2 = dfs[,c(1,3)]
+          df  = inner_join(df, df2, by="id")
+          df$symbol = df$symbol.y
+          df        = df[,-ncol(df)]
 
-       df$last = last
-       dft = rbind(dft, df)
-       start = data$from + data$count
-       if (start >= max) break;
-       data = provider$getTickers(500, start)
-   }
+          df$last = last
+          dft = rbind(dft, df)
+          start = data$from + data$count
+          if (start >= max) break;
+          data = provider$getTickers(500, start)
+        }
+     }, error = function (cond) {
+         cat("ERROR EN GETSESSION DATA - Continua\n")
+     })
+
+   #  repeat {
+   #     df = data$df
+   #     df[,c("name", "slug")] = NULL
+   #
+   #     # Puede haber symbol repetidos (no por id)
+   #     # Se han cambiado en la tabla de currencies
+   #     df1 = df[,c("id", "symbol")]
+   #     ctc = tblCurrencies$table()
+   #     df2 = ctc[,c("id", "symbol")]
+   #     dfs = inner_join(df1, df2, by="id")
+   #     df2 = dfs[,c(1,3)]
+   #     df  = inner_join(df, df2, by="id")
+   #     df$symbol = df$symbol.y
+   #     df        = df[,-ncol(df)]
+   #
+   #     df$last = last
+   #     dft = rbind(dft, df)
+   #     start = data$from + data$count
+   #     if (start >= max) break;
+   #     data = provider$getTickers(500, start)
+   # }
    dft
 }
 
