@@ -19,6 +19,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       # Ponemos init y clear para manejar fuera de initialize y finalize
       # auto se usa para el CI
       ,initialize = function(auto=TRUE) {
+
           init(auto, FALSE)
           self$logger = YATALogger$new("yata")
        }

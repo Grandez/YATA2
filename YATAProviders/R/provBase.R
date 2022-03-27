@@ -11,6 +11,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,logger  = NULL
       ,status = NULL   # Control del error
       ,initialize  = function(code, name, factory) {
+
           self$code    = code
           self$name    = name
           if (!missing(factory)) {

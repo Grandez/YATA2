@@ -12,6 +12,7 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
             # private$dbf  = dbf
 #            private$EUR = get("EUR", "Euro")
             # Por ahora vamos a tirar de MarketCap
+
             private$mktcap = PROVMarketCap$new("MKTCAP", factory) # , dbf)
         }
        ,finalize = function() {
