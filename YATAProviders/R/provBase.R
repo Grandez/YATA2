@@ -8,6 +8,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,code = NULL
       ,info = NULL
       ,factory = NULL
+      ,logger  = NULL
       ,status = NULL   # Control del error
       ,initialize  = function(code, name, factory) {
           self$code    = code
