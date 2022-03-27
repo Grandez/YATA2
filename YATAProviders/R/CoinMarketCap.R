@@ -9,8 +9,6 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
    ,public = list(
         initialize = function(code, factory) { # }, dbf) {
           super$initialize  (code, "CoinMarketCap", factory) #, dbf)
-          self$factory = factory
-          self$logger  = self$factory$logger
           private$base    = YATABase$new()
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
           private$hID     = base$map()
