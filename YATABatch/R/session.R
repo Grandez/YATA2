@@ -72,6 +72,7 @@
 #     count
 # }
 updateSession = function(max=0, output=1, log=1) {
+    browser()
     count = 0
     begin = as.numeric(Sys.time())
     batch = YATABatch$new("Tickers", output, log)

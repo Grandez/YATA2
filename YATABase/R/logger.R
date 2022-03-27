@@ -25,29 +25,30 @@ YATALogger = R6::R6Class("YATA.LOGGER"
         valid   = TRUE
        ,lastErr = NULL
        ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20)
-       ,print     = function() { message("Global environment for YATA")}
-       ,initialize= function(module=NULL, output = 1,log=1) {
+       ,print      = function() { message("Generic Logger class") }
+       ,initialize = function(module=NULL, output = 1,log=1) {
            if (is.null(module)) module="general"
            private$modname   = module
            private$.logLevel = log
            private$.out      = output
            .setLogFile()
        }
+
        # Friendly function
        ,log = function(level, fmt,...) {
           # Mensaje de logging/depuracion de nivel level
-          .println(self$type$LOG, level,.mountMesage(fmt, ...))
+          .println(self$type$LOG, level,.mountMessage(fmt, ...))
        }
        # Proceso en marcha, espera un done. Fichero se guarda
        ,doing = function(level, fmt, ...) {
-          .print(self$type$ACT, level, .mountMesage(fmt, ...))
+          .print(self$type$ACT, level, .mountMessage(fmt, ...))
        }
-       ,done = function(level, res=TTRUE) {
+       ,done = function(level, res=TRUE) {
           if (is.logical(res)) {
-             if ( res) .flush(self$type$ACT, level," -\tOK", crayon::bold)
-             if (!res) .flush(self$type$ACT, level," -\tKO", crayon::red)
+             if ( res) .flush(self$type$ACT, level,"\tOK", crayon::bold)
+             if (!res) .flush(self$type$ACT, level,"\tKO", crayon::red)
           } else {
-             .flush(self$type$ACT, level, paste0(" -\t", res),  crayon::blue)
+             .flush(self$type$ACT, level, paste0("\t", res),  crayon::blue)
           }
        }
        ,batch = function(fmt, ...) {
@@ -128,20 +129,20 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,logNames  = NULL
        ,.print = function(type, level, msg) {
           if (bitwAnd(.out, FILE)) private$cache = msg
-          if (bitwAnd(.out, CON )) .toConsole(type, level, paste0(msg, "\n"))
+          if (bitwAnd(.out, CON )) .toConsole(type, level, msg)
           invisible(self)
        }
-       ,.println = function(type, level, msg) {
+       ,.println = function(type, level, msg, ansi=.void) {
           if (bitwAnd(.out, FILE)) .toFile   (type, level, msg)
-          if (bitwAnd(.out, CON )) .toConsole(type, level, paste0(msg, "\n"), attr)
+          if (bitwAnd(.out, CON )) .toConsole(type, level, paste0(msg, "\n"), ansi)
           invisible(self)
        }
-       ,.flush = function(type, level, msg, attr=.void) {
+       ,.flush = function(type, level, msg, ansi=.void) {
            if (bitwAnd(.out, FILE)) {
-               .toFile   (type, level, paste(cache, msg))
+               .toFile   (type, level, paste(private$cache, msg))
                private$cache = ""
            }
-           if (bitwAnd(.out, CON )) .toConsole(type, level, paste0(msg, "\n"), attr)
+           if (bitwAnd(.out, CON )) cat(ansi(paste(msg, "\n")))
            invisible(self)
        }
        ,.toFile = function(type, level, txt, ...) {
@@ -152,12 +153,12 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            if (nchar(rest) > 0) line = paste0(line, ";",rest)
            cat(line, file=logFile, append=TRUE)
        }
-       ,.toConsole = function(type, level, txt, attr=.void) {
+       ,.toConsole = function(type, level, txt, ansi=.void) {
            str  = format(Sys.time(), "%H:%M:%S")
-           prfx = NULL
-           if (type == self$LOG) prfx = sprintf("LOG%02d -", level)
-           msg = paste(str, "-", prfx, txt)
-           cat(attr(paste(str, "-", prfx, txt)))
+#           prfx = NULL
+#           if (type == self$type$LOG) prfx = sprintf("LOG%02d -", level)
+           msg = paste(str, "-", txt)
+           cat(ansi(msg))
        }
 
        ,.setLogFile = function() {
@@ -166,7 +167,6 @@ YATALogger = R6::R6Class("YATA.LOGGER"
               logfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/log/web.log")
           private$logFile = logfile
        }
-
        ,.mountMessage = function(fmt, ...) {
            sprintf(fmt, ...)
        }

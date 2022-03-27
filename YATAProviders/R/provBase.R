@@ -13,8 +13,10 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,initialize  = function(code, name, factory) {
           self$code    = code
           self$name    = name
-          self$factory = factory
-          self$logger  = factory$logger
+          if (!missing(factory)) {
+              self$factory = factory
+              self$logger  = factory$logger
+          }
           private$created = Sys.time()
           private$lastGet = as.Date.POSIXct(1)
           private$EUR     = EUR
@@ -26,6 +28,10 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
           # self$info = tbl$current
       }
       ,print       = function()         { message(name, " provider")}
+      ,setFactory  = function(factory)  {
+          self$factory = factory
+          self$logger = self$factory$logger
+       }
       ,getCurrencies = function(from, max) { stop("Este metodo es virtual")}
 
       ,setLimits   = function(limits)   { private$limits = limits }

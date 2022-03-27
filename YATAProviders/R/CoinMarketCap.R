@@ -94,7 +94,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           while (parms$start < until) {
                if (parms$start > 1) Sys.sleep(1)
               tryCatch({
-                 logger$doing(3, "Getting tickers - %d ", parms$start)
+                 logger$doing(3, "Getting tickers from %5d ", parms$start)
                  data = request(url, parms)
                  logger$done(3)
                  if (is.null(data) || length(data) == 0) break

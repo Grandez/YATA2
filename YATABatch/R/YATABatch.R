@@ -23,6 +23,7 @@ YATABatch = R6::R6Class("OBJ.BATCH"
            self$codes  = YATACore::YATACODES$new()
            self$fact   = YATACore::YATAFactory$new()
            self$logger = YATALogger$new(process, output, loglevel)
+           self$fact$setLogger(self$logger)
            self$base   = YATABase$new()
        }
        ,setVerbose = function(verbose) {

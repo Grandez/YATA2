@@ -120,6 +120,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,.valid      = TRUE
       ,setProvFactory = function() {
          # Le pasamos los datos de parametros a la factoria
+         ProvFactory$setFactory        (self)
          ProvFactory$setOnlineInterval (parms$getOnlineInterval())
          ProvFactory$setCloseTime      (parms$getCloseTime())
          ProvFactory$setBaseCurrency   (parms$getBaseCurrency())
@@ -134,7 +135,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           private$objects     = base$map()
           private$classes     = base$map()
           private$DBFactory   = YATADB::YATADBFactory$new()
-          private$ProvFactory = YATAProviders::ProviderFactory$new(self)
+          private$ProvFactory = YATAProviders::ProviderFactory$new()
 
           self$parms  = OBJParms$new   (private$DBFactory, self$CODES$tables$parameters)
           self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)
