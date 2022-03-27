@@ -81,7 +81,7 @@ updateSession = function(max=0, output=1, log=1) {
     rc = tryCatch({
        session = batch$fact$getObject(batch$fact$CODES$object$session)
 
-       while (count < 50) { # Para que se pare automaticamente
+       while (count < 15) { # Para que se pare automaticamente
           batch$logger$batch("Retrieving tickers")
           last = as.POSIXct(Sys.time())
           session$updateLastUpdate(last, 0)
