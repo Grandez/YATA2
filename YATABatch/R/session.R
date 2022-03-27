@@ -18,7 +18,7 @@
           df2 = ctc[,c("id", "symbol")]
           dfs = inner_join(df1, df2, by="id")
           df2 = dfs[,c(1,3)]
-          df  = inner_join(df, df2, by="id")
+          df  = left_join(df, df2, by="id")
           df$symbol = df$symbol.y
           df        = df[,-ncol(df)]
 
@@ -62,6 +62,7 @@
 # Para evitar esos errores cargamos la tabla con mysql que los errores no bloquean
 #
 .appendLatest = function(batch, session, last, max) {
+    browser()
     count = 0
 
     df = .getSessionData(batch, last, max)

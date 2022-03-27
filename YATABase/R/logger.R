@@ -30,10 +30,11 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,SUMMARY = 11
        ,print     = function() { message("Global environment for YATA")}
        ,initialize= function(module=NULL, output = 1,log=1) {
-           .setLogFile(module)
-           if (!is.null(module)) private$modname = module
-           private$.logLevel   = log
-           private$.out = output
+           if (is.null(module)) module="general"
+           private$modname   = module
+           private$.logLevel = log
+           private$.out      = output
+           .setLogFile()
        }
        # Friendly function
        ,log = function(level, fmt,...) {
@@ -146,9 +147,11 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            cat(paste(str, "-", prfx, txt))
        }
 
-       ,.setLogFile = function(module) {
-          logfile = paste0(Sys.getenv("YATA_SITE"), "YATAData/log/yata.log")
-          if (module == "WEB") paste0(Sys.getenv("YATA_SITE"), "YATAData/log/web.log")
+       ,.setLogFile = function() {
+          logfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/log/yata.log")
+          if (private$modname == "WEB")
+              logfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/log/web.log")
+          private$logFile = logfile
        }
 
        ,.mountMessage = function(fmt, ...) {

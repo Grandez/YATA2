@@ -93,7 +93,9 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           while (parms$start < until) {
                if (parms$start > 1) Sys.sleep(1)
               tryCatch({
+                  cat(paste("Getting tickers -", parms$start))
                data = request(url, parms)
+               cat("OK\n")
                if (is.null(data) || length(data) == 0) break
                data2 = data[[1]]
                resp$total = data$totalCount
@@ -145,7 +147,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                }
                dfc = rbind(dfc, df)
               }, error = function (cond) {
-                  cat(paste("FALLO EN  GETTICKERS -", parms$start, "\n"))
+                  cat(paste("KO\n"))
 
               })
           }
