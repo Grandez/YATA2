@@ -221,10 +221,9 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
       }
       ,setColumnHeader = function(data) {
            if (is.null(colNames) || colNames == "asis") return
-         # if (private$colNames == "title") colnames(data) = YATABase$str$titleCase(colnames(data))
+         # if (private$colNames == "title") colnames(data) = str_to_title(colnames(data))
          # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
          # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
-         # browser()
 #         private$dfWork
 
       }
@@ -352,7 +351,11 @@ WDGTableButtoned = R6::R6Class("YATA.WEB.TABLE"
 yuiTable          = function(id)   { reactable::reactableOutput(id) }
 updTable          = function(data) { reactable::renderReactable({ .updTable(data, NULL)       })}
 updTableSingle    = function(data) { reactable::renderReactable({ .updTable(data, "single")   })}
-updTableMultiple  = function(data) { reactable::renderReactable({ .updTable(data, "multiple") })}
+updTableMultiple  = function(data) {
+    .updTable(data,"multiple")
+    reactable::renderReactable({ .updTable(data, "multiple")})
+}
+
 updTbl            = function(data) { .updTable(data, "multiple") }
 updTableSelection = function(table, sel) { reactable::updateReactable(table, selected = sel) }
 .updTable = function(data, selection) {
@@ -372,10 +375,10 @@ updTableSelection = function(table, sel) { reactable::updateReactable(table, sel
    info    = data$info
    columns = df$columns
 
-   #colnames(df) = YATABase$str$titleCase(colnames(df))
     if (!is.null(info)) click = .makeScript(info)
     df  = .yataSetClasses(df, info$types)
     df  = .adjustValues(df)
+    colnames(df) = str_to_title(colnames(df))
     cols = .formatColumns(df, columns)
 
     buttons = NULL
@@ -400,6 +403,7 @@ updTableSelection = function(table, sel) { reactable::updateReactable(table, sel
     }
     if (length(cols) >  0 && length(buttons) > 0) cols = list.merge(cols, buttons)
     if (length(cols) == 0 && length(buttons) > 0) cols = buttons
+
     reactable::reactable(df, striped = TRUE, compact=TRUE
                                   , pagination=FALSE
                                   , selection = selection
@@ -560,6 +564,7 @@ updTableBest = function(df) {
      ,"date"  , "time"   , "tms" )
 }
 .yataSetClasses = function(df, types) {
+
     # pvl es porcentaje impreso: 23,45%
     # prc es porcentaje real   : 0,2345
     cc = list(imp=c(), pvl = c(), prc = c(), tms=c(), int=c(), lbl=c(), dat=c(), tim=c(), btn=c())
@@ -631,17 +636,21 @@ updTableBest = function(df) {
     lapply(fmt, function(item) do.call(reactable::colDef, item))
 }
 .adjustValues = function (df) {
-    if (nrow(df) > 0) {
-        for (row in 1:nrow(df)) {
-             for (idx in 1:ncol(df)) {
-                  if ("type_price" %in% class(df[,idx])) {
-                      df[row,idx] = ifelse(df[row,idx] > 999                     , round(df[row,idx],0), df[row,idx])
-                      df[row,idx] = ifelse(df[row,idx] > 99 && df[row,idx] < 1000, round(df[row,idx],2), df[row,idx])
-                      df[row,idx] = ifelse(df[row,idx] > 1  && df[row,idx] <  100, round(df[row,idx],3), df[row,idx])
-                      df[row,idx] = ifelse(df[row,idx] < 1                       , round(df[row,idx],6), df[row,idx])
-                  }
-             }
-        }
+    if (nrow(df) == 0) return (df)
+    for (idx in 1:ncol(df)) {
+      if ("type_price" %in% class(df[,idx])) df = .adjustPrice(df, idx)
+    }
+    df
+}
+.adjustPrice = function(df, col) {
+    value = 0
+    for (row in 1:nrow(df)) {
+        value = df[row,col]
+        if (value >   999) { df[row,col] = round(df[row,col], 0); next }
+        if (value >    99) { df[row,col] = round(df[row,col], 1); next }
+        if (value >     9) { df[row,col] = round(df[row,col], 2); next }
+        if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
+        df[row,col] = round(df[row,col], 3)
     }
     df
 }
