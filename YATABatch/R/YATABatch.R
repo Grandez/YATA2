@@ -12,18 +12,18 @@ YATABatch = R6::R6Class("OBJ.BATCH"
     ,portable   = FALSE
     ,lock_class = TRUE
     ,public = list(
-        codes = NULL
-       ,fact  = NULL
-       ,log   = NULL
-       ,base  = NULL
+        codes  = NULL
+       ,fact   = NULL
+       ,logger = NULL
+       ,base   = NULL
         # Return codes
        ,OK  = 0
        ,NODATA = 4
        ,initialize = function (process=NULL, output=1, loglevel=0) {
-           self$codes = YATACore::YATACODES$new()
-           self$fact  = YATACore::YATAFactory$new()
-           self$log   = YATALogger$new(process, output, loglevel)
-           self$base  = YATABase$new()
+           self$codes  = YATACore::YATACODES$new()
+           self$fact   = YATACore::YATAFactory$new()
+           self$logger = YATALogger$new(process, output, loglevel)
+           self$base   = YATABase$new()
        }
        ,setVerbose = function(verbose) {
            if (!missing(verbose)) {

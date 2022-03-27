@@ -1,8 +1,10 @@
-updateHistory = function(console=1, log=1) {
+updateHistory = function(output=1, log=1) {
     count = 0
     begin = as.numeric(Sys.time())
+    batch = YATABatch$new("History", output, log)
+    batch$fact$setLogger(batch$logger)
+
     rc = tryCatch({
-       logger = YATABase::YATALogger$new("History", console, log)
        fact = YATACore::YATAFactory$new()
        octc = fact$getObject(fact$CODES$object$currencies)
        hist = fact$getObject(fact$CODES$object$history)
@@ -14,7 +16,7 @@ updateHistory = function(console=1, log=1) {
        df[is.na(df$min), "min"] = as.Date.character("2021-01-01")
        df[is.na(df$max), "max"] = as.Date.character("2021-01-01")
        for (row in 1:nrow(ctc)) {
-           logger$batch("%5d - Retrieving history for %s", row, df[row,"name"])
+           batch$logger$batch("%5d - Retrieving history for %s", row, df[row,"name"])
            data = prov$getHistory(df[row, "id"], df[row,"max"])
            if (!is.null(data)) {
                if (difftime(Sys.time(), df[1,"max"], unit="days") >= 2) {
@@ -30,6 +32,6 @@ updateHistory = function(console=1, log=1) {
         message(cond)
         16
     })
-    logger$executed(rc, begin, "Retrieving history")
+    batch$logger$executed(rc, begin, "Retrieving history")
     invisible(rc)
 }

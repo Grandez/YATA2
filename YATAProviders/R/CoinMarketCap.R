@@ -7,11 +7,16 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-       initialize = function(code, eurusd) { # }, dbf) {
+        factory = NULL
+       ,logger  = NULL
+       ,initialize = function(code, factory) { # }, dbf) {
           super$initialize  (code, "CoinMarketCap", eurusd) #, dbf)
+          self$factory = factory
+          self$logger  = self$factory$logger
           private$base    = YATABase$new()
           private$lastGet = as.POSIXct(1, origin="1970-01-01")
           private$hID     = base$map()
+
        }
       ,getIcons = function(maximum, force=FALSE) {
           urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
@@ -93,61 +98,61 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
           while (parms$start < until) {
                if (parms$start > 1) Sys.sleep(1)
               tryCatch({
-                  cat(paste("Getting tickers -", parms$start))
-               data = request(url, parms)
-               cat("OK\n")
-               if (is.null(data) || length(data) == 0) break
-               data2 = data[[1]]
-               resp$total = data$totalCount
-               resp$from  = parms$start
-               resp$count = length(data2)
-               until = ifelse (max == 0, data$totalCount, max)
-               parms$start = parms$start + length(data2)
+                 logger$doing(3, "Getting tickers - %d ", parms$start)
+                 data = request(url, parms)
+                 logger$done(3)
+                 if (is.null(data) || length(data) == 0) break
+                 data2 = data[[1]]
+                 resp$total = data$totalCount
+                 resp$from  = parms$start
+                 resp$count = length(data2)
+                 until = ifelse (max == 0, data$totalCount, max)
+                 parms$start = parms$start + length(data2)
 
-               lst = lapply(data2, function(x) {
-                      quote = x$quotes[[1]]
-                      list( id     = x$id
-                           ,symbol = x$symbol
-                           ,rank   = x$cmcRank
-                           ,price  = ifelse(is.null(quote$price),            0, quote$price)
-                           ,volume = ifelse(is.null(quote$volume24),         0, quote$volume24)
-                           ,vol24  = ifelse(is.null(quote$volume24),         0, quote$volume24)
-                           ,vol07  = ifelse(is.null(quote$volume7d),         0, quote$volume7d)
-                           ,vol30  = ifelse(is.null(quote$volume30d),        0, quote$volume30d)
-                           ,var01  = ifelse(is.null(quote$percentChange1h),  0, quote$percentChange1h)
-                           ,var24  = ifelse(is.null(quote$percentChange24h), 0, quote$percentChange24h)
-                           ,var07  = ifelse(is.null(quote$percentChange7d),  0, quote$percentChange7d)
-                           ,var30  = ifelse(is.null(quote$percentChange30d), 0, quote$percentChange30d)
-                           ,var60  = ifelse(is.null(quote$percentChange60d), 0, quote$percentChange60d)
-                           ,var90  = ifelse(is.null(quote$percentChange90d), 0, quote$percentChange90d)
-                           ,dominance = ifelse(is.null(quote$dominance),     0, quote$dominance)
-                           ,turnover  = ifelse(is.null(quote$turnover),      0, quote$turnover)
-                           ,tms = paste(substr(quote$lastUpdated,1,10),substr(quote$lastUpdated,12,19), sep="-")
-                      )
-                     })
-               df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
-                               ,stringsAsFactors=FALSE)
-               colnames(df) = c( "id",        "symbol",   "rank",    "price"
-                                ,"volume",    "volday",   "volweek", "volmonth"
-                                ,"hour",      "day",      "week",    "month"
-                                ,"bimonth",   "quarter"
-                                ,"dominance", "turnover", "tms")
+                 lst = lapply(data2, function(x) {
+                        quote = x$quotes[[1]]
+                        list( id     = x$id
+                             ,symbol = x$symbol
+                             ,rank   = x$cmcRank
+                             ,price  = ifelse(is.null(quote$price),            0, quote$price)
+                             ,volume = ifelse(is.null(quote$volume24),         0, quote$volume24)
+                             ,vol24  = ifelse(is.null(quote$volume24),         0, quote$volume24)
+                             ,vol07  = ifelse(is.null(quote$volume7d),         0, quote$volume7d)
+                             ,vol30  = ifelse(is.null(quote$volume30d),        0, quote$volume30d)
+                             ,var01  = ifelse(is.null(quote$percentChange1h),  0, quote$percentChange1h)
+                             ,var24  = ifelse(is.null(quote$percentChange24h), 0, quote$percentChange24h)
+                             ,var07  = ifelse(is.null(quote$percentChange7d),  0, quote$percentChange7d)
+                             ,var30  = ifelse(is.null(quote$percentChange30d), 0, quote$percentChange30d)
+                             ,var60  = ifelse(is.null(quote$percentChange60d), 0, quote$percentChange60d)
+                             ,var90  = ifelse(is.null(quote$percentChange90d), 0, quote$percentChange90d)
+                             ,dominance = ifelse(is.null(quote$dominance),     0, quote$dominance)
+                             ,turnover  = ifelse(is.null(quote$turnover),      0, quote$turnover)
+                             ,tms = paste(substr(quote$lastUpdated,1,10),substr(quote$lastUpdated,12,19), sep="-")
+                        )
+                       })
+                 df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
+                                 ,stringsAsFactors=FALSE)
+                 colnames(df) = c( "id",        "symbol",   "rank",    "price"
+                                  ,"volume",    "volday",   "volweek", "volmonth"
+                                  ,"hour",      "day",      "week",    "month"
+                                  ,"bimonth",   "quarter"
+                                  ,"dominance", "turnover", "tms")
 
-               names = colnames(df)
-               for (idx in 1:ncol(df)) {
-                   if (names[idx] == "id")     { df[,idx] = as.numeric(df[,idx]); next }
-                   if (names[idx] == "rank")   { df[,idx] = as.numeric(df[,idx]); next }
-                   if (names[idx] == "symbol") { next }
-                   if (names[idx] == "tms")    {
-                       df[,idx] = as.POSIXct( df[,idx]
-                                             ,format="%Y-%m-%d-%H:%M:%S")
-                       next
-                   }
-                   df[,idx] = as.numeric(df[,idx])
-               }
-               dfc = rbind(dfc, df)
+                 names = colnames(df)
+                 for (idx in 1:ncol(df)) {
+                     if (names[idx] == "id")     { df[,idx] = as.numeric(df[,idx]); next }
+                     if (names[idx] == "rank")   { df[,idx] = as.numeric(df[,idx]); next }
+                     if (names[idx] == "symbol") { next }
+                     if (names[idx] == "tms")    {
+                         df[,idx] = as.POSIXct( df[,idx]
+                                               ,format="%Y-%m-%d-%H:%M:%S")
+                         next
+                     }
+                     df[,idx] = as.numeric(df[,idx])
+                 }
+                 dfc = rbind(dfc, df)
               }, error = function (cond) {
-                  cat(paste("KO\n"))
+                  logger$done(3, FALSE)
 
               })
           }

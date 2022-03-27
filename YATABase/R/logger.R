@@ -42,10 +42,13 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,doing = function(level, fmt, ...) {
           .print(self$type$ACT, level, .mountMesage(fmt, ...))
        }
-       ,done = function(level, type = 0, alt = "") {
-           if (type == 0) .flush(self$type$ACT, level," -\tOK", crayon::bold)
-           if (type == 1) .flush(self$type$ACT, level," -\tKO", crayon::red)
-           if (type >  1) .flush(self$type$ACT, level, paste0(" -\t", alt),  crayon::blue)
+       ,done = function(level, res=TTRUE) {
+          if (is.logical(res)) {
+             if ( res) .flush(self$type$ACT, level," -\tOK", crayon::bold)
+             if (!res) .flush(self$type$ACT, level," -\tKO", crayon::red)
+          } else {
+             .flush(self$type$ACT, level, paste0(" -\t", res),  crayon::blue)
+          }
        }
        ,batch = function(fmt, ...) {
           .println(self$type$BATCH, 0, .mountMessage(fmt,...))
@@ -167,7 +170,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,.mountMessage = function(fmt, ...) {
            sprintf(fmt, ...)
        }
-       .void = function(txt) { txt }
+       ,.void = function(txt) { txt }
     )
 )
 

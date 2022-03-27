@@ -10,6 +10,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
        CODES  = NULL
       ,parms  = NULL
       ,MSG    = NULL  # Like WEB
+      ,logger = NULL
       ,delete_flag = FALSE
       ,created = NULL
       ,fiat    = "$FIAT"  # Codigo moneda FIAT
@@ -19,6 +20,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       # auto se usa para el CI
       ,initialize = function(auto=TRUE) {
           init(auto, FALSE)
+          self$logger = YATALogger$new("yata")
        }
       ,finalize   = function() {
           message("Finalize ", id , created)
@@ -56,6 +58,10 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
          # self$MSG  = NULL
          # private$objects = NULL
 #         gc(verbose=FALSE)
+      }
+      ,setLogger = function(logger) {
+          self$logger = logger
+          invisible(self)
       }
       ,getID     = function() { base$getID() }
       ,getDBName = function() {
@@ -128,7 +134,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           private$objects     = base$map()
           private$classes     = base$map()
           private$DBFactory   = YATADB::YATADBFactory$new()
-          private$ProvFactory = YATAProviders::ProviderFactory$new()
+          private$ProvFactory = YATAProviders::ProviderFactory$new(self)
 
           self$parms  = OBJParms$new   (private$DBFactory, self$CODES$tables$parameters)
           self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)

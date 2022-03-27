@@ -4,13 +4,15 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-        initialize = function() { # dbf) {
+        Factory = NULL
+       ,initialize = function(Factory) {
           # le pasamos la factoria para que obtenga sus datos
 #           if (!missing(external)) private$provNames = c(private$provNames, external)
             # if (missing(dbf)) dbf = YATADB::YATADBFactory$new()
             # private$dbf  = dbf
 #            private$EUR = get("EUR", "Euro")
             # Por ahora vamos a tirar de MarketCap
+            self$Factory = Factory
             private$mktcap = PROVMarketCap$new("MKTCAP", NULL) # , dbf)
         }
        ,finalize = function() {

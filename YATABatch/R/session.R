@@ -75,17 +75,18 @@ updateSession = function(max=0, output=1, log=1) {
     count = 0
     begin = as.numeric(Sys.time())
     batch = YATABatch$new("Tickers", output, log)
+    batch$fact$setLogger(batch$logger)
 
     rc = tryCatch({
        session = batch$fact$getObject(batch$fact$CODES$object$session)
 
        while (count < 50) { # Para que se pare automaticamente
-          batch$log$batch("Retrieving tickers")
+          batch$logger$batch("Retrieving tickers")
           last = as.POSIXct(Sys.time())
           session$updateLastUpdate(last, 0)
           total = .getSessionData(batch, last, max, session)
           session$updateLastUpdate(last, total)
-          batch$log$batch("OK")
+          batch$logger$batch("OK")
           Sys.sleep(15 * 60)
           count = count + 1
        }
@@ -97,6 +98,6 @@ updateSession = function(max=0, output=1, log=1) {
         message(cond)
         16
     })
-    batch$log$executed(rc, begin, "Retrieving tickers")
+    batch$logger$executed(rc, begin, "Retrieving tickers")
     invisible(rc)
 }
