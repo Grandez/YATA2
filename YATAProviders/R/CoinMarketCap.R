@@ -7,10 +7,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
    ,cloneable  = FALSE
    ,lock_class = FALSE
    ,public = list(
-        factory = NULL
-       ,logger  = NULL
-       ,initialize = function(code, factory) { # }, dbf) {
-          super$initialize  (code, "CoinMarketCap", eurusd) #, dbf)
+        initialize = function(code, factory) { # }, dbf) {
+          super$initialize  (code, "CoinMarketCap", factory) #, dbf)
           self$factory = factory
           self$logger  = self$factory$logger
           private$base    = YATABase$new()

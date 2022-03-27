@@ -7,11 +7,13 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        name = NULL
       ,code = NULL
       ,info = NULL
+      ,factory = NULL
       ,status = NULL   # Control del error
-      ,initialize  = function(code, name, EUR) {
-          self$code = code
-          self$name = name
-
+      ,initialize  = function(code, name, factory) {
+          self$code    = code
+          self$name    = name
+          self$factory = factory
+          self$logger  = factory$logger
           private$created = Sys.time()
           private$lastGet = as.Date.POSIXct(1)
           private$EUR     = EUR
