@@ -439,9 +439,11 @@ observeEvent(flags$plotPos, {
    plot = pnl$plots[["plotHist"]]
    plot$setTitle(pnl$MSG$get("PLOT.TIT.HISTORY"))
    name = pnl$vars$symbol
-   if(!plot$hasSource(name)) {
-      df = pnl$getHistory(name)
-      if (!is.null(df)) plot$addData(df, name, "parm ui")
+   if (!is.null(name)) {
+      if(!plot$hasSource(name)) {
+         df = pnl$getHistory(name)
+         if (!is.null(df)) plot$addData(df, name, "parm ui")
+      }
    }
    output$plotHist = plot$render("plotHist")
 })
