@@ -11,6 +11,7 @@ PNLPos = R6::R6Class("PNL.OPER"
       ,cameras     = NULL
       ,session     = NULL
       ,history     = NULL
+      ,currencies  = NULL
       ,monitors    = NULL
       ,plots = list()
       ,initialize    = function(id, pnlParent, session, ns) {
@@ -18,6 +19,7 @@ PNLPos = R6::R6Class("PNL.OPER"
           private$defaultValues(ns)             
           self$position  = Factory$getObject(self$codes$object$position)
           self$cameras   = Factory$getObject(self$codes$object$cameras)
+          self$currencies= Factory$getObject(self$codes$object$currencies)
           self$session   = Factory$getObject(self$codes$object$session)
           self$history   = Factory$getObject(self$codes$object$history)
           self$data$lstHist = list()
@@ -77,7 +79,6 @@ PNLPos = R6::R6Class("PNL.OPER"
           if (table == "Fav")  return(self$data$dfFav)
           NULL
       }
-       
       ,updateBest = function() {
           #JGG 0,26,101 son numeros de rango
           #JGG 0 - todos
@@ -113,17 +114,34 @@ PNLPos = R6::R6Class("PNL.OPER"
     ,loadPosition = function() {
         df = self$getGlobalPosition()
         if (is.null(df) || nrow(df) == 0) return()
-        df = cbind(df, day=0, week=0, month=0)
+        df = private$appendVariations(df)
+        
         self$data$dfGlobal = df
         self$vars$selected[["PosGlobal"]] = df$currency
         cameras = self$position$getCameras()
         self$data$position = lapply(cameras,
-                  function(camera) {df = self$position$getCameraPosition(camera)
-                                    if (nrow(df) == 0) return (NULL) 
-                                     df = cbind(df, day=0, week=0, month=0)
-                                 })
+             function(camera) { 
+                 df = self$position$getCameraPosition(camera)
+                 if (nrow(df) == 0) return (NULL) 
+                 ids = self$currencies$getCurrencyID(df$currency, asList=FALSE)
+                 df = inner_join(df, ids, by="currency")
+                 private$appendVariations(df)
+                 })
         names(self$data$position) = cameras
-     }
+    }
+    ,appendVariations = function (df) {
+        periods = c(1, 7, 30)
+        dfp = self$history$getPrices(df$id, periods)
+        dfp = cbind(dfp, df$value)
+        j = ncol(dfp)
+        for (idx in 1:length(periods)) {
+            dfp[,idx] = dfp[,j] / dfp[,idx]
+            dfp[,idx] = ifelse (dfp[,idx] < 1, (1 - dfp[,idx]) * -1, dfp[,idx] - 1)
+        }
+        dfp = dfp[-ncol(dfp)]
+        colnames(dfp) = c("day", "week", "month", "id")
+        inner_join(df, dfp, by="id")
+    } 
      ,makePlots = function() {
          info  = list(type="Line", observer=ns("modebar"), scale="date")
          plots = c("plotHist","plotTop","plotBest","plotFav")
@@ -173,7 +191,7 @@ PNLPos = R6::R6Class("PNL.OPER"
 preparePosition = function(df, table) {
    if (nrow(df) == 0) return()    
    types = list( imp = c("balance", "value","profit")
-                ,pvl = c("day", "week", "month")
+                ,prc = c("day", "week", "month")
                 ,dat = c("since")
            )
 

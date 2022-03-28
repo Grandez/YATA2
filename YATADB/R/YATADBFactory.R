@@ -35,9 +35,7 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           invisible(self)
       }
       ,getID      = function()     { private$dbID   }
-      ,getTable   = function(name, force = FALSE) {
-          message("YATADB con ", name)
-          get(name, force) }
+      ,getTable   = function(name, force = FALSE) {get(name, force) }
       ,get        = function(name, force = FALSE) {
          # force obliga a crear el objeto sin cachearlo
          prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")

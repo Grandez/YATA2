@@ -19,14 +19,10 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       # Ponemos init y clear para manejar fuera de initialize y finalize
       # auto se usa para el CI
       ,initialize = function(auto=TRUE) {
-
           init(auto, FALSE)
           self$logger = YATALogger$new("yata")
        }
-      ,finalize   = function() {
-          message("Finalize ", id , created)
-          clear()
-      }
+      ,finalize   = function() { clear() }
       ,valid = function() {
           if (.valid) {
               tryCatch({
@@ -41,7 +37,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           message("Removing")
       }
       ,delete     = function(){
-          message("Deleting Factory")
+          # message("Deleting Factory")
           # pf = parent.frame()
           # self$delete_flag = TRUE
           # insts = sapply(ls(pf), function(i) {class(get(i, envir = pf))[1] == "YATA.FACTORY"})

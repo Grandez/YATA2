@@ -23,6 +23,17 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             data = select(id = code)
             ifelse (full, paste0(data$id, " - ", data$name), data$id)
         }
+        ,getCurrencyID = function(symbols, asList=TRUE) {
+            data = tblCurrencies$table(inValues=list(symbol=symbols))
+            if (asList) {
+                res = as.list(c(data$id))
+                names(res) = c(data$symbol)
+            } else {
+                res = data[,c("id", "symbol")]
+                res$currency = res$symbol
+            }
+            res
+        }
         ,getCurrencyNames      = function(subset, full = TRUE) {
             df = tblCurrencies$getCurrencyNames()
             if (!missing(subset)) {
