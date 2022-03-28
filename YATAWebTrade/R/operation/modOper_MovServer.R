@@ -177,11 +177,12 @@ modOperMovServer = function(id, full, pnlParent, parent) {
       observeEvent(input$cboCamera, {
           dfPos = pnl$getPosition(input$cboCamera)
           pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
-          pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"balance"]
+          pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"available"]
           
-          if (length(pnl$vars$fiat) == 0) pnl$vars$fiat = 0
-          if (length(pnl$vars$ctc)  == 0) pnl$vars$ctc  = 0
-
+          if (!pnl$vars$buy) {
+              updNumericInput("impAmount", pnl$vars$ctc)
+              updNumericInput("impValue",  round(pnl$vars$ctc * input$impPrice, 0))
+          }
           currency = ifelse(pnl$vars$buy, pnl$factory$fiat, input$cboCurrency)
           pnl$vars$available = dfPos[dfPos$currency == currency,"available"]
 

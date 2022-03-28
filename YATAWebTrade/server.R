@@ -134,11 +134,15 @@ function(input, output, session) {
                              ,"Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
    })
    observeEvent(input$connected,    { 
+              showNotification("Connected")
        browser()
        PUT("begin") 
     })
-   observeEvent(input$disconnected, { PUT("end")   })
+   observeEvent(input$disconnected, { 
+              showNotification("Disconnected")
+       PUT("end")   })
    observeEvent(input$initialized,  { 
+       showNotification("Initialized")
        browser()
        PUT("begin") })
    observeEvent(input$app_title,    {
