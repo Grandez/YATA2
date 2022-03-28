@@ -19,7 +19,7 @@ modLogInput = function(id, title="") {
       ,yuiBtnOK(ns("btnFilter"),lblFilter)
     )
     main = tagList(
-        yuiBox(ns("item"),"", tags$br()
+        yuiBox(ns("item"),"Crear nota", tags$br()
               ,fluidRow( guiColumn(2, h4(lblApply))
                         ,guiColumn(2, guiCombo( ns("cboApply"),choices=targets,selected="oper"))
                         ,guiColumn(1)

@@ -82,7 +82,7 @@ CREATE TABLE HIST_POSITION  (
 -- Para el calculo de los precios de coste y netos
 DROP TABLE  IF EXISTS REGULARIZATION CASCADE;
 CREATE TABLE REGULARIZATION  (
-    ID          INT UNSIGNED  NOT NULL     -- Identificador unico de la operacion
+    ID_REG      INT UNSIGNED  NOT NULL     -- Identificador unico de la operacion
    ,CAMERA      VARCHAR(32)   NOT NULL     -- Codigo de camara
    ,CURRENCY    VARCHAR(64)   NOT NULL     -- Moneda
    ,DATE_REG    DATE          NOT NULL     -- Fecha de regularizacion
@@ -226,7 +226,7 @@ CREATE TABLE BLOG  (
 -- Tabla de favoritos
 DROP TABLE  IF EXISTS FAVORITES CASCADE;
 CREATE TABLE FAVORITES  (
-    ID       INTEGER       DEFAULT 0
+    ID_FAV   INTEGER       DEFAULT 0
    ,SYMBOL   VARCHAR(64)   NOT NULL 
    ,PRTY     INTEGER       DEFAULT 1  -- Orden de insercion
    ,PRIMARY KEY ( ID, PRTY DESC )
@@ -235,7 +235,7 @@ CREATE TABLE FAVORITES  (
 -- Tabla de alertas
 DROP TABLE  IF EXISTS ALERTS CASCADE;
 CREATE TABLE ALERTS     (
-    ID       INT UNSIGNED      NOT NULL -- Identificador de la alerta
+    ID_ALERT INT UNSIGNED      NOT NULL -- Identificador de la alerta
    ,TYPE     TINYINT           DEFAULT 0 -- Tipo de alerta (moneda, operacion, fecha, etc.)
    ,SUBJECT  VARCHAR(64)       NOT NULL   -- ID del sujeto de la alerta 
    ,MATCHER  CHAR(2)           NOT NULL   -- Operador (EQ, GT, LT, etc)

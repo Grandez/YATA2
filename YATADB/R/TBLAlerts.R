@@ -1,4 +1,4 @@
-TBLBlog = R6::R6Class("TBL.BLOG"
+TBLAlerts = R6::R6Class("TBL.ALERTS"
   ,inherit    = YATATable
   ,portable   = FALSE
   ,cloneable  = FALSE
@@ -10,14 +10,15 @@ TBLBlog = R6::R6Class("TBL.BLOG"
   )
   ,private = list (
       fields = list(
-      id  = "ID_BLOG"
-      ,tms   = "TMS"
-      ,type   = "TYPE"
-      ,target = "TARGET"
-      ,title   = "TITLE"
-      ,summary = "SUMMARY"
-      ,data    = "DATA"
+         id      = "ID_ALERT"
+        ,type    = "TYPE"
+        ,subject = "SUBJECT"
+        ,matcher = "MATCHER"
+        ,target  = "TARGET"
+        ,status  = "STATUS"
+        ,active  = "ACTIVE"
+        ,tms     = "TMS"
+     )
   )
- )
 )
 

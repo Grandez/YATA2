@@ -7,12 +7,10 @@ OBJBlog = R6::R6Class("OBJ.BLOG"
         print          = function() { message("Cameras")}
        ,initialize     = function(Factory) {
            super$initialize(Factory)
-           private$tblBlog   = Factory$getTable(YATACodes$tables$Blog)
-           # private$tblExchanges = Factory$getTable(YATACodes$tables$Exchanges)
-           # private$icons        = Factory$getClass("Icons")
+           private$tblBlog   = Factory$getTable(self$codes$tables$blog)
        }
        ,add = function(data) {
-          data$id = YATABase$getID()
+          data$id = Factory$getID()
           data$type = DBDict$blog[[data$type]]
           self$current = data
           tblBlog$add(data,isolate=TRUE)

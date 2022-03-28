@@ -8,8 +8,8 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
             blog       = NULL
            ,currencies = NULL
            ,data       = NULL
-           ,initialize = function(id, pnlParent, session) {
-               super$initialize(id, pnlParent, session)
+           ,initialize = function(id, pnlParent, session, ns) {
+               super$initialize(id, pnlParent, session, ns)
                self$blog  = self$factory$getObject("Blog")
                self$currencies = self$factory$getObject("Currencies")
            }
@@ -38,9 +38,10 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
           definition = list(id = "",left = -1, right=-1)
         )
    ) 
-    moduleServer(id, function(input, output, session) {
-        YATAWEB$beg("Blog Server")
-     
+moduleServer(id, function(input, output, session) {
+   pnl = WEB$getPanel(id)
+   if (is.null(pnl)) pnl = WEB$addPanel(PNLBlog$new(id, pnlParent, session, NS(id)))
+        
        reset = function() {
           output$msg = renderText({""})
           updTextArea(ns("title"), "")
@@ -91,17 +92,14 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
 #   )
            
        }
-        pnl = YATAWEB$getPanel(id)
-        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLBlog$new(id, pnlParent, session))
-
-      
-    item = accordionItem(
-      id = 1,
-      title = "Creado",
-      color = "danger",
-      collapsed = FALSE,
-      "Creo un item"
-    )
+#JGG FALTA EL PAQUETE       
+    # item = accordionItem(
+    #   id = 1,
+    #   title = "Creado",
+    #   color = "danger",
+    #   collapsed = FALSE,
+    #   "Creo un item"
+    # )
       
     observeEvent(input$cboApply, ignoreNULL = TRUE, { 
       updateCboTarget(input$cboApply) })
@@ -126,7 +124,6 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
             #browser()
         })
     })
-    YATAWEB$end("Blog Server")
 }    
 # 
 # box(
