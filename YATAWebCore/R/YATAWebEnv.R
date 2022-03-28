@@ -66,12 +66,12 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
       }
      ,getPanel = function(name, loading=FALSE)  {
          panel = private$panels$get(name)
-         if (!is.null(panel)) shinyjs::js$jgg_set_page(name)
+         if (!is.null(panel)) shinyjs::js$yata_set_page(name)
          panel
       }
      ,addPanel = function(panel) {
          private$panels$put(panel$name, panel)
-         shinyjs::js$jgg_add_page(panel$name)
+         shinyjs::js$yata_add_page(panel$name)
          self$getPanel(panel$name, loading=TRUE)
      }
     ,getMsg      = function(code, ...) { MSG$get(code, ...) }

@@ -92,99 +92,99 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
      )
    )
    moduleServer(id, function(input, output, session) {
-       YATAWEB$beg("History Server")
-       pnl = YATAWEB$getPanel(id)
-       if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHist$new(session))
-        flags = reactiveValues(
-           currency = NULL
-          ,update   = FALSE
-          ,plots    = 0
-        )
-        initPage = function() {
-           yuiLoading()
-           choices        = pnl$data$dfSymbols$symbol
-           names(choices) = pnl$data$dfSymbols$label
-           updListBox("lstCurrencies", choices = choices)
-           yuiLoaded()
-        }
-       updateLeftPanel = function() {
-           browser()
-       }
-       ###########################################################
-       ### Reactives
-       ###########################################################
-        observeEvent(flags$currency, ignoreInit = TRUE, {
-#            pnl$stackAdd(flags$currency)
-            pnl$vars$active = flags$currency
-            pnl$setCommareaItem("detail", flags$currency)
-            if (!pnl$ctcLoaded(flags$currency)) YATATabAppend(ns("tabDetail"), flags$currency)
-            
-            updateTabsetPanel(session, inputId="tabHist", selected=ns("dummy"))
-            updateTabsetPanel(session, inputId="tabHist", selected=ns("detail"))
-#            updateLeftPanel()
-        })
-        observeEvent(flags$plots, ignoreInit = TRUE, {
-           if (is.null(pnl$active)) return()
-           if (flags$plots == 1) pnl$act$plotTypes[[1]] = input$cboPlot_1_1
-           if (flags$plots == 2) pnl$act$plotTypes[[2]] = input$cboPlot_1_2
-           if (flags$plots == 3) pnl$act$plotTypes[[3]] = input$cboPlot_2_1
-           if (flags$plots == 4) pnl$act$plotTypes[[4]] = input$cboPlot_2_2
-           pnl$plotChanged = flags$plots
-           #modHistDetailServer(pnl$active, full, pnl,parent=session)
-           updateTabsetPanel(session, inputId="tabHist", selected=ns("dummy"))
-           updateTabsetPanel(session, inputId="tabHist", selected=ns("detail"))
-        })
-
-       ###########################################################
-       ### END Reactives
-       ###########################################################
-
-      #####################################################
-      ### Observers                                     ###
-      #####################################################
-
-      
-      observeEvent(input$tabHist, {
-         act = yataActiveNS(input$tabHist)
-         module = paste0("modHist", titleCase(act),"Server")
-
-         if (act == "dummy") return()
-         if (act != "detail") pnl$vars$active = NULL
-         eval(parse(text=paste0(module, "(act, input$tabHist, pnl, parent=session)")))
-      })
-      observeEvent(input$btnClose, {
-         browser()
-      })
-
-      #################################################
-      ### Navegacion dinamica
-      #################################################
-      
-      observeEvent(input$tabDetail_click, {
-          if (input$tabDetail_click != pnl$vars$active) 
-              flags$currency = isolate(input$tabDetail_click)
-      })
-      observeEvent(input$tabDetail_close, {
-          YATATabRemove(ns("tabDetail"), input$tabDetail_close)
-          pnl$stackRemove(input$tabdetail_close)
-          if (pnl$active == input$tabdetail_close) flags$currency = isolate(pnl$stackTop())
-      })
-
-      if (!pnl$loaded || pnl$isInvalid(pnl$id)) initPage()
-
-      #################################################
-      ### Panel Izquierdo
-      ### Es comun para todos
-      #################################################
-
-      observeEvent(input$lstCurrencies, ignoreInit = TRUE, { flags$currency = isolate(input$lstCurrencies) })
-      
-      observeEvent(input$cboPlot_1_1, ignoreInit = TRUE, { flags$plots = isolate(1) })
-      observeEvent(input$cboPlot_1_2, ignoreInit = TRUE, { flags$plots = isolate(2) })
-      observeEvent(input$cboPlot_2_1, ignoreInit = TRUE, { flags$plots = isolate(3) })
-      observeEvent(input$cboPlot_2_2, ignoreInit = TRUE, { flags$plots = isolate(4) })
-
-      YATAWEB$end("History Server")
+#        YATAWEB$beg("History Server")
+#        pnl = YATAWEB$getPanel(id)
+#        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHist$new(session))
+#         flags = reactiveValues(
+#            currency = NULL
+#           ,update   = FALSE
+#           ,plots    = 0
+#         )
+#         initPage = function() {
+#            yuiLoading()
+#            choices        = pnl$data$dfSymbols$symbol
+#            names(choices) = pnl$data$dfSymbols$label
+#            updListBox("lstCurrencies", choices = choices)
+#            yuiLoaded()
+#         }
+#        updateLeftPanel = function() {
+#            browser()
+#        }
+#        ###########################################################
+#        ### Reactives
+#        ###########################################################
+#         observeEvent(flags$currency, ignoreInit = TRUE, {
+# #            pnl$stackAdd(flags$currency)
+#             pnl$vars$active = flags$currency
+#             pnl$setCommareaItem("detail", flags$currency)
+#             if (!pnl$ctcLoaded(flags$currency)) YATATabAppend(ns("tabDetail"), flags$currency)
+#             
+#             updateTabsetPanel(session, inputId="tabHist", selected=ns("dummy"))
+#             updateTabsetPanel(session, inputId="tabHist", selected=ns("detail"))
+# #            updateLeftPanel()
+#         })
+#         observeEvent(flags$plots, ignoreInit = TRUE, {
+#            if (is.null(pnl$active)) return()
+#            if (flags$plots == 1) pnl$act$plotTypes[[1]] = input$cboPlot_1_1
+#            if (flags$plots == 2) pnl$act$plotTypes[[2]] = input$cboPlot_1_2
+#            if (flags$plots == 3) pnl$act$plotTypes[[3]] = input$cboPlot_2_1
+#            if (flags$plots == 4) pnl$act$plotTypes[[4]] = input$cboPlot_2_2
+#            pnl$plotChanged = flags$plots
+#            #modHistDetailServer(pnl$active, full, pnl,parent=session)
+#            updateTabsetPanel(session, inputId="tabHist", selected=ns("dummy"))
+#            updateTabsetPanel(session, inputId="tabHist", selected=ns("detail"))
+#         })
+# 
+#        ###########################################################
+#        ### END Reactives
+#        ###########################################################
+# 
+#       #####################################################
+#       ### Observers                                     ###
+#       #####################################################
+# 
+#       
+#       observeEvent(input$tabHist, {
+#          act = yataActiveNS(input$tabHist)
+#          module = paste0("modHist", titleCase(act),"Server")
+# 
+#          if (act == "dummy") return()
+#          if (act != "detail") pnl$vars$active = NULL
+#          eval(parse(text=paste0(module, "(act, input$tabHist, pnl, parent=session)")))
+#       })
+#       observeEvent(input$btnClose, {
+#          browser()
+#       })
+# 
+#       #################################################
+#       ### Navegacion dinamica
+#       #################################################
+#       
+#       observeEvent(input$tabDetail_click, {
+#           if (input$tabDetail_click != pnl$vars$active) 
+#               flags$currency = isolate(input$tabDetail_click)
+#       })
+#       observeEvent(input$tabDetail_close, {
+#           YATATabRemove(ns("tabDetail"), input$tabDetail_close)
+#           pnl$stackRemove(input$tabdetail_close)
+#           if (pnl$active == input$tabdetail_close) flags$currency = isolate(pnl$stackTop())
+#       })
+# 
+#       if (!pnl$loaded || pnl$isInvalid(pnl$id)) initPage()
+# 
+#       #################################################
+#       ### Panel Izquierdo
+#       ### Es comun para todos
+#       #################################################
+# 
+#       observeEvent(input$lstCurrencies, ignoreInit = TRUE, { flags$currency = isolate(input$lstCurrencies) })
+#       
+#       observeEvent(input$cboPlot_1_1, ignoreInit = TRUE, { flags$plots = isolate(1) })
+#       observeEvent(input$cboPlot_1_2, ignoreInit = TRUE, { flags$plots = isolate(2) })
+#       observeEvent(input$cboPlot_2_1, ignoreInit = TRUE, { flags$plots = isolate(3) })
+#       observeEvent(input$cboPlot_2_2, ignoreInit = TRUE, { flags$plots = isolate(4) })
+# 
+#       YATAWEB$end("History Server")
    })
 }    
 

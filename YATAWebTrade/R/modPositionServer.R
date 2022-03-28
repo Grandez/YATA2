@@ -36,7 +36,7 @@ PNLPos = R6::R6Class("PNL.OPER"
           }
           self$monitors$render()
           self$updateBest()
-          js$jgg_set_layout(id)
+          js$yata_set_layout(id)
           self$loaded = TRUE
           invisible(self)
       }

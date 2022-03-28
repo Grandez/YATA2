@@ -15,7 +15,7 @@ custom_css = function(cssFiles) {
     tagList(base, cssLink)
 }
 custom_js = function(jsFiles) {
-    base = tagList( tags$script(src='yatashiny/yataapp.js')
+    base = tagList( tags$script(src='yatashiny/yatashiny.js')
                    ,tags$script(src='yatashiny/js_cookie.js'))
     jsLink = NULL
     if (is.null(jsFiles)) return (tagList(base))

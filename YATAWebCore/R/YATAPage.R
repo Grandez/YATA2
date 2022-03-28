@@ -35,7 +35,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
 #               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"
               )
 
-    JGGDashboardFull( title,  id
+    YATADashboardFull( title,  id
                        ,theme    = theme
                        ,paths    = paths
                        ,cssFiles = customCSS

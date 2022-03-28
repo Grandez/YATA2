@@ -30,7 +30,7 @@ YATADashboardFull = function( title    = NULL
 
     jsshiny = parseYATAShinyJS()
     heads = tags$head(
-               extendShinyjs(script="yatashiny/yatashiny.js", functions=jsshiny)
+               extendShinyjs(script="yatashiny/yatashiny_shiny.js", functions=jsshiny)
                ,custom_css(cssFiles)
               ,custom_js(jsFiles)
               ,document_ready_script(jsInit, title, id)
@@ -196,7 +196,7 @@ old_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
   return(list(liTag = liTag, divTag = divTag))
 }
 parseYATAShinyJS = function() {
-    jsfile = system.file("extdata/www/yatashiny.js", package=packageName())
+    jsfile = system.file("extdata/www/yatashiny_shiny.js", package=packageName())
     lines = readLines(jsfile)
     resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
     lens = attr(resp, "match.length")

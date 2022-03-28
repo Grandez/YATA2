@@ -1,11 +1,11 @@
-Package: JGGShiny
+Package: YATAShiny
 Type: Package
-Title: What the Package Does (Title Case)
+Title: A PORT of JGGShiny
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Modulo para paginas abstrayendo shiny dashboard y demas
+    Copia de GGShiny
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

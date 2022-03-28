@@ -17,7 +17,7 @@ suppressMessages(library(tidyr, warn.conflicts = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE))
 
 # YATA
-suppressMessages(library(JGGShiny,       warn.conflicts = FALSE))
+suppressMessages(library(YATAShiny,       warn.conflicts = FALSE))
 suppressMessages(library(YATABase,       warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
