@@ -1,0 +1,49 @@
+
+html, body {
+  height: 100% ;
+  margin: 0;
+  padding: 0;
+}
+
+.bg-light, .navbar.navbar-default {
+	background-color: #000 !important;
+	color: #fff;
+}
+.nav-link {
+    color: grey !important;
+}
+.a.active {
+    color: white !important;
+}
+.navbar {
+    padding: 0;
+    margin-bottom: 0;
+    height: 42px; /* Ajustado a la altura de la barra jgg_header*/
+}
+#jgg_nav_bar {
+    height: 42px; /* Ajustado a la altura de la barra jgg_header*/
+}
+.navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
+	margin-bottom: 0 !important;
+}
+.container-fluid {
+    padding: 0;
+}
+.tmp_color_1 {
+    background-color: aliceblue;
+}
+.tmp_color_2 {
+    background-color: blueviolet;
+}
+.tmp_color_3 {
+    background-color: coral;
+}
+.tmp_color_4 {
+    background-color: cyan;
+}
+.tmp_color_5 {
+    background-color: darkblue;
+}
+.tmp_color_6 {
+    background-color: gray;
+}

@@ -1,0 +1,177 @@
+.jgg_container {
+   min-height: 100%;
+   position: relative;
+}
+.jgg_page {
+    min-height: 100%;
+    position: relative;
+}
+.jgg_page_left {
+/*   width: 200px; */
+  height: 100%;
+  background-color: lightskyblue;
+  overflow-x: hidden;
+  transition: 0.5s;
+  float: left;
+}
+.jgg_page_right {
+/*   width: 200px; */
+  height: 100%;
+  background-color: #222;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.jgg_header {
+/*   width: 100%; */
+   height: 42px;
+   background-color: black;
+   color: white;
+}
+.jgg_body {
+/*  height: 100%;*/
+  overflow: auto;
+  margin-bottom: 32px;
+}
+.jgg_footer {
+   background-color: black;
+   position: fixed;
+   bottom: 0;
+   width: 100%;
+   height: 32px;
+   color: white;
+}
+.jgg_clearfix {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.jgg_tab_content {
+    display: flex;
+    flex-flow: row;
+}
+.jgg_panel_err_container {
+   margin: 0;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   -webkit-transform: translate(-50%, -50%);
+   -ms-transform:     translate(-50%, -50%);
+   -moz-transform:    translate(-50%, -50%);
+   -o-transform:      translate(-50%, -50%);
+   transform:         translate(-50%, -50%);
+}
+.jgg_panel_err {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 900;
+   background-color: white;
+   opacity: 0.8;
+}
+.jgg_text_error {
+   font-size: 30px;
+   font-weight: bold;
+}
+.jgg_nav_left {
+    float: left;
+}
+/* Iconos de abrir/cerrar paneles */
+.jgg_button_side_hide {
+  display: none;
+}
+.jgg_side_hide {
+  display: none;
+}
+
+.jgg_clickable:hover {
+    cursor: pointer;
+}
+
+/*********************************/
+/* Basico                        */
+/*********************************/
+.jgg-title {
+  text-align: center;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 30px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+.jgg-title-1 {
+  text-align: center;
+}
+
+.jgg-title-2 {
+  text-align: center;
+}
+
+.jgg-title-3 {
+  text-align: center;
+}
+
+.jgg-title-4 {
+  text-align: center;
+}
+
+/*************************************
+ LAYOUT
+**************************************/
+.jgg_blocks_container {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  max-height: 10px;
+}
+
+.jgg_layout_table {
+    border: 1px solid navy;
+    border-collapse: collapse;
+    margin: 6px;
+    width: 95%;
+}
+.jgg_layout_row {
+    border-bottom: 1px solid navy;
+    border-collapse: collapse;
+}
+.jgg_layout_left {
+    border-right: 1px solid navy;
+    border-collapse: collapse;
+}
+.jgg_block_hide {
+    display: none;
+}
+
+/*************************************
+ END LAYOUT
+ **************************************/
+
+#jgg_tab_content {
+    padding: 0;
+    margin: 0;
+}
+#jgg_left_side {
+    color: rgb(255,255,255);
+}
+
+#jgg_nav_bar {
+    padding: 0;
+}
+
+.jgg_brand {
+    margin-left: 3px; /* Como los monitores */
+}
+.jgg_number {
+  text-align: right;
+}
+
+.jgg_layout_row  .form-group {
+    margin-bottom: 0;
+}
