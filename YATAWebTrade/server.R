@@ -84,8 +84,6 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
-    cat("CAT SERVER")
-    message("message server")
    WEB$setSession(session)  
    if (WEB$errorLevel > 0) {
        if (WEB$errorLevel == 99) 

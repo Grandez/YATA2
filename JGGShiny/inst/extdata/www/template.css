@@ -18,6 +18,7 @@ html, body {
 .navbar {
     padding: 0;
     margin-bottom: 0;
+    height: 42px; /* Ajustado a la altura de la barra jgg_header*/
 }
 .navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
 	margin-bottom: 0 !important;
