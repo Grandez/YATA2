@@ -151,15 +151,15 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
       }
       ,getSQLCode = function (cond) {
           # Los codigos van al final del mensaje [nnnnn]
-          # 2006 - Se ha ido
-          # 1205 - Tablas bloqueadas por transaccion
+          # https://mariadb.com/kb/en/mariadb-error-codes/
           browser()
-          res = grep("\\[[0-9]+\\]", cond$message, value = TRUE)
+          rc = 0
+          res = regexpr("\\[[0-9]+\\]", cond$message, value = TRUE)
           if (length(res) > 0) {
-              browser()
-              return (1205)
+              end = attr(res,"match.length")[1]
+              rc = substr(cond$message,res + 1, res + end - 1)
           }
-          0
+          rc
       }
 
    )
