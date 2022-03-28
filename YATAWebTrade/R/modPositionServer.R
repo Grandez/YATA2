@@ -406,6 +406,7 @@ observeEvent(flags$tab, ignoreInit = TRUE, {
    action = strsplit(pnl$vars$table$colName, "_")[[1]][2]
 
    if (action == "buy") {
+       browser()
        carea = pnl$getCommarea()
        carea$action = action
        carea$pending = TRUE

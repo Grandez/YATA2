@@ -48,11 +48,12 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
          df[df$id != 0,]
       }
       ,getOpenCurrencies = function() {
-         df = self$data$dfPosGlobal
-         df = df[!df$currency %in% private$fiats, c("currency", "id")]
-         labels = unlist(WEB$getCTCLabels(df$currency))
-         df$label = labels[df$currency]
-         df
+          error("NO SE QUE HACE ESTA FUNCION: SERVER getOpenCurrencies")
+         # df = self$data$dfPosGlobal
+         # df = df[!df$currency %in% private$fiats, c("currency", "id")]
+         # labels = unlist(WEB$getCTCLabels(df$currency))
+         # df$label = labels[df$currency]
+         # df
       }
       # common commarea across panels 
       ,getCommarea       = function(item=NULL, default=NULL)     { 
@@ -63,7 +64,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
        }
       ,setCommarea       = function(...) {
           items = list(...)
-          if (is.list(args[[1]])) {
+          if (is.list(items[[1]])) {
               private$commarea = items[[1]]      
           } else {
              for (idx in 1:length(items)) {
@@ -82,8 +83,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
        }
    )
    ,private = list(
-      fiats = c("EUR", "USD")
-     ,commarea     = list(
+      commarea     = list( # evitar nulos
         position = FALSE
      )
    )
