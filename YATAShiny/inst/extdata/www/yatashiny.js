@@ -1,10 +1,10 @@
 if (typeof jQuery === "undefined") { throw new Error("jQuery is required"); }
 
-class JGGShiny {
+class YATAShiny {
    #page; // : undefined  // Active page
    #panels; // : new Map()
-   #leftSideIcon =  "[data-toggle='jgg_left_button']";
-   #rightSideIcon = "[data-toggle='jgg_right_button']";
+   #leftSideIcon =  "[data-toggle='yata_left_button']";
+   #rightSideIcon = "[data-toggle='yata_right_button']";
    #menuTag       = "[data-toggle='tab']";
    #app
    constructor(app)  {
@@ -14,8 +14,8 @@ class JGGShiny {
    }
    init(title, id)    {
        jQuery("#app_title").text(title);
-       jQuery(document).on('click', this.#leftSideIcon,  {jggshiny: this}, jggshiny.sidebarLeft);
-       jQuery(document).on('click', this.#rightSideIcon, {jggshiny: this}, jggshiny.sidebarRight);
+       jQuery(document).on('click', this.#leftSideIcon,  {yatashiny: this}, yatashiny.sidebarLeft);
+       jQuery(document).on('click', this.#rightSideIcon, {yatashiny: this}, yatashiny.sidebarRight);
        this.#add_listeners();
    }
    send_cookies() {
@@ -71,39 +71,39 @@ class JGGShiny {
       // Se ha hecho click en el menu de abrir/cerrar panel
       // Icono del panel lateral clickado
       // No se por que, pero no hace el this
-      let page = jggshiny.#page;
+      let page = yatashiny.#page;
       if (page === undefined) return; // Se ha activado antes de insertarla
 
        // Botones
-       let id = "#jgg_left_side";
+       let id = "#yata_left_side";
        if (page.left == 0) {
-           jQuery(id).addClass('jgg_side_hide');
+           jQuery(id).addClass('yata_side_hide');
            return;
        }
-       jQuery(id).removeClass('jgg_side_hide');
+       jQuery(id).removeClass('yata_side_hide');
 
        if (page.left == -1) {
-           jQuery("#jgg_left_side_close").removeClass('jgg_button_side_hide');
-           jQuery("#jgg_left_side_open").addClass    ('jgg_button_side_hide');
+           jQuery("#yata_left_side_close").removeClass('yata_button_side_hide');
+           jQuery("#yata_left_side_open").addClass    ('yata_button_side_hide');
            page.left = 1; // Open
        } else {
-//           jQuery(id).addClass('jgg_side_closed').trigger('collapsed.pushMenu');
-           jQuery("#jgg_left_side_close").addClass  ('jgg_button_side_hide');
-           jQuery("#jgg_left_side_open").removeClass('jgg_button_side_hide');
+//           jQuery(id).addClass('yata_side_closed').trigger('collapsed.pushMenu');
+           jQuery("#yata_left_side_close").addClass  ('yata_button_side_hide');
+           jQuery("#yata_left_side_open").removeClass('yata_button_side_hide');
            page.left = -1; // Closed
        }
 
        id = "#" + page.name + "_container_left";
        if (page.left == 1) {
-           $(id).removeClass('jgg_side_hide').trigger('expanded.pushMenu');
+           $(id).removeClass('yata_side_hide').trigger('expanded.pushMenu');
        } else {
-           $(id).addClass('jgg_side_hide').trigger('collapsed.pushMenu');
+           $(id).addClass('yata_side_hide').trigger('collapsed.pushMenu');
        }
-       jggshiny.update_page(page);
+       yatashiny.update_page(page);
    }
    sidebarRight(evt) {
-//       alert(evt.data.jgg);
-       if (evt.data.jgg.page === undefined) return;
+//       alert(evt.data.yata);
+       if (evt.data.yata.page === undefined) return;
 
        // Se ha hecho click en el menu de abrir/cerrar panel
        // Icono del panel lateral clickado
@@ -178,9 +178,9 @@ class JGGShiny {
 
       // Identifica el panel destino
       let tgt = "#" + ns + "-blocks_2x" + item[1] + "x2";
-      if ($(tgt).hasClass("jgg_block_hide")) {
+      if ($(tgt).hasClass("yata_block_hide")) {
           tgt = "#" + ns + "-blocks_2x" + item[1] + "x1";
-          if ($(tgt).hasClass("jgg_block_hide")) {
+          if ($(tgt).hasClass("yata_block_hide")) {
               tgt = $("#" + ns + "-blocks_1");
           }
       } else {
@@ -233,32 +233,32 @@ class JGGShiny {
        }
    }
    #add_listeners() {
-      window.addEventListener('resize', jggshiny.window_resize );
+      window.addEventListener('resize', yatashiny.window_resize );
 
       // Listener a los combos del layout
-      let elements = document.getElementsByClassName("jgg_layout");
+      let elements = document.getElementsByClassName("yata_layout");
       Array.from(elements).forEach(function(element) {
-            element.addEventListener('change', function (event) { jggshiny.layout_update_event(event) });
+            element.addEventListener('change', function (event) { yatashiny.layout_update_event(event) });
       });
-      elements = document.getElementsByClassName("jgg_layout_notify");
+      elements = document.getElementsByClassName("yata_layout_notify");
       Array.from(elements).forEach(function(element) {
-            element.addEventListener('change', function (event) { jggshiny.layout_notify_event(event) });
+            element.addEventListener('change', function (event) { yatashiny.layout_notify_event(event) });
       });
    }
    #setSideIcons(value, side) {
-       let id = "#jgg_" + side + "_side";
-       if (value == 0) jQuery(id).addClass('jgg_button_side_hide');
-       if (value != 0) jQuery(id).removeClass('jgg_button_side_hide');
+       let id = "#yata_" + side + "_side";
+       if (value == 0) jQuery(id).addClass('yata_button_side_hide');
+       if (value != 0) jQuery(id).removeClass('yata_button_side_hide');
 
         const idOpen  = id + "_open"
         const idClose = id + "_close"
         if (value == 1) { // Is open
-            jQuery(idClose).removeClass("jgg_button_side_hide");
-            jQuery(idOpen).addClass    ("jgg_button_side_hide");
+            jQuery(idClose).removeClass("yata_button_side_hide");
+            jQuery(idOpen).addClass    ("yata_button_side_hide");
         }
         if (value == -1) {
-            jQuery(idOpen).removeClass("jgg_button_side_hide");
-            jQuery(idClose).addClass  ("jgg_button_side_hide");
+            jQuery(idOpen).removeClass("yata_button_side_hide");
+            jQuery(idClose).addClass  ("yata_button_side_hide");
         }
    }
     #set_blocks_layout(ns, panels) {
@@ -270,54 +270,54 @@ class JGGShiny {
        }
 
        switch (ids[0]) {
-           case 0: $("#" + ns + "-blocks_1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x1x1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x1x2").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x2x1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x2x2").addClass   ("jgg_block_hide");
+           case 0: $("#" + ns + "-blocks_1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x1x1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x1x2").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x2x1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x2x2").addClass   ("yata_block_hide");
                    break;
-           case 1: $("#" + ns + "-blocks_1").removeClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x1x1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x1x2").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x2x1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x2x2").addClass   ("jgg_block_hide");
+           case 1: $("#" + ns + "-blocks_1").removeClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x1x1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x1x2").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x2x1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x2x2").addClass   ("yata_block_hide");
                    break;
            case 2: switch (ids[1]) {
-               case 0: $("#" + ns + "-blocks_2x1x1").addClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x1x2").addClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x1").addClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x2").removeClass   ("jgg_block_hide");
+               case 0: $("#" + ns + "-blocks_2x1x1").addClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x1x2").addClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x1").addClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x2").removeClass   ("yata_block_hide");
                        break;
-               case 1: $("#" + ns + "-blocks_2x1x1").removeClass("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x1x2").addClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x1").removeClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x2").addClass   ("jgg_block_hide");
+               case 1: $("#" + ns + "-blocks_2x1x1").removeClass("yata_block_hide");
+                       $("#" + ns + "-blocks_2x1x2").addClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x1").removeClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x2").addClass   ("yata_block_hide");
                        break;
-               case 2: $("#" + ns + "-blocks_2x1x1").addClass("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x1x2").removeClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x1").addClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x2").addClass   ("jgg_block_hide");
+               case 2: $("#" + ns + "-blocks_2x1x1").addClass("yata_block_hide");
+                       $("#" + ns + "-blocks_2x1x2").removeClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x1").addClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x2").addClass   ("yata_block_hide");
                        break;
                }
                break;
            case 3: switch (ids[1]) {
-               case 1: $("#" + ns + "-blocks_2x1x1").removeClass("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x1x2").addClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x1").removeClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x2").addClass   ("jgg_block_hide");
+               case 1: $("#" + ns + "-blocks_2x1x1").removeClass("yata_block_hide");
+                       $("#" + ns + "-blocks_2x1x2").addClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x1").removeClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x2").addClass   ("yata_block_hide");
                        break;
-               case 2: $("#" + ns + "-blocks_2x1x1").addClass("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x1x2").removeClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x1").removeClass   ("jgg_block_hide");
-                       $("#" + ns + "-blocks_2x2x2").addClass   ("jgg_block_hide");
+               case 2: $("#" + ns + "-blocks_2x1x1").addClass("yata_block_hide");
+                       $("#" + ns + "-blocks_2x1x2").removeClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x1").removeClass   ("yata_block_hide");
+                       $("#" + ns + "-blocks_2x2x2").addClass   ("yata_block_hide");
                        break;
                }
                break;
-           case 4: $("#" + ns + "-blocks_1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x1x1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x1x2").removeClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x2x1").addClass   ("jgg_block_hide");
-                   $("#" + ns + "-blocks_2x2x2").removeClass   ("jgg_block_hide");
+           case 4: $("#" + ns + "-blocks_1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x1x1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x1x2").removeClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x2x1").addClass   ("yata_block_hide");
+                   $("#" + ns + "-blocks_2x2x2").removeClass   ("yata_block_hide");
                    break;
        }
     }

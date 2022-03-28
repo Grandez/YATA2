@@ -1,6 +1,6 @@
 guiTitle = function(level, txt, ...) {
   data = sprintf(txt, ...)
-  eval(parse(text=paste0("h", level, "(class='jgg_title_", level, "', '", data, "')")))
+  eval(parse(text=paste0("h", level, "(class='yata_title_", level, "', '", data, "')")))
 }
 
 guiRow = function(id=NULL, style=NULL, class=NULL, ...) {
@@ -91,8 +91,8 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
 # Cambiamos selectInput para añadir la clase yata_layout
 guiLayoutSelect = function (inputId, choices, selected = NULL, full=TRUE) {
    cls = "form-control"
-   if (full) cls = paste(cls, "jgg_layout")
-   else      cls = paste(cls, "jgg_layout_notify")
+   if (full) cls = paste(cls, "yata_layout")
+   else      cls = paste(cls, "yata_layout_notify")
 
    selected = restoreInput(id = inputId, default = selected)
    choices = shiny:::choicesWithNames(choices)

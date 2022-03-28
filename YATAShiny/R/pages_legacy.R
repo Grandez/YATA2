@@ -1,4 +1,4 @@
-JGGDashboardFull = function( title    = NULL
+YATADashboardFull = function( title    = NULL
                               ,id       = NULL
                               ,theme    = bs_theme()
                               ,paths    = NULL
@@ -21,22 +21,22 @@ JGGDashboardFull = function( title    = NULL
   #   source
   #   functions
     pathShiny = normalizePath(system.file("extdata/www", package = packageName()))
-    shiny::addResourcePath("jggshiny", pathShiny)
+    shiny::addResourcePath("yatashiny", pathShiny)
 
     if (!is.null(paths)) {
         lapply(names(paths), function(path) shiny::addResourcePath(path, paths[[path]]))
     }
-    page = jgg_bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
+    page = yata_bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
 
-    jsshiny = parseJGGShinyJS()
+    jsshiny = parseYATAShinyJS()
     heads = tags$head(
-               extendShinyjs(script="jggshiny/jggshiny.js", functions=jsshiny)
+               extendShinyjs(script="yatashiny/yatashiny.js", functions=jsshiny)
                ,custom_css(cssFiles)
               ,custom_js(jsFiles)
               ,document_ready_script(jsInit, title, id)
             )
 
-    bspage = jgg_dashboard_bslib_page( title = title, theme = theme, lang = lang
+    bspage = yata_dashboard_bslib_page( title = title, theme = theme, lang = lang
                                       ,shinyjs::useShinyjs()
                                       ,heads
                                       ,page
@@ -44,7 +44,7 @@ JGGDashboardFull = function( title    = NULL
     bspage
    addDeps(shiny::tags$body(bspage))
 }
-jgg_dashboard_bslib_page = function(..., title = NULL, theme = bs_theme(), lang = NULL) {
+yata_dashboard_bslib_page = function(..., title = NULL, theme = bs_theme(), lang = NULL) {
    data = shiny::bootstrapPage(..., title = title, theme = theme, lang = lang)
    class(data) <- c("bslib_page", class(data))  # bslib_as_page
    data
@@ -195,8 +195,8 @@ old_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
   }
   return(list(liTag = liTag, divTag = divTag))
 }
-parseJGGShinyJS = function() {
-    jsfile = system.file("extdata/www/jggshiny.js", package=packageName())
+parseYATAShinyJS = function() {
+    jsfile = system.file("extdata/www/yatashiny.js", package=packageName())
     lines = readLines(jsfile)
     resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
     lens = attr(resp, "match.length")

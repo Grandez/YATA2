@@ -18,10 +18,10 @@ html, body {
 .navbar {
     padding: 0;
     margin-bottom: 0;
-    height: 42px; /* Ajustado a la altura de la barra jgg_header*/
+    height: 42px; /* Ajustado a la altura de la barra yata_header*/
 }
-#jgg_nav_bar {
-    height: 42px; /* Ajustado a la altura de la barra jgg_header*/
+#yata_nav_bar {
+    height: 42px; /* Ajustado a la altura de la barra yata_header*/
 }
 .navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
 	margin-bottom: 0 !important;
