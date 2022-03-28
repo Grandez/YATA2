@@ -54,19 +54,24 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
          df$label = labels[df$currency]
          df
       }
-      ,getCommarea       = function()     { private$commarea      }
-      ,setCommarea       = function(data) { 
-          private$commarea = data  
+      # common commarea across panels 
+      ,getCommarea       = function(item=NULL, default=NULL)     { 
+          if (is.null(item)) return (private$commarea)      
+          val = private$commarea[[item]]
+          if (is.null(val)) val = default
+          val
+       }
+      ,setCommarea       = function(...) {
+          items = list(...)
+          if (is.list(args[[1]])) {
+              private$commarea = items[[1]]      
+          } else {
+             for (idx in 1:length(items)) {
+                  private$commarea[[names(items)[idx]]] = items[[idx]] 
+             }
+          }
           invisible(self)
       }
-      ,setCommareaItem  = function(name, value) { private$commarea[[name]] = value }
-      ,setCommareaItems = function(...)         { private$commarea = list.merge(private$commarea, list(...)) }
-      ,getCommareaItem  = function(item, default=NULL) {
-         val = private$commarea[[item]]
-         if (is.null(val)) val = default
-         val
-      }
-      
       ,getDFSession      = function() { self$data$dfSession   } 
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() { 

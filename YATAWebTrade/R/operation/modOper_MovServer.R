@@ -300,12 +300,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
          if (res) {
              yataMsgErr(ns2("msg"), pnl$MSG$get("OPER.MAKE.ERR"))
          } else {
-             # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
-             # yataMsgSuccess(ns2("operMsg"), pnl$MSG$get(msgKey))
-             # carea = pnl$getCommarea()
-             # carea$position = TRUE
-             # pnl$setCommarea(carea)
-             # 
+             msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
+             yataMsgSuccess(ns2("operMsg"), pnl$MSG$get(msgKey))
+             pnl$setCommarea(position=TRUE)
              resetValues()
           }
       }, ignoreInit = TRUE)

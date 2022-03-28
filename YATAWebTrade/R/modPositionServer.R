@@ -159,7 +159,6 @@ PNLPos = R6::R6Class("PNL.OPER"
         ,best      = FALSE
         ,history   = 15
         ,refresh   = FALSE
-        ,update    = FALSE
         ,plotsBest = FALSE
         ,plotPos   = FALSE
         ,table     = FALSE
@@ -335,10 +334,6 @@ observeEvent(flags$refresh, ignoreInit = TRUE, {
    renderBestTables()
    renderPlotSession()
 })
-observeEvent(flags$update, ignoreInit = TRUE, {
-   pnl$updateData()
-   flags$refresh = isolate(!flags$refresh)
-})
 observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {
    if (is.na(flags$history)) return()
    if (flags$history != pnl$cookies$history) {
@@ -505,10 +500,9 @@ carea = pnl$getCommarea()
 if (!pnl$loaded || carea$position) {
     pnl$loadData()
     if (!carea$position) initPage()
-    pnl$setCommareaItems(position=FALSE)
+    pnl$setCommarea(position=FALSE)
+    flags$refresh = isolate(!flags$refresh)
 }       
-
-#     flags$refresh = isolate(!flags$refresh) # each time server is called
 
 #####################################################
 ### Timers                                        ###
@@ -517,7 +511,8 @@ if (!pnl$loaded || carea$position) {
   
 observe({
   invalidateLater(pnl$cookies$interval * 60000) # update page each interval minutes
-  flags$update = isolate(!flags$update)
+   pnl$updateData()
+   flags$refresh = isolate(!flags$refresh)
 })
 
 })   # END MODULE

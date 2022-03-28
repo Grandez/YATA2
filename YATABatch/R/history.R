@@ -1,7 +1,12 @@
 updateHistory = function(output=1, log=1) {
+    pidfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/wrk/history.pid")
+    batch   = YATABatch$new("History", output, log)
+
+    if (file.exists(pidfile)) return (batch$rc$RUNNING)
+
     count = 0
     begin = as.numeric(Sys.time())
-    batch = YATABatch$new("History", output, log)
+
     batch$fact$setLogger(batch$logger)
 
     fact = YATACore::YATAFactory$new()
@@ -31,5 +36,6 @@ updateHistory = function(output=1, log=1) {
         })
    }
     batch$logger$executed(rc, begin, "Retrieving history")
-    invisible(0)
+    file.remove(pidfile)
+    invisible(batch$rc$OK)
 }

@@ -109,22 +109,10 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ##########################################################
     ,getGlobalPosition = function(fiat=FALSE) { private$root$getGlobalPosition(fiat) }
     ,getOpenCurrencies = function()           { private$root$getOpenCurrencies()     }
-    ,getCommarea       = function()           { private$root$getCommarea()           }
-    ,setCommarea       = function(data)       {
-        private$root$setCommarea(data)
-        invisible(self)
-    }
-    ,setCommareaItem   = function(name, value) {
-        private$root$setCommareaItem(name, value)
-        invisible (self)
+    ,setCommarea       = function(...)        { private$root$setCommarea(...)        }
+    ,getCommarea       = function(item=NULL, default=NULL) {
+        private$root$getCommarea(item, default)
      }
-    ,setCommareaItems  = function(...)        {
-        private$root$setCommareaItems(...)
-        invisible (self)
-     }
-    ,getCommareaItem  = function(item, default=NULL)  {
-        private$root$getCommareaItem(item, default)
-      }
   )
   ,private = list(
        invalid = c("")

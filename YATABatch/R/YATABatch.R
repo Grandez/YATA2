@@ -17,8 +17,7 @@ YATABatch = R6::R6Class("OBJ.BATCH"
        ,logger = NULL
        ,base   = NULL
         # Return codes
-       ,OK  = 0
-       ,NODATA = 4
+       ,rc = list(OK = 0, RUNNING=2, NODATA = 4, FATAL=16)
        ,initialize = function (process=NULL, output=1, loglevel=0) {
            self$codes  = YATACore::YATACODES$new()
            self$fact   = YATACore::YATAFactory$new()
