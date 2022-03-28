@@ -1,27 +1,39 @@
 #!/usr/bin/bash 
+# Make backups for operationral tables
 # Author: Grandez
 #
-# Se llama como script paquete puerto accion
-local PKG=$1
-local PORT=$2
+# Use: yata_backup [tables]
+# If missing tables all tables are backed
 
-base=${YATA_SITE}/YATAData/bck
-wrk=${YATA_SITE}/YATAData/wrk
-day=`date +%Y%m%d`
-# Si no existe el fichero database_day.zip hacer backup
-
-function backupdb {
+DATA=${YATA_SITE}/YATAData
+function makebackup {
+    while [ -n "$1" ] ; do
+       CWD=`pwd`
+       WD=${DATA}/wrk
+       sql=${WD}/$1.sql
+       mysqldump -cfnt -u YATA -pyata -r $sql $1
+       rc=$?
+       if [ $rc -gt 0 ] ; then
+          echo "ERROR " $rc "making backup of " $1 
+       else 
+          out=${DATA}/bck/$1_`date +%Y%m%d`.zip
+          cd $WD
+          zip -q $out $1.sql
+          rc=$?
+          cd $CWD
+          if [ $rc -ne 0 ] ; then 
+              echo "ERROR " $rc " ZIPPING FILE " $1.sql 
+          else
+              rm $sql
+          fi
+       fi
+       shift  
+    done
 }
 
-CWD=`cwd`
-cd $wrk
-
-bbdd=( "YATA" )
-if [ $* ]
-    
-while [ ] ; do
-done
-        
-cd $CWD
-
+if [ $# -gt 0 ] ; then
+    makebackup $*
+else 
+    makebackup YATA YATATest YATASimm
+fi
 
