@@ -48,9 +48,11 @@ options( warn = -1
 ### En R busca subdirectorios
 #####################################
 
+cat("LEYENDO FICHEROS")
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
+message("Creando WEBENV")
 #cat(paste(Sys.time(), " - Before WEB\n"), file="P:/R/YATA2/web.log", append=TRUE)
 WEB = YATAWebEnv$new()
 
