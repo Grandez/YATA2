@@ -14,7 +14,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                private$oper    = self$factory$getObject(self$codes$object$operation)
                private$pos     = self$factory$getObject(self$codes$object$position)
                self$fiat       = pnlParent$factory$fiat
-               self$vars$price = 0
+               private$initVars()
            }
            ,cboReasons    = function(type)      { self$makeCombo(private$oper$getReasons(type)) } 
            ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
@@ -37,11 +37,16 @@ modOperMovServer = function(id, full, pnlParent, parent) {
        ,private = list(
            oper = NULL
           ,pos  = NULL
+          ,initVars = function() {
+              # Sirve de memoria
+              self$vars$price = 0       
+              self$vars$cboOper  = 0
+          }
         )
    )   
    
 
-   moduleServer(id, function(input, output, session) {
+moduleServer(id, function(input, output, session) {
         pnl = WEB$getPanel(id)
         if (is.null(pnl)) pnl = WEB$addPanel(PNLOperMov$new(id, pnlParent, session))
 
@@ -158,6 +163,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           }
       }
       observeEvent(input$cboOper, { 
+          # Punto de control de tabs (memoria)
+          if (pnl$vars$cboOper == input$cboOper) return()
+          pnl$vars$cboOper = input$cboOper
           enable("cboCurrency")
           pnl$vars$soper = input$cboOper
           # Recargar el combo de monedas? Para compras es costoso
@@ -175,6 +183,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)      
       observeEvent(input$cboCamera, {
+          updNumericInput("impAmount", pnl$vars$ctc)
           dfPos = pnl$getPosition(input$cboCamera)
           pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"available"]
@@ -314,6 +323,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
     #   if (!is.null(carea$action)) {
     #       if (carea$action %in% c("buy", "sell")) processCommarea(0)
     #   }
+      
+#    if (!pnl$loaded) pnl$loaded = TRUE
+      
      })
 }
 

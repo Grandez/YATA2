@@ -23,6 +23,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,vars       = list()  # Variables temporales con memoria
     ,cookies    = list() # Variables con estado
     ,layout     = NULL
+    ,visited    = 0
     ,print      = function() { message(paste("Panel object for", self$name)) }
     ,initialize = function(id, parent, session, ns = NULL) {
         self$name         = id

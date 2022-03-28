@@ -95,8 +95,6 @@ function(input, output, session) {
            return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
        return (yataErrGeneral(0, WEB$txtError, input, output, session))
    }
-
-
    pnl = WEB$getPanel("server")
    if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
 
@@ -115,11 +113,11 @@ function(input, output, session) {
       paste("YATA", name, sep = "-")
    })
    observeEvent(input$mainMenu,{
-        eval(parse(text=paste0( "mod"
-                               ,str_to_title(input$mainMenu)
-                               ,"Server(input$mainMenu
-                               ,''
-                               ,pnl, parent=session)")))
+      eval(parse(text=paste0( "mod"
+                             ,str_to_title(input$mainMenu)
+                             ,"Server(input$mainMenu
+                             ,''
+                             ,pnl, parent=session)")))
     })
    observeEvent(input$btnKO, { closePanel() })
    observeEvent(input$btnDBChanged, {
