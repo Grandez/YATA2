@@ -26,14 +26,23 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,lastErr = NULL
        ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20)
        ,print      = function() { message("Generic Logger class") }
-       ,initialize = function(module=NULL, output = 1,log=1) {
-           if (is.null(module)) module="general"
+       ,initialize = function(module="general") {
+           loglevel    = Sys.getenv("YATA_LOG_LEVEL")
+           logoutput   = Sys.getenv("YATA_LOG_OUTPUT")
+
            private$modname   = module
-           private$.logLevel = log
-           private$.out      = output
+           private$.logLevel = ifelse(nchar(loglevel) == 0, 9, as.integer(loglevel))
+           private$.output   = ifelse(nchar(loglevel) == 0, 9, as.integer(loglevel))
            .setLogFile()
        }
-
+       ,setLogLevel = function(level) {
+          private$.logLevel = level
+          invisible(self)
+       }
+       ,setLogOutput = function(output) {
+          private$.output = output
+          invisible(self)
+       }
        # Friendly function
        ,log = function(level, fmt,...) {
           # Mensaje de logging/depuracion de nivel level
@@ -122,27 +131,27 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,CON  = 2
        ,logFile  = NULL
        ,.logLevel = 0
-       ,.out      = 0
+       ,.output   = 0
        ,cache     = ""
        ,modname  = "YATA"
        ,logTimers = NULL
        ,logNames  = NULL
        ,.print = function(type, level, msg) {
-          if (bitwAnd(.out, FILE)) private$cache = msg
-          if (bitwAnd(.out, CON )) .toConsole(type, level, msg)
+          if (bitwAnd(.output, FILE)) private$cache = msg
+          if (bitwAnd(.output, CON )) .toConsole(type, level, msg)
           invisible(self)
        }
        ,.println = function(type, level, msg, ansi=.void) {
-          if (bitwAnd(.out, FILE)) .toFile   (type, level, msg)
-          if (bitwAnd(.out, CON )) .toConsole(type, level, paste0(msg, "\n"), ansi)
+          if (bitwAnd(.output, FILE)) .toFile   (type, level, msg)
+          if (bitwAnd(.output, CON )) .toConsole(type, level, paste0(msg, "\n"), ansi)
           invisible(self)
        }
        ,.flush = function(type, level, msg, ansi=.void) {
-           if (bitwAnd(.out, FILE)) {
+           if (bitwAnd(.output, FILE)) {
                .toFile   (type, level, paste(private$cache, msg))
                private$cache = ""
            }
-           if (bitwAnd(.out, CON )) cat(ansi(paste(msg, "\n")))
+           if (bitwAnd(.output, CON )) cat(ansi(paste(msg, "\n")))
            invisible(self)
        }
        ,.toFile = function(type, level, txt, ...) {
@@ -151,7 +160,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            line = paste(str,modname,type,level,txt, sep=";")
            rest = paste(list(...), collapse=";")
            if (nchar(rest) > 0) line = paste0(line, ";",rest)
-           cat(line, file=logFile, append=TRUE)
+           cat(paste0(line, "\n"), file=logFile, append=TRUE)
        }
        ,.toConsole = function(type, level, txt, ansi=.void) {
            str  = format(Sys.time(), "%H:%M:%S")

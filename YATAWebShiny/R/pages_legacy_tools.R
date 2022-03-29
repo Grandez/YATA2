@@ -80,7 +80,6 @@ yata_make_container_full = function (nav, content, titleActive) {
 }
 
 yata_make_container = function (nav, content, titleActive) {
-    browser()
    contentDiv = shiny::tags$div(id="yata_page")
    divHeader  = shiny::tags$div(id="yata_page_header", class="yata_header row" )
    divBody    = shiny::tags$div(id="yata_page_body",   class="yata_body"   )
@@ -155,7 +154,7 @@ yata_make_page_header <- function(parent, nav, titleActive = FALSE, titleWidth =
     } else {
         span = shiny::tags$span( class="navbar-brand yata_brand")
     }
-    span = tagAppendChild(span, textOutput("app_title", inline=TRUE))
+    span     = tagAppendChild(span, textOutput("app_title", inline=TRUE))
     divBrand = tagAppendChildren(divBrand
         ,span
         ,shiny::tags$span(shiny::icon("bars"), style = "display:none;")   # para la dependencia
@@ -166,7 +165,7 @@ yata_make_page_header <- function(parent, nav, titleActive = FALSE, titleWidth =
 
     #JGG Aqui falta poner el menu
     divRight = tags$div(class="col-lg-1", style="float: 'right';")
-    divRight = tagAppendChildren(divRight, button_right)
+    divRight = tagAppendChildren(divRight, tags$div(id="yata_page_header_right"), button_right)
 
     tagAppendChildren(parent, divBrand, divNav, divRight)
 }

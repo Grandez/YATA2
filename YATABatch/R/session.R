@@ -14,6 +14,7 @@
     dft   = NULL
     provider      = batch$fact$getObject(batch$fact$CODES$object$providers)
     tblCurrencies = batch$fact$getTable(batch$fact$CODES$tables$currencies)
+    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/start_session.pid")
 
     tryCatch({
        data = provider$getTickers(500, 1)
@@ -71,12 +72,14 @@
 #     file.remove(datafile)
 #     count
 # }
-updateSession = function(max=0, output=1, log=1) {
-    browser()
-    count = 0
-    begin = as.numeric(Sys.time())
-    batch = YATABatch$new("Tickers", output, log)
+updateSession = function(max = 0) {
+    count   = 0
+    begin   = as.numeric(Sys.time())
+    batch   = YATABatch$new("Tickers")
+    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/start_tickers.pid")
+
     batch$fact$setLogger(batch$logger)
+    if (file.exists(pidfile)) return (batch$rc$RUNNING)
 
     rc = tryCatch({
        session = batch$fact$getObject(batch$fact$CODES$object$session)
@@ -91,14 +94,15 @@ updateSession = function(max=0, output=1, log=1) {
           Sys.sleep(15 * 60)
           count = count + 1
        }
-       0
+       batch$rc$OK
     }, YATAERROR = function (cond) {
-        browser()
+       batch$rc$FATAL
     }, error = function(cond) {
-        browser()
-        message(cond)
-        16
+       message(cond)
+       batch$rc$SEVERE
     })
+
+    if (file.exists(pidfile)) file.remove(pidfile)
     batch$logger$executed(rc, begin, "Retrieving tickers")
     invisible(rc)
 }

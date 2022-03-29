@@ -20,34 +20,18 @@ import(reactable)
 
 # async
 import(httr)
-import(jsonlite)
-import(future)
-
+# import(jsonlite)
+# import(future)
 
 # import(reactable)
 import(markdown)
-# import(DT)
 
 # YATA
 import(YATABase)
+import(YATAWebShiny)
 
 exportPattern("YATA.*")
 exportPattern("WDG.*")
 exportPattern("yui.*")
 exportPattern("upd.*")
 exportPattern("yata.*")
-
-
-
-
-#exportPattern("blk.*")
-
-#exportPattern("plt*")
-#exportPattern("prepare*")
-#exportPattern("rest.*")
-#exportPattern("OBJ.*")
-#exportPattern("rmd.*")
-#export(isPlot)
-#exportPattern("PUT.*")
-#exportPattern("GET.*")
-#export(YATAWEBDEF)

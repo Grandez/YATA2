@@ -82,39 +82,20 @@ yuiLabelBold = function(id, class) {
   if (!missing(class)) cls = class
   tags$span(class=cls, textOutput(outputId=id, inline=TRUE))
 }
-updLabelText = function(txt) {
-  renderText({ txt })
-}
-# yuiLabelText = function(id, label=NULL, inline=TRUE) {
-#   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
-# }
-
-# yuiLabelNumeric = function(id, label=NULL, inline=TRUE) {
-#   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
-# }
 updLabel = function(txt) {
     renderText({txt})
 }
-updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
-  text = format(value, big.mark = ".", decimal.mark=",")
-  if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
-  #.updLabelNumber(value, text, bold, color)
-  updLabel(text)
-}
+# updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
+#   text = format(value, big.mark = ".", decimal.mark=",")
+#   if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)
+#   #.updLabelNumber(value, text, bold, color)
+#   updLabel(text)
+# }
 yuiLabelInteger = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
 }
-updLabelInteger   = function(value, bold=TRUE, color=FALSE) {
-  text = format(round(value), big.mark = ".", decimal.mark=",")
-  .updLabelNumber(value, text, bold, color)
-}
 yuiLabelPercentage = function(id, label=NULL, inline=TRUE) {
   htmlOutput(outputId=id, inline=TRUE, class="yataTextRight")
-}
-
-updLabelPercentage   = function(value, bold=TRUE, color=FALSE) {
-  text = format(value, big.mark = ".", decimal.mark=",", nsmall=2)
-  .updLabelNumber(value, text, bold, color)
 }
 
 yuiLabelDate = function(id, label=NULL, inline=TRUE) {
@@ -133,19 +114,6 @@ yuiLabelDate = function(id, label=NULL, inline=TRUE) {
      textOutput(outputId=id, inline=TRUE)
   }
 }
-updLabelTime = function(epoch) {
-  if (missing(epoch)) epoch=as.numeric(Sys.time())
-  renderText({format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S")})
-}
-updLabelDate = function(epoch) {
-  if (missing(epoch)) epoch=as.numeric(Sys.time())
-  renderText({txt = format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S") })
-  # renderText({txt = format(as.POSIXct(epoch, origin="1970-01-01"),"%H:%M:%S")
-  #             HTML(paste0("<span style=\"text-align: right;\">", txt, "</span>"))
-  # })
-}
-
-
 yuiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
     shinyWidgets::switchInput( inputId = id
                 ,onLabel = onLbl ,offLabel = offLbl
@@ -164,11 +132,6 @@ yuiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
     selectInput(id,lbl,choice, size=size, selectize=FALSE,...)
-}
-
-updListBox = function(id, choices, selected=NULL, session=getDefaultReactiveDomain()) {
-    updateSelectInput(session, id, choices = choices, selected = selected)
-  #updateSelectInput(session, id, choices = as.list(choices), selected = selected)
 }
 
 # Copiadode TextArea
@@ -190,9 +153,6 @@ yuiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = 
         class = "form-control", placeholder = placeholder, style = style,
         rows = rows, cols = cols, value))
 }
-updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain()) {
-  updateTextAreaInput(session, id, label=label, value=text)
-}
 .updLabelNumber = function(value, text,bold,color) {
   if (bold) cls = paste(cls, "yata_number_bold")
   if (color) {
@@ -204,7 +164,4 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
 }
 yuiRadio = function(id, label=NULL, choices, selected=NULL) {
    shinyWidgets::awesomeRadio(id,label,choices,selected,inline = TRUE,checkbox = TRUE)
-}
-updRadio = function(id, selected=NULL) {
-   shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)
 }

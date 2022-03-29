@@ -31,10 +31,16 @@ class YATAShiny {
    set_page(data) {
        /* Called from shinyjs, data is an array */
 //       alert("SET PAGE " + data[0]);
+       if (this.#page !== undefined && this.#page.header !== undefined) {
+           jQuery(this.#page.header).toggleClass('yata_header_hide');
+       }
        this.#page = this.#panels.get(data[0]);
        if (this.#page  === undefined) return;
        this.#setSideIcons(this.#page.left,  "left");
        this.#setSideIcons(this.#page.right, "right");
+       if (this.#page.header !== undefined) {
+           jQuery(this.#page.header).toggleClass('yata_header_hide');
+       }
     }
    add_page(data) {
        // Called from shinyjs, data is an array
@@ -49,6 +55,7 @@ class YATAShiny {
             name:  name
            ,left:  0  // 0 - No hay, 1 - Open, -1 - Closed
            ,right: 0
+           ,header: undefined
        };
        let divBase = "#" + name + "_container";
        let div = divBase + "_left";
@@ -57,6 +64,13 @@ class YATAShiny {
        div = divBase + "_right";
        obj = jQuery(div);
        if (obj.length > 0) panel.right = -1;
+       div = divBase + "_header";
+       obj = jQuery(div);
+       if (obj.length > 0) {
+           panel.header = div;
+           $("#yata_page_header_right").append(.getElementById(div));
+       }
+
        this.#panels.set(name, panel);
        // this.set_page(name);
   }

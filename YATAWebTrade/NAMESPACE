@@ -1,1 +1,28 @@
+#import(utils)
+import(R6)
+import(tibble)
+import(rlist)
+import(stringr)
+# import(plyr)
+# import(tidyr)
+import(dplyr)
+
+# YATA
+import(YATABase)
+import(YATACore)
+import(YATAWebShiny)
+import(YATAWebCore)
+
+# suppressMessages(import(YATADT))
+
+# Shiny
+import(shiny)
+import(shinyjs)
+import(bslib)
+
+# Async
+#suppressMessages(import(jsonlite, warn.conflicts = FALSE))
+#suppressMessages(import(promises, warn.conflicts = FALSE))
+#suppressMessages(import(future,   warn.conflicts = FALSE))
+
 exportPattern("^[[:alpha:]]+")

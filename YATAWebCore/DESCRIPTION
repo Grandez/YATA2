@@ -9,8 +9,4 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Depends:
-    R               (>= 4.0)
-   ,shiny           (>= 1.6)
-   ,YATABase
-   ,YATACore        (>= 1.0) 
+imports: YATAWebShiny

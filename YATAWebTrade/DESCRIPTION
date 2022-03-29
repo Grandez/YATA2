@@ -9,3 +9,9 @@ Description: Main web page for YATA System
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+imports:  shiny
+         ,shinyjs
+         ,bslib
+         ,YATAWebShiny
+         ,YATAWebCore
+         ,dplyr

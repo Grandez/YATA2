@@ -1,5 +1,5 @@
 updateHistory = function(output=1, log=1) {
-    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/history.pid")
+    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/start_history.pid")
     batch   = YATABatch$new("History", output, log)
 
     if (file.exists(pidfile)) return (batch$rc$RUNNING)
@@ -35,7 +35,7 @@ updateHistory = function(output=1, log=1) {
             # Nada. Ignoramos errores de conexion, duplicates, etc
         })
    }
-    batch$logger$executed(rc, begin, "Retrieving history")
-    file.remove(pidfile)
+    batch$logger$executed(0, begin, "Retrieving history")
+    if (file.exists(pdifile)) file.remove(pidfile)
     invisible(batch$rc$OK)
 }

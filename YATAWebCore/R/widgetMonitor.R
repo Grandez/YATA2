@@ -89,7 +89,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
           dfc = dfc[,c("id", "icon")]
 
           dfs   = session$getLatest(0, dfc$id)
-          dfs   = left_join(dfc,dfs, by=c("id"))
+          dfs   = dplyr::left_join(dfc,dfs, by=c("id"))
 
           names = WEB$getCTCLabels(dfs$id, type="name")
           lapply(dfs$id, function(id) createMonitor(id, dfp, dfs, names))

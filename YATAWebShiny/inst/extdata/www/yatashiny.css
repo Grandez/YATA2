@@ -85,6 +85,9 @@
 .yata_side_hide {
   display: none;
 }
+.yata_header_hide {
+  display: none;
+}
 
 .yata_clickable:hover {
     cursor: pointer;
