@@ -1,0 +1,11 @@
+Package: YATAWebTrade
+Type: Package
+Title: YATA Trade Application
+Version: 0.1.0
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: Main web page for YATA System
+    This is the page to monitoring and operate con cryptocurrencies
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true

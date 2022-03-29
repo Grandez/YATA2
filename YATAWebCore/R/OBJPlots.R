@@ -64,7 +64,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
       ,getPlot = function() {
           if (!generated) generatePlot()
           #self$plot %>% layout(showlegend = FALSE)
-          self$plot %>% layout(showlegend = FALSE, autosize = TRUE, responsive = TRUE, width=900)
+          self$plot %>% layout(showlegend = FALSE, autosize = TRUE)
        }
        ,setObserver = function(observer) { private$info$observer = observer }
        ,setTitle    = function(title)    { private$title = title }
@@ -222,7 +222,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
             #  src = ifelse(is.missing(id), "A", info$plotly)
             p = plot_ly(source=id)
             p = config(p)
-            plotly::layout(p, autosize=TRUE, responsive = TRUE, width=900, legend = list(orientation = 'h'))
+            plotly::layout(p, autosize=TRUE, legend = list(orientation = 'h'))
         }
         ,trace = function(df, type, mode, name, ...) {
             if (!is.null(private$current$visible) && !private$current$visible) return (self$plot)
@@ -291,7 +291,7 @@ YATAPlot = R6::R6Class("YATA.PLOT"
                buttons = getSVGGroup()
                if (!is.null(buttons))       self$plot = plotly::config(plot, modeBarButtonsToAdd = buttons)
                if (!is.null(private$title))
-                   self$plot = plotly::layout(plot, autosize = TRUE, responsive = TRUE, width=900, title = private$title)
+                   self$plot = plotly::layout(plot, autosize = TRUE, title = private$title)
                private$generated = TRUE
            }
            private$generated
