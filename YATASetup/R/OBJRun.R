@@ -61,7 +61,7 @@ YATARUN = R6::R6Class("YATA.R6.RUN"
        }
        ,copy2web  = function(pkgs) {
            libuser = Sys.getenv("YATA_ROOT")
-           libweb  = Sys.getenv("R_LIBS_SHINY")
+           libweb  = paste0(Sys.getenv("YATA_SITE"), "/shiny")
            lapply(pkgs, function (pkg) {
                from = file.path(libuser, pkg)
                to   = file.path(libweb, pkg)
