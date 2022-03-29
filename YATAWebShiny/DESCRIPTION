@@ -1,4 +1,4 @@
-Package: YATAShiny
+Package: YATAWebShiny
 Type: Package
 Title: A PORT of JGGShiny
 Version: 0.1.0
