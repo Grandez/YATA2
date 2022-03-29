@@ -1,7 +1,0 @@
-## About
-
-En esta sección se detallan algunas de las decisiones de diseño, técnicas, etc. que se han tomado, asi como el porqué y sus alternativas.
-
-El objetivo es mantener la trazabilidad y ofrecer un mejor conocimiento del sistema, evitando "repensar" de manera repetida la solución a ciertos problemas.
-
-Por facilidad, cada decisión va en su propio archivo
