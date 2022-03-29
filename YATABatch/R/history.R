@@ -1,5 +1,5 @@
 updateHistory = function(output=1, log=1) {
-    pidfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/wrk/history.pid")
+    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/history.pid")
     batch   = YATABatch$new("History", output, log)
 
     if (file.exists(pidfile)) return (batch$rc$RUNNING)

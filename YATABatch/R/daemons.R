@@ -1,5 +1,5 @@
 startDaemons = function() {
-   work = paste0(Sys.getenv("YATA_SITE"), "/YATAData/wrk/")
+   work = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/")
 
    exec = YATAExec$new()
    resp = exec$R("start_tickers.R")

@@ -20,7 +20,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
              # ,tags$script(makeMessageHandler(YATAMSG$movePanel))
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
-      ,icons = paste0(Sys.getenv("YATA_SITE"), "/YATAExt/icons")
+      ,icons = paste0(Sys.getenv("YATA_SITE"), "/ext/icons")
       ,icons2 = normalizePath(system.file("extdata/www/icons", package = packageName()))
       ,img    = normalizePath(system.file("extdata/www/img", package = packageName()))
       ,yata   = normalizePath(system.file("extdata/www/yata", package = packageName()))

@@ -1,1 +1,0 @@
-YATABatch::updateHistory()

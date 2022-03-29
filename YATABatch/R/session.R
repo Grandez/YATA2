@@ -1,12 +1,12 @@
 # En lugar de esperar a tener todas las monedas vamos cargando bloque por bloque
 .add2database = function (df, session) {
     colnames = session$getColumnNames(colnames(df))
-    datafile = file.path(Sys.getenv("YATA_SITE"), "YATAData/tmp", session$getDBTableName())
+    datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp", session$getDBTableName())
     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
     datafile = paste0(datafile, ".dat")
 
     write.table(df, datafile, dec=".", sep=";", quote=FALSE, row.names = FALSE, col.names=FALSE)
-    res = YATAExec$new()$import(basename(datafile), "YATAData", colnames)
+    res = YATAExec$new()$import(basename(datafile), "data", colnames)
     file.remove(datafile)
 }
 .getSessionData = function(batch, last, max, session) {
@@ -62,12 +62,12 @@
 #     count = nrow(df)
 #
 #     colnames = session$getColumnNames(colnames(df))
-#     datafile = file.path(Sys.getenv("YATA_SITE"), "YATAData/tmp", session$getDBTableName())
+#     datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp", session$getDBTableName())
 #     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
 #     datafile = paste0(datafile, ".dat")
 #
 #     write.table(df, datafile, dec=".", sep=";", quote=FALSE, row.names = FALSE, col.names=FALSE)
-#     res = YATAExec$new()$import(basename(datafile), "YATAData", colnames)
+#     res = YATAExec$new()$import(basename(datafile), "eata", colnames)
 #     file.remove(datafile)
 #     count
 # }

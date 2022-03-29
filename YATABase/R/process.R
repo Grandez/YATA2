@@ -72,8 +72,8 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
        }
       ,R = function(script, async = TRUE) {
          site = Sys.getenv("YATA_SITE")
-         root = paste0(site,"/YATAExt/scripts/")
-         log =  paste0(site,"/YATAData/log/")
+         root = paste0(site,"/ext/scripts/")
+         log =  paste0(site,"/data/log/")
 
          rscript = paste0(root, script)
          script  = substr(script,1, nchar(script) - 1)
@@ -92,7 +92,7 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
       }
       # DataBases
        ,import = function(file, database, columns) {
-            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/YATAData/tmp")
+            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/data/tmp")
             args = list( "--local"
                         , "--replace"
                         ,"--fields-terminated-by=;"
@@ -105,7 +105,7 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
            .run("mysqlimport", args)
        }
        ,backup = function(database, filename) {
-            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/YATAData/tmp")
+            private$.wd = paste0(Sys.getenv("YATA_SITE"), "/data/tmp")
             args = list( "--local"
                         , "--replace"
                         ,"--fields-terminated-by=;"

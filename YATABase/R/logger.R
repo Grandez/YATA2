@@ -162,9 +162,9 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        }
 
        ,.setLogFile = function() {
-          logfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/log/yata.log")
+          logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/yata.log")
           if (private$modname == "WEB")
-              logfile = paste0(Sys.getenv("YATA_SITE"), "/YATAData/log/web.log")
+              logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/web.log")
           private$logFile = logfile
        }
        ,.mountMessage = function(fmt, ...) {
