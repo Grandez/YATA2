@@ -32,6 +32,10 @@ guiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
 }
+updComboSelect = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
+    shiny::updateSelectizeInput(session=session, inputId=id, choices = choices, selected = selected, server=TRUE)
+}
+
 guiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
     lbl = NULL
     choice = c("")

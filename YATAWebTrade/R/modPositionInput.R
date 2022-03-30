@@ -55,7 +55,7 @@ modPosInput = function(id, title) {
     )
     main = tagList( guiRow(id=ns("monitor"), class="yata_monitors"), wdgLayout$getBody(blocks))
 
-    header = tagList(btnIcon(id=ns("btnRefresh"), shiny::icon("sync")))
+    #header = tagList(btnIcon(id=ns("btnRefresh"), shiny::icon("sync")))
 
-    list(left=left, main=main, right=NULL, header=header)
+    list(left=left, main=main, right=NULL, header=NULL)
 }
