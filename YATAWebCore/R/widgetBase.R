@@ -154,6 +154,7 @@ yuiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = 
         rows = rows, cols = cols, value))
 }
 .updLabelNumber = function(value, text,bold,color) {
+    cls=""
   if (bold) cls = paste(cls, "yata_number_bold")
   if (color) {
      col = if(value > 0) cls = paste(cls, "yata_number_pos")

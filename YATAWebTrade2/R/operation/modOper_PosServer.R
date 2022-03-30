@@ -11,7 +11,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            ,cameras    = NULL
            ,plot       = NULL
            ,nextAction = NULL
-           ,action     = NULL
+           ,action     = NULL 
            ,info = list(
                 observer = "modebar"
                ,id   = "plotOpen"
@@ -44,18 +44,18 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            invisible(self)
         }
 #        ,selectOperation = function(info, status) {
-        ,selectOperation = function(row, status) {
+        ,selectOperation = function(row, status) {            
             # self$action = info$action
             # row = info$row
-
+            
             if (status == 0) private$selected = self$data$dfPending [row, "id"]
             if (status == 1) private$selected = self$data$dfAccepted[row, "id"]
             if (status == 2) private$selected = self$data$dfOpen    [row, "id"]
-
+             
             name = self$codes$xlateStatus(status)
             self$operations$select(private$selected)
             self$cameras$select(self$operations$current$camera)
-
+               
             self$data        = list.merge(self$data, self$operations$current)
             self$data$camera = self$cameras$current
             self$data$names = list()
@@ -72,14 +72,14 @@ modOperPosServer = function(id, full, pnlParent, parent) {
             df$value = df$price * df$amount
 
             last = self$session$getLast()
-
+      
             if (is.null(last)) {
                 df = add_column(df, act   = 0, .after = "price")
                 df = add_column(df, var   = 0, .after = "act")
             } else {
                 dfl = last[,c("symbol", "price")]
                 colnames(dfl) = c("currency", "act")
-                df = dplyr::left_join(df, dfl, by="currency")
+                df = left_join(df, dfl, by="currency")
                 df$var = (df$act / df$price) - 1
                 df = df[,c("camera", "currency","amount","price", "act", "var", "target", "stop", "deadline")]
             }
@@ -93,7 +93,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
             cameras = WEB$getCameraNames(unique(df$camera))
             df$camera = cameras[df$camera]
       # df$cost = df$price
-      #
+      # 
       # for (idx in 1:nrow(df)) {
       #      cc = df[idx, "counter"]
       #      if (!is.null(last[[cc]])) df[idx, "price"] = last[[cc]]$price
@@ -102,7 +102,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       # df$balance = df$delta * df$cost * df$amount
       # df = df[,c("camera", "counter", "amount", "cost", "price", "delta", "value", "balance")]
             self$data$tblOpen = df
-
+            
              # btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
              #          ,yuiTblButton(full, table, "View", yuiBtnIconView())
              # )
@@ -112,7 +112,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                                ,buttons = list(btnClose=yuiBtnIconCash(), btnView=yuiBtnIconView())
                               )
               tblDef$df = df
-
+            
             tblDef
         }
         ,prepareNotOpen = function (df) {
@@ -127,14 +127,14 @@ modOperPosServer = function(id, full, pnlParent, parent) {
             df
         }
 
-       ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }
+       ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }            
      )
       ,private = list(
           selected = NULL
         ,definition = list(id = "", left=0, right=0, son=NULL, submodule=TRUE)
       )
    )
-
+   
    moduleServer(id, function(input, output, session) {
       pnl = WEB$getPanel(full)
       if (is.null(pnl)) pnl = WEB$addPanel(PNLPosOper$new(full, pnlParent, session))
@@ -152,9 +152,9 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            # ,tblBest   = getReactableState("tblBest", "selected")
            # ,tblTop    = getReactableState("tblTop", "selected")
            # ,tblFav   = getReactableState("tblFav", "selected")
-           #
+           # 
        )
-
+      
        updateLeftSide = function() {
           updCombo("cboUp",   selected = pnl$vars$layout[1])
           updCombo("cboDown", selected = pnl$vars$layout[2])
@@ -166,7 +166,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           YATAFormClose()
           loadHistory()
           renderData()
-      }
+      }       
       renderPlot = function(df, symbol) {
          if (!is.data.frame(df)) {
              message("ha ido mal 3")
@@ -176,7 +176,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          # browser()
          # output$plotOpen = updPlot(pnl$plot, "plotOpen") # %>% event_register("plotly_legendclick") %>%
       }
-
+      
        ###########################################################
        ### Reactives
        ###########################################################
@@ -193,7 +193,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
        observeEvent(flags$opView, ignoreInit = TRUE, {
            browser()
        })
-
+      
       observeEvent(input$tableOpen, {
           if (!str_starts(input$tableOpen$colName, "btn")) return()
           pnl$vars$row = pnl$selectOperation(input$tableOpen$row, pnl$codes$status$executed)
@@ -201,7 +201,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           if (input$tableOpen$colName == "btnView")  flags$opView  = isolate(!flags$opView)
       })
 
-#       renderPlot = function(symbol) {
+#       renderPlot = function(symbol) { 
 #           if (missing(symbol)) {
 #               return (NULL)
 #           }
@@ -217,8 +217,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       ######################################################
       ### REST                                          ###
       #####################################################
-# Los eventos aqui
-# https://plotly-r.com/linking-views-with-shiny.html#shiny-plotly-inputs
+# Los eventos aqui                  
+# https://plotly-r.com/linking-views-with-shiny.html#shiny-plotly-inputs                  
 
        getHistorical = function(symbol,since) {
            id = WEB$getCTCID(symbol)
@@ -231,20 +231,21 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                          if (is.data.frame(df)) renderPlot(df, symbol)
                          }, function(err)    {
                           WEB$log$message("hist resp: %d - %s - %s", id,from,to)
+                          browser()
                           message("ha ido mal 3") ; message(err)
                       })
         }
-
+      
       renderOpen = function(table) {
 
-         if (nrow(pnl$data$dfOpen) == 0) return()
+         if (nrow(pnl$data$dfOpen) == 0) return() 
           makejs = function(table) {
              stmt = paste0( "function(rowInfo, colInfo) { "
                            ,"yataTableclick('", ns2(table), "', rowInfo, colInfo)}" )
-             JS(stmt)
+             JS(stmt) 
           }
           data = pnl$prepareOpen()
-
+          
              table = "open"
              btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
                       ,yuiTblButton(full, table, "View", yuiBtnIconView())
@@ -252,14 +253,14 @@ modOperPosServer = function(id, full, pnlParent, parent) {
 #             dfb = yataDTButtons(df, btns)
 
              # opts = list(sortable=FALSE
-             #
+             #     
              #     ,types = list(dat = c("Deadline"), prc = c("Var"), btn=c(ncol(dfb)))
              #    ,color = list( var = c("Var")
              #                  ,date = c("Deadline")
              #                   )
              # )
              # df2 = cbind(df, close=NA, view=NA)
-             #
+             # 
              # cols = list(
              #      close = colDef(name="", sortable=FALSE, cell = function() yuiBtnIconCash("Close"))
              #     ,view  = colDef(name="", sortable=FALSE, cell = function() yuiBtnIconView("View"))
@@ -275,7 +276,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
 
 #             output$tblOpen = renderReactable(reactable(df2, columns=cols, onClick=makejs("btnTableOpen")
 
-             output$tblOpen = updTable(data)
+             output$tblOpen = updTable(data) 
                  # , onClick=JS("function(rowInfo, colInfo) {
                  #                  window.alert('Details for row ' + rowInfo.index + ':\\n'
                  #                 + JSON.stringify(rowInfo.row, null, 2))
@@ -297,7 +298,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
                        ,yuiTblButton(full, table, "Cancel",   yuiBtnIconDel()))
              df = yataDTButtons(df, btns)
              output$tblPending = yataDFOutput({df}, type='operation')
-
+         
       }
       renderAccepted = function() {
          if (nrow(pnl$data$dfAccepted) == 0) {
@@ -311,17 +312,17 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          btns = c(yuiTblButton(full, table, "Executed", yuiBtnIconCloud("Executed")))
          df = yataDTButtons(df, btns)
          output$tblAccepted = yataDFOutput({df}, type='operation')
-      }
+      } 
      showBoxes = function() {
          .show = function(cond, obj) {if (cond) shinyjs::show(obj) else shinyjs::hide(obj) }
          .show(nrow(pnl$data$dfOpen)     == 0, "noOpen")
          .show(nrow(pnl$data$dfPending)  == 0, "noPending")
          .show(nrow(pnl$data$dfAccepted) == 0, "noAccepted")
          .show(nrow(pnl$data$dfPending)  == 0 && nrow(pnl$data$dfAccepted) == 0, "divPend")
-     }
+     } 
      renderData = function() {
         renderOpen()
-        showBoxes()
+        showBoxes() 
         renderPending()
         renderAccepted()
      }
@@ -342,22 +343,23 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          if (pnl$vars$nextAction == pnl$codes$status$executed) title = WEB$MSG$title("OPER.EXECUTE")
          if (pnl$vars$nextAction == pnl$codes$status$rejected) title = WEB$MSG$title("OPER.REJECT")
          if (pnl$vars$nextAction == pnl$codes$status$closed)   title = WEB$MSG$title("OPER.CLOSE")
-
+         
          output$formLblOper    = updLabelText( title )
          output$formLblCamera  = updLabelText( pnl$data$names$camera  )
          output$formLblBase    = updLabelText( pnl$data$names$base    )
          output$formLblCounter = updLabelText( pnl$data$names$counter )
 
-         updNumericInput("ImpAmount", value=pnl$data$amount)
+         updNumericInput("ImpAmount", value=pnl$data$amount) 
          if (pnl$vars$nextAction == pnl$codes$status$closed) {
-             updNumericInput("formImpPrice",  value=pnl$data$act)
+             updNumericInput("formImpPrice",  value=pnl$data$act) 
              updateSelectInput(session=session, inputId="formcboReasons", choices = pnl$cboReasons(DBParms$reasons$close), selected=0)
          } else {
-           updNumericInput("ImpPrice",  value=pnl$data$price)
+           updNumericInput("ImpPrice",  value=pnl$data$price)     
          }
-
+                  
       }
       observeEvent(input$btnTablePending, {
+          browser()
           WEB$log$beg("Table Pending")
           pnl$selectOperation(input$btnTablePending, pnl$codes$status$pending)
           if (pnl$action == "accept") {
@@ -383,6 +385,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           WEB$log$end("Table Pending")
       }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTableAccepted, {
+           browser()
           WEB$log$beg("Table Accepted")
           pnl$selectOperation(input$btnTableAccepted, pnl$codes$status$accepted)
           pnl$vars$nextAction = pnl$codes$status$executed
@@ -392,13 +395,14 @@ modOperPosServer = function(id, full, pnlParent, parent) {
           WEB$log$end("Table Accepted")
        }, ignoreInit = TRUE, ignoreNULL = TRUE)
        observeEvent(input$btnTable, {
+         browser()
           # me devuelve: tabla - operacion - fila
           data = strsplit(toLower(input$btnTable), "-")[[1]]
       #   showModal(modalDialog(
       #   title = "Important message",
       #   "This is an important message!"
       # ))
-
+        
         id = pnl$getOperationID(data[1], as.integer(data[3]))
 
       # selectedRow <- as.numeric(strsplit(input$select_button, "_")[[1]][2])
@@ -451,7 +455,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
      #################################################
      ### Panel Izquierdo
      #################################################
-
+    
       observeEvent(input$cboUp, {
          session$sendCustomMessage('yataShowBlock',list(ns=full,row=1,col=0,block=input$cboUp))
       }, ignoreNULL = TRUE)
