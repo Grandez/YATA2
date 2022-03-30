@@ -90,6 +90,8 @@ moduleServer(id, function(input, output, session) {
           updNumericInput("impFee"   , value=0)
           updNumericInput("impGas"   , value=0)
           updTextArea("comment", "")
+          # Si es una venta puede ser que no queden monedas
+          if (!pnl$vars$buy) updateCboCurrency()
 #          yataMsgReset()#
       }
 
@@ -271,8 +273,7 @@ moduleServer(id, function(input, output, session) {
          if (data$amount == 0) data$amount = input$impValue  / input$impPrice
          if (data$value  == 0) data$value  = input$impAmount * input$impPrice
 
-         # Pares son compras. sale de Base y va a counter
-         if ((as.integer(input$cboOper) %% 2) == 0) {
+         if (pnl$vars$buy) {
              data$base      = pnl$fiat
              data$counter   = input$cboCurrency
              data$ctcIn     = data$amount
