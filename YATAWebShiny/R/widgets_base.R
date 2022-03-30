@@ -3,8 +3,8 @@ guiTitle = function(level, txt, ...) {
   eval(parse(text=paste0("h", level, "(class='yata_title_", level, "', '", data, "')")))
 }
 
-guiRow = function(id=NULL, style=NULL, class=NULL, ...) {
-  tags$div(id=id,style=style,class=c("row", class),...)
+guiRow = function(...) {
+  tags$div(class="row yata_fluid_row", ...)
 }
 guiColumn = function(width, ...) {
     if (!is.numeric(width) || (width < 1) || (width > 12)) stop("column width must be between 1 and 12")
@@ -41,11 +41,11 @@ guiListBox = function( id, label=NULL, choices=NULL, size=10, ...) {
     choice = c("")
     if (!is.null(label))   lbl    = label
     if (!is.null(choices)) choice = choices
-    selectInput(id,lbl,choice, size=size, selectize=FALSE,...)
+    shiny::selectInput(id,lbl,choice, size=size, selectize=FALSE,...)
 }
 
 updListBox = function(id, choices, selected=NULL, session=getDefaultReactiveDomain()) {
-    updateSelectInput(session, id, choices = choices, selected = selected)
+    shiny::updateSelectInput(session, id, choices = choices, selected = selected)
 }
 guiNumericInput = function(id, label=NULL, value=0, step, min, max) {
   st = NA ; if (!missing(step)) st=step
@@ -87,6 +87,9 @@ guiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = 
         tags$label(label, `for` = inputId), tags$textarea(id = inputId,
         class = "form-control", placeholder = placeholder, style = style,
         rows = rows, cols = cols, value))
+}
+updTextInput = function(id, text, label=NULL, session=getDefaultReactiveDomain()) {
+  updateTextInput(session, id, label=label, value=text)
 }
 updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain()) {
   updateTextAreaInput(session, id, label=label, value=text)

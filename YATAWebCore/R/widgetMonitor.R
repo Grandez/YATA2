@@ -66,7 +66,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
               mon$session = mon$price
               if (!is.null(dfPos)) {
                   pos         = dfPos[dfPos$id == id,]
-                  mon$cost    = ifelse(nrow(pos) > 0,pos[1,"value"], mon$price)
+                  mon$cost    = ifelse(nrow(pos) > 0,pos[1,"value"], "N/A")
               }
               else {
                   mon$cost = mon$price
@@ -187,7 +187,8 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
 
     ,updateMonitor = function(mon, last) {
         idMon = paste0(substr(idDiv, 2, nchar(idDiv)), "_", last$symbol, "_")
-        vcost = ((last$price / mon$cost)    - 1) * 100
+
+        vcost = ifelse(is.numeric(mon$cost), ((last$price / mon$cost)    - 1) * 100, mon$cost)
         vsess = ((last$price / mon$session) - 1) * 100
 
         updateRow(paste0(idMon,"cost_delta"),    mon$cost,    vcost,      TRUE)
@@ -222,7 +223,11 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
              if (old < act) shinyjs::addCssClass(id, class = clsUp   , asis = TRUE)
              if (old > act) shinyjs::addCssClass(id, class = clsUp   , asis = TRUE)
          }
-         txt = ifelse (prc, base$str$percentage2string(act / 100), base$str$number2string(act))
+         txt = act
+         if (is.numeric(act)) {
+             txt = ifelse (prc, base$str$percentage2string(act / 100), base$str$number2string(act))
+         }
+
          shinyjs::html(id, html = txt, asis = TRUE)
      }
 

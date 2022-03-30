@@ -17,16 +17,14 @@ OBJBlog = R6::R6Class("OBJ.BLOG"
           data$id
        }
       ,select = function(idBlog) {
-          private$selected = FALSE
           df = tblBlog$table(id=idBlog)
-          if (nrow(df) > 0) {
+          self$current = NULL
+          if (nrow(df) > 0) { # Solo hay uno
               self$current = as.list(df[1,])
               self$current$type = names(which(DBDict$blog == self$current$type))
-              private$selected = TRUE
           }
           invisible(self)
       }
-
     )
     ,private = list(
         tblBlog = NULL

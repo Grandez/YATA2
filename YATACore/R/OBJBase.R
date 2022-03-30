@@ -11,10 +11,6 @@ OBJBase = R6::R6Class("OBJ.BASE"
        ,codes    = NULL
        ,db       = NULL
        ,print      = function() { message("This is an abstract class")}
-       ,log     = function(txt, ...) {
-           data = sprintf(txt, ...)
-           writeLines(paste(Sys.time(), data, sep="-"))
-       }
        ,initialize = function(Factory) {
            self$parms = Factory$parms
            self$db    = Factory$getDB()

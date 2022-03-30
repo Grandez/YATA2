@@ -64,13 +64,14 @@ class YATAShiny {
        div = divBase + "_right";
        obj = jQuery(div);
        if (obj.length > 0) panel.right = -1;
+/*JGG Pendiente
        div = divBase + "_header";
        obj = jQuery(div);
        if (obj.length > 0) {
            panel.header = div;
            $("#yata_page_header_right").append(.getElementById(div));
        }
-
+*/
        this.#panels.set(name, panel);
        // this.set_page(name);
   }

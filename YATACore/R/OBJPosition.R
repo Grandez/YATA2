@@ -52,11 +52,14 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            # list(total = sum(cIn$amount), reimb=sum(cOut$amount) * -1, invest=sum(inv$balance * inv$priceBuy))
 list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
       }
-       ,getHistoryCurrencies = function() {
+       ,getCurrenciesHistory = function() {
          df = tblPosition$table()
-         df = df[!df$currency == "$FIAT",]
-         df = df %>% group_by(currency) %>% summarise(currency, min(since))
-         colnames(df) = c("symbol", "since")
+         df = df[!df$currency == Factory$fiat,]
+         if(nrow(df) == 0) return (df)
+         df = df %>% group_by(currency) %>%
+                     summarise(currency, balance=mean(balance), available=mean(available)
+                                       , buy=mean(buy),         sell=mean(sell)
+                                       , profit=mean(profit))
          df
       }
        ,getRegularizations = function() { tblPosition$getRegularizations() }

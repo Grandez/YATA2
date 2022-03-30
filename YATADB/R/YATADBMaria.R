@@ -146,8 +146,12 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
       ,base      = NULL
       ,SQL_LOCK  = 1205
       ,getConn   = function(isolated=FALSE) {
-         if (isolated) return (begin())
-         private$connRead
+         conn = private$connRead
+         if (isolated) {
+             begin()
+             conn = private$connTran
+         }
+         conn
       }
       ,getSQLCode = function (cond) {
           # Los codigos van al final del mensaje [nnnnn]

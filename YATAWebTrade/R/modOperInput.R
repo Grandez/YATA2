@@ -6,12 +6,13 @@ modOperInput = function(id, title) {
          ,tabPanel(WEB$MSG$get("MNU.OPER"),       value=ns("mov"),  YATAModule(ns("mov")))
          ,tabPanel(WEB$MSG$get("MNU.XFER"),       value=ns("xfer"), YATAModule(ns("xfer")))
          ,tabPanel(WEB$MSG$get("MNU.REGULARIZE"), value=ns("reg"),  YATAModule(ns("reg")))
-         # 
+         ,tabPanel(WEB$MSG$get("MNU.HISTORY"),    value=ns("hist"), YATAModule(ns("hist")))
+         #
          # ,tabPanel("cerrada",     value=ns("detail"),   tags$div(id=ns("detail"), YATAModule(ns("detail"))))
          # ,tabPanel("",   value="detail",    YATAModule(ns("detail")))
          ,tabPanel("",   value=ns("dummy"),     "")
       )
 
     )
-    list(left=NULL, main=main, right=NULL)        
+    list(left=NULL, main=main, right=NULL)
 }

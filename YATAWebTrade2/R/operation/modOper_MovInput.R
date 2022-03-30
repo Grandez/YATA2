@@ -1,18 +1,20 @@
+#TODO cambiar fluidRow por guiRow jode la pagina
+#     No se por que
 modOperMovInput = function(id, title) {
   ns = YATANS(id)
   labels = c(
-      WEB$getMsg("TXT.BID")       
-     ,WEB$getMsg("TXT.ASK")       
-     ,WEB$getMsg("TXT.BUY")       
-     ,WEB$getMsg("TXT.SELL")      
-     ,WEB$getMsg("TXT.OPEN.POS")  
-     ,WEB$getMsg("TXT.CLOSE.POS") 
-      
+      WEB$getMsg("TXT.BID")
+     ,WEB$getMsg("TXT.ASK")
+     ,WEB$getMsg("TXT.BUY")
+     ,WEB$getMsg("TXT.SELL")
+     ,WEB$getMsg("TXT.OPEN.POS")
+     ,WEB$getMsg("TXT.CLOSE.POS")
+
   )
   # Match against YATACodes$oper
   operTypes = list(10, 11, 20, 21, 30, 31)
   names(operTypes) = labels
-  
+
   main = tagList(
       br()
      ,fluidRow( guiColumn(2)
@@ -81,7 +83,7 @@ modOperMovInput = function(id, title) {
            )
 
             )
-     )  
+     )
     ,fluidRow(guiColumn(2), guiColumn(4, h2("Notas")))
     ,fluidRow(guiColumn(2), guiColumn(7, guiTextArea(ns("comment"), label=NULL, cols="200", rows="10")))
     ,fluidRow(guiColumn(2), guiColumn(6, yuiYesNo(id=ns("tpl"), "Procesar", "Cancelar")))

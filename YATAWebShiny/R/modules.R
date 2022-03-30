@@ -30,7 +30,7 @@ YATAModule = function(id, title="",mod=NULL, ...) {
                       ,tags$div(id=paste0(idErr, "_container"), class="yata_form_center", uiOutput(ns("err")))
                      )
 
-   tagList( left=divLeft, main=divMain, right=divRight, header=data$header
+   tagList( left=divLeft, main=divMain, right=divRight #, header=data$header
            ,form=shinyjs::hidden(divForm)
            ,err=shinyjs::hidden(divErr)
    )

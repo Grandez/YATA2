@@ -14,7 +14,7 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
                self$currencies = self$factory$getObject("Currencies")
            }
           ,getCurrencies = function() {
-              self$makeCombo(self$currencies$getCurrencyNames()) 
+              self$makeCombo(self$currencies$getCurrencyNames())
            }
           ,createPost = function(input) {
              data = list()
@@ -29,23 +29,23 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
               self$blog$select(self$vars$id)
               self$data$current = self$blog$current
               self$data$current
-          }    
+          }
          ,getCurrencyIcon = function(symbol) {
              self$currencies$select(symbol = symbol)$current$icon
-         }    
+         }
         )
        ,private = list(
           definition = list(id = "",left = -1, right=-1)
         )
-   ) 
+   )
 moduleServer(id, function(input, output, session) {
    pnl = WEB$getPanel(id)
    if (is.null(pnl)) pnl = WEB$addPanel(PNLBlog$new(id, pnlParent, session, NS(id)))
-        
+
        reset = function() {
           output$msg = renderText({""})
-          updTextArea(ns("title"), "")
-          updTextArea(ns("summary"), "")
+#JGG Revisar not found          updTextInput(ns("title"), "")
+          #updTextArea(ns("summary"), "")
           updTextArea(ns("comment"), "")
        }
        validate = function() {
@@ -70,14 +70,14 @@ moduleServer(id, function(input, output, session) {
            if (data$type == "currency") data$ico = paste0("icons/", pnl$getCurrencyIcon(data$target))
            if (data$type == "all")      data$ico = "img/notepad.png"
            if (data$type == "note")     data$ico = "img/postit.png"
-           
-           insertUI(paste0("#", ns("posts")), where="afterBegin", yuiPost(data), immediate=TRUE)           
+
+           insertUI(paste0("#", ns("posts")), where="afterBegin", yuiPost(data), immediate=TRUE)
               # tags$td(rowspan="6", class="yata_cell_icon",
               #        img( src=paste0("icons/", data$id, ".png")
               #            ,width  = YATAWEBDEF$iconSize
               #            ,height = YATAWEBDEF$iconSize,
               #        onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$icon, ";")))
-           
+
            # Aqui definimos si debe ser con boton o sin boton
 #   userPost(
 #     id = 2, image=NULL,
@@ -90,9 +90,9 @@ moduleServer(id, function(input, output, session) {
 #       userPostTagItem(dashboardLabel("item 2", status = "danger"), side = "right")
 #     )
 #   )
-           
+
        }
-#JGG FALTA EL PAQUETE       
+#JGG FALTA EL PAQUETE
     # item = accordionItem(
     #   id = 1,
     #   title = "Creado",
@@ -100,23 +100,21 @@ moduleServer(id, function(input, output, session) {
     #   collapsed = FALSE,
     #   "Creo un item"
     # )
-      
-    observeEvent(input$cboApply, ignoreNULL = TRUE, { 
+
+    observeEvent(input$cboApply, ignoreNULL = TRUE, {
       updateCboTarget(input$cboApply) })
     observeEvent(input$btnOK, {
        if (validate()) return()
        pnl$vars$id = pnl$createPost(input)
        if (hasToPrint()) addPost()
        reset()
-#          insertUI(paste0("#", ns("data")), where="afterBegin", item, immediate=TRUE)
-    })  
-    observeEvent(input$btnKO, { reset()
-    })  
+    })
+    observeEvent(input$btnKO, { reset() })
     observeEvent(input$btnView, {
        # browser()
           insertUI(paste0("#", ns("data")), where="afterBegin", item, immediate=TRUE)
-    })  
-    
+    })
+
     observeEvent(input$cboFilter, {
       #browser()
     })
@@ -124,8 +122,8 @@ moduleServer(id, function(input, output, session) {
             #browser()
         })
     })
-}    
-# 
+}
+#
 # box(
 #   title = "Accordion Demo",
 #   width = NULL,

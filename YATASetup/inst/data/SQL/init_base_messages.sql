@@ -47,7 +47,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "ERR.NO.DATA"
 -- -------------------------------------------------------------------------------------------------------
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.OPERATION"        ,"XX", "XX"     , "Operar"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.OPERATION"        ,"XX", "XX"     , "Operacion"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.ANALYSIS"         ,"XX", "XX"     , "Analisis"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "PNL.LOG"              ,"XX", "XX"     , "Log"                                         );
@@ -57,6 +57,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.POSITION
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.OPER"             ,"XX", "XX"     , "Operar"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.XFER"             ,"XX", "XX"     , "Transferir"                                  );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.REGULARIZE"       ,"XX", "XX"     , "Regularizacion"                              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "MNU.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.CURRENCIES"     ,"XX", "XX"     , "Monedas"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "TITLE.PLOTS"          ,"XX", "XX"     , "Graficos"                                    );

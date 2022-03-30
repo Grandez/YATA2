@@ -9,6 +9,7 @@ DROP TABLE  IF EXISTS PARMS CASCADE;
 CREATE TABLE PARMS  (
     GRUPO    INTEGER     NOT NULL -- Grupo, no usamos GROUP para evitar problemas de nombres
    ,SUBGROUP INTEGER     NOT NULL -- Parametro
+   ,BLOCK    INTEGER     DEFAULT 0
    ,ID       INTEGER     NOT NULL -- Parametro
    ,TYPE     TINYINT     NOT NULL -- Tipo de parametro
    ,NAME     VARCHAR(32) NOT NULL

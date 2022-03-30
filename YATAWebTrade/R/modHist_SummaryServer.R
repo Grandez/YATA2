@@ -18,14 +18,13 @@ modHistSummServer = function(id, full, pnlParent, parent) {
                self$data$texts = list()
            }
            ,loadData = function() {
-               
               df   = self$position$getGlobalPosition(TRUE)
-              self$data$dfGlobal = df[df$currency != "EUR",]
-              
+              self$data$dfGlobal = df[df$currency != self$factory$fiat,]
+
               df = self$operations$getOperations()
-              df = df[df$camera != "XFER",]
+              df = df[df$camera != self$factory$fiat,]
               self$data$dfOper = df
-              
+
            }
      )
       ,private = list(
@@ -35,15 +34,13 @@ modHistSummServer = function(id, full, pnlParent, parent) {
              df$counter = self$data$texts$counters[df$counter]
              df$camera = self$data$texts$cameras[df$camera]
              df
-         }    
+         }
 
       )
    )
    moduleServer(id, function(input, output, session) {
-      YATAWEB$beg("modHist_Summary")
-
-      pnl = YATAWEB$getPanel(id)
-      if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHistSumm$new(full, pnlParent, session))
+      pnl = WEB$getPanel(id)
+      if (is.null(pnl)) pnl = WEB$addPanel(PNLHistSumm$new(full, pnlParent, session))
 
       flags = reactiveValues(
           refresh = FALSE
@@ -71,47 +68,44 @@ modHistSummServer = function(id, full, pnlParent, parent) {
        ###########################################################
 
        observeEvent(flags$refresh, ignoreInit = TRUE, {
-           YATAWEB$beg("flags$refresh")
            df = pnl$data$dfGlobal
            dfs = (df$priceSell / df$priceBuy) - 1
-           YATAWEB$end("flags$refresh")
-       })       
+       })
       refresh = function() {
-           YATAWEB$beg("flags$refresh")
+           browser()
            df = pnl$data$dfGlobal
-           dfr = data.frame(currency=df$currency, revenue=((df$priceSell / df$priceBuy) - 1) * 100)
-           plot = YATAPlot$new("revenue", type="Bar", data=dfr)
+           plot = YATAPlot$new("revenue", type="Bar", data=df[,c("currency","profit")])
            output$plotRevenue = plot$render()
            # El otro grafico
            # Por cada dia, el saldo en eur, el valor, y el resultado
-           renderPie()
-           renderRevenue()
-           YATAWEB$end("flags$refresh")
-          
+#JGG       renderPie()
+#JGG       renderRevenue()
+
       }
 #       headerClosed = htmltools::withTags(table(class = 'display', thead(
 #          tr( th(colspan = 2, class="yata_dt_header_false", '')
 #             ,th(colspan = 2, class="yata_dt_header", 'In')
 #             ,th(colspan = 2, class="yata_dt_header", 'Real')
 #             ,th(colspan = 2, class="yata_dt_header", 'Out')
-#             ,th(colspan = 2, class="yata_dt_header_false", ' ') 
+#             ,th(colspan = 2, class="yata_dt_header_false", ' ')
 #          )
 #         ,tr( th('Camera'),th('Counter')
 #             ,th('Amount'),th('Price'),th('Amount'),th('Price'),th('Amount'),th('Price')
 #             ,th('Revenue'),th('Profit'))
-#       )))      
-# 
+#       )))
+#
       if (!pnl$loaded) {
+          browser()
           pnl$loadData()
           flags$refresh = isolate(!flags$refresh)
-          
+
           refresh()
           pnl$loaded = TRUE
       }
 #       opts = list(sortable=FALSE)
 #       output$tblDetClosed = yataDFOutput(pnl$prepareClosed(), header= headerClosed, opts=opts, type="operation")
 #       output$tblDetExec   = yataDFOutput(pnl$prepareExec(input),   type="operation")
-#  
+#
 #       isolate({
 #        observeEvent(input$tblDetClosed_cell_clicked, {
 #            # se generan varios clicks. no se por que
@@ -125,17 +119,16 @@ modHistSummServer = function(id, full, pnlParent, parent) {
 #           # idl = paste("detail", item$id, sep="_")
 #           # insertTab( "pnlOpType",tabPanel(lbl,value=idl, tags$div(id= sub(id, item$id,full)))
 #           #               ,"oper-hist", position="after", select=TRUE, session=parent)
-#           updateTabsetPanel(parent, "pnlOpType", selected = "oper-detail")          
+#           updateTabsetPanel(parent, "pnlOpType", selected = "oper-detail")
 #        }, ignoreInit = TRUE, ignoreNULL = TRUE)
-#           
+#
 #       })
-#            
-#       observeEvent(input$chkCancelled, { 
-#          output$tblDetExec = yataDFOutput(pnl$prepareExec(input),   type="operation") 
+#
+#       observeEvent(input$chkCancelled, {
+#          output$tblDetExec = yataDFOutput(pnl$prepareExec(input),   type="operation")
 #       }, ignoreInit = TRUE)
 #       observeEvent(input$chkSon, {
-#          output$tblDetExec = yataDFOutput(pnl$prepareExec(input),   type="operation") 
+#          output$tblDetExec = yataDFOutput(pnl$prepareExec(input),   type="operation")
 #       }, ignoreInit = TRUE)
-       YATAWEB$end("modHist_Summary")
    })
 }
