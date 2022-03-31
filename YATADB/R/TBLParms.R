@@ -119,6 +119,7 @@ TBLParameters = R6::R6Class("TBL.PARMS"
           ,fields = list(
                group     = "GRUPO"
               ,subgroup  = "SUBGROUP"
+              ,block     = "BLOCK"
               ,id        = "ID"
               ,type      = "TYPE"
               ,name      = "NAME"

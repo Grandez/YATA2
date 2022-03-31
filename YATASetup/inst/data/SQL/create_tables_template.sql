@@ -229,7 +229,7 @@ CREATE TABLE FAVORITES  (
     ID_FAV   INTEGER       DEFAULT 0
    ,SYMBOL   VARCHAR(64)   NOT NULL 
    ,PRTY     INTEGER       DEFAULT 1  -- Orden de insercion
-   ,PRIMARY KEY ( ID, PRTY DESC )
+   ,PRIMARY KEY ( ID_FAV, PRTY DESC )
 );
 
 -- Tabla de alertas
@@ -244,7 +244,7 @@ CREATE TABLE ALERTS     (
    ,ACTIVE   TINYINT           DEFAULT 1  -- Flag
    ,TMS      TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
                         ON UPDATE CURRENT_TIMESTAMP          -- Ultima actualizacion
-   ,PRIMARY KEY ( ID )
+   ,PRIMARY KEY ( ID_ALERT )
    ,INDEX (ACTIVE, TYPE)
 );
 

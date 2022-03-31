@@ -35,7 +35,8 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                     )
           },error = function(cond) {
               YATABase:::SQL( "DB Connection error", origin=cond
-                             ,action="connect", sqlcode = getSQLCode(cond))
+                             ,action="connect", sqlcode = getSQLCode(cond)
+                             ,sql="connect")
           })
       }
       ,disconnect = function(conn) {
@@ -43,7 +44,8 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
               tryCatch({ RMariaDB::dbDisconnect(conn)
           },error = function(cond) {
               YATABase:::SQL( "DB Disconnect", origin=cond
-                             ,action="connect", sqlcode = getSQLCode(cond))
+                             ,action="disconnect", sqlcode = getSQLCode(cond)
+                             ,sql = "disconnect")
           })
           }
           NULL
@@ -51,7 +53,8 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
       ,begin      = function() {
           if (!is.null(connTran)) {
               YATABase:::SQL( "Transacciones activas", origin=NULL
-                             , action="begin", sqlcode = getSQLCode(cond))
+                             ,action="begin", sqlcode = getSQLCode(cond)
+                             ,sql="begin")
           }
           private$connTran = connect()
           RMariaDB::dbBegin(connTran)
@@ -80,7 +83,8 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, param=params)
               }, error = function (cond) {
                 YATABase:::SQL( "QUERY Error",  origin=cond
-                               ,action="query", sqlcode = getSQLCode(cond))
+                               ,action="query", sqlcode = getSQLCode(cond)
+                               ,sql=qry)
           })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
@@ -96,11 +100,12 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                if (isolated) rollback()
                YATABase:::SQL("EXECUTE", origin=cond, sql=qry, action="execute")
           },error = function (cond) {
-               sqlcode = getSQLCode(cond)
+               sqlcode =
                if (sqlcode == SQL_LOCK) isolated = TRUE
                if (isolated) rollback()
                YATABase:::SQL( "SQL EXECUTE ERROR",origin=cond,sql=qry
-                              ,action="execute", sqlcode=sqlcode)
+                              ,action="execute", sqlcode=getSQLCode(cond)
+                              ,sql = qry)
           })
       }
       ,write      = function(table, data, append=TRUE, isolated=FALSE) {
@@ -115,7 +120,8 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
          }, error   = function(cond) {
             if (isolated) rollback()
             YATABase:::SQL( "SQL WRITE TABLE ERROR", origin = cond, sql = qry
-                           ,action = "WriteTable", sqlcode = getSQLCode(cond))
+                           ,action = "WriteTable", sqlcode = getSQLCode(cond)
+                           ,sql="writeTable")
              })
       }
       ,add        = function(table, values, isolated=FALSE) {

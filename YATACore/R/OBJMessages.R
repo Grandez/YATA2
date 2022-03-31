@@ -16,7 +16,12 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           txt = getMessage(code)
           sprintf(txt, ...)
       }
+      ,getBlockBueno = function(block) {
+          df = tblMsg$table(block = block)
+          df[,c("code","msg")]
+      }
       ,getBlock = function(block, inverted=FALSE) {
+          stop("ESTA FUNCION DEBERIA SER getBlockBueno")
         df = tblMsg$table(block = block)
         if (inverted) {
             data = df$code

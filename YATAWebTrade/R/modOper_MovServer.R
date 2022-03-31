@@ -16,7 +16,6 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                self$fiat       = pnlParent$factory$fiat
                private$initVars()
            }
-           ,cboReasons    = function(type)      { self$makeCombo(private$oper$getReasons(type)) }
            ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
            ,operation     = function(data)      {
                tryCatch({private$oper$add(data$type, data)
@@ -98,14 +97,14 @@ moduleServer(id, function(input, output, session) {
       updatecboCurrency = function() {
          if (!pnl$vars$reload) return()
          if (pnl$vars$buy) {
-             data = pnl$makeCombo(pnl$getCurrenciesBuy())
+             data = WEB$combo$currencies()
          }
          else {
              df = pnl$getCurrenciesSell()
              if (nrow(df) == 0) {
                  data = c("No hay posiciones"="")
              } else {
-                 data=pnl$makeCombo(df)
+                 data = WEB$combo$currencies(id=FALSE, set=df$symbol)
              }
          }
          # Esto es por si se ha clickado en otro panel para comprar
@@ -123,7 +122,8 @@ moduleServer(id, function(input, output, session) {
          #     updCombo("cboCurrency", selected=selc)
          # }
          updCombo("cboCurrency", choices=data, selected=selc)
-         updCombo("cboReasons", choices = pnl$cboReasons(input$cboOper), selected=selr)
+         type = ifelse(pnl$vars$buy, 1, 2)
+         updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
          processCommarea(1)
       }
       updateSummary = function() {

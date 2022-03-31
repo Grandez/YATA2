@@ -5,7 +5,7 @@
 # Use: yata_backup [tables]
 # If missing tables all tables are backed
 
-DATA=${YATA_SITE}/YATAData
+DATA=${YATA_SITE}/data
 function makebackup {
     while [ -n "$1" ] ; do
        CWD=`pwd`

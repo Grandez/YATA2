@@ -91,6 +91,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
 function(input, output, session) {
    WEB$setSession(session)
    if (WEB$errorLevel > 0) {
+       browser()
        if (WEB$errorLevel == 99)
            return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
        return (yataErrGeneral(0, WEB$txtError, input, output, session))

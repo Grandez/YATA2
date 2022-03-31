@@ -7,10 +7,11 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     ,public = list(valid = TRUE
         ,err = NULL
         ,print = function() { message("YATA Parameters")}
-        ,initialize = function(dbf, table) {
+        ,initialize = function(dbf, msg, table) {
             if (missing(table)) table = YATACODES$new()$tables$parameters
             tryCatch({
                 private$tblParms = dbf$getTable(table)
+                private$objMsg   = msg
                 private$db       = dbf$getDBBase()
              }, error = function(cond) {
                  YATABase:::error("Error de inicializacion de OBJParms", subclass=NULL, origin="OBJParms", cond)
@@ -19,6 +20,14 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,get         = function(group, subgroup, id) { tblParms$table(group=group, subgroup=subgroup,id=id) }
         ,getGroup    = function(group)               { tblParms$table(group=group) }
         ,getSubgroup = function(group, subgroup)     { tblParms$table(group=group, subgroup=subgroup) }
+        ,getBlock    = function(group, subgroup) {
+            df = tblParms$table(group=group, subgroup=subgroup)
+            dfr = data.frame(block=unique(df$block))
+            keys = unique(df$name)
+            for (idx in 1:length(keys)) dfr = cbind(dfr, df[df$name == keys[idx],"value"])
+            colnames(dfr) = c("block", keys)
+            dfr
+        }
         ,getList = function(group, subgroup)     {
             df = tblParms$getSubGroup(group, subgroup)
             data = list()
@@ -145,6 +154,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
        ,tblParms      = NULL
        ,tblCurrencies = NULL
        ,tblProviders  = NULL
+       ,objMsg        = NULL
        ,splitKeys = function(id) { as.integer(strsplit(id, " ", fixed=TRUE)[[1]]) }
        ,checkParameterType = function (value, type) {
            if (type == 10 && !is.integer(value)) stop("Debe ser numerico")

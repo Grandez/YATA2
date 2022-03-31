@@ -23,6 +23,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,session  = NULL
      ,log      = NULL
      ,window  = list(width = 0, height = 0)
+     ,combo    = NULL
      ,initialize = function() {
          tryCatch({
             base = YATABase$new()
@@ -34,6 +35,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$hSym   = base$map()
             private$hCam   = base$map()
             self$REST      = YATARest$new()
+            self$combo     = YATAWebCombos$new(self$factory)
 #            self$errorLevel = REST$check()
             private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
          }, YATAERROR = function (cond) {

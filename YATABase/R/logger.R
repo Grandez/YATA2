@@ -24,7 +24,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
     ,public = list(
         valid   = TRUE
        ,lastErr = NULL
-       ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20)
+       ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20, ERROR=99)
        ,print      = function() { message("Generic Logger class") }
        ,initialize = function(module="general") {
            loglevel    = Sys.getenv("YATA_LOG_LEVEL")
@@ -123,6 +123,10 @@ YATALogger = R6::R6Class("YATA.LOGGER"
                private$logNames  = logNames [1:(idx - 1)]
            }
            invisible(self)
+       }
+       ,fail = function(cond) {
+          browser()
+          .toFile(self$type$ERROR, 0, "Clase: %s;message:%s", class(cond)[2],cond)
        }
 
     )

@@ -34,9 +34,11 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
    )
 )
 .error = function(msg, subclass=NULL, origin=NULL, ...) {
+   logger = YATALogger$new("ERROR")
    data = list(...)
    data$message = msg
    err = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
+   logger$fail(err)
    stop(err)
 }
 

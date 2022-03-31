@@ -332,17 +332,6 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             prtOper$apply()
             invisible(self)
         }
-        ,getReasons        = function(type) {
-            gral = parms$getSubgroup(DBParms$group$reasons, DBParms$reasons$gral)
-            oth  = parms$getSubgroup(DBParms$group$reasons, type)
-            df = rbind(gral, oth)
-            df$value = paste0("REASON.", df$value)
-            df$name  = "MISSING"
-            for (row in 1:nrow(df)) {
-                df[row, "name"] = Factory$MSG$get(df[row,"value"])
-            }
-            df[order(df$id),c("id", "name")]
-        }
         ,getFlowsByCurrency = function (currency) {
             tblFlows$table(currency = currency)
         }

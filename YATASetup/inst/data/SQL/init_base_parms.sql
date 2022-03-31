@@ -136,40 +136,6 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 2,   
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 3,   10, ''    , ' 7');
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   10, ''    , '30');
 
--- ----------------------------------------------------
--- Grupo 15 - Motivos 
---  El subgrupo coincide cn el codigo  de la operacion
---  El text es la clave para REASON.text
---   Sub   0 - Comunes a todas
---   Sub  20 - Para compras/posicion
---   Sub  30 - Para ventas
---   Sub  3 - Para tomar posicion
---   Sub  4 - Para cerrar posicion
---   Sub 99 - Fijos en programa (YATACodes/reasons)
--- El id es el codigo de la razon, por eso deben ser distintos
--- El texto esta en la tabla de mensajes con prefijo REASON
--- ----------------------------------------------------
-
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0,  0,    1, ''    , 'NONE'       );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 98,    1, ''    , 'FAIL'       );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  0, 99,    1, ''    , 'OTHER'      );
-                                                                         
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 20, 11,    1, ''    ,  'UP'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 20, 12,    1, ''    ,  'SUGGEST'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 20, 13,    1, ''    ,  'TOP'       );
-                                                                         
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 30, 21,    1, ''    ,  'DOWN'      );
-
-
-                                                                         
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 41,    1, ''    , 'TARGET'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 42,    1, ''    , 'LIMIT'      );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15,  4, 43,    1, ''    , 'CHANGE'     );
-
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 90,    1, ''    , 'ACCEPT'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 91,    1, ''    , 'EXECUTED'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 92,    1, ''    , 'CANCEL'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 15, 99, 93,    1, ''    , 'REJECT'     );
 
 -- ----------------------------------------------------
 -- Grupo 16 - Combos
@@ -231,11 +197,69 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  7, 10,
 INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3, 10, 20, 'active'   , '1'           );
 
 -- ----------------------------------------------------
--- Grupos 50 - Combos
+-- Grupos 50 - Combos y grupos
+--   Sub  1  - Operaciones (key tiene que coincidir con los codigos de las tablas)
+--             Los pares (0) crean-entran / impares (1) venden-salen
+--   Sub  2  - Razones
+
 --   Sub  5 - Log aplica
 -- ----------------------------------------------------
 
--- INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (50, 5,  1,  1,  1, 'label'     , 'Simulacion'  );
--- INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (50, 5,  1,  1,  1, 'key'       , 'Simulacion'  );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  1,  1,  1, 'label'      ,  'TXT.BID'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  2,  1,  1, 'label'      ,  'TXT.ASK'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  3,  1,  1, 'label'      ,  'TXT.BUY'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  4,  1,  1, 'label'      ,  'TXT.ASK'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  5,  1,  1, 'label'      ,  'TXT.OPEN'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  6,  1,  1, 'label'      ,  'TXT.CLOSE'    );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  1,  2, 10, 'key'       ,  '10'           );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  2,  2, 10, 'key'       ,  '11'           );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  3,  2, 10, 'key'       ,  '20'           );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  4,  2, 10, 'key'       ,  '21'           );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  5,  2, 10, 'key'       ,  '30'           ); 
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  6,  2, 10, 'key'       ,  '31'           );
+
+-- INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  7,  1,  1, 'label'     ,  'TXT.REG'      );
+-- INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  7,  2, 10, 'key'       ,  '41'           );
+
+-- ----------------------------------------------------
+-- Grupo 15 - Motivos 
+--  El subgrupo coincide cn el codigo  de la operacion
+--  ID esta codificado
+--     xx0 - Todos
+--     xx1 - Compras
+--     xx2 - Ventas
+--     xx3 - Eventos en operaciones
+-- ----------------------------------------------------
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,   0,  1,   1, 'label'    , 'REASON.NONE'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  10,  1,   1, 'label'    , 'REASON.FAIL'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  20,  1,   1, 'label'    , 'REASON.OTHER'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  11,  1,   1, 'label'    , 'REASON.UP'         );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  21,  1,   1, 'label'    , 'REASON.SUGGEST'    );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  31,  1,   1, 'label'    , 'REASON.TOP'        );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  12,  1,   1, 'label'    , 'REASON.DOWN'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  22,  1,   1, 'label'    , 'REASON.TARGET'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  32,  1,   1, 'label'    , 'REASON.LIMIT'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  42,  1,   1, 'label'    , 'REASON.CHANGE'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  13,  1,   1, 'label'    , 'REASON.ACCEPT'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  23,  1,   1, 'label'    , 'REASON.EXECUTED'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  33,  1,   1, 'label'    , 'REASON.CANCEL'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  43,  1,   1, 'label'    , 'REASON.REJECT'     );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,   0,  2,  10,  'key'    , ' 0'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  10,  2,  10,  'key'    , '98'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  20,  2,  10,  'key'    , '99'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  11,  2,  10,  'key'    , '11'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  21,  2,  10,  'key'    , '12'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  31,  2,  10,  'key'    , '13'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  12,  2,  10,  'key'    , '21'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  22,  2,  10,  'key'    , '41'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  32,  2,  10,  'key'    , '42'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  42,  2,  10,  'key'    , '43'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  13,  2,  10,  'key'    , '90'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  23,  2,  10,  'key'    , '91'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  33,  2,  10,  'key'    , '92'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  43,  2,  10,  'key'    , '93'   );
 
 COMMIT;
