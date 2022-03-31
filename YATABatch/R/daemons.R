@@ -6,6 +6,7 @@ startDaemons = function() {
    lapply(daemons, function (daemon) {
       pidfile = paste0(work, daemon, ".pid")
       if (!file.exists(pidfile)) {
+          cat("starting ", daemon, "\n")
           resp = exec$R(paste0(daemon, ".R"))
           if (resp$is_alive()) {
               cat(paste(resp$get_pid(), "\n"), file=pidfile)
