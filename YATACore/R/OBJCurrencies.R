@@ -60,7 +60,7 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
         }
         ,getCurrencies = function(currencies) {
             if (missing(currencies)) {
-                tblCurrencies$table()
+                tblCurrencies$table(active = 1)
             } else {
                tblCurrencies$table(inValues=list(symbol=currencies))
             }

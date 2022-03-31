@@ -14,6 +14,7 @@ updateHistory = function(output=1, log=1) {
     count = 0
     begin = as.numeric(Sys.time())
 
+    cat(Sys.time(), "history", "Procesos iniciales\n", sep=";", file=logfile, append=TRUE)
     batch$fact$setLogger(batch$logger)
 
     fact = YATACore::YATAFactory$new()
@@ -22,7 +23,7 @@ updateHistory = function(output=1, log=1) {
     prov = fact$getObject(fact$CODES$object$providers)
     ctc  = octc$getCurrencies()
     rng  = hist$getRanges()
-    df   = left_join(ctc, rng, by=c("id", "symbol"))
+    df   = dplyr::left_join(ctc, rng, by=c("id", "symbol"))
     #JGG OJO AL 2021-01-01 COMO FECHA FIJA
     df[is.na(df$min), "min"] = as.Date.character("2021-01-01")
     df[is.na(df$max), "max"] = as.Date.character("2021-01-01")
