@@ -12,6 +12,7 @@ import(YATABase)
 import(YATACore)
 import(YATAWebShiny)
 import(YATAWebCore)
+import(YATABatch)
 
 # suppressMessages(import(YATADT))
 

@@ -1,10 +1,10 @@
 # Esto es para las pruebas
-unloadNamespace("YATAWebCore")
-unloadNamespace("YATACore")
-unloadNamespace("YATADT")
-unloadNamespace("YATAProviders")
-unloadNamespace("YATADB")
-unloadNamespace("YATABase")
+# unloadNamespace("YATAWebCore")
+# unloadNamespace("YATACore")
+# unloadNamespace("YATADT")
+# unloadNamespace("YATAProviders")
+# unloadNamespace("YATADB")
+# unloadNamespace("YATABase")
 
 # Core
 library(utils)
@@ -21,6 +21,7 @@ suppressMessages(library(YATAShiny,       warn.conflicts = FALSE))
 suppressMessages(library(YATABase,       warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
+library(YATABatch)
 
 # suppressMessages(library(YATADT))
 
@@ -62,6 +63,7 @@ WEB = YATAWebCore::YATAWebEnv$new()
 #                     tweak(multisession, workers = 4)))
 # }
 
+YATABatch::startDaemons()
 onStart = function() {
       cat("Doing application setup\n")
 }

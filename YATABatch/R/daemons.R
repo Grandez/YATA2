@@ -4,7 +4,6 @@ startDaemons = function() {
    exec = YATAExec$new()
    daemons = c("start_tickers", "start_history")
    lapply(daemons, function (daemon) {
-       browser()
       pidfile = paste0(work, daemon, ".pid")
       if (!file.exists(pidfile)) {
           resp = exec$R(paste0(daemon, ".R"))

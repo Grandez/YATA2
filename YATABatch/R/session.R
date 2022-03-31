@@ -76,11 +76,16 @@ updateSession = function(max = 0) {
     count   = 0
     begin   = as.numeric(Sys.time())
     batch   = YATABatch$new("Tickers")
-    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/start_tickers.pid")
-
+    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
+        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
+cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";", file=logfile, append=TRUE)
     batch$fact$setLogger(batch$logger)
-    if (file.exists(pidfile)) return (batch$rc$RUNNING)
-
+    if (file.exists(pidfile)) {
+        cat(Sys.time(), "tickers", "Existe PID\n", sep=";", file=logfile, append=TRUE)
+        return (batch$rc$RUNNING)
+    }
+    cat(Sys.getpid(), file=pidfile, sep="\n")
+cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE)
     rc = tryCatch({
        session = batch$fact$getObject(batch$fact$CODES$object$session)
 
@@ -89,20 +94,25 @@ updateSession = function(max = 0) {
           last = as.POSIXct(Sys.time())
           session$updateLastUpdate(last, 0)
           total = .getSessionData(batch, last, max, session)
+          cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
           session$updateLastUpdate(last, total)
           batch$logger$batch("OK")
           Sys.sleep(15 * 60)
+          cat(Sys.time(), "tickers", "sE ACTIVA\n", sep=";", file=logfile, append=TRUE)
           count = count + 1
        }
        batch$rc$OK
     }, YATAERROR = function (cond) {
+        cat(Sys.time(), "tickers", "ERROR", cond, "YATAERROR\n", sep=";", file=logfile, append=TRUE)
        batch$rc$FATAL
     }, error = function(cond) {
+        cat(Sys.time(), "tickers", "ERROR", cond, "GENERAL\n", sep=";", file=logfile, append=TRUE)
        message(cond)
        batch$rc$SEVERE
     })
 
     if (file.exists(pidfile)) file.remove(pidfile)
+    cat(Sys.time(), "tickers", "ACABA PROCESO\n", sep=";", file=logfile, append=TRUE)
     batch$logger$executed(rc, begin, "Retrieving tickers")
     invisible(rc)
 }

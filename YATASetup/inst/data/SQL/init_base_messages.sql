@@ -86,6 +86,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LBL.SUMMARY"
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LBL.TARGET"          ,"XX", "XX"     , "Objetivo"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LBL.TO"              ,"XX", "XX"     , "A"                                             );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LBL.VALUE"           ,"XX", "XX"     , "Valor"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "LBL.SINCE"           ,"XX", "XX"     , "Desde"                                         );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 0, "SUBT.APPLY"           ,"XX", "XX"     , "Aplica"                                       );
 

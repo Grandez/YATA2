@@ -62,6 +62,8 @@ WEB = YATAWebCore::YATAWebEnv$new()
 #                     tweak(multisession, workers = 4)))
 # }
 
+YATABatch::startDaemons()
+
 onStart = function() {
       cat("Doing application setup\n")
 }

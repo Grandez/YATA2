@@ -11,9 +11,7 @@ PNLOperHist = R6::R6Class("PNL.OPER.HIST"
       ,initialize = function(id, pnlParent, session) {
           super$initialize(id, pnlParent, session)
           private$oper      = self$factory$getObject(self$codes$object$operation)
-          self$vars$oper     = 0    # Avoid NULLs
-          self$vars$currency = " "
-          self$vars$camera   = " "
+          self$vars = list(oper = 0, currency = " ",camera   = " ", date=NULL)
       }
       ,reload = function() {
           self$data$dfOpers = private$oper$getActive()
@@ -37,9 +35,14 @@ PNLOperHist = R6::R6Class("PNL.OPER.HIST"
           if (nchar(trimws(self$vars$camera)) == 0) return (df)
           df[df$camera == self$vars$camera,]
       }
+      ,filterByDate   = function (df) {
+          if (is.null(self$vars$date)) return (df)
+          df[df$tms >= self$vars$date,]
+      }
+
       ,prepareTable = function(df) {
           if (nrow(df) == 0) return()
-          include = c("camera", "base", "counter", "amount", "value", "price", "fee", "gas")
+          include = c("tms", "camera", "base", "counter", "amount", "value", "price", "fee", "gas")
           exclude =  c("id", "parent", "priceIn", "priceOut", "alive", "rank")
           exclude = c(exclude, "acive", "status")
           exclude = c(exclude, "acive", "status")
@@ -67,6 +70,7 @@ moduleServer(id, function(input, output, session) {
        df   = pnl$filterByOper     (pnl$data$dfOpers)
        df   = pnl$filterByCurrency (df)
        df   = pnl$filterByCamera   (df)
+       df   = pnl$filterByDate     (df)
        data = pnl$prepareTable (df)
 
        output$tblHistory = updTable(data)
@@ -94,6 +98,10 @@ moduleServer(id, function(input, output, session) {
    }, ignoreInit = TRUE, ignoreNULL = TRUE)
    observeEvent(input$cboCamera, {
       pnl$vars$camera = input$cboCamera
+      flags$refresh = isolate(!flags$refresh)
+   }, ignoreInit = TRUE, ignoreNULL = TRUE)
+   observeEvent(input$dtDate, {
+      pnl$vars$date = input$dtDate
       flags$refresh = isolate(!flags$refresh)
    }, ignoreInit = TRUE, ignoreNULL = TRUE)
 
