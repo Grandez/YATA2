@@ -109,12 +109,15 @@ cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE
        }
        batch$rc$OK
     }, YATAERROR = function (cond) {
-        cat(Sys.time(), "tickers", "ERROR", cond, "YATAERROR\n", sep=";", file=logfile, append=TRUE)
-        cat(Sys.time(), "tickers", "ERROR", cond, "YATAERROR\n", sep=";")
+
+        cat(Sys.time(), "tickers", "ERROR", "YATAERROR\n", sep=";", file=logfile, append=TRUE)
+                for (i in names(cond)) cat(Sys.time(), "tickers", "ERROR", cond$i, "\n", sep=";")
+        cat(Sys.time(), "tickers", "ERROR", "YATAERROR\n", sep=";")
        batch$rc$FATAL
     }, error = function(cond) {
-        cat(Sys.time(), "tickers", "ERROR", cond)
-        cat(Sys.time(), "tickers", "ERROR", cond, "GENERAL\n", sep=";", file=logfile, append=TRUE)
+        cat(Sys.time(), "tickers", "ERROR")
+        for (i in names(cond)) cat(Sys.time(), "tickers", "ERROR", cond$i, "\n", sep=";")
+        cat(Sys.time(), "tickers", "ERROR", "GENERAL\n", sep=";", file=logfile, append=TRUE)
        message(cond)
        batch$rc$SEVERE
     })

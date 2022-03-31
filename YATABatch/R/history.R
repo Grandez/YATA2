@@ -56,8 +56,9 @@ cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
                cat(Sys.time(), "history", "data es NULL\n", sep=";", file=logfile, append=TRUE)
            }
         }, error = function(cond) {
-            cat(Sys.time(), "history", "ERROR", cond, sep=";")
-            cat(Sys.time(), "history", "ERROR", cond, sep=";", file=logfile, append=TRUE)
+            cat(Sys.time(), "history", "ERROR", sep=";")
+            cat(Sys.time(), "history", "ERROR", sep=";", file=logfile, append=TRUE)
+            for (i in names(cond)) cat(Sys.time(), "history", "ERROR", cond$i, sep=";")
             # Nada. Ignoramos errores de conexion, duplicates, etc
         })
     }
