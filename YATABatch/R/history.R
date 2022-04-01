@@ -1,14 +1,15 @@
 updateHistory = function(output=1, log=1) {
+tryCatch({
     logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/history.log")
     pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/history.pid")
     batch   = YATABatch$new("History")
 cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";", file=logfile, append=TRUE)
-    # if (file.exists(pidfile)) {
-    #     cat(Sys.time(), "history", "EXISTE pid file\n", sep=";")
-    #     cat(Sys.time(), "history", "EXISTE pid file\n", sep=";", file=logfile, append=TRUE)
-    #     return (batch$rc$RUNNING)
-    # }
+    if (file.exists(pidfile)) {
+        cat(Sys.time(), "history", "EXISTE pid file\n", sep=";")
+        cat(Sys.time(), "history", "EXISTE pid file\n", sep=";", file=logfile, append=TRUE)
+        return (batch$rc$RUNNING)
+    }
     cat(Sys.time(), "history", "No existe pid file\n", sep=";")
     cat(Sys.getpid(), file=pidfile, sep="\n")
     cat(Sys.time(), "history", "No existe pid file\n", sep=";", file=logfile, append=TRUE)
@@ -67,6 +68,9 @@ cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     cat(Sys.time(), "history", "Acaba for\n", sep=";")
     cat(Sys.time(), "history", "Acaba for\n", sep=";", file=logfile, append=TRUE)
     batch$logger$executed(0, begin, "Retrieving history")
+}, error = function(cond) {
+    cat("history error no controlado\n")
+})
     if (file.exists(pdifile)) file.remove(pidfile)
     invisible(batch$rc$OK)
 }

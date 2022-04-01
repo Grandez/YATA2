@@ -43,6 +43,7 @@
      count
 }
 updateSession = function(max = 0) {
+tryCatch({
     count   = 0
     begin   = as.numeric(Sys.time())
     batch   = YATABatch$new("Tickers")
@@ -52,11 +53,11 @@ updateSession = function(max = 0) {
 cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";")
 cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";", file=logfile, append=TRUE)
     batch$fact$setLogger(batch$logger)
-    # if (file.exists(pidfile)) {
-    #     cat(Sys.time(), "tickers", "Existe PID\n", sep=";")
-    #     cat(Sys.time(), "tickers", "Existe PID\n", sep=";", file=logfile, append=TRUE)
-    #     return (batch$rc$RUNNING)
-    # }
+    if (file.exists(pidfile)) {
+        cat(Sys.time(), "tickers", "Existe PID\n", sep=";")
+        cat(Sys.time(), "tickers", "Existe PID\n", sep=";", file=logfile, append=TRUE)
+        return (batch$rc$RUNNING)
+    }
     cat(Sys.getpid(), file=pidfile, sep="\n")
     cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";")
 cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE)
@@ -93,7 +94,9 @@ cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE
             })
       if (rc0 > rc) rc = rc0
    }
-
+}, error = function(cond) {
+    cat(Sys.time(), "tickers", "ERROR NO CONTROLADO\n", sep=";")
+})
   if (file.exists(pidfile)) file.remove(pidfile)
   cat(Sys.time(), "tickers", "ACABA PROCESO\n", sep=";")
   cat(Sys.time(), "tickers", "ACABA PROCESO\n", sep=";", file=logfile, append=TRUE)
