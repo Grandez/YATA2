@@ -11,12 +11,9 @@
        if (max == 0) max = data$total
 
        repeat {
-           cat("ENTRA EN REPEAT\n")
           df = data$df
           df[,c("name", "slug")] = NULL
 
-          # Puede haber symbol repetidos (no por id)
-          # Se han cambiado en la tabla de currencies
           df1 = df[,c("id", "symbol")]
           ctc = tblCurrencies$table()
           df2 = ctc[,c("id", "symbol")]
@@ -38,35 +35,25 @@
           data = provider$getTickers(500, start)
         }
      }, error = function (cond) {
-         cat("ERROR EN GETSESSION DATA", cond$code, " - Continua\n")
+         # Nada, igonoramos errores de red
      })
      count
 }
 updateSession = function(max = 0) {
-        pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
-        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
+   pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
+   logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 
-tryCatch({
-    count   = 0
-    begin   = as.numeric(Sys.time())
-    batch   = YATABatch$new("Tickers")
-    rc      = batch$rc$OK
-cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";")
-cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";", file=logfile, append=TRUE)
-    batch$fact$setLogger(batch$logger)
-    if (file.exists(pidfile)) {
-        cat(Sys.time(), "tickers", "Existe PID\n", sep=";")
-        cat(Sys.time(), "tickers", "Existe PID\n", sep=";", file=logfile, append=TRUE)
-        return (batch$rc$RUNNING)
-    }
-    cat(Sys.getpid(), file=pidfile, sep="\n")
-    cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";")
-cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE)
+   count   = 0
+   begin   = as.numeric(Sys.time())
+   batch   = YATABatch$new("Tickers")
+   rc      = batch$rc$OK
+
+   batch$fact$setLogger(batch$logger)
+   if (file.exists(pidfile)) return (batch$rc$RUNNING)
 
    session = batch$fact$getObject(batch$fact$CODES$object$session)
 
-#   while (count < 15) { # Para que se pare automaticamente
-   while (count < 3) { # Para que se pare automaticamente
+   while (count < 17) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())
@@ -76,31 +63,18 @@ cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE
                cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
                session$updateLastUpdate(last, total)
                batch$logger$batch("OK")
-               #Sys.sleep(15 * 60)
-               Sys.sleep(2 * 60)
-               cat(Sys.time(), "tickers", "sE ACTIVA\n", sep=";")
-               cat(Sys.time(), "tickers", "sE ACTIVA\n", sep=";", file=logfile, append=TRUE)
+               Sys.sleep(15 * 60)
                count = count + 1
                batch$rc$OK
             }, YATAERROR = function (cond) {
-               cat(Sys.time(), "tickers", "ERROR", "YATAERROR\n", sep=";", file=logfile, append=TRUE)
-                       for (i in names(cond)) cat(Sys.time(), "tickers", "ERROR", cond$i, "\n", sep=";")
-               cat(Sys.time(), "tickers", "ERROR", "YATAERROR\n", sep=";")
                batch$rc$FATAL
             }, error = function(cond) {
-               cat(Sys.time(), "tickers", "ERROR")
-               for (i in names(cond)) cat(Sys.time(), "tickers", "ERROR", cond$i, "\n", sep=";")
-               cat(Sys.time(), "tickers", "ERROR", "GENERAL\n", sep=";", file=logfile, append=TRUE)
-              batch$rc$SEVERE
+               batch$rc$SEVERE
             })
       if (rc0 > rc) rc = rc0
    }
-}, error = function(cond) {
-    cat(Sys.time(), "tickers", "ERROR NO CONTROLADO\n", sep=";")
-})
+
   if (file.exists(pidfile)) file.remove(pidfile)
-  cat(Sys.time(), "tickers", "ACABA PROCESO\n", sep=";")
-  cat(Sys.time(), "tickers", "ACABA PROCESO\n", sep=";", file=logfile, append=TRUE)
   batch$logger$executed(rc, begin, "Retrieving tickers")
   invisible(rc)
 }

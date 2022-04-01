@@ -106,7 +106,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         }
 
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
-        cat(sprintf("getTickers(%4d,%5d)\n", max,from),file=logfile,append=TRUE)
+
         #JGG Se capturan los errores de HTTP por los problemas de red
 
         url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
@@ -119,14 +119,11 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
            if (parms$start > 1) Sys.sleep(1) # avoid DoS
            tryCatch({
              logger$doing(3, "Getting tickers from %5d ", parms$start)
-             cat(sprintf("Getting tickers from %5d\n", parms$start),file=logfile,append=TRUE)
-             cat(sprintf("URL: %s - Getting tickers from %5d\n", url, parms$start),file=logfile,append=TRUE)
              data = request(url, parms)
              logger$done(3)
 
              if (is.null(data) || length(data) == 0) break
 
-             # data[[1]] = datos, data[[2]] = total
              resp$total  = as.integer(data[[2]])
              resp$from   = parms$start
              resp$count  = length(data[[1]])
@@ -139,7 +136,6 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
               df    = as_tms(df, c(17))
               dfc   = rbind(dfc, df)
            }, error = function (cond) {
-              browser()
               logger$done(3, FALSE)
            })
         }
@@ -156,7 +152,6 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
      }
     ,getHistorical = function(idCurrency, from, to ) {
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
-        cat(sprintf("getTickers(%4d,%5d)\n", from,to),file=logfile,append=TRUE)
 
         if (is.null(idCurrency)) return(NULL)
         url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/historical"
@@ -189,7 +184,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                  ,Referer         = "https://coinmarketcap.com/"
                  ,TE              = "Trailers"
     )
-    ,getPage = function(page) {  
+    ,getPage = function(page) {
         # el paquete rvest hace cosas muy raras
         # Hacemos scrapping a pelo
         # La columna 3 tiene icono, nombre y simbolo
@@ -205,26 +200,26 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         table = substr(page, beg[2]+1, end[1])
         rows = strsplit(table, "<tr", fixed=TRUE)
         rows = lapply(rows[[1]], function(x) strsplit(x, "<td", fixed=TRUE))
-        
+
         tab = page %>% html_nodes("table")
         rows = tab %>% html_nodes("tr")
         data = lapply(rows, function(row) row %>% html_nodes("td"))
-        
+
         # Coger las filas correctas
         cols = lapply(data, function(x) length(x))
         mask = (cols == 11)
         data = data[mask]
-        
+
         # col 1 - Estrella
         # col 2 - orden
         # col 3 - Icono, nombre y simbolo
         # La columna 3 tiene nombre y simbolo en div o en span
-        
+
         # Si busco img me da los 100 elementos
         sims = lapply(data, function(item) extractName(item[[3]]))
         df = as.data.frame(sims, optional=T)
         df = data.table::transpose(df)
-        
+
         # Las columnas 4,5, 6 tienen precio, var 1 dia y 1 sem
         # Pueden estar en un div (si hay link) o en un span
         values = unlist(lapply(data, function(x) extractValues(x[[4]])))

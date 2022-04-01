@@ -1,25 +1,13 @@
 updateHistory = function(output=1, log=1) {
-        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/history.log")
+    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/history.log")
     pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/history.pid")
 
-tryCatch({
     batch   = YATABatch$new("History")
-cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
-    cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";", file=logfile, append=TRUE)
-    if (file.exists(pidfile)) {
-        cat(Sys.time(), "history", "EXISTE pid file\n", sep=";")
-        cat(Sys.time(), "history", "EXISTE pid file\n", sep=";", file=logfile, append=TRUE)
-        return (batch$rc$RUNNING)
-    }
-    cat(Sys.time(), "history", "No existe pid file\n", sep=";")
-    cat(Sys.getpid(), file=pidfile, sep="\n")
-    cat(Sys.time(), "history", "No existe pid file\n", sep=";", file=logfile, append=TRUE)
+    if (file.exists(pidfile)) return (batch$rc$RUNNING)
 
     count = 0
     begin = as.numeric(Sys.time())
 
-        cat(Sys.time(), "history", "Procesos iniciales\n", sep=";")
-    cat(Sys.time(), "history", "Procesos iniciales\n", sep=";", file=logfile, append=TRUE)
     batch$fact$setLogger(batch$logger)
 
     fact = YATACore::YATAFactory$new()
@@ -29,49 +17,31 @@ cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     ctc  = octc$getCurrencies()
     rng  = hist$getRanges()
     df   = dplyr::left_join(ctc, rng, by=c("id", "symbol"))
+
     #JGG OJO AL 2021-01-01 COMO FECHA FIJA
     df[is.na(df$min), "min"] = as.Date.character("2021-01-01")
     df[is.na(df$max), "max"] = as.Date.character("2021-01-01")
-    cat(Sys.time(), "history", "Antes del for\n", sep=";")
-    cat(Sys.time(), "history", "Antes del for\n", sep=";", file=logfile, append=TRUE)
-#    for (row in 1:nrow(ctc)) {
-    f=nrow(ctc) -50
-    t=f - 50
-    for (row in f:t) {
+    pid = Sys.getpid() %% 2
+    from = ifelse(pid == 0, 1,         nrow(ctc))
+    to   = ifelse(pid == 0, nrow(ctc), 1)
+
+    for (row in from:to) {
          tryCatch({
-             cat(Sys.time(), "history", sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]), sep=";")
-    cat(Sys.time(), "history", sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]), sep=";", file=logfile, append=TRUE)
            batch$logger$batch("%5d - Retrieving history for %s", row, df[row,"name"])
            if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
            data = prov$getHistory(df[row, "id"], df[row,"max"])
            if (!is.null(data)) {
-                   cat(Sys.time(), "history", "Inserta datos\n", sep=";")
-                   cat(Sys.time(), "history", "Inserta datos\n", sep=";", file=logfile, append=TRUE)
-                   data$id = df[row, "id"]
-                   data$symbol = df[row, "symbol"]
-                   .add2database(data, hist)
-         #          hist$add(data)
-                   if ((row %% 2) == 0) Sys.sleep(1) # Para cada 2
-               } else {
-                   cat(Sys.time(), "history", "No hay datos\n", sep=";")
-                   cat(Sys.time(), "history", "No hay datos\n", sep=";", file=logfile, append=TRUE)
-               }
-         }, HTTP = function(cond) { # Error HTTP
-             cat("HISTORY ERROR HTTP ", cond$code, "\n")
-#             if ((cond$code %/% 4) != 0) YATABase:::propagate(cond)
+               data$id = df[row, "id"]
+               data$symbol = df[row, "symbol"]
+               .add2database(data, hist)
+               if ((row %% 2) == 0) Sys.sleep(1) # Para cada 2
+           }
         }, error = function(cond) {
-            cat(Sys.time(), "history", "ERROR", sep=";")
-            cat(Sys.time(), "history", "ERROR", sep=";", file=logfile, append=TRUE)
-            for (i in names(cond)) cat(Sys.time(), "history", "ERROR", cond$i, sep=";")
             # Nada. Ignoramos errores de conexion, duplicates, etc
         })
     }
-    cat(Sys.time(), "history", "Acaba for\n", sep=";")
-    cat(Sys.time(), "history", "Acaba for\n", sep=";", file=logfile, append=TRUE)
     batch$logger$executed(0, begin, "Retrieving history")
-}, error = function(cond) {
-    cat("history error no controlado\n")
-})
-    if (file.exists(pdifile)) file.remove(pidfile)
+
+    if (file.exists(pidfile)) file.remove(pidfile)
     invisible(batch$rc$OK)
 }
