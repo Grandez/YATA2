@@ -63,7 +63,8 @@ cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE
 
    session = batch$fact$getObject(batch$fact$CODES$object$session)
 
-   while (count < 15) { # Para que se pare automaticamente
+#   while (count < 15) { # Para que se pare automaticamente
+   while (count < 5) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())
@@ -73,7 +74,8 @@ cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE
                cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
                session$updateLastUpdate(last, total)
                batch$logger$batch("OK")
-               Sys.sleep(15 * 60)
+               #Sys.sleep(15 * 60)
+               Sys.sleep(2 * 60)
                cat(Sys.time(), "tickers", "sE ACTIVA\n", sep=";")
                cat(Sys.time(), "tickers", "sE ACTIVA\n", sep=";", file=logfile, append=TRUE)
                count = count + 1

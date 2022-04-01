@@ -32,7 +32,10 @@ cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     df[is.na(df$max), "max"] = as.Date.character("2021-01-01")
     cat(Sys.time(), "history", "Antes del for\n", sep=";")
     cat(Sys.time(), "history", "Antes del for\n", sep=";", file=logfile, append=TRUE)
-    for (row in 1:nrow(ctc)) {
+#    for (row in 1:nrow(ctc)) {
+    f=nrow(ctc)
+    t=f - 50
+    for (row in f:t) {
          tryCatch({
              cat(Sys.time(), "history", sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]), sep=";")
     cat(Sys.time(), "history", sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]), sep=";", file=logfile, append=TRUE)
