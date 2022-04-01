@@ -43,13 +43,14 @@
      count
 }
 updateSession = function(max = 0) {
+        pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
+        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
+
 tryCatch({
     count   = 0
     begin   = as.numeric(Sys.time())
     batch   = YATABatch$new("Tickers")
     rc      = batch$rc$OK
-    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
-        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";")
 cat(Sys.time(), "tickers", "Inicia updateSession\n", sep=";", file=logfile, append=TRUE)
     batch$fact$setLogger(batch$logger)
@@ -65,7 +66,7 @@ cat(Sys.time(), "tickers", "NO Existe PID\n", sep=";", file=logfile, append=TRUE
    session = batch$fact$getObject(batch$fact$CODES$object$session)
 
 #   while (count < 15) { # Para que se pare automaticamente
-   while (count < 5) { # Para que se pare automaticamente
+   while (count < 3) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())

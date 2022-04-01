@@ -1,7 +1,8 @@
 updateHistory = function(output=1, log=1) {
-tryCatch({
-    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/history.log")
+        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/history.log")
     pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/history.pid")
+
+tryCatch({
     batch   = YATABatch$new("History")
 cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";", file=logfile, append=TRUE)
@@ -34,7 +35,7 @@ cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     cat(Sys.time(), "history", "Antes del for\n", sep=";")
     cat(Sys.time(), "history", "Antes del for\n", sep=";", file=logfile, append=TRUE)
 #    for (row in 1:nrow(ctc)) {
-    f=nrow(ctc)
+    f=nrow(ctc) -50
     t=f - 50
     for (row in f:t) {
          tryCatch({
