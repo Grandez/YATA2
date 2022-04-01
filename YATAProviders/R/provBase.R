@@ -32,7 +32,14 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,setFactory  = function(factory)  {
           self$factory = factory
           self$logger = self$factory$logger
-       }
+      }
+      ,as_tms = function(data, cols) {
+          df = data
+          for (i in 1:length(cols)) {
+              df[,cols[i]] = paste(substr(df[,cols[i]],1,10),substr(df[,cols[i]],12,19), sep="-")
+          }
+          df
+      }
       ,getCurrencies = function(from, max) { stop("Este metodo es virtual")}
 
       ,setLimits   = function(limits)   { private$limits = limits }
@@ -46,6 +53,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
       ,getDaySession = function(base, counter,           from, to) { stop("Este metodo es virtual")}
       ,currencies    = function() { stop("Este metodo es virtual")}
       ,getCloseSession = function(base, counter, day) { stop("Este metodo es virtual")}
+
 
    )
    ,private = list(resp = NULL
@@ -383,6 +391,16 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
               }
           }
           url
+      }
+      ,checkResponse = function(resp, url, parms, accept404=TRUE) {
+         rc = as.integer(resp$status$error_code)
+         if ( rc ==   0 || rc == 200) return (rc)
+         if ((rc == 400 || rc == 404) && accept404) return (rc)
+         YATABase:::HTTP( paste("HTTP ERROR:", resp$status$error_message)
+                         , action="GET", code=rc
+                         ,origin=url, message=resp$status$error_message
+                         ,parameters = parms
+         )
       }
    )
 

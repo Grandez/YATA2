@@ -9,6 +9,7 @@ startDaemons = function() {
           cat("starting ", daemon, "\n")
           resp = exec$R(paste0(daemon, ".R"))
           if (resp$is_alive()) {
+              cat(daemon, " - ", resp$get_pid(), "\n")
               cat(paste(resp$get_pid(), "\n"), file=pidfile)
           }
       }

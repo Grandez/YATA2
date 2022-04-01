@@ -47,9 +47,12 @@ TBLHistory = R6::R6Class("TBL.HISTORY"
             ,high       = "HIGH"
             ,low        = "LOW"
             ,volume     = "VOLUME"
-            ,market_cap = "MKTCAP"
+            ,marketCap = "MKTCAP"
             ,timestamp  = "TMS"
             ,tms        = "TMS"
+            ,timeHigh   = "TMSHIGH"
+            ,timeLow    = "TMSLOW"
+
           )
          ,key    = c("id", "tms")
      )

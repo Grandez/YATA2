@@ -30,6 +30,8 @@ CREATE TABLE HISTORY  (
    ,VOLUME   DOUBLE
    ,MKTCAP   DOUBLE
    ,TMS      DATE         NOT NULL -- Moneda      
+   ,TMSHIGH  TIMESTAMP
+   ,TMSLOW   TIMESTAMP
    ,PRIMARY KEY ( ID, TMS DESC )
 );
 
@@ -109,13 +111,14 @@ CREATE TABLE EXCHANGES_CTC  (
 -- Tabla de monedas trabajadas por cada camara
 DROP TABLE  IF EXISTS FIATS CASCADE;
 CREATE TABLE FIATS  (
-    ID        CHAR(3)       -- ISO 4217
+    ID        INTEGER      NOT NULL
    ,SYMBOL    CHAR(3)
    ,NAME      VARCHAR(64) 
    ,ICON      VARCHAR(255)    
    ,EXCHANGE  DOUBLE DEFAULT 1.0 
+   ,CRYPTO    TINYINT DEFAULT 0 -- Es Cryptomoneda
    ,PRIMARY KEY ( ID )
+   ,UNIQUE  KEY ( SYMBOL )
 );
-
 
 COMMIT;

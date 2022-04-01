@@ -15,6 +15,12 @@ OBJBase = R6::R6Class("OBJ.BASE"
            self$parms = Factory$parms
            self$db    = Factory$getDB()
            self$codes = Factory$CODES
-        }
+       }
+       ,getColumnNames = function(yataNames) { tblBase$translateColNames(yataNames) }
+       ,getDBTableName = function()          { tblBase$getDBTableName()             }
+       ,getDBName      = function()          { tblBase$getDB()$getName()                         }
+    )
+    , private = list(
+         tblBase  = NULL
     )
 )

@@ -19,8 +19,8 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
      ,SQL = function(msg, action=NULL, origin=NULL, ...) {
         self$error(msg, subclass="SQL", action=action,origin=origin,  ...)
      }
-     ,HTTP = function(msg, action=NULL, origin=NULL, ...) {
-        self$error(msg, subclass="HTTP",action=action,origin=origin,  ...)
+     ,HTTP = function(msg,  ...) {
+        self$error(msg, subclass="HTTP",  ...)
      }
      ,EXEC = function(msg, ...) {
         self$error(msg, subclass="EXEC", NULL, NULL, ...)
@@ -33,13 +33,14 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
      }
    )
 )
-.error = function(msg, subclass=NULL, origin=NULL, ...) {
+.error = function(msg, subclass, ...) {
+   browser()
    logger = YATALogger$new("ERROR")
    data = list(...)
    data$message = msg
-   err = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
-   logger$fail(err)
-   stop(err)
+   errdata = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
+   logger$fail(errdata)
+   stop(errdata)
 }
 
 # No se exportan para no tener efectos colaterales
@@ -49,21 +50,22 @@ Warning = function(msg, action=NULL, subclass=NULL, ...) {
     )
     warning(warn)
 }
- error = function(msg, subclass=NULL, origin=NULL, ...) {
-    .error(msg, subclass, origin, ...)
+ error = function(msg, ...) {
+    .error(msg, subclass="UNHANDLED", ...)
 }
- SQL = function(msg, action=NULL, origin=NULL, ...) {
+ SQL = function(msg, ...) {
       data = list(...)
       msg = paste0(msg, " (", data$sqlcode, ")")
-     .error(msg, subclass="SQL", origin=origin, action=action, ...)
+     .error(msg, subclass="SQL", ...)
 }
-HTTP = function(msg, action=NULL, origin=NULL, ...) {
-     .error(msg, subclass="HTTP", origin=origin, action=action, ...)
+HTTP = function(msg, ...) {
+     .error(msg, subclass="HTTP", ...)
 }
 EXEC = function(msg, ...) {
-     .error(msg, subclass="EXEC", NULL, NULL, ...)
+     .error(msg, subclass="EXEC", ...)
 }
-logical = function(msg, action=NULL, origin=NULL, ...) {
-     .error(msg, subclass="LOGICAL", origin=origin, action=action, ...)
+logical = function(msg, ...) {
+     .error(msg, subclass="LOGICAL", ...)
 }
-
+propagateError = function(cond) { stop(cond) }
+propagate      = function(cond) { stop(cond) }

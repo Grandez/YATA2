@@ -6,11 +6,12 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
     ,portable   = FALSE
     ,lock_class = TRUE
     ,public = list(valid = TRUE
-        ,print = function() { message("Currencies")}
+        ,print = function() { message("Currencies History")}
         ,initialize = function(Factory) {
             super$initialize(Factory)
             private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
             private$tblHistory    = Factory$getTable(self$codes$tables$history)
+            private$tblBase       = private$tblHistory
         }
         ,getRanges = function(idList) {
             tblHistory$getRange(idList)
@@ -60,9 +61,11 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
             colnames(df) = c(labels, "id")
             df
         }
-        ,add = function(df, isolated=TRUE) {
-            tblHistory$bulkAdd(df, isolated)
+       ,add = function(df, isolated=TRUE) {
+           tblHistory$bulkAdd(df, isolated)
+           invisible(self)
         }
+
     )
     ,private = list(
         tblCurrencies = NULL

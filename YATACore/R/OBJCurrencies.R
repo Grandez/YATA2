@@ -58,12 +58,14 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             df  = tblExchanges$uniques(c("camera"), symbol=currency)
             tblCameras$table(inValues=list(id=df$camera))
         }
-        ,getCurrencies = function(currencies) {
+        ,getCurrencies = function(currencies, active=TRUE) {
             if (missing(currencies)) {
-                tblCurrencies$table(active = 1)
+                df = tblCurrencies$table()
             } else {
-               tblCurrencies$table(inValues=list(symbol=currencies))
+               df = tblCurrencies$table(inValues=list(symbol=currencies))
             }
+            if (active) df = df[df$active == 1, ]
+            df
         }
         ,addBulk = function(data) { tblCurrencies$bulkAdd(data)}
     )

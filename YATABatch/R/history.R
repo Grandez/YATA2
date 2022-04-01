@@ -4,11 +4,11 @@ updateHistory = function(output=1, log=1) {
     batch   = YATABatch$new("History")
 cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
     cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";", file=logfile, append=TRUE)
-    if (file.exists(pidfile)) {
-        cat(Sys.time(), "history", "EXISTE pid file\n", sep=";")
-        cat(Sys.time(), "history", "EXISTE pid file\n", sep=";", file=logfile, append=TRUE)
-        return (batch$rc$RUNNING)
-    }
+    # if (file.exists(pidfile)) {
+    #     cat(Sys.time(), "history", "EXISTE pid file\n", sep=";")
+    #     cat(Sys.time(), "history", "EXISTE pid file\n", sep=";", file=logfile, append=TRUE)
+    #     return (batch$rc$RUNNING)
+    # }
     cat(Sys.time(), "history", "No existe pid file\n", sep=";")
     cat(Sys.getpid(), file=pidfile, sep="\n")
     cat(Sys.time(), "history", "No existe pid file\n", sep=";", file=logfile, append=TRUE)
@@ -37,24 +37,23 @@ cat(Sys.time(), "history", "Inicia updateHistory\n", sep=";")
              cat(Sys.time(), "history", sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]), sep=";")
     cat(Sys.time(), "history", sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]), sep=";", file=logfile, append=TRUE)
            batch$logger$batch("%5d - Retrieving history for %s", row, df[row,"name"])
+           if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
            data = prov$getHistory(df[row, "id"], df[row,"max"])
            if (!is.null(data)) {
-               if (difftime(Sys.time(), df[1,"max"], unit="days") >= 2) {
                    cat(Sys.time(), "history", "Inserta datos\n", sep=";")
                    cat(Sys.time(), "history", "Inserta datos\n", sep=";", file=logfile, append=TRUE)
                    data$id = df[row, "id"]
                    data$symbol = df[row, "symbol"]
-                   hist$add(data)
+                   .add2database(data, hist)
+         #          hist$add(data)
                    if ((row %% 2) == 0) Sys.sleep(1) # Para cada 2
                } else {
                    cat(Sys.time(), "history", "No hay datos\n", sep=";")
                    cat(Sys.time(), "history", "No hay datos\n", sep=";", file=logfile, append=TRUE)
                }
-           }
-           else {
-               cat(Sys.time(), "history", "data es NULL\n", sep=";")
-               cat(Sys.time(), "history", "data es NULL\n", sep=";", file=logfile, append=TRUE)
-           }
+         }, HTTP = function(cond) { # Error HTTP
+             cat("HISTORY ERROR HTTP ", cond$code, "\n")
+#             if ((cond$code %/% 4) != 0) YATABase:::propagate(cond)
         }, error = function(cond) {
             cat(Sys.time(), "history", "ERROR", sep=";")
             cat(Sys.time(), "history", "ERROR", sep=";", file=logfile, append=TRUE)

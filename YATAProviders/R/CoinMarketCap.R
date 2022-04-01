@@ -2,312 +2,251 @@
 # 300 creditos dia
 # 10000 creditos mes
 PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
-   ,inherit    = ProviderBase
-   ,portable   = FALSE
-   ,cloneable  = FALSE
-   ,lock_class = FALSE
-   ,public = list(
-        initialize = function(code, factory) { # }, dbf) {
-          super$initialize  (code, "CoinMarketCap", factory) #, dbf)
-          private$base    = YATABase$new()
-          private$lastGet = as.POSIXct(1, origin="1970-01-01")
-          private$hID     = base$map()
+  ,inherit    = ProviderBase
+  ,portable   = FALSE
+  ,cloneable  = FALSE
+  ,lock_class = FALSE
+  ,public = list(
+     initialize = function(code, factory) { # }, dbf) {
+       super$initialize  (code, "CoinMarketCap", factory) #, dbf)
+       private$base    = YATABase$new()
+       private$lastGet = as.POSIXct(1, origin="1970-01-01")
+       private$hID     = base$map()
+     }
+    ,getIcons = function(maximum, force=FALSE) {
+        urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
+        urlbase2 = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
+        if (missing(maximum)) maximum=9999
+        oldwd = getwd()
+        site = Sys.getenv("YATA_SITE")
+        site = "P:/R/YATA2/"
+        wd = file.path(site, "YATAExternal", "icons")
+        setwd(wd)
+        files = list.files()
+        for (idx in 1:maximum) {
+             png = paste0(idx, ".png")
+             cat(png)
+             if (length(which(files == png)) != 0 && !force) {
+                 cat("\tExist\n")
+                 next
+             }
+             resp = GET(paste0(urlbase, png), add_headers(.headers=headers), query=NULL)
+             if (resp$status_code != 200) {
+                 cat("\tKO\n")
+             } else {
+               writeBin(resp$content, png)
+                 cat("\tOK\n")
+             }
+        }
+        setwd(oldwd)
+     }
+    ,getCurrencies = function(from = 1, max = 0) {
+        url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
+        count   =   0
+        until   = 501
+        dfc     = NULL
+        process = TRUE
+        parms = list( start=from, limit=500, convert = "EUR"
+                     ,cryptoType="all", tagType="all")
 
-       }
-      ,getIcons = function(maximum, force=FALSE) {
-          urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
-          urlbase2 = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
-          if (missing(maximum)) maximum=9999
-          oldwd = getwd()
-          site = Sys.getenv("YATA_SITE")
-          site = "P:/R/YATA2/"
-          wd = file.path(site, "YATAExternal", "icons")
-          setwd(wd)
-          files = list.files()
-          for (idx in 1:maximum) {
-               png = paste0(idx, ".png")
-               cat(png)
-               if (length(which(files == png)) != 0 && !force) {
-                   cat("\tExist\n")
-                   next
-               }
-               resp = GET(paste0(urlbase, png), add_headers(.headers=headers), query=NULL)
-               if (resp$status_code != 200) {
-                   cat("\tKO\n")
-               } else {
-                 writeBin(resp$content, png)
-                   cat("\tOK\n")
-               }
-          }
-          setwd(oldwd)
-      }
-      ,getCurrencies = function(from = 1, max = 0) {
-          url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
-          count   =   0
-          until   = 501
-          dfc     = NULL
-          process = TRUE
-          parms = list( start=from, limit=500, convert = "EUR"
-                       ,cryptoType="all", tagType="all")
+        while (process) {
+             if (count > 0) Sys.sleep(1) # Para no saturar
+             data  = request(url, parms)
+             until = ifelse (max == 0, data$totalCount, max)
+             data  = data[[1]]
+             parms$start = parms$start + length(data)
 
-          while (process) {
-               if (count > 0) Sys.sleep(1) # Para no saturar
-               data  = request(url, parms)
-               until = ifelse (max == 0, data$totalCount, max)
-               data  = data[[1]]
-               parms$start = parms$start + length(data)
-
-               lst = lapply(data, function(x) {
-                      since = ifelse(is.null(x$dateAdded), x$lastUpdated, x$dateAdded)
-                      since = paste(substr(since,1,10),substr(since,12,19), sep="-")
-                      if (nchar(x$symbol) > 64) x$symbol = substr(x$symbol,1,64)
-                      list( id=as.integer(x$id)
-                           ,name=x$name
-                           ,symbol=x$symbol
-                           ,slug=x$slug
-                           ,rank=as.integer(x$cmcRank)
-                           ,since = since
-                           ,icon = paste0(x$id, ".png")
-                           ,active = as.integer(x$isActive)
-                       )
-                     })
-               if (length(lst) > 0) {
-                   df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
-                                   ,stringsAsFactors=FALSE)
-                   colnames(df) = names(lst[[1]])
-                   dfc = rbind(dfc, df)
-               }
-               count = count + length(data)
-               if (count >= until || length(data) < 500) process = FALSE
-          }
-          dfc
-      }
-      ,getTickers    = function(max = 0, from = 1) {
-          #JGG Se capturan los errores de HTTP por lo problemas de red
-          #JGG Habra que verificar el tipo de error
-          url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
-          until = from + 500
-          dfc   = NULL
-          parms = list( start=from, limit=500, convert = "EUR"
-                       ,cryptoType="all", tagType="all")
-          resp = list(total=0, from=0, count=0)
-          while (parms$start < until) {
-               if (parms$start > 1) Sys.sleep(1)
-              tryCatch({
-                 logger$doing(3, "Getting tickers from %5d ", parms$start)
-                 data = request(url, parms)
-                 logger$done(3)
-                 if (is.null(data) || length(data) == 0) break
-                 data2 = data[[1]]
-                 resp$total = data$totalCount
-                 resp$from  = parms$start
-                 resp$count = length(data2)
-                 until = ifelse (max == 0, data$totalCount, max)
-                 parms$start = parms$start + length(data2)
-
-                 lst = lapply(data2, function(x) {
-                        quote = x$quotes[[1]]
-                        list( id     = x$id
-                             ,symbol = x$symbol
-                             ,rank   = x$cmcRank
-                             ,price  = ifelse(is.null(quote$price),            0, quote$price)
-                             ,volume = ifelse(is.null(quote$volume24),         0, quote$volume24)
-                             ,vol24  = ifelse(is.null(quote$volume24),         0, quote$volume24)
-                             ,vol07  = ifelse(is.null(quote$volume7d),         0, quote$volume7d)
-                             ,vol30  = ifelse(is.null(quote$volume30d),        0, quote$volume30d)
-                             ,var01  = ifelse(is.null(quote$percentChange1h),  0, quote$percentChange1h)
-                             ,var24  = ifelse(is.null(quote$percentChange24h), 0, quote$percentChange24h)
-                             ,var07  = ifelse(is.null(quote$percentChange7d),  0, quote$percentChange7d)
-                             ,var30  = ifelse(is.null(quote$percentChange30d), 0, quote$percentChange30d)
-                             ,var60  = ifelse(is.null(quote$percentChange60d), 0, quote$percentChange60d)
-                             ,var90  = ifelse(is.null(quote$percentChange90d), 0, quote$percentChange90d)
-                             ,dominance = ifelse(is.null(quote$dominance),     0, quote$dominance)
-                             ,turnover  = ifelse(is.null(quote$turnover),      0, quote$turnover)
-                             ,tms = paste(substr(quote$lastUpdated,1,10),substr(quote$lastUpdated,12,19), sep="-")
-                        )
-                       })
+             lst = lapply(data, function(x) {
+                    since = ifelse(is.null(x$dateAdded), x$lastUpdated, x$dateAdded)
+                    since = paste(substr(since,1,10),substr(since,12,19), sep="-")
+                    if (nchar(x$symbol) > 64) x$symbol = substr(x$symbol,1,64)
+                    list( id=as.integer(x$id)
+                         ,name=x$name
+                         ,symbol=x$symbol
+                         ,slug=x$slug
+                         ,rank=as.integer(x$cmcRank)
+                         ,since = since
+                         ,icon = paste0(x$id, ".png")
+                         ,active = as.integer(x$isActive)
+                     )
+                   })
+             if (length(lst) > 0) {
                  df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
                                  ,stringsAsFactors=FALSE)
-                 colnames(df) = c( "id",        "symbol",   "rank",    "price"
-                                  ,"volume",    "volday",   "volweek", "volmonth"
-                                  ,"hour",      "day",      "week",    "month"
-                                  ,"bimonth",   "quarter"
-                                  ,"dominance", "turnover", "tms")
-
-                 names = colnames(df)
-                 for (idx in 1:ncol(df)) {
-                     if (names[idx] == "id")     { df[,idx] = as.numeric(df[,idx]); next }
-                     if (names[idx] == "rank")   { df[,idx] = as.numeric(df[,idx]); next }
-                     if (names[idx] == "symbol") { next }
-                     if (names[idx] == "tms")    {
-                         df[,idx] = as.POSIXct( df[,idx]
-                                               ,format="%Y-%m-%d-%H:%M:%S")
-                         next
-                     }
-                     df[,idx] = as.numeric(df[,idx])
-                 }
+                 colnames(df) = names(lst[[1]])
                  dfc = rbind(dfc, df)
-              }, error = function (cond) {
-                  logger$done(3, FALSE)
+             }
+             count = count + length(data)
+             if (count >= until || length(data) < 500) process = FALSE
+        }
+        dfc
+     }
+    ,getTickers    = function(max = 0, from = 1) {
+        toNum    = function(item) { ifelse(is.null(item), 0, item) }
+        makeList = function(x)    {
+          quote  = x$quotes[[1]]
+          list( id        = x$id
+               ,symbol    = x$symbol
+               ,rank      = x$cmcRank
+               ,price     = toNum(quote$price)
+               ,volume    = toNum(quote$volume24)
+               ,volday    = toNum(quote$volume24)
+               ,volweek   = toNum(quote$volume7d)
+               ,volmonth  = toNum(quote$volume30d)
+               ,hour      = toNum(quote$percentChange1h)
+               ,day       = toNum(quote$percentChange24h)
+               ,week      = toNum(quote$percentChange7d)
+               ,month     = toNum(quote$percentChange30d)
+               ,bimonth   = toNum(quote$percentChange60d)
+               ,quarter   = toNum(quote$percentChange90d)
+               ,dominance = toNum(quote$dominance)
+               ,turnover  = toNum(quote$turnover)
+               ,tms       = quote$lastUpdated
+          )
+        }
 
-              })
-          }
-          resp$df = dfc
-          resp
-      }
-      ,loadTickers = function() {
-           if (difftime(Sys.time(), lastGet, unit="mins") < interval) return (invisible(self))
-           private$lastGet = Sys.time()
-           getLatest()
-       }
-      ,getExchanges = function(txtID) {
-          # Necesitamos una clave profesional
-           stop("NO tenemos permiso")
-           url = mountURL("exchange/quotes/latest")
-           page = GET(url,add_headers("X-CMC_PRO_API_KEY" = info$token)
-                         ,add_headers(Accept = "application/json")
-                         ,query = list(id = txtID, convert = "EUR")
-                     )
+        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
+        cat(sprintf("getTickers(%4d,%5d)\n", max,from),file=logfile,append=TRUE)
+        #JGG Se capturan los errores de HTTP por los problemas de red
 
-           json = content(page, type = "application/json")
+        url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
+        until = from + 500
+        dfc   = NULL
+        parms = list( start=from, limit=500, convert = "EUR"
+                     ,cryptoType="all", tagType="all")
+        resp = list(total=0, from=0, count=0)
+        while (parms$start < until) {
+           if (parms$start > 1) Sys.sleep(1) # avoid DoS
+           tryCatch({
+             logger$doing(3, "Getting tickers from %5d ", parms$start)
+             cat(sprintf("Getting tickers from %5d\n", parms$start),file=logfile,append=TRUE)
+             cat(sprintf("URL: %s - Getting tickers from %5d\n", url, parms$start),file=logfile,append=TRUE)
+             data = request(url, parms)
+             logger$done(3)
 
+             if (is.null(data) || length(data) == 0) break
 
-       }
-      ,unloadCurrencies = function(from, limit) {
-         getLatest(from, limit)
-      }
-      ,getHistorical = function(idCurrency, from, to ) {
-          if (is.null(idCurrency)) return(NULL)
-          url = "https://web-api.coinmarketcap.com/v1/cryptocurrency/ohlcv/historical"
+             # data[[1]] = datos, data[[2]] = total
+             resp$total  = as.integer(data[[2]])
+             resp$from   = parms$start
+             resp$count  = length(data[[1]])
+             parms$start = parms$start + resp$count
+             data        = data[[1]]
+             until       = ifelse (max == 0, resp$total, max)
 
-          headers = c(
-             `User-Agent`      = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
-            ,`Accept-Language` = "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"
-            ,Accept          = "application/json, text/plain, */*"
-            ,Origin          = "https://coinmarketcap.com"
-            ,Referer         = "https://coinmarketcap.com/"
-            ,TE              = "Trailers"
-         )
-         parms = list(
-             convert    = "EUR"
-            ,id         = idCurrency
-            ,time_start = as.numeric(as.POSIXct(from))
-            ,time_end   = as.numeric(as.POSIXct(to))
-         )
+              items = lapply(data, function(x) makeList(x))
+              df    = do.call(rbind.data.frame,items)
+              df    = as_tms(df, c(17))
+              dfc   = rbind(dfc, df)
+           }, error = function (cond) {
+              browser()
+              logger$done(3, FALSE)
+           })
+        }
+        resp$df = dfc
+        resp
+     }
+    ,loadTickers = function() {
+        if (difftime(Sys.time(), lastGet, unit="mins") < interval) return (invisible(self))
+        private$lastGet = Sys.time()
+        getLatest()
+     }
+    ,unloadCurrencies = function(from, limit) {
+        getLatest(from, limit)
+     }
+    ,getHistorical = function(idCurrency, from, to ) {
+        logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
+        cat(sprintf("getTickers(%4d,%5d)\n", from,to),file=logfile,append=TRUE)
 
-         page = GET(url, add_headers(.headers=headers), query=parms)
+        if (is.null(idCurrency)) return(NULL)
+        url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/historical"
 
-         # 1 - Header response / 2 - Data
-         resp = httr::content(page, type="application/json")
-         if (resp$status$error_code == 400) return (NULL)  # No data
-         if (resp$status$error_code != 0) {
-             YATABase:::HTTP( "ERROR GET HISTORICAL", action="GET"
-                         ,origin=resp$error_code, message=resp[[1]]$error_message)
-         }
+        parms = list(
+            convertId  = 2781 #JGG 2781 = EUR
+           ,id         = idCurrency
+           ,timeStart = as.numeric(as.POSIXct(from))
+           ,timeEnd   = as.numeric(as.POSIXct(to))
+        )
 
-         body = resp[[2]]
-         data = body[[4]] # 1 - id / 2 - name / 3 - symbol / 4 - data
-
-
-         data2 = lapply(data, function(x) x[[5]])
-         data3 = lapply(data2, function(x) x[[1]])
-         df1 = as.data.frame(sapply(data3, unlist))
-         df = t(df1)
-         row.names(df) = NULL
-         df = as.data.frame(df)
-         if (nrow(df) == 0) return (NULL)
-         # La ultima columna es el timestamp
-         df[,"timestamp"] = paste(substr(df[,"timestamp"],1,10),substr(df[,"timestamp"],12,19), sep="-")
-         df
-      }
+        data  = request(url, parms, accept404 = FALSE)
+        data  = data$quotes
+        items = lapply(data, function(item) {
+            l1 = list(timeHigh=item$timeHigh, timeLow=item$timeLow)
+            list.merge(item$quote, l1)
+        })
+        df = do.call(rbind.data.frame,items)
+        as_tms(df, c(7,8,9))
+     }
    )
-   ,private = list(
-       urlbase = "https://coinmarketcap.com/"
-      ,hID     = NULL
-      ,base    = NULL
-      ,headers = c( `User-Agent`      = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
-                   ,`Accept-Language` = "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"
-                   ,Accept          = "application/json, text/plain, */*"
-                   ,Origin          = "https://coinmarketcap.com"
-                   ,Referer         = "https://coinmarketcap.com/"
-                   ,TE              = "Trailers"
-      )
-
-      ,getPage = function(page) {
-
-         # el paquete rvest hace cosas muy raras
-         # Hacemos scrapping a pelo
-         # La columna 3 tiene icono, nombre y simbolo
-         # La 4 el precio
-         # La 5 variacion diaria
-         # La 6 variacion semanal
-          url = urlbase
-          if (!missing(page)) url = paste0(url, "?page=", page)
-          page = httr::GET(url)
-          page = content(page, "text")
-          beg = str_locate(page, "<tbody")
-          end = str_locate(page, "</tbody>")
-          table = substr(page, beg[2]+1, end[1])
-          rows = strsplit(table, "<tr", fixed=TRUE)
-          rows = lapply(rows[[1]], function(x) strsplit(x, "<td", fixed=TRUE))
-#           mask =
-# lines = unlist(lapply(table, function(x) strsplit(table, "<tr", fixed=TRUE)))
-#     datos = lines[grepl("coin-logo", lines, fixed=TRUE)]
-
-          tab = page %>% html_nodes("table")
-          rows = tab %>% html_nodes("tr")
-          data = lapply(rows, function(row) row %>% html_nodes("td"))
-
-          # Coger las filas correctas
-          cols = lapply(data, function(x) length(x))
-          mask = (cols == 11)
-          data = data[mask]
-
-          # col 1 - Estrella
-          # col 2 - orden
-          # col 3 - Icono, nombre y simbolo
-          # La columna 3 tiene nombre y simbolo en div o en span
-
-          # Si busco img me da los 100 elementos
-         sims = lapply(data, function(item) extractName(item[[3]]))
-         df = as.data.frame(sims, optional=T)
-         df = data.table::transpose(df)
-
-         # Las columnas 4,5, 6 tienen precio, var 1 dia y 1 sem
-         # Pueden estar en un div (si hay link) o en un span
-         values = unlist(lapply(data, function(x) extractValues(x[[4]])))
-         df = cbind(df,values)
-         values = unlist(lapply(data, function(x) extractValues(x[[5]])))
-         df = cbind(df,values)
-         values = unlist(lapply(data, function(x) extractValues(x[[6]])))
-         df = cbind(df,values)
-         colnames(df) = c("base", "counter", "last", "var1", "var7")
-         df$base = "EUR"
-         private$dfTickers = df
-         df
-      }
-      ,request = function (url, parms) {
-          if (missing(parms) || is.null(parms)) {
-              page = httr::GET(url, add_headers(.headers=headers))
-          } else {
-             page = httr::GET(url, add_headers(.headers=headers), query=parms)
-          }
-         resp = httr::content(page, type="application/json")
-
-         if (http_error(page) || resp$status$error_code != 0) {
-             data = resp$status
-             status=list(code=data$error_code,message=data$error_message)
-             YATABase$cond$HTTP( "HTTP Error", origin=page, action="get"
-                                ,rc=resp$status$error_code
-                                ,message = resp$status$error_message)
-         }
-         resp$status = NULL
-         #JGG  Depurar la lista a devolver
-         resp[[1]]
-      }
-   )
+  ,private = list(
+     urlbase = "https://coinmarketcap.com/"
+    ,hID     = NULL
+    ,base    = NULL
+    ,headers = c( `User-Agent`      = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
+                 ,`Accept-Language` = "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"
+                 ,Accept          = "application/json, text/plain, */*"
+                 ,Origin          = "https://coinmarketcap.com"
+                 ,Referer         = "https://coinmarketcap.com/"
+                 ,TE              = "Trailers"
+    )
+    ,getPage = function(page) {  
+        # el paquete rvest hace cosas muy raras
+        # Hacemos scrapping a pelo
+        # La columna 3 tiene icono, nombre y simbolo
+        # La 4 el precio
+        # La 5 variacion diaria
+        # La 6 variacion semanal
+        url = urlbase
+        if (!missing(page)) url = paste0(url, "?page=", page)
+        page = httr::GET(url)
+        page = content(page, "text")
+        beg = str_locate(page, "<tbody")
+        end = str_locate(page, "</tbody>")
+        table = substr(page, beg[2]+1, end[1])
+        rows = strsplit(table, "<tr", fixed=TRUE)
+        rows = lapply(rows[[1]], function(x) strsplit(x, "<td", fixed=TRUE))
+        
+        tab = page %>% html_nodes("table")
+        rows = tab %>% html_nodes("tr")
+        data = lapply(rows, function(row) row %>% html_nodes("td"))
+        
+        # Coger las filas correctas
+        cols = lapply(data, function(x) length(x))
+        mask = (cols == 11)
+        data = data[mask]
+        
+        # col 1 - Estrella
+        # col 2 - orden
+        # col 3 - Icono, nombre y simbolo
+        # La columna 3 tiene nombre y simbolo en div o en span
+        
+        # Si busco img me da los 100 elementos
+        sims = lapply(data, function(item) extractName(item[[3]]))
+        df = as.data.frame(sims, optional=T)
+        df = data.table::transpose(df)
+        
+        # Las columnas 4,5, 6 tienen precio, var 1 dia y 1 sem
+        # Pueden estar en un div (si hay link) o en un span
+        values = unlist(lapply(data, function(x) extractValues(x[[4]])))
+        df = cbind(df,values)
+        values = unlist(lapply(data, function(x) extractValues(x[[5]])))
+        df = cbind(df,values)
+        values = unlist(lapply(data, function(x) extractValues(x[[6]])))
+        df = cbind(df,values)
+        colnames(df) = c("base", "counter", "last", "var1", "var7")
+        df$base = "EUR"
+        private$dfTickers = df
+        df
+     }
+    ,request = function (url, parms, accept404 = TRUE) {
+        if (missing(parms) || is.null(parms)) {
+            page = httr::GET(url, add_headers(.headers=headers))
+        } else {
+           page = httr::GET(url, add_headers(.headers=headers), query=parms)
+        }
+       resp = httr::content(page, type="application/json")
+       checkResponse(resp, url, parms, accept404 = FALSE)
+       resp$data
+    }
+  )
 )
-
-# Permite unas 10 peticiones dia
-# https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=68886e75-9fd7-4566-8942-587220e58538&start=1&limit=5000&convert=USD
-

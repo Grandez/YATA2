@@ -12,8 +12,8 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            super$initialize(Factory)
            .getTables(Factory)
            .loadCache()
+           private$tblBase = private$tblSession
        }
-       ,getDBTableName = function()         { tblSession$getDBTableName() }
        ,getLastUpdate  = function() {
            tblControl$select(id = 1)
            last = as.POSIXct("2020-01-01 00:00:00")
@@ -57,9 +57,6 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            }
            df
         }
-       ,getColumnNames = function(yataNames) {
-           tblSession$translateColNames(yataNames)
-       }
     )
     ,private = list(
         tblSession    = NULL
