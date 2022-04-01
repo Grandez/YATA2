@@ -81,7 +81,7 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
          args = c( "CMD", "BATCH"
                   ,"--no-save", "--no-restore"
                   ,rscript
-        #          ,log
+                  ,log
                  )
          if (async) {
              processx::process$new("R", args=args)
