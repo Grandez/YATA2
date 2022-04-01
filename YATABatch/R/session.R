@@ -50,7 +50,7 @@ updateSession = function(max = 0) {
 
    batch$fact$setLogger(batch$logger)
    if (file.exists(pidfile)) return (batch$rc$RUNNING)
-
+   cat(paste0(Sys.getpid(),"\n"), file=pidfile)
    session = batch$fact$getObject(batch$fact$CODES$object$session)
 
    while (count < 17) { # Para que se pare automaticamente

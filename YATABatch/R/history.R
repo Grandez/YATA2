@@ -4,7 +4,7 @@ updateHistory = function(output=1, log=1) {
 
     batch   = YATABatch$new("History")
     if (file.exists(pidfile)) return (batch$rc$RUNNING)
-
+    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
     count = 0
     begin = as.numeric(Sys.time())
 
