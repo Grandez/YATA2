@@ -1,4 +1,4 @@
-TBLFIAT = R6::R6Class("TBL.FIAT"
+TBLFIATExch = R6::R6Class("TBL.FIAT.EXCHANGE"
     ,inherit    = YATATable
     ,portable   = FALSE
     ,cloneable  = FALSE
@@ -10,12 +10,10 @@ TBLFIAT = R6::R6Class("TBL.FIAT"
      )
      ,private = list (
          fields = list(
-             id         = "ID"
-            ,symbol     = "SYMBOL"
-            ,name       = "NAME"
-            ,icon       = "ICON"
-            ,exchange   = "EXCHANGE"
-            ,crypto     = "CRYPTO"
+             idfrom    = "IDFROM"
+            ,idto      = "IDTO"
+            ,exchange  = "EXCHANGE"
+            ,date      = "DATE"
           )
      )
 )

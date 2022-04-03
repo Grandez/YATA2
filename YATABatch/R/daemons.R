@@ -4,12 +4,19 @@ startDaemons = function() {
    exec = YATAExec$new()
    daemons = c("start_tickers", "start_history")
    lapply(daemons, function (daemon) {
-       resp = exec$R(paste0(daemon, ".R"))
+       cat("Daemon ", daemon, " ")
+       resp = exec$R(daemon)
+       nfo = ifelse (resp$is_alive(), resp$get_pid(), "KO")
+       cat(nfo, "\n")
    })
-   # if (.launchRest()) {
-   #     resp = exec$R("start_rest.R")
-   #     if (resp$is_alive()) cat(paste(resp$get_pid(), "\n"),file=paste(work,"rest.pid"))
-   # }
+   if (.launchRest()) {
+       cat("Daemon start_rest ")
+       resp = exec$R("start_rest")
+       nfo = ifelse (resp$is_alive(), resp$get_pid(), "KO")
+       cat(nfo, "\n")
+   } else {
+       cat("Daemon start_rest active\n")
+   }
    0
 }
 .launchRest = function(exec) {

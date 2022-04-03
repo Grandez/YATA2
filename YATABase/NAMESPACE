@@ -4,9 +4,6 @@ import(stringr)
 import(crayon)
 import(httr)
 
-export(YATABase)
-export(YATAExec)
-export(YATANS)   # MIRARA WEBTRADE
-export(YATALogger)
+exportPattern("YATA.*")
 export(args2list)
 export(map)

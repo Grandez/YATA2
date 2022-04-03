@@ -23,10 +23,11 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,session  = NULL
      ,log      = NULL
      ,window  = list(width = 0, height = 0)
+     ,cookies = NULL
      ,combo    = NULL
      ,initialize = function() {
          tryCatch({
-            base = YATABase$new()
+            private$base   = YATABase$new()
             private$panels = base$map()
             self$factory   = YATACore::getFactory(TRUE)
             self$MSG       = factory$MSG
@@ -56,14 +57,14 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
       #   factory$clear()
      }
      ,setWindow = function(data) {
-         self$window$width  = data$window_width
-         self$window$height = data$window_height
+         # self$window$width  = data$window_width
+         # self$window$height = data$window_height
      }
      ,setSession = function(session) {
+         #JGG Revisr
          self$session = session
-         private$cookies = list()
          data = parseQueryString(session$request$HTTP_COOKIE)
-         if (length(data) > 0 && !is.null(data$YATA)) private$cookies = fromJSON(data$YATA)
+         if (length(data) > 0 && !is.null(data$YATA)) self$cookies = fromJSON(data$YATA)
          invisible(self)
       }
      ,getPanel = function(name, loading=FALSE)  {
@@ -76,11 +77,12 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          shinyjs::js$yata_add_page(panel$name)
          self$getPanel(panel$name, loading=TRUE)
      }
-    ,getMsg      = function(code, ...) { MSG$get(code, ...) }
-    ,getCookies  = function(id) { private$cookies[[id]] }
-    ,setCookies = function(id, data) {
-       private$cookies[[id]] = data
-       updateCookie(self$session, YATA=private$cookies)
+    ,getMsg    = function(code, ...) { MSG$get(code, ...) }
+    ,getCookie = function(id) { self$cookies[[id]] }
+    ,setCookie = function(id, data) {
+        browser()
+       self$cookies[[id]] = data
+       updateCookie(self$session, YATA=self$cookies)
     }
     ,getCTCLabels = function(codes, type="medium", invert = FALSE) {
         # Acepta: id, sym, name, long, medium, short
@@ -124,12 +126,18 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         names(lst) = codes
         lst
     }
+     ,startDaemons = function() {
+         exec = private$base$exec()
+         resp = exec$R("start_daemons")
+         invisible(self)
+     }
   )
   ,private = list(
 # Cada objeto representa una pagina
 # De esta forma se gestiona la inicializacion de la pagina
 # Y guardamos los datos temporales
       panels  = NULL
+     ,base = NULL
      ,.logLevel = 0
      ,tblCurrencies = NULL
      ,tblCameras    = NULL
@@ -140,7 +148,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      # ,logs    = c(rep(0,10))
      # ,logn    = c(rep("", 10))
      # ,logi    = 1
-     ,cookies = list()
      ,.getNameByID = function (id, type) {
          info = hID$get(id)
          if (is.null(info)) info = .addSymbol(id)
@@ -208,6 +215,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 )
 
 yataSetCookie = function(key, value) {
+    browser()
   string = sprintf("Cookies.set(\'%s\', \'%s\');", key, value)
   runjs(string)
 }

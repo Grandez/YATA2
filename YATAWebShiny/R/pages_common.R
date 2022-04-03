@@ -15,8 +15,10 @@ custom_css = function(cssFiles) {
     tagList(base, cssLink)
 }
 custom_js = function(jsFiles) {
-    base = tagList( tags$script(src='yatashiny/yatashiny.js')
-                   ,tags$script(src='yatashiny/js_cookie.js'))
+    base = tagList( tags$script(src='yatashiny/js_cookie.js')
+                   ,tags$script(src='yatashiny/yatashiny.js')
+                   ,tags$script(src='yatashiny/yatashiny_shiny.js')
+                   )
     jsLink = NULL
     if (is.null(jsFiles)) return (tagList(base))
     if (!is.null(jsFiles$shiny)) {
@@ -29,7 +31,7 @@ document_ready_script = function(jsInit, title, id) {
     # This is the javascript to execute on document ready
     code = paste( " jQuery(document).ready(function() {\n")
     code = paste0(code, "   globalThis.yatashiny = new YATAShiny('YATA');  \n")
-    code = paste0(code, "    yatashiny.init('", title, "','", id, "');   \n")
+    code = paste0(code, "   globalThis.yatashiny.init('", title, "','", id, "');   \n")
     if (!is.null(jsInit)) {
         for (js in jsInit) code = paste(code, js, sep="\n")
     }

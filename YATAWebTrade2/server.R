@@ -99,8 +99,9 @@ function(input, output, session) {
    pnl = WEB$getPanel("server")
    if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
 
-   js$request_cookies()
+   js$yata_req_cookies()
    observeEvent(input$cookies, {
+       WEB$cookies = jsonlite::fromJSON(input$cookies)
        WEB$setWindow(input$cookies)
    })
    observeEvent(input$resize, {

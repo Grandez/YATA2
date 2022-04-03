@@ -28,9 +28,8 @@ YATADashboardFull = function( title    = NULL
     }
     page = yata_bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
 
-    jsshiny = parseYATAShinyJS()
     heads = tags$head(
-               extendShinyjs(script="yatashiny/yatashiny_shiny.js", functions=jsshiny)
+               extendShinyjs(script="yatashiny/yatashiny_shiny.js", functions=parseYATAShinyJS())
                ,custom_css(cssFiles)
               ,custom_js(jsFiles)
               ,document_ready_script(jsInit, title, id)

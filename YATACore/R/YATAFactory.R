@@ -16,10 +16,14 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,fiat    = "$FIAT"  # Codigo moneda FIAT
       ,camera  = "CASH"   # Codigo camara FIAT
       ,id = 0
-      # Ponemos init y clear para manejar fuera de initialize y finalize
-      # auto se usa para el CI
-      ,initialize = function(auto=TRUE) {
-          init(auto, FALSE)
+      ,initialize = function(auto=TRUE, level=3) {
+          # auto: Conectar a la ultima BBDD / si no a la de por defecto
+          # level: Cosas a conectarpara hacer la carga rapida
+          #    0 - Nada
+          #    1 - BBDD de usuario (la de sistema siempre se conecta)
+          #    2 - Providers
+
+          init(auto, level)
           self$logger = YATALogger$new("yata")
        }
       ,finalize   = function() { clear() }
@@ -85,8 +89,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           setProvFactory() # Necesita tener Base creado
           ProvFactory$get(code, object, force)
       }
-      ,getProviderBase = function() { ProvFactory$get() }
-
+      ,getDefaultProvider = function() { ProvFactory$getDefaultProvider() }
       ,getObject   = function(name, force = FALSE) {
          # Pasamos la propia factoria como referencia
          if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
@@ -122,17 +125,15 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
          ProvFactory$setCloseTime      (parms$getCloseTime())
          ProvFactory$setBaseCurrency   (parms$getBaseCurrency())
       }
-      ,init      = function(auto, clean=TRUE){
-          if (clean) clear()
+      ,init      = function(auto, level){
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
 
-          self$CODES  = YATACore::YATACODES$new()
+          self$CODES          = YATACore::YATACODES$new()
           private$base        = YATABase$new()
           private$objects     = base$map()
           private$classes     = base$map()
           private$DBFactory   = YATADB::YATADBFactory$new()
-          private$ProvFactory = YATAProviders::ProviderFactory$new()
 
           self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)
           self$parms  = OBJParms$new   (private$DBFactory, self$MSG, self$CODES$tables$parameters)
@@ -140,7 +141,9 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           self$fiat   = parms$getFIAT()
           self$camera = parms$getCamera()
 
-          if (auto) {
+          if (bitwAnd(level,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
+
+          if (auto && bitwAnd(level, 1) != 0) {
               if (parms$autoConnect()) {
                   setDB(parms$lastOpen())
               } else {

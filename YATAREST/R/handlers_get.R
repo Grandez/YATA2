@@ -54,7 +54,21 @@ latest_handler = function(.req, .res) {
     df = latest_body()
     .df_handler(df, .res)
 }
+trending_handler = function(.req, .res) {
+    browser()
+   logger("trending")
+   tryCatch({
+     fact = YATACore::YATAFACTORY$new(level=2)
+     prov = fact$getDefaultProvider()
 
+     df   = prov$getTrend()
+     .df_handler(df, .res)
+   }, error = function(cond) {
+      .res$set_status_code(500)
+      .res$set_content_type("text/html")
+      .res$set_body("KO")
+   })
+}
 .df_handler = function(df, .res) {
   .res$set_status_code(200)
   .res$set_content_type("application/json")

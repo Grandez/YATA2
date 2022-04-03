@@ -19,9 +19,10 @@ import(reactable)
 #import(shinycookie)
 
 # async
-import(httr)
+#import(httr)
 # import(jsonlite)
-# import(future)
+import(future)
+import(promises)
 
 # import(reactable)
 import(markdown)

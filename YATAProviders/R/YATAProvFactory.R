@@ -20,7 +20,8 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
           private$dbf = NULL
           private$config = NULL
        }
-       ,print = function() { message("Providers factory")}
+       ,print              = function() { message("Providers factory") }
+       ,getDefaultProvider = function() { private$mktcap               }
        ,get = function(code, provider, force=FALSE) {
           private$mktcap
            # if (force) {

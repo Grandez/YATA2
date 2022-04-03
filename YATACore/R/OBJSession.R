@@ -56,7 +56,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
                if (rank > 0) df = df[df$rank <= rank,]
            }
            df
-        }
+       }
     )
     ,private = list(
         tblSession    = NULL

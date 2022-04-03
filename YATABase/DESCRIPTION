@@ -18,3 +18,4 @@ Imports:
     hash
    ,stringr
    ,rlist
+   ,rvest

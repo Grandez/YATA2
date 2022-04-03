@@ -165,7 +165,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           # https://mariadb.com/kb/en/mariadb-error-codes/
           browser()
           rc = 0
-          res = regexpr("\\[[0-9]+\\]", cond$message, value = TRUE)
+          res = regexpr("\\[[0-9]+\\]", cond$message)
           if (length(res) > 0) {
               end = attr(res,"match.length")[1]
               rc = substr(cond$message,res + 1, res + end - 1)

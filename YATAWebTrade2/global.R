@@ -32,8 +32,8 @@ suppressMessages(library(bslib,              warn.conflicts = FALSE))
 
 # Async
 # #suppressMessages(library(jsonlite, warn.conflicts = FALSE))
-# suppressMessages(library(promises, warn.conflicts = FALSE))
-# suppressMessages(library(future,   warn.conflicts = FALSE))
+suppressMessages(library(promises, warn.conflicts = FALSE))
+suppressMessages(library(future,   warn.conflicts = FALSE))
 
 # options( warn = -1
 # #        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
@@ -49,21 +49,22 @@ suppressMessages(library(bslib,              warn.conflicts = FALSE))
 ### Carga de fuentes
 ### En R busca subdirectorios
 #####################################
-
+library(YATABatch)
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
-#cat(paste(Sys.time(), " - Before WEB\n"), file="P:/R/YATA2/web.log", append=TRUE)
 WEB = YATAWebCore::YATAWebEnv$new()
+# YATABatch::startDaemons()
+# WEB$startDaemons()
 
-# if (.Platform$OS.type != "windows") {
-#    future::plan(strategy="sequential")
-# } else {
-#   future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
-#                     tweak(multisession, workers = 4)))
-# }
+if (.Platform$OS.type != "windows") {
+   future::plan(strategy="sequential")
+} else {
+  future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
+                    tweak(multisession, workers = 4)))
+}
 
-YATABatch::startDaemons()
+# WEB$startDaemons()
 onStart = function() {
       cat("Doing application setup\n")
 }

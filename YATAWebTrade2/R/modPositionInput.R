@@ -3,8 +3,10 @@ modPosInput = function(id, title) {
     blocks = c( "Plot Position"  = "plotHist", "Plot Session" = "plotSession"
                ,"Plot Best"      = "plotBest", "Plot Top"     = "plotTop"
                ,"Plot Favorites" = "plotFav"
-               ,"Position"       = "Position", "Best"              = "blkBest"
+               ,"Position"       = "Position", "Full Position"  = "PositionFull"
+               ,"Best"           = "blkBest"
                ,"Best of Top"    = "blkTop"  , "Best of favorites" = "blkFav"
+               ,"Trending"       = "blkTrending"
     )
     vals = c("plotHist", "plotSession", "blkBest", "Position")
     mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", guiCheck(ns("chkMonitors"))))
@@ -46,12 +48,21 @@ modPosInput = function(id, title) {
                       ,guiLabelText(ns("lblTop")),  yuiTable(ns("tblTop"))))
             ,tags$div( id=ns("blkFav") ,style="width: 100%", guiBox(ns("Fav")
                       ,guiLabelText(ns("lblFav")),  yuiTable(ns("tblFav"))))
+            ,tags$div( id=ns("blkTrend") ,style="width: 100%", guiBox(ns("Trend")
+                      ,guiLabelText(ns("lblTrend")),  yuiTable(ns("tblTrend"))))
             ,tags$div(id=ns("Position"), style="width: 100%;"
                      ,hidden(tags$div( id=ns("posGlobal")
                                       , guiBox( ns("PosGlobal")
                                                ,"Posicion Global", yuiTable(ns("tblPosGlobal")))))
                      ,hidden(tags$div(id=ns("PosCameras")))
             )
+            ,tags$div(id=ns("PositionFull"), style="width: 100%;"
+                     ,hidden(tags$div( id=ns("posGlobalFull")
+                                      , guiBox( ns("PosGlobalFull")
+                                               ,"Posicion Global Completa", yuiTable(ns("tblPosGlobalFull")))))
+                     ,hidden(tags$div(id=ns("PosCamerasFull")))
+            )
+
     )
     main = tagList( guiRow(id=ns("monitor"), class="yata_monitors"), wdgLayout$getBody(blocks))
 

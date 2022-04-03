@@ -67,6 +67,16 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             if (active) df = df[df$active == 1, ]
             df
         }
+        ,getID = function(symbols,as.df=TRUE) {
+            df = tblCurrencies$table(inValues=list(symbol=symbols))
+            if (as.df) {
+                df[,c("id", "symbol")]
+            } else {
+                data = df$id
+                names(data) = df$symbol
+                data
+            }
+        }
         ,addBulk = function(data) { tblCurrencies$bulkAdd(data)}
     )
     ,private = list(

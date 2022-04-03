@@ -40,19 +40,19 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
           }
           df
       }
-      ,getCurrencies = function(from, max) { stop("Este metodo es virtual")}
-
-      ,setLimits   = function(limits)   { private$limits = limits }
-      ,setInterval = function(interval) { private$interval = interval }
-      ,getLatests  = function(base, counter) { stop("Este metodo es temporañ")}
+      # ,getCurrencies = function(from, max) { stop("Este metodo es virtual")}
+      #
+      # ,setLimits   = function(limits)   { private$limits = limits }
+      # ,setInterval = function(interval) { private$interval = interval }
+      # ,getLatests  = function(base, counter) { stop("Este metodo es temporañ")}
 
       # Metodos
 
-      ,ticker        = function() { stop("Este metodo es virtual")}
-      ,session       = function(base, counter, interval, from, to) { stop("Este metodo es virtual")}
-      ,getDaySession = function(base, counter,           from, to) { stop("Este metodo es virtual")}
-      ,currencies    = function() { stop("Este metodo es virtual")}
-      ,getCloseSession = function(base, counter, day) { stop("Este metodo es virtual")}
+      # ,ticker        = function() { stop("Este metodo es virtual")}
+      # ,session       = function(base, counter, interval, from, to) { stop("Este metodo es virtual")}
+      # ,getDaySession = function(base, counter,           from, to) { stop("Este metodo es virtual")}
+      # ,currencies    = function() { stop("Este metodo es virtual")}
+      # ,getCloseSession = function(base, counter, day) { stop("Este metodo es virtual")}
 
 
    )
@@ -69,49 +69,49 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        ,fiats     = c("EUR", "USD", "USDT", "USDC")
        # ,tblPath   = NULL
        # ,dfPath    = NULL
-       ,get       = function(url) {
-           # No va por la hora, si no por el intervalo de tiempo
-           # Ignoramos segundos
-           dt = Sys.time()
-           if (!is.null(lastGet)) {
-               if (difftime(dt, lastGet, units="mins")  > 1) private$current[2] = 0
-               if (difftime(dt, lastGet, units="hours") > 1) private$current[3] = 0
-           }
-           private$lastGet = dt
-           private$current = private$current + 1
-           if (private$current[2] >= private$limits[2]) {
-               message("Esperando por exceso de peticiones por minuto")
-               Sys.sleep(62)
-           }
-           if (private$current[3] >= private$limits[3]) {
-               message("Esperando por exceso de peticiones por hora")
-               Sys.sleep(3610)
-           }
-           resp = httr::GET(url)
-           jsonlite::fromJSON(httr::content(resp, as="text", encoding="UTF-8"))
-       }
-       ,.getLatest = function(base, counter) {
-           value = 1
-           idx   = 1
-           loadTickers()
-
-           path = .getPath(base,counter)
-           pair = c(path[1], path[2], path[3])
-           while (idx <= length(path)) {
-               pair = c(path[idx], path[idx+1], path[idx+2])
-               value = calcPrice(value, pair)
-               idx = idx + 3
-           }
-           if (!base %in% pair) value = calcPrice(value, c("EUR","USD", "NRM"))
-           lst = list(last=value)
-           lst
-       }
-       ,calcPrice = function(value, pair) {
-           df = subset(dfTickers, base == pair[1] & counter == pair[2])
-           res = (df$highest + df$lowest) / 2
-           if (pair[3] == "INV") res = 1 / res
-           value * res
-       }
+       #,get       = function(url) {
+       #     # No va por la hora, si no por el intervalo de tiempo
+       #     # Ignoramos segundos
+       #     dt = Sys.time()
+       #     if (!is.null(lastGet)) {
+       #         if (difftime(dt, lastGet, units="mins")  > 1) private$current[2] = 0
+       #         if (difftime(dt, lastGet, units="hours") > 1) private$current[3] = 0
+       #     }
+       #     private$lastGet = dt
+       #     private$current = private$current + 1
+       #     if (private$current[2] >= private$limits[2]) {
+       #         message("Esperando por exceso de peticiones por minuto")
+       #         Sys.sleep(62)
+       #     }
+       #     if (private$current[3] >= private$limits[3]) {
+       #         message("Esperando por exceso de peticiones por hora")
+       #         Sys.sleep(3610)
+       #     }
+       #     resp = httr::GET(url)
+       #     jsonlite::fromJSON(httr::content(resp, as="text", encoding="UTF-8"))
+       # }
+       # ,.getLatest = function(base, counter) {
+       #     value = 1
+       #     idx   = 1
+       #     loadTickers()
+       #
+       #     path = .getPath(base,counter)
+       #     pair = c(path[1], path[2], path[3])
+       #     while (idx <= length(path)) {
+       #         pair = c(path[idx], path[idx+1], path[idx+2])
+       #         value = calcPrice(value, pair)
+       #         idx = idx + 3
+       #     }
+       #     if (!base %in% pair) value = calcPrice(value, c("EUR","USD", "NRM"))
+       #     lst = list(last=value)
+       #     lst
+       # }
+       # ,calcPrice = function(value, pair) {
+       #     df = subset(dfTickers, base == pair[1] & counter == pair[2])
+       #     res = (df$highest + df$lowest) / 2
+       #     if (pair[3] == "INV") res = 1 / res
+       #     value * res
+       # }
        #  ,.getPath = function(base, counter) {
        #     df = dfPath[dfPath$base == base & dfPath$counter == counter,]
        #     if (nrow(df) == 0)  {
@@ -130,82 +130,83 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
        #     }
        #     path
        # }
-       ,findPathOld      = function (base, counter, add=TRUE) {
-           path = dfPath[dfPath$base == base & dfPath$counter == counter,]
-           if (nrow(path) > 0) return (path[1,"path"])
-
-           path = NULL
-           idx = 4
-           res = searchPath(base, counter)
-
-           if (!is.null(res)) {
-               path = mountPath("", res[1:3])
-               while(idx < length(res)) {
-                    tag = res[idx]
-                    if (tag %in% c("INV", "NRM")) {
-                        path = mountPath(path, res[idx], res[idx - 1], res[idx + 1])
-                    } else {
-                        path = mountPath(path, res[idx+1], res[idx - 1], res[idx])
-                    }
-                    idx = idx + 2
-               }
-           }
-           if (add) {
-               data = list(provider = self$code, base=base,counter=counter,path=path)
-               tblPath$add(data, isolated=TRUE)
-           }
-           path
-       }
-       ,mountPath = function(path, ...) {
-           flds = list(...)
-           if (length(flds) == 1) {
-               flds = flds[[1]]
-           }
-           else {
-               flds = unlist(flds)
-           }
-           if (flds[1] != "INV") res = paste(flds[2], flds[3], flds[1], sep="/")
-           if (flds[1] == "INV") res = paste(flds[3], flds[2], flds[1], sep="/")
-           paste(res,path,sep="/")
-       }
-       ,checkPair = function(base, counter) {
-           dfb = dfTickers[dfTickers$base == base | dfTickers$counter == base,]
-           dfc = dfTickers[dfTickers$base == counter | dfTickers$counter == counter,]
-           ifelse (nrow(dfb) == 0 || nrow(dfc) == 0, TRUE, FALSE)
-       }
-       ,namecols = function(df, left) {
-           if (left)  colnames(df) = c(paste0("from", seq(1,(ncol(df) - 1))), "chk")
-           if (!left) colnames(df) = c("chk", paste0("to", seq(1,(ncol(df) - 1))))
-           df
-       }
-       ,makejoin = function(df1, df2, left) {
-           df = inner_join(df1, df2, by="chk")
-           if ( left) df = namecols(df, TRUE)
-           if (!left) df = namecols(df, FALSE)
-           df
-       }
-       ,.invert = function(df) {
-          # JGG hay que revisar
-           df[,2:ncol(df)] = 1 / df[,2:ncol(df)]
-           df
-       }
-       ,.adjustDFSession = function(prov, base, counter, df) {
-           df$tms = as.POSIXct(df$tms, origin="1970-01-01")
-           df$quoteVolume = NULL
-           names(df)[names(df) == "weightedAverage"] = "average"
-
-           prov    = rep(prov, nrow(df))
-           base    = rep(base, nrow(df))
-           counter = rep(counter, nrow(df))
-           df0     = data.frame(provider=prov, base=base, counter=counter)
-           cbind(df0, df)
-       }
+       # ,findPathOld      = function (base, counter, add=TRUE) {
+       #     path = dfPath[dfPath$base == base & dfPath$counter == counter,]
+       #     if (nrow(path) > 0) return (path[1,"path"])
+       #
+       #     path = NULL
+       #     idx = 4
+       #     res = searchPath(base, counter)
+       #
+       #     if (!is.null(res)) {
+       #         path = mountPath("", res[1:3])
+       #         while(idx < length(res)) {
+       #              tag = res[idx]
+       #              if (tag %in% c("INV", "NRM")) {
+       #                  path = mountPath(path, res[idx], res[idx - 1], res[idx + 1])
+       #              } else {
+       #                  path = mountPath(path, res[idx+1], res[idx - 1], res[idx])
+       #              }
+       #              idx = idx + 2
+       #         }
+       #     }
+       #     if (add) {
+       #         data = list(provider = self$code, base=base,counter=counter,path=path)
+       #         tblPath$add(data, isolated=TRUE)
+       #     }
+       #     path
+       # }
+       # ,mountPath = function(path, ...) {
+       #     flds = list(...)
+       #     if (length(flds) == 1) {
+       #         flds = flds[[1]]
+       #     }
+       #     else {
+       #         flds = unlist(flds)
+       #     }
+       #     if (flds[1] != "INV") res = paste(flds[2], flds[3], flds[1], sep="/")
+       #     if (flds[1] == "INV") res = paste(flds[3], flds[2], flds[1], sep="/")
+       #     paste(res,path,sep="/")
+       # }
+       # ,checkPair = function(base, counter) {
+       #     dfb = dfTickers[dfTickers$base == base | dfTickers$counter == base,]
+       #     dfc = dfTickers[dfTickers$base == counter | dfTickers$counter == counter,]
+       #     ifelse (nrow(dfb) == 0 || nrow(dfc) == 0, TRUE, FALSE)
+       # }
+       # ,namecols = function(df, left) {
+       #     if (left)  colnames(df) = c(paste0("from", seq(1,(ncol(df) - 1))), "chk")
+       #     if (!left) colnames(df) = c("chk", paste0("to", seq(1,(ncol(df) - 1))))
+       #     df
+       # }
+       # ,makejoin = function(df1, df2, left) {
+       #     df = inner_join(df1, df2, by="chk")
+       #     if ( left) df = namecols(df, TRUE)
+       #     if (!left) df = namecols(df, FALSE)
+       #     df
+       # }
+       # ,.invert = function(df) {
+       #    # JGG hay que revisar
+       #     df[,2:ncol(df)] = 1 / df[,2:ncol(df)]
+       #     df
+       # }
+       # ,.adjustDFSession = function(prov, base, counter, df) {
+       #     df$tms = as.POSIXct(df$tms, origin="1970-01-01")
+       #     df$quoteVolume = NULL
+       #     names(df)[names(df) == "weightedAverage"] = "average"
+       #
+       #     prov    = rep(prov, nrow(df))
+       #     base    = rep(base, nrow(df))
+       #     counter = rep(counter, nrow(df))
+       #     df0     = data.frame(provider=prov, base=base, counter=counter)
+       #     cbind(df0, df)
+       # }
        # ,.adjust = function(df, price) {
        #    # JGG hay que revisar
        #     df[,2:ncol(df)] = df[,2:ncol(df)] *
        #     df
        # }
       ,.applyFiat = function(df, base, counter, from, to) {
+          stop("provbase$applyFIAT llamado")
            # Euro va por dias
            dfEur = EUR$getSessionDays(base, counter, asDate(from), asDate(to))
            colnames(dfEur) = c("date", "otro", "USD")
@@ -217,6 +218,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            df[,1:(ncol(df) - 3)]
         }
        ,findCTC = function(dfwrk, ctc, seen, left) {
+           stop("provbase$findCTC llamado")
            act = "NRM"
            # df, monedas a buscar, monedas vistas, from o to
            idx = ifelse(left, 1,2)
@@ -246,6 +248,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            df
        }
        ,searchPath = function(base, counter) {
+           stop("provbase$searchPath llamado")
            dfwrk = dfTickers[,c("base", "counter")]
            dfe = dfwrk[dfwrk$base == counter | dfwrk$counter == counter,]
            if (nrow(dfe) == 0) return (NULL)
@@ -270,6 +273,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            error("Casos raros")
        }
        ,searchPathOld = function(base, counter) {
+           stop("provbase$searchPathOld llamado")
            # Base y counter existen
            # Primero buscamos partiendo de base=base
            # Si no existe el camino y existe counter=base
@@ -292,6 +296,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            res
        }
        ,internalSearch     = function (dfwrk, dffrom, base, counter) {
+           stop("provbase$internalsearch llamado")
            lseen = c(base)
            rseen = c()
 
@@ -335,6 +340,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
            as.vector(dfj[1,])
       }
        ,addDefaults  = function() {
+           stop("provbase$addefaults llamado")
 #            eur = EUR$latest("EUR", "USD")
 #            # Ponemos cambios por defecto para que los encuentre
 #            # Por definicion USDT, USDC son monedas USD
@@ -372,6 +378,7 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
           private$dfTickers = rbind(private$dfTickers, dfe, dft,dfc)
        }
       ,mountURL = function(page) {
+          stop("provbase$mountURL llamado")
           url = info$url
           len = nchar(url)
           last = substr(url, len, len)
@@ -391,16 +398,6 @@ ProviderBase = R6::R6Class("PROVIDER.BASE"
               }
           }
           url
-      }
-      ,checkResponse = function(resp, url, parms, accept404=TRUE) {
-         rc = as.integer(resp$status$error_code)
-         if ( rc ==   0 || rc == 200) return (rc)
-         if ((rc == 400 || rc == 404) && accept404) return (rc)
-         YATABase:::HTTP( paste("HTTP ERROR:", resp$status$error_message)
-                         , action="GET", code=rc
-                         ,origin=url, message=resp$status$error_message
-                         ,parameters = parms
-         )
       }
    )
 

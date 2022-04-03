@@ -17,10 +17,30 @@ class YATAShiny {
        jQuery(document).on('click', this.#leftSideIcon,  {yatashiny: this}, yatashiny.sidebarLeft);
        jQuery(document).on('click', this.#rightSideIcon, {yatashiny: this}, yatashiny.sidebarRight);
        this.#add_listeners();
+       var yata = {
+            "data1": "data 1"
+           ,"dataArr": [1, 2, 3]
+           ,"position": {
+                "pos1": "pos1"
+               ,"val1": 33
+           }
+       };
+       Cookies.set("yata", JSON.stringify(yata), { SameSite: "Strict"});
    }
-   send_cookies() {
+   cookies_send() {
+      let res = Cookies.get("yata");
+      Shiny.setInputValue('cookies', res);
+   }
+   cookies_recv(data) {
+       alert("Recevie co")
       let res = Cookies.get();
       Shiny.setInputValue('cookies', res);
+   }
+   cookies_set(msg) {
+       alert(msg);
+   }
+   cookies_delete(msg) {
+       alert(msg);
    }
    window_resize(evt) {
       Cookies.set('window_width',  window.innerWidth,  { SameSite: "Strict"});

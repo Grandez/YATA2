@@ -10,10 +10,12 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
      initialize = function(code, factory) { # }, dbf) {
        super$initialize  (code, "CoinMarketCap", factory) #, dbf)
        private$base    = YATABase$new()
+       private$http    = private$base$http
        private$lastGet = as.POSIXct(1, origin="1970-01-01")
        private$hID     = base$map()
      }
     ,getIcons = function(maximum, force=FALSE) {
+        #JGG Revisar
         urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
         urlbase2 = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
         if (missing(maximum)) maximum=9999
@@ -30,7 +32,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                  cat("\tExist\n")
                  next
              }
-             resp = GET(paste0(urlbase, png), add_headers(.headers=headers), query=NULL)
+             resp = http$get(paste0(urlbase, png), parms=NULL, headers=headers, accept=500)
              if (resp$status_code != 200) {
                  cat("\tKO\n")
              } else {
@@ -41,6 +43,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         setwd(oldwd)
      }
     ,getCurrencies = function(from = 1, max = 0) {
+        #JGG Revisar
         url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
         count   =   0
         until   = 501
@@ -51,7 +54,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
         while (process) {
              if (count > 0) Sys.sleep(1) # Para no saturar
-             data  = request(url, parms)
+             data  = http$get(url, parms=parms, headers=headers)
              until = ifelse (max == 0, data$totalCount, max)
              data  = data[[1]]
              parms$start = parms$start + length(data)
@@ -119,7 +122,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
            if (parms$start > 1) Sys.sleep(1) # avoid DoS
            tryCatch({
              logger$doing(3, "Getting tickers from %5d ", parms$start)
-             data = request(url, parms)
+             data = http$json(url, parms=parms, headers=headers)
              logger$done(3)
 
              if (is.null(data) || length(data) == 0) break
@@ -141,15 +144,24 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         }
         resp$df = dfc
         resp
-     }
-    ,loadTickers = function() {
-        if (difftime(Sys.time(), lastGet, unit="mins") < interval) return (invisible(self))
-        private$lastGet = Sys.time()
-        getLatest()
-     }
-    ,unloadCurrencies = function(from, limit) {
-        getLatest(from, limit)
-     }
+    }
+    ,getTrend = function() {
+        table = http$html_table("https://coinmarketcap.com/trending-cryptocurrencies/", accept=500)
+        if (is.null(table)) return (NULL)
+
+        dfData  = table[,4:9]
+        for (i in 1:ncol(dfData)) {
+            dfData[,i] = gsub("[\\$\\%,-]", "", dfData[,i])
+            dfData[,i] = as.numeric(dfData[,i])
+        }
+        lbls = strsplit(table[,3], "[0-9]+")
+        dfl = do.call(rbind.data.frame,lbls)
+        colnames(dfl) = c("name", "symbol")
+        df = cbind(dfl, dfData)
+        cols = c("name", "symbol", "price", "day", "week", "month", "marketcap", "volumne")
+        colnames(df) = cols
+        df
+    }
     ,getHistorical = function(idCurrency, from, to ) {
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
 
@@ -163,7 +175,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
            ,timeEnd   = as.numeric(as.POSIXct(to))
         )
 
-        data  = request(url, parms, accept404 = FALSE)
+        data  = http$json(url, parms=parms, headers=headers)
         data  = data$quotes
         items = lapply(data, function(item) {
             l1 = list(timeHigh=item$timeHigh, timeLow=item$timeLow)
@@ -177,6 +189,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
      urlbase = "https://coinmarketcap.com/"
     ,hID     = NULL
     ,base    = NULL
+    ,http    = NULL
     ,headers = c( `User-Agent`      = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
                  ,`Accept-Language` = "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"
                  ,Accept          = "application/json, text/plain, */*"
@@ -185,6 +198,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                  ,TE              = "Trailers"
     )
     ,getPage = function(page) {
+        stop("MarketCap$getPage llamado")
         # el paquete rvest hace cosas muy raras
         # Hacemos scrapping a pelo
         # La columna 3 tiene icono, nombre y simbolo
@@ -233,15 +247,15 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         private$dfTickers = df
         df
      }
-    ,request = function (url, parms, accept404 = TRUE) {
-        if (missing(parms) || is.null(parms)) {
-            page = httr::GET(url, add_headers(.headers=headers))
-        } else {
-           page = httr::GET(url, add_headers(.headers=headers), query=parms)
-        }
-       resp = httr::content(page, type="application/json")
-       checkResponse(resp, url, parms, accept404 = FALSE)
-       resp$data
-    }
+    # ,request = function (url, parms, accept404 = TRUE) {
+    #     if (missing(parms) || is.null(parms)) {
+    #         page = httr::GET(url, add_headers(.headers=headers))
+    #     } else {
+    #        page = httr::GET(url, add_headers(.headers=headers), query=parms)
+    #     }
+    #    resp = httr::content(page, type="application/json")
+    #    checkResponse(resp, url, parms, accept404 = FALSE)
+    #    resp$data
+    # }
   )
 )

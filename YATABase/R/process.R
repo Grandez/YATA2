@@ -75,14 +75,10 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
          root = paste0(site,"/ext/scripts/")
          log =  paste0(site,"/data/log/")
 
-         rscript = paste0(root, script)
-         script  = substr(script,1, nchar(script) - 1)
-         log = paste0(log, script, "log")
-         args = c( "CMD", "BATCH"
-                  ,"--no-save", "--no-restore"
-                  ,rscript
-                  ,log
-                 )
+         rscript = paste0(root, script, ".R")
+         log     = paste0(log,  script, ".log")
+
+         args = c( "CMD", "BATCH", "--no-save", "--no-restore", rscript, log)
          if (async) {
              processx::process$new("R", args=args)
          } else {

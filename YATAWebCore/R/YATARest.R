@@ -6,50 +6,56 @@ YATARest = R6::R6Class("YATA.REST"
   ,public = list(
      initialize = function(type) {
          tryCatch({
-            fact  = YATACore::getFactory()
+            private$fact  = YATACore::getFactory()
             servers = fact$parms$getServers()
             if (missing(type)) type = "REST"
             private$parms = servers[[type]]
             private$.url = paste0(parms$url, ":", parms$port, "/")
+            private$http = YATAHTTP$new()
          }, error = function(cond) {
             YATABase:::error( "Error initializing object"
                             ,subclass=NULL, origin=cond, action="YATARest")
          })
      }
-     ,check = function() {
-         tryCatch({
-             httr::GET(paste0(.url,"alive"), timeout(2))
-             0
-            },error = function(e) {
-             99
-            })
+     ,GET   = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
+     ,PUT   = function(endpoint, ...) {
+        future({ .restDfBody(endpoint, ...)})
+        invisible(self)
       }
-     ,PUT   = function(endpoint, ...) { # PUT No devuelve datos
-         url = paste0(.url, endpoint)
-         cat(paste(Sys.time(), "PUT", url), file=paste0(sys.getenv("YATA_SITE"), "/data/log/web.log"), append=TRUE)
-         #future({ httr::GET(url, query = args2list(...)) })
-          httr::GET(url, query = args2list(...))
-      }
-     ,POST   = function(endpoint, ...) { # PUT No devuelve datos
-         url = paste0(.url, endpoint)
-cat(paste(Sys.time(), "POST", url), file="P:/R/YATA2/web.log", append=TRUE)
-         #future({ httr::GET(url, query = args2list(...)) })
-          httr::GET(url, query = args2list(...))
-      }
-     ,PUTSync = function(endpoint, ...) {
-         url = paste0(.url, endpoint)
-         httr::GET(url, query = args2list(...))
-      }
+     ,GETSync    = function(endpoint, ...) {          .restDfBody(endpoint, ...)   }
      ,GETDF      = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
      ,DF         = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
-     ,restdfSync = function(endpoint, ...) {          .restDfBody(endpoint, ...)   }
+     ,trending   = function(sync=FALSE) {
+         if (sync) {
+             prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
+             prov$getTrend()
+         } else {
+            future_promise ({
+                browser()
+                prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
+                df = prov$getTrend()
+            }) %>% then (
+                onFulfilled = function(df) {
+                    browser()
+                    df
+                }
+                ,onRejected = function(err) {
+               browser()
+               NULL
+            })
+
+         }
+     }
   )
   ,private = list(
       parms = NULL
-    ,.url = NULL
+     ,http = NULL
+    ,.url  = NULL
+    ,fact  = NULL
     ,.restDfBody = function(endpoint, ...) {
+        browser()
         url = paste0(.url, endpoint)
-
+        http$get(url, query = args2list(...))
         req = httr::GET(url, query = args2list(...))
         if (req$status_code == 200) {
             json = httr::content(req, type="application/json", encoding="UTF-8")

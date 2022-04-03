@@ -3,6 +3,7 @@
 DBDict = list(
     parts  = list(
        Operations   = "OPERATIONS"
+      ,FIAT         = "FIAT"        # Completa
     )
     ,base = list(
        Messages     = "MESSAGES"
@@ -18,6 +19,7 @@ DBDict = list(
       ,ExchangesFiat = "EXCHANGES_FIAT"
       ,History       = "HISTORY"
       ,Session       = "SESSION"
+      ,Fiat          = "FIAT"   # Solo la moneda
     )
     ,tables = list(
        Alerts         = "ALERTS"
