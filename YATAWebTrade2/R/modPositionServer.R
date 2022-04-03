@@ -356,9 +356,11 @@ observeEvent(flags$position, ignoreInit = TRUE, {
     #     shinyjs::hide("posGlobal")
     # } else {
           shinyjs::show("posGlobal")
-
+shinyjs::show("posGlobalFull")
         data = preparePosition(pnl$data$dfGlobal, "PosGlobal")
         output$tblPosGlobalFull = updTableMultiple(data)
+        sel = c(which(data$df$currency %in% pnl$vars$selected[["PosGlobal"]]))
+        updTableSelection("tblPosGlobalFull", sel)
 
         df = data$df
         data$df = df[df$balance > 0,]
