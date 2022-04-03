@@ -1,38 +1,39 @@
 # Esto es para las pruebas
-#unloadNamespace("YATAWebCore")
-#unloadNamespace("YATACore")
-#unloadNamespace("YATADT")
-#unloadNamespace("YATAProviders")
-#unloadNamespace("YATADB")
-#unloadNamespace("YATABase")
+# unloadNamespace("YATAWebCore")
+# unloadNamespace("YATACore")
+# unloadNamespace("YATADT")
+# unloadNamespace("YATAProviders")
+# unloadNamespace("YATADB")
+# unloadNamespace("YATABase")
 
 # Core
-# library(utils)
-# library(R6)
-# library(tibble)
-# library(rlist)
-# library(stringr)
-# suppressMessages(library(plyr,  warn.conflicts = FALSE))
-# suppressMessages(library(tidyr, warn.conflicts = FALSE))
-# suppressMessages(library(dplyr, warn.conflicts = FALSE))
+library(utils)
+library(R6)
+library(tibble)
+library(rlist)
+library(stringr)
+suppressMessages(library(plyr,  warn.conflicts = FALSE))
+suppressMessages(library(tidyr, warn.conflicts = FALSE))
+suppressMessages(library(dplyr, warn.conflicts = FALSE))
 
 # YATA
-# suppressMessages(library(YATAShiny,       warn.conflicts = FALSE))
-# suppressMessages(library(YATABase,       warn.conflicts = FALSE))
-# suppressMessages(library(YATACore,       warn.conflicts = FALSE))
-# suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
+suppressMessages(library(YATAShiny,       warn.conflicts = FALSE))
+suppressMessages(library(YATABase,       warn.conflicts = FALSE))
+suppressMessages(library(YATACore,       warn.conflicts = FALSE))
+suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
+library(YATABatch)
 
 # suppressMessages(library(YATADT))
 
 # Shiny
-# library(shiny)
-# suppressMessages(library(shinyjs             ,warn.conflicts = FALSE))
-# suppressMessages(library(bslib,              warn.conflicts = FALSE))
+library(shiny)
+suppressMessages(library(shinyjs             ,warn.conflicts = FALSE))
+suppressMessages(library(bslib,              warn.conflicts = FALSE))
 
 # Async
 # #suppressMessages(library(jsonlite, warn.conflicts = FALSE))
-# suppressMessages(library(promises, warn.conflicts = FALSE))
-# suppressMessages(library(future,   warn.conflicts = FALSE))
+suppressMessages(library(promises, warn.conflicts = FALSE))
+suppressMessages(library(future,   warn.conflicts = FALSE))
 
 # options( warn = -1
 # #        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
@@ -48,22 +49,22 @@
 ### Carga de fuentes
 ### En R busca subdirectorios
 #####################################
+library(YATABatch)
+files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
+sapply(files,source)
 
-# files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
-# sapply(files,source)
-
-#cat(paste(Sys.time(), " - Before WEB\n"), file="P:/R/YATA2/web.log", append=TRUE)
 WEB = YATAWebCore::YATAWebEnv$new()
+# YATABatch::startDaemons()
+# WEB$startDaemons()
 
-# if (.Platform$OS.type != "windows") {
-#    future::plan(strategy="sequential")
-# } else {
-#   future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
-#                     tweak(multisession, workers = 4)))
-# }
+if (.Platform$OS.type != "windows") {
+   future::plan(strategy="sequential")
+} else {
+  future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
+                    tweak(multisession, workers = 4)))
+}
 
-YATABatch::startDaemons()
-
+# WEB$startDaemons()
 onStart = function() {
       cat("Doing application setup\n")
 }
