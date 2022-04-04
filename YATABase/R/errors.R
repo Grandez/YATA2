@@ -34,7 +34,6 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
    )
 )
 .error = function(msg, subclass, ...) {
-   browser()
    logger = YATALogger$new("ERROR")
    data = list(...)
    data$message = msg

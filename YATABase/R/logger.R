@@ -125,7 +125,6 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            invisible(self)
        }
        ,fail = function(cond) {
-          browser()
           .toFile(self$type$ERROR, 0, "Clase: %s;message:%s", class(cond)[2],cond)
        }
 

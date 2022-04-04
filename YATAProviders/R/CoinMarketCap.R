@@ -115,7 +115,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
         until = from + 500
         dfc   = NULL
-        parms = list( start=from, limit=500, convert = "EUR"
+        parms = list( start=from, limit=500, convert = "USD"
                      ,cryptoType="all", tagType="all")
         resp = list(total=0, from=0, count=0)
         while (parms$start < until) {
@@ -169,10 +169,10 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/historical"
 
         parms = list(
-            convertId  = 2781 #JGG 2781 = EUR
-           ,id         = idCurrency
+            id         = idCurrency
            ,timeStart = as.numeric(as.POSIXct(from))
            ,timeEnd   = as.numeric(as.POSIXct(to))
+           ,convertId  = 2781 #JGG 2781 = USD 2790-EUR
         )
 
         data  = http$json(url, parms=parms, headers=headers)
@@ -183,7 +183,45 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         })
         df = do.call(rbind.data.frame,items)
         as_tms(df, c(7,8,9))
-     }
+    }
+    ,getExchanges = function() {
+        # Aparte de 1000 campos devuelve el campo 2
+        # Nombre y acabado en un numero a veces (supongo que el id y solo los 10 primeros
+        table = http$html_table("https://coinmarketcap.com/rankings/exchanges")
+        df = table[,2]
+        colnames(df) = "name"
+        df$name = gsub("[0-9]+$","",df[,1])
+        df
+    }
+    ,getExchangeMarkets = function(exchange) {
+        cols = c( "exchangeId", "exchangeName"
+                 ,"baseSymbol", "baseCurrencyId"
+                 ,"quoteSymbol", "quoteCurrencyId")
+
+        url   = "https://api.coinmarketcap.com/data-api/v3/exchange/market-pairs/latest"
+        parms = list( slug=exchange, category = "spot"
+                     ,start=1, limit=500)
+
+        data = http$json(url, parms=parms, headers=headers)
+        data = data$data
+        maxPairs=data$numMarketPairs
+        tbl = data$marketPairs
+        df = do.call(rbind.data.frame,as.list(tbl))
+        dfExch = df[,cols]
+        count = nrow(dfExch)
+        while(count < maxPairs) {
+            parms$start = count + 1
+            data = http$json(url, parms=parms, headers=headers)
+            data = data$data
+            tbl = data$marketPairs
+            df = do.call(rbind.data.frame,as.list(tbl))
+            dfTmp = df[,cols]
+            count = count + nrow(dfTmp)
+            dfExch = rbind(dfExch, dfTmp)
+        }
+        dfExch
+    }
+
    )
   ,private = list(
      urlbase = "https://coinmarketcap.com/"

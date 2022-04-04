@@ -17,6 +17,7 @@ DBDict = list(
       ,Exchanges     = "EXCHANGES"
       ,ExchangesCtc  = "EXCHANGES_CTC"
       ,ExchangesFiat = "EXCHANGES_FIAT"
+      ,ExchangesPair = "EXCHANGES_PAIR"
       ,History       = "HISTORY"
       ,Session       = "SESSION"
       ,Fiat          = "FIAT"   # Solo la moneda

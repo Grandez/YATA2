@@ -10,15 +10,16 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          prms=NULL
          if (!is.null(headers)) heads=headers
          if (!is.null(parms))   prms = parms
-
+#JGG json la page devuelve 0 pero el json no
          page = httr::GET(url, add_headers(.headers=headers), query=prms)
-         private$rc = checkResponse("get", page, url, parms, accept)
+         private$rc = checkPageResponse("get", page, url, parms, accept)
          page
       }
-     ,json = function (url, parms=NULL, headers=NULL, accept = 400) {
+     ,json = function (url, parms=NULL, headers=NULL, accept = 0) {
          page = get(url, parms, headers, accept)
          resp = httr::content(page, type="application/json")
-         resp$data
+         private$rc = checkContentResponse("get", resp, url, parms, accept)
+         resp
       }
      ,html = function(url, parms=NULL, headers=NULL, accept = 400) {
          page = get(url, parms=NULL, headers=NULL, accept = 400)
@@ -36,18 +37,34 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
    ,private = list(
        resp = NULL
       ,rc = 0
-      ,checkResponse = function(method, page, url, parms, accept) {
+      ,checkPageResponse = function(method, page, url, parms, accept) {
          rc = (page$status_code %/% 100) * 100
          if (rc == 0 || rc == 200) return (0)
          # Hacemos el trycatch para grabar siempre el error
          tryCatch({
-            YATABase:::HTTP( paste("HTTP ERROR:", resp$status$error_message)
+            YATABase:::HTTP( paste("HTTP ERROR:", "Page error")
                             ,action=method, code=page$status_code
-                            ,origin=page$url, message=resp$status$error_message
+                            ,origin=page$url, message="Page error"
                             ,parameters = parms
                            )
          }, error = function(cond){
-            if (rc == accept || rc == 500) return (rc)
+            if (rc == accept || accept == 500) return (rc)
+            YATABase:::propagateError(cond)
+         })
+      }
+      ,checkContentResponse = function(method, resp, url, parms, accept) {
+         rc = as.integer(resp$status$error_code)
+         rc = (rc %/% 100) * 100
+         if (rc == 0 || rc == 200) return (0)
+         # Hacemos el trycatch para grabar siempre el error
+         tryCatch({
+            YATABase:::HTTP( paste("HTTP ERROR:", resp$status$error_message)
+                            ,action = method, code    = resp$status_code
+                            ,origin = url,    message = resp$status$error_message
+                            ,parameters = parms
+                           )
+         }, error = function(cond){
+            if (rc == accept || accept == 500) return (rc)
             YATABase:::propagateError(cond)
          })
       }
