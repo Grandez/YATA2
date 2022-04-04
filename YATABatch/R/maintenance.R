@@ -1,6 +1,6 @@
 updateExchanges = function (logoutput, loglevel) {
     process = "exchanges"
-    logLbl  = "%5d - Retrieving exchanges pairs for %s\n"
+    logLbl  = "%5d - Retrieving exchanges pairs for %s"
     logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
 
     count = 0

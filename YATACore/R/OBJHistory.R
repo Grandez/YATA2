@@ -61,11 +61,11 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
             colnames(df) = c(labels, "id")
             df
         }
+       ,getTableHistory = function() { private$tblHistory }
        ,add = function(df, isolated=TRUE) {
            tblHistory$bulkAdd(df, isolated)
            invisible(self)
         }
-
     )
     ,private = list(
         tblCurrencies = NULL
