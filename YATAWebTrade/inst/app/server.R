@@ -91,6 +91,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
 function(input, output, session) {
    WEB$setSession(session)
    if (WEB$errorLevel > 0) {
+       browser()
        if (WEB$errorLevel == 99)
            return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
        return (yataErrGeneral(0, WEB$txtError, input, output, session))
@@ -98,8 +99,9 @@ function(input, output, session) {
    pnl = WEB$getPanel("server")
    if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
 
-   js$request_cookies()
+   js$yata_req_cookies()
    observeEvent(input$cookies, {
+       WEB$cookies = jsonlite::fromJSON(input$cookies)
        WEB$setWindow(input$cookies)
    })
    observeEvent(input$resize, {

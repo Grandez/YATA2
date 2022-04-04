@@ -192,6 +192,7 @@ PNLPos = R6::R6Class("PNL.OPER"
  )
 
  moduleServer(id, function(input, output, session) {
+     browser()
             showNotification("Entra en POSITION")
     pnl = WEB$getPanel(id)
     if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
@@ -356,9 +357,11 @@ observeEvent(flags$position, ignoreInit = TRUE, {
     #     shinyjs::hide("posGlobal")
     # } else {
           shinyjs::show("posGlobal")
-
+shinyjs::show("posGlobalFull")
         data = preparePosition(pnl$data$dfGlobal, "PosGlobal")
         output$tblPosGlobalFull = updTableMultiple(data)
+        sel = c(which(data$df$currency %in% pnl$vars$selected[["PosGlobal"]]))
+        updTableSelection("tblPosGlobalFull", sel)
 
         df = data$df
         data$df = df[df$balance > 0,]
