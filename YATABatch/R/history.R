@@ -33,6 +33,7 @@ updateHistory = function(output=1, log=1, unload=FALSE) {
     to   = ifelse(pid == 0, nrow(ctc), 1)
 
     for (row in from:to) {
+
          tryCatch({
            cat(sprintf("%5d - Retrieving history for %s\n", row, df[row,"name"]))
            batch$logger$batch("%5d - Retrieving history for %s", row, df[row,"name"])
