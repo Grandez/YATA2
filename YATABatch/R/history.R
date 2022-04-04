@@ -3,7 +3,6 @@ updateHistory = function(logoutput, loglevel) {
     process = "history"
     logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
     pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")
-    logLbl  = "%5d - Retrieving history for %s"
 
     batch = YATABatch$new("History")
     fact  = batch$fact
@@ -38,7 +37,7 @@ updateHistory = function(logoutput, loglevel) {
 
     for (row in from:to) {
          rc2 = tryCatch({
-         batch$logger$batch(loglbl, row, df[row,"name"])
+         batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
          if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
          data = prov$getHistory(df[row, "id"], df[row,"max"])
            if (!is.null(data)) {
