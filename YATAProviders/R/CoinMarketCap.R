@@ -49,12 +49,12 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         until   = 501
         dfc     = NULL
         process = TRUE
-        parms = list( start=from, limit=500, convert = "EUR"
-                     ,cryptoType="all", tagType="all")
+        parms = list( start=from, limit=500, cryptoType="all", tagType="all")
 
         while (process) {
              if (count > 0) Sys.sleep(1) # Para no saturar
-             data  = http$get(url, parms=parms, headers=headers)
+             data  = http$json(url, parms=parms, headers=headers)
+
              until = ifelse (max == 0, data$totalCount, max)
              data  = data[[1]]
              parms$start = parms$start + length(data)
@@ -73,12 +73,14 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                          ,active = as.integer(x$isActive)
                      )
                    })
-             if (length(lst) > 0) {
-                 df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
-                                 ,stringsAsFactors=FALSE)
-                 colnames(df) = names(lst[[1]])
-                 dfc = rbind(dfc, df)
-             }
+             df = do.call(rbind.data.frame,as.list(lst))
+             dfc = rbind(dfc, df)
+             # if (length(lst) > 0) {
+             #     df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
+             #                     ,stringsAsFactors=FALSE)
+             #     colnames(df) = names(lst[[1]])
+             #     dfc = rbind(dfc, df)
+             # }
              count = count + length(data)
              if (count >= until || length(data) < 500) process = FALSE
         }
@@ -110,20 +112,18 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
 
-        #JGG Se capturan los errores de HTTP por los problemas de red
-
         url =  "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
         until = from + 500
         dfc   = NULL
-        parms = list( start=from, limit=500, convert = "USD"
-                     ,cryptoType="all", tagType="all")
+        parms = list( start=from, limit=500, cryptoType="all", tagType="all")
         resp = list(total=0, from=0, count=0)
         while (parms$start < until) {
            if (parms$start > 1) Sys.sleep(1) # avoid DoS
            tryCatch({
-             logger$doing(3, "Getting tickers from %5d ", parms$start)
+             #logger$doing(3, "Getting tickers from %5d ", parms$start)
              data = http$json(url, parms=parms, headers=headers)
-             logger$done(3)
+
+             #logger$done(3)
 
              if (is.null(data) || length(data) == 0) break
 
@@ -139,7 +139,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
               df    = as_tms(df, c(17))
               dfc   = rbind(dfc, df)
            }, error = function (cond) {
-              logger$done(3, FALSE)
+               browser()
+              #logger$done(3, FALSE)
            })
         }
         resp$df = dfc
@@ -203,7 +204,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                      ,start=1, limit=500)
 
         data = http$json(url, parms=parms, headers=headers)
-        data = data$data
+
         maxPairs=data$numMarketPairs
         tbl = data$marketPairs
         df = do.call(rbind.data.frame,as.list(tbl))

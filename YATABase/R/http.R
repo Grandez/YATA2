@@ -10,7 +10,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          prms=NULL
          if (!is.null(headers)) heads=headers
          if (!is.null(parms))   prms = parms
-#JGG json la page devuelve 0 pero el json no
+         #JGG json la page devuelve 0 pero el json no
          page = httr::GET(url, add_headers(.headers=headers), query=prms)
          private$rc = checkPageResponse("get", page, url, parms, accept)
          page
