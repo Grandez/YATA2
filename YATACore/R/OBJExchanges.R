@@ -10,6 +10,7 @@ OBJExchanges = R6::R6Class("OBJ.EXCHANGES"
         ,initialize = function(Factory) {
             super$initialize(Factory)
             private$tblExchanges  = Factory$getTable(self$codes$tables$exchanges)
+            private$nameTblPair = self$codes$tables$exchanges_pair
         }
         ,getExchanges = function(exchanges=NULL, active=TRUE) {
             if (is.null(exchanges)) {
@@ -22,21 +23,22 @@ OBJExchanges = R6::R6Class("OBJ.EXCHANGES"
         }
         ,getTablePairs = function() {
             if (is.null(tblExchangesPair)) {
-                private$tblExchangesPair = Factory$getTable(self$codes$tables$exchanges_pair)
+                private$tblExchangesPair = Factory$getTable(nameTblPair)
             }
-            tblExchangesPair
+            private$tblExchangesPair
         }
         ,deletePairs = function(idExch) {
             if (is.null(tblExchangesPair)) {
-                private$tblExchangesPair = Factory$getTable(self$codes$tables$exchanges_pair)
+                private$tblExchangesPair = Factory$getTable(nameTblPair)
             }
             tblExchangesPair$delete(idExch=idExch)
-            inivisible(self)
+            invisible(self)
         }
     )
     ,private = list(
         tblExchanges  = NULL
        ,tblExchangesPair = NULL
+       ,nameTblPair = NULL
     )
 )
 

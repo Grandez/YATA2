@@ -1,5 +1,4 @@
 updateExchanges = function (logoutput, loglevel) {
-    browser()
     process = "exchanges"
     logLbl  = "%5d - Retrieving exchanges pairs for %s\n"
     logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
@@ -20,7 +19,7 @@ updateExchanges = function (logoutput, loglevel) {
     df = objExch$getExchanges()
     #hasta aqui
     row = 1
-    browser()
+
     while (row <= nrow(df)) {
          tryCatch({
            batch$logger$batch(sprintf(logLbl, row, df[row,"name"]))
@@ -28,7 +27,6 @@ updateExchanges = function (logoutput, loglevel) {
            objExch$deletePairs(df[row,"idExch"])
            .add2database(data, objExch$getTablePairs())
         }, error = function(cond) {
-            browser()
             cat(cond$message, "\n")
             # Nada. Ignoramos errores de conexion, duplicates, etc
         })
@@ -59,16 +57,18 @@ updateExchangesPairs = function (logoutput, loglevel) {
     objProv  = fact$getDefaultProvider()
 
     df = objExch$getExchanges()
+    df = df[df$id > 0,]  # 0 es FIAT
     row = 1
-    browser()
     while (row <= nrow(df)) {
          tryCatch({
            batch$logger$batch(sprintf(logLbl, row, df[row,"name"]))
-           data = objProv$getExchangeMarkets(df[row,"slug"])
-           objExch$deletePairs(df[row,"idExch"])
-           .add2database(data, objExch$getTablePairs())
+           data = objProv$getExchangePairs(df[row,"slug"])
+           if (nrow(data) > 0) {
+               objExch$deletePairs(data[row,"idExch"])
+              .add2database(data, objExch$getTablePairs())
+           }
+           Sys.sleep(1)
         }, error = function(cond) {
-            browser()
             cat(cond$message, "\n")
             # Nada. Ignoramos errores de conexion, duplicates, etc
         })

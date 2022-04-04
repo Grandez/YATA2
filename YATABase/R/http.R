@@ -19,7 +19,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          page = get(url, parms, headers, accept)
          resp = httr::content(page, type="application/json")
          private$rc = checkContentResponse("get", resp, url, parms, accept)
-         resp
+         resp$data
       }
      ,html = function(url, parms=NULL, headers=NULL, accept = 400) {
          page = get(url, parms=NULL, headers=NULL, accept = 400)

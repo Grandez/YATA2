@@ -40,7 +40,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,print          = function() { cat(self$name)  }
       ,getDB          = function() { self$db         }
       ,getDBTableName = function() { return(tblName) }
-      ,getColNames = function(yataNames) { fields    }
+      ,getColNames = function(yataNames) { stop("QUIEN LO LLAMA CON PARMS")
+          fields    }
       ,translateColNames = function(yataNames) {
           pos = match(yataNames, names(fields))
           unlist(fields[pos])

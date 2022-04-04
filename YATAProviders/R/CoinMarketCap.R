@@ -7,14 +7,14 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
   ,cloneable  = FALSE
   ,lock_class = FALSE
   ,public = list(
-     initialize = function(code, factory) { # }, dbf) {
+     initialize       = function(code, factory) { # }, dbf) {
        super$initialize  (code, "CoinMarketCap", factory) #, dbf)
        private$base    = YATABase$new()
        private$http    = private$base$http
        private$lastGet = as.POSIXct(1, origin="1970-01-01")
        private$hID     = base$map()
      }
-    ,getIcons = function(maximum, force=FALSE) {
+    ,getIcons         = function(maximum, force=FALSE) {
         #JGG Revisar
         urlbase = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
         urlbase2 = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
@@ -42,7 +42,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         }
         setwd(oldwd)
      }
-    ,getCurrencies = function(from = 1, max = 0) {
+    ,getCurrencies    = function(from = 1, max = 0) {
         #JGG Revisar
         url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
         count   =   0
@@ -86,7 +86,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         }
         dfc
      }
-    ,getTickers    = function(max = 0, from = 1) {
+    ,getTickers       = function(max = 0, from = 1) {
         toNum    = function(item) { ifelse(is.null(item), 0, item) }
         makeList = function(x)    {
           quote  = x$quotes[[1]]
@@ -146,7 +146,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         resp$df = dfc
         resp
     }
-    ,getTrend = function() {
+    ,getTrend         = function() {
         table = http$html_table("https://coinmarketcap.com/trending-cryptocurrencies/", accept=500)
         if (is.null(table)) return (NULL)
 
@@ -163,7 +163,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         colnames(df) = cols
         df
     }
-    ,getHistorical = function(idCurrency, from, to ) {
+    ,getHistorical    = function(idCurrency, from, to ) {
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
 
         if (is.null(idCurrency)) return(NULL)
@@ -185,7 +185,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         df = do.call(rbind.data.frame,items)
         as_tms(df, c(7,8,9))
     }
-    ,getExchanges = function() {
+    ,getExchanges     = function() {
         # Aparte de 1000 campos devuelve el campo 2
         # Nombre y acabado en un numero a veces (supongo que el id y solo los 10 primeros
         table = http$html_table("https://coinmarketcap.com/rankings/exchanges")
@@ -194,10 +194,13 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         df$name = gsub("[0-9]+$","",df[,1])
         df
     }
-    ,getExchangeMarkets = function(exchange) {
-        cols = c( "exchangeId", "exchangeName"
-                 ,"baseSymbol", "baseCurrencyId"
-                 ,"quoteSymbol", "quoteCurrencyId")
+    ,getExchangePairs = function(exchange) {
+        colsJson  = c( "exchangeId",  "exchangeName"
+                      ,"baseSymbol",  "baseCurrencyId"
+                      ,"quoteSymbol", "quoteCurrencyId")
+        colsTable = c( "idExch",      "name"
+                      ,"base",        "idBase"
+                      ,"counter",     "idCounter")
 
         url   = "https://api.coinmarketcap.com/data-api/v3/exchange/market-pairs/latest"
         parms = list( slug=exchange, category = "spot"
@@ -208,7 +211,9 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         maxPairs=data$numMarketPairs
         tbl = data$marketPairs
         df = do.call(rbind.data.frame,as.list(tbl))
-        dfExch = df[,cols]
+        if (nrow(df) == 0) return (df)
+        dfExch = df[,colsJson]
+        colnames(dfExch) = colsTable
         count = nrow(dfExch)
         while(count < maxPairs) {
             parms$start = count + 1
@@ -216,7 +221,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
             data = data$data
             tbl = data$marketPairs
             df = do.call(rbind.data.frame,as.list(tbl))
-            dfTmp = df[,cols]
+            dfTmp = df[,colsJson]
+            colnames(dfTmp) = colsTable
             count = count + nrow(dfTmp)
             dfExch = rbind(dfExch, dfTmp)
         }
