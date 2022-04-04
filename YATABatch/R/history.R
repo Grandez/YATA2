@@ -36,9 +36,9 @@ updateHistory = function(logoutput, loglevel) {
     to   = ifelse(pid == 0, nrow(ctc), 1)
 
     for (row in from:to) {
+         if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
          rc2 = tryCatch({
          batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
-         if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
          data = prov$getHistory(df[row, "id"], df[row,"max"])
            if (!is.null(data)) {
                data$id = df[row, "id"]
