@@ -192,6 +192,7 @@ PNLPos = R6::R6Class("PNL.OPER"
  )
 
  moduleServer(id, function(input, output, session) {
+     browser()
             showNotification("Entra en POSITION")
     pnl = WEB$getPanel(id)
     if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
