@@ -7,7 +7,7 @@ updateHistory = function(logoutput, loglevel) {
     batch = YATABatch$new("History")
     fact  = batch$fact
 
-    if (file.exists(pidfile) && !unload) return (batch$rc$RUNNING)
+    #if (file.exists(pidfile) && !unload) return (batch$rc$RUNNING)
     cat(paste0(Sys.getpid(),"\n"), file=pidfile)
 
     rc    = batch$rc$OK
@@ -28,18 +28,19 @@ updateHistory = function(logoutput, loglevel) {
 
     df$min = "2019-12-31"
     #JGG OJO AL 2021-01-01 COMO FECHA FIJA
-    df[is.na(df$min), "min"] = as.Date.character("2020-01-01")
-    df[is.na(df$max), "max"] = as.character(Sys.Date())
+    df[is.na(df$min), "min"] = as.Date.character("2019-12-31")
+    df[is.na(df$max), "max"] = as.Date.character("2019-12-31")
 
     pid  = Sys.getpid() %% 2
     from = ifelse(pid == 0, 1, nrow(ctc))
     to   = ifelse(pid == 0, nrow(ctc), 1)
-
+fom = nrow(ctc)
+to = 1
     for (row in from:to) {
-         if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
-         rc2 = tryCatch({
-         batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
-         data = prov$getHistory(df[row, "id"], df[row,"max"])
+       if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
+       rc2 = tryCatch({
+           batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
+           data = prov$getHistory(df[row, "id"], df[row,"max"])
            if (!is.null(data)) {
                data$id = df[row, "id"]
                data$symbol = df[row, "symbol"]
