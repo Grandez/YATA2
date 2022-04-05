@@ -93,9 +93,11 @@ modHistServer <- function(id, full, pnlParent, parent=NULL) {
      )
    )
    moduleServer(id, function(input, output, session) {
+      pnl = WEB$getPanel(id)
+      if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
+          pnl = WEB$addPanel(PNLHist$new(id, pnlParent, session, NS(id)))
+      }
 
-       pnl = WEB$getPanel(id)
-       if (is.null(pnl)) pnl = WEB$addPanel(PNLHist$new(session))
         flags = reactiveValues(
            currency = NULL
           ,update   = FALSE

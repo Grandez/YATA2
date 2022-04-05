@@ -25,8 +25,8 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                private$opers   = YATABase$map
            }
            ,getOper = function (id)        { private$opers$get(id)       }
-           ,setOper = function (id, oper)  { 
-               private$opers$put(id, oper) 
+           ,setOper = function (id, oper)  {
+               private$opers$put(id, oper)
                oper
             }
            #,getCounters = function() {self$currencies$getCurrencyNames() }
@@ -35,13 +35,13 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                df = self$position$getByCurrency(currency, available = TRUE)
                self$makeCombo(self$cameras$getForCombo(cameras=df$camera))
                # if (currency == self$factory$fiat) {
-               #     
+               #
                # } else {
                #     df = self$position$getByCurrency(currency, available = TRUE)
                #     return(self$makeCombo(self$cameras$getForCombo(cameras=df$camera)))
                # }
                # if (missing(currency)) return(self$makeCombo(self$cameras$getForCombo()))
-               # df = self$position$getCurrencyPosition(currency)   
+               # df = self$position$getCurrencyPosition(currency)
                # df = df[df$camera != self$factory$camera,]
                # df = df[df$available > 0,]
                # df = self$cameras$getCameras(as.vector(df$camera))
@@ -49,14 +49,14 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                # colnames(df) = c("id", "name")
                # self$makeCombo(df)
            }
-            
-           ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }                        
+
+           ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }
            ,cboCameras   = function(exclude = NULL) {
                self$makeCombo(self$cameras$getForCombo(cameras=NULL, exclude=exclude))
            }
-           ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }            
+           ,cboCamerasCounter = function(counter) { self$currencies$getCameras(counter) }
            ,getCurrenciesBuy  = function() {
-               self$currencies$getCurrencyNames() 
+               self$currencies$getCurrencyNames()
              }
            ,getCurrenciesSell = function() {
                 data = self$position$getCurrencies(available = TRUE)
@@ -65,7 +65,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                 if (length(idx)) data = data[-idx]
                 if (length(data) == 0) return (NULL)
                 self$currencies$getCurrencyNames(data)
-           }    
+           }
            ,cboCurrency  = function(camera, available) {
                # if (missing(camera)) {
                #     private$asCombo(WEB$getCurrencyNames())
@@ -77,7 +77,7 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                   }
                   else {
                       #JGG Por ahora solo EUR
-                     # df = self$cameras$getCameraPosition(camera, available = available) 
+                     # df = self$cameras$getCameraPosition(camera, available = available)
                      # if (nrow(df) > 0) {
                          WEB$getCTCLabels("EUR", invert = TRUE)
                      # }
@@ -99,14 +99,14 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            #         TRUE
            #       }
            #     )
-           # } 
+           # }
            ,loadOperations = function(status) {
                df = self$operations$getOperations(active = self$codes$flag$active, status = status)
-               # Guardar los id               
+               # Guardar los id
                stname = self$codes$xlateStatus(status)
                private$opIdx[[stname]] = df$id
                prepareOperation(df)
-           }            
+           }
         )
        ,private = list(
             opIdx    = list() # Contiene los id de las operaciones
@@ -120,11 +120,13 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
                self$session    = self$factory$getObject(self$codes$object$session)
            }
         )
-   )   
+   )
     moduleServer(id, function(input, output, session) {
         pnl = WEB$getPanel(id)
-        if (is.null(pnl)) pnl = WEB$addPanel(PNLOper$new(id, pnlParent, session))
-        
+        if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
+            pnl = WEB$addPanel(PNLOper$new(id, pnlParent, session))
+        }
+
         flags = reactiveValues(
             commarea  = FALSE
         )
@@ -137,9 +139,9 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            carea = pnl$getCommarea()
            carea$pending = FALSE
            pnl$setCommarea(carea)
-       })       
-        
-        observeEvent(input$pnlOpType, { 
+       })
+
+        observeEvent(input$pnlOpType, {
            act = yataActiveNS(input$pnlOpType)
            module = paste0("modOper", str_to_title(act),"Server")
            carea = pnl$getCommarea()
@@ -153,4 +155,4 @@ modOperServer <- function(id, full, pnlParent, parent=NULL) {
            }
         })
     })
-}    
+}

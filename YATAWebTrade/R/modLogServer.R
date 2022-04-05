@@ -40,7 +40,10 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
    )
 moduleServer(id, function(input, output, session) {
    pnl = WEB$getPanel(id)
-   if (is.null(pnl)) pnl = WEB$addPanel(PNLBlog$new(id, pnlParent, session, NS(id)))
+
+   if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
+       pnl = WEB$addPanel(PNLBlog$new(id, pnlParent, session, NS(id)))
+   }
 
        reset = function() {
           output$msg = renderText({""})
