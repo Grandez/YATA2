@@ -101,7 +101,11 @@ PNLPos = R6::R6Class("PNL.OPER"
          invisible(self)
       }
       ,storeTrending = function (df) {
-         if (!is.null(self$data$dfTrending) && (Sys.time() - self$vars$trendig) < 30) return(FALSE)
+         if ( !is.null(self$data$dfTrending) &&
+             (Sys.time() - self$vars$trendig) < 30) {
+             return(FALSE)
+         }
+
          df = WEB$REST$trending(TRUE)
          if (!is.null(df)) {
              self$vars$trending = Sys.time()

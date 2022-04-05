@@ -27,24 +27,27 @@ YATARest = R6::R6Class("YATA.REST"
      ,DF         = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
      ,trending   = function(sync=FALSE) {
          if (sync) {
-             prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
-             prov$getTrend()
-         } else {
-            future_promise ({
-                browser()
+             return (tryCatch({
                 prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
-                df = prov$getTrend()
-            }) %>% then (
-                onFulfilled = function(df) {
-                    browser()
-                    df
-                }
-                ,onRejected = function(err) {
-               browser()
-               NULL
-            })
-
+                prov$getTrend()
+             }, error = function(cond) {
+                NULL
+             }))
          }
+
+         future_promise ({
+            browser()
+            prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
+            df = prov$getTrend()
+         }) %>% then (
+            onFulfilled = function(df) {
+               browser()
+               df
+            }
+           ,onRejected = function(err) {
+             browser()
+             NULL
+        })
      }
   )
   ,private = list(
