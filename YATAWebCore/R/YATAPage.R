@@ -8,6 +8,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
     "sans-serif", "Apple Color Emoji", "Segoe UI Emoji"),
     font_scale = NULL
     )
+    jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
       ,icons = paste0(Sys.getenv("YATA_SITE"), "/ext/icons")
@@ -15,7 +16,6 @@ YATAPage = function( title="YATA", id = "mainMenu"
       ,img    = normalizePath(system.file("extdata/www/img", package = packageName()))
       ,yata   = normalizePath(system.file("extdata/www/yata", package = packageName()))
     )
-    jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
 
     customJS  = list(shiny=jsShiny,js=("yata/yataapp.js"))
     customCSS = list( "yata/yata.css"             # Base
