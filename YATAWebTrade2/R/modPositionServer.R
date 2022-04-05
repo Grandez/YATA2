@@ -193,7 +193,9 @@ PNLPos = R6::R6Class("PNL.OPER"
  moduleServer(id, function(input, output, session) {
             showNotification("Entra en POSITION")
     pnl = WEB$getPanel(id)
-    if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
+    if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
+        pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
+    }
     flags = reactiveValues(
          position  = FALSE
         ,best      = FALSE

@@ -19,6 +19,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,codes      = NULL  # short code to factory$codes
     ,parms      = NULL  # short code to factory$parms
     ,MSG        = NULL  # short code to factory$msgs
+    ,DBID       = 0     # Check DB changed
     ,data       = list()  # Datos
     ,vars       = list()  # Variables temporales con memoria
     ,cookies    = list() # Variables con estado
@@ -29,6 +30,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         self$name         = id
         self$parent       = parent
         web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})
+        self$DBID = web$DBID
         self$factory = web$factory
         #if (!is.null(private$definition)) private$definition$id = id
         # Typos

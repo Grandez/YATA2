@@ -41,6 +41,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           })
       }
       ,disconnect = function(conn) {
+          if (missing(conn)) conn = private$connRead
           if (!is.null(conn) && isValid(conn))  {
               tryCatch({ RMariaDB::dbDisconnect(conn)
           },error = function(cond) {

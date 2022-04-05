@@ -40,10 +40,11 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           invisible(self)
       }
       ,changeDB = function(id) {
-          oldDB = factory$parms$lastOpen()
+          oldDB = self$factory$parms$lastOpen()
           if (oldDB$id == id) return()
-          factory$changeDB(id)
-          output$appTitle = updLabelText(factory$getDBName())
+          self$factory$changeDB(id)
+          WEB$DBID = id
+          invisible (self)
       }
       #########################################################
       ### Exported
@@ -173,6 +174,12 @@ dataModal <- function(failed = FALSE) {
    observeEvent(input$dbOK,    {
       removeModal()
       pnl$changeDB(input$radDB)
+      output$appTitle = updLabelText(factory$getDBName())
+      eval(parse(text=paste0( "mod"
+                             ,str_to_title(input$mainMenu)
+                             ,"Server(input$mainMenu
+                             ,''
+                             ,pnl, parent=session)")))
    })
 
 

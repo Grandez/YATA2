@@ -81,8 +81,9 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,changeDB  = function(id) {
           connInfo = parms$getDBInfo(id)
           private$objects = base$map()
-          parms$setLastOpen(id)
           setDB(connInfo)
+          parms$setLastOpen(id)
+          invisible(self)
        }
       ,getTable    = function(name, force = FALSE) { DBFactory$get(name, force) }
       ,getProvider = function(code, object, force = FALSE) {

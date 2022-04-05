@@ -25,6 +25,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,window  = list(width = 0, height = 0)
      ,cookies = NULL
      ,combo    = NULL
+     ,DBID     = 0     # Flag DB Changed
      ,initialize = function() {
          tryCatch({
             private$base   = YATABase$new()
