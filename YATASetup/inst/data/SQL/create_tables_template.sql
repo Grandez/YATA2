@@ -26,7 +26,7 @@ CREATE TABLE CAMERAS  (
 
 DROP TABLE  IF EXISTS POSITION CASCADE;
 CREATE TABLE POSITION  (
-    CAMERA      VARCHAR(32) NOT NULL     -- Codigo de camara
+    CAMERA      VARCHAR(64) NOT NULL     -- Codigo de camara
    ,CURRENCY    VARCHAR(64) NOT NULL     -- Moneda
    ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
    ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
@@ -104,7 +104,7 @@ CREATE TABLE REGULARIZATION  (
    ,ID_OPER     INT UNSIGNED  NOT NULL     -- Identificador de la operacion
    ,TMS         TIMESTAMP   
    ,LAST        TIMESTAMP   
-   ,PRIMARY KEY ( CAMERA, CURRENCY, DATE_REG DESC, ID )
+   ,PRIMARY KEY ( CAMERA, CURRENCY, DATE_REG DESC, ID_REG )
 );
 
 -- ------------------------------------------------------------------
