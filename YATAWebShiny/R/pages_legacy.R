@@ -20,6 +20,7 @@ YATADashboardFull = function( title    = NULL
   # shiny
   #   source
   #   functions
+
     pathShiny = normalizePath(system.file("extdata/www", package = packageName()))
     shiny::addResourcePath("yatashiny", pathShiny)
 
