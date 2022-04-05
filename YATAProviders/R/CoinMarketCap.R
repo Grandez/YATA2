@@ -164,6 +164,10 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         df
     }
     ,getHistorical    = function(idCurrency, from, to ) {
+        #JGG PARECE QUE AHORA SOLO DEVUELVE 180/1 DIAS EN LUGAR DE TODO EL RANGO
+        #JGG ESTO NO ES PROBLEMA EN CONDICIONES NORMALES QUE SOLO PEDIMOS UNOS DIAS
+        #JGG PERO SI PARA PROCESOS MAS MASIVOS
+        #JGG ASI QUE IREMOS POR BUCLES DE 90 DIAS
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
 
         if (is.null(idCurrency)) return(NULL)

@@ -125,7 +125,13 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            invisible(self)
        }
        ,fail = function(cond) {
-          .toFile(self$type$ERROR, 0, "Clase: %s;message:%s", class(cond)[2],cond)
+          data=""
+          tags = names(cond)
+          for (idx in 1:length(tags)) {
+             data=paste0(data,";",tags[idx],": ", cond[[idx]])
+          }
+          .toFile(self$type$ERROR, 0, sprintf( "Class: %s;Message: %s;Fields: %d;%s"
+                                              ,class(cond)[2], cond, length(tags),data))
        }
 
     )
