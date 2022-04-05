@@ -31,7 +31,7 @@ TBLCameras = R6::R6Class("TBL.CAMERAS"
              ,token    = "TOKEN"
              ,usr      = "USR"
              ,pwd      = "PWD"
-             ,CC       = "cc"
+             ,CC       = "CC"
           )
      )
 )

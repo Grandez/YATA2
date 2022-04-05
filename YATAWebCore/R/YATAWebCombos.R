@@ -12,13 +12,25 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
      ,initialize = function(factory) {
          private$tblCameras    = factory$getTable(factory$CODES$tables$cameras)
          private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
-         private$objParms   = factory$parms
-         private$objMsgs    = factory$MSG
+         private$tblPosition   = factory$getTable(factory$CODES$tables$position)
+         private$objParms      = factory$parms
+         private$objMsgs       = factory$MSG
+         refresh()
      }
-     ,cameras = function(all=FALSE, inactive=FALSE) {
+     ,refresh = function() {
+         private$cache$cameras  = NULL
+         private$cache$position = private$tblPosition$table()
+     }
+     ,cameras = function(all=FALSE, inactive=FALSE, exclude = NULL, balance=FALSE, available=FALSE) {
          if (is.null(cache$cameras)) loadCameras()
          df = cache$cameras
          if (!inactive) df = df[df$active != 0,]
+         if (!is.null(exclude)) df = df[!(df$camera %in% exclude),]
+         if (balance || available) {
+             df = dplyr::left_join(df, cache$position, by="camera")
+             if (balance)   df = df %>% filter( !is.na(balance)   & balance   > 0)
+             if (available) df = df %>% filter( !is.na(available) & available > 0)
+         }
          data = makeCombo(df, id="camera", name="desc")
          checkAll(all, data)
      }
@@ -52,6 +64,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
   ,private = list(
       tblCameras    = NULL
      ,tblCurrencies = NULL
+     ,tblPosition   = NULL
      ,objParms      = NULL
      ,objMsgs       = NULL
      ,cache = list(
