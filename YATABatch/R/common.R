@@ -8,6 +8,7 @@
 
     write.table(df, file=file(datafile,"wb"), dec=".", sep=";", quote=FALSE, eol="\n"
                             , row.names = FALSE, col.names=FALSE)
+    closeAllConnections()
     exec = YATAExec$new()
     res = exec$import(basename(datafile), tbl$getDB()$getName(), colNames)
     file.remove(datafile)

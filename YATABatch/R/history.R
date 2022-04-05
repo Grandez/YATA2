@@ -79,7 +79,7 @@ to = nrow(ctc)
            }
            batch$rc$OK
          }, error = function(cond) {
-             browser()
+#             browser()
            cat(cond$message, "\n")
            # Nada. Ignoramos errores de conexion, duplicates, etc
            batch$rc$ERRORS
