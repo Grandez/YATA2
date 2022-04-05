@@ -8,16 +8,6 @@ YATAPage = function( title="YATA", id = "mainMenu"
     "sans-serif", "Apple Color Emoji", "Segoe UI Emoji"),
     font_scale = NULL
     )
-
-
-    # Messages from Server
-    #Shiny.addCustomMessageHandler("closeLeftSide",
-    #X               function(message) { $("[data-toggle=\'yataoffcanvas\']").trigger("click");});')
-
-
-             # ,tags$script(makeMessageHandler(YATAMSG$setPage))
-             # ,tags$script(makeMessageHandler(YATAMSG$showBlock))
-             # ,tags$script(makeMessageHandler(YATAMSG$movePanel))
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
       ,icons = paste0(Sys.getenv("YATA_SITE"), "/ext/icons")
