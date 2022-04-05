@@ -191,7 +191,7 @@ PNLPos = R6::R6Class("PNL.OPER"
  )
 
  moduleServer(id, function(input, output, session) {
-            showNotification("Entra en POSITION")
+    showNotification("Entra en POSITION")
     pnl = WEB$getPanel(id)
     if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
         pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
@@ -485,7 +485,6 @@ observeEvent(flags$tab, ignoreInit = TRUE, {
    action = strsplit(pnl$vars$table$colName, "_")[[1]][2]
 
    if (action == "buy") {
-       browser()
        carea = pnl$getCommarea()
        carea$action = action
        carea$pending = TRUE
