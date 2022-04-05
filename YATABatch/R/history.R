@@ -58,7 +58,7 @@ to = nrow(ctc)
            repeat {
                to = Sys.Date()
                byChunk = FALSE
-               if (as.integer(to - df[row,"max"], unit="days") > 90) {
+               if (as.integer(to - df[row,"max"], unit="days") > 121) {
                    to = as.Date(df[row,"max"]) + 121
                    byChunk = TRUE
                }
