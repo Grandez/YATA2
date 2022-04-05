@@ -155,11 +155,18 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
             dfData[,i] = gsub("[\\$\\%,-]", "", dfData[,i])
             dfData[,i] = as.numeric(dfData[,i])
         }
-        lbls = strsplit(table[,3], "[0-9]+")
-        dfl = do.call(rbind.data.frame,lbls)
-        colnames(dfl) = c("name", "symbol")
-        df = cbind(dfl, dfData)
-        cols = c("name", "symbol", "price", "day", "week", "month", "marketcap", "volumne")
+        # Partir nombre y simbolo (fallar si el simbolo tiene numeros)
+        lbls = as.data.frame(table[,3])
+        res = regexpr("[0-9]+[a-zA-Z]+$", lbls[,1])
+        lbls$tmp = res
+        lbls$len = attr(res,"match.length")
+        lbls$name = substr(lbls[,1],1,nchar(lbls[,1]) - lbls[,3])
+        lbls$symbol = substr(lbls[,1],lbls[,2],nchar(lbls[,1]))
+        lbls$tmp     = regexpr("[a-zA-Z]+$", lbls$sym)
+        lbls$symbol = substr(lbls$symbol,lbls$tmp,nchar(lbls$symbol))
+        lbls = lbls[,c("symbol","name")]
+        df = cbind(lbls, dfData)
+        cols = c("symbol", "name", "price", "day", "week", "month", "marketcap", "volume")
         colnames(df) = cols
         df
     }

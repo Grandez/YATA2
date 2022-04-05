@@ -44,7 +44,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,getFIAT           = function() tblParms$getString(DBParms$ids$fiat)
         ,getCamera         = function() tblParms$getString(DBParms$ids$camera)
         ,autoConnect       = function() tblParms$getBoolean(DBParms$ids$autoConnect)
-        ,getDefaultDbId    = function() tblParms$getInteger(DBParms$ids$DBDefault)
+        ,getDefaultDb      = function() tblParms$getInteger(DBParms$ids$DBDefault)
         ,getDBInfo         = function(id) {
             data = getList(DBParms$group$databases, id)
             data$id = id
@@ -54,7 +54,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen))
         }
         ,defaultDB         = function() {
-            id = getDefaultDbId()
+            id = getDefaultDb()
             getList(DBParms$group$databases, id)
         }
         ,setLastOpen       = function(iddb) {
@@ -84,19 +84,16 @@ OBJParms = R6::R6Class("OBJ.PARMS"
          ##############################################
          ### Databases
          ##############################################
-        ,getDBNames = function(active=TRUE) {
-            df1 = tblParms$table(group=DBParms$group$databases, id=DBParms$databases$db$name)
-            df1 = df1[,c("group", "subgroup","value")]
-            colnames(df1) = c("group", "id","name")
-            df2 = tblParms$table(group=DBParms$group$databases, id=DBParms$databases$db$active)
-            df2 = df2[,c("group", "subgroup","value")]
-            colnames(df2) = c("group", "id","active")
+        ,getDBData = function(all=FALSE) {
+            df = getGroup(DBParms$group$databases)
+            df = df[,c("subgroup","name","value")]
+            df = spread(df,name,value)
+            if (!all) df = df[df$active == 1,]
+            df
+         }
+         ,getDBActive = function() {
 
-            df = inner_join(df1, df2, by=c("group", "id"))
-            df = df[df$active != 0,]
-
-            df[,c("id", "name")]
-        }
+         }
          ##############################################
          ### REST
          ##############################################

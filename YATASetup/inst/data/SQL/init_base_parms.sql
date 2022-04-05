@@ -160,41 +160,55 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 10, 1, 4,   
 -- ----------------------------------------------------
 
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  1,  1, 'name'     , 'Base'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  2,  1, 'engine'   , 'MariaDB'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  3,  1, 'dbname'   , 'YATABase'    );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  4,  1, 'user'     , 'YATA'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  5,  1, 'password' , 'yata'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  6,  1, 'host'     , '127.0.0.1'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0,  7, 10, 'port'     , '3306'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 0, 10, 20, 'active'   , '0'           );
-                                                                                            
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  1,  1, 'name'     , 'Operacional' );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  2,  1, 'engine'   , 'MariaDB'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  3,  1, 'dbname'   , 'YATA'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  4,  1, 'user'     , 'YATA'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  5,  1, 'password' , 'yata'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  6,  1, 'host'     , '127.0.0.1'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1,  7, 10, 'port'     , '3306'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 1, 10, 20, 'active'   , '1'           );
-                                                                                            
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  1,  1, 'name'     , 'Test'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  2,  1, 'engine'   , 'MariaDB'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  3,  1, 'dbname'   , 'YATATest'    );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  4,  1, 'user'     , 'YATA'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  5,  1, 'password' , 'yata'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  6,  1, 'host'     , '127.0.0.1'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2,  7, 10, 'port'     , '3306'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 2, 10, 20, 'active'   , '1'           );
-                                                                                            
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  1,  1, 'name'     , 'Simulacion'  );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  2,  1, 'engine'   , 'MariaDB'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  3,  1, 'dbname'   , 'YATASimm'    );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  4,  1, 'user'     , 'YATA'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  5,  1, 'password' , 'yata'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  6,  1, 'host'     , '127.0.0.1'   );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3,  7, 10, 'port'     , '3306'        );
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (5, 3, 10, 20, 'active'   , '1'           );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  1,  1, 'name'     , 'Base'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  2,  1, 'engine'   , 'MariaDB'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  3,  1, 'dbname'   , 'YATABase'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  4,  1, 'user'     , 'YATA'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  5,  1, 'password' , 'yata'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  6,  1, 'host'     , '127.0.0.1'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  7, 10, 'port'     , '3306'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100,  8,  1, 'descr'    , 'YATA system'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 100, 100, 10, 20, 'active'   , '0'             );
+
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  1,  1, 'name'     , 'Data'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  2,  1, 'engine'   , 'MariaDB'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  3,  1, 'dbname'   , 'YATAData'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  4,  1, 'user'     , 'YATA'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  5,  1, 'password' , 'yata'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  6,  1, 'host'     , '127.0.0.1'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  7, 10, 'port'     , '3306'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101,  8,  1, 'descr'    , 'Common Data'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5, 101, 101, 10, 20, 'active'   , '0'             );
+                                                                                                              
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  1,  1, 'name'     , 'Real'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  2,  1, 'engine'   , 'MariaDB'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  3,  1, 'dbname'   , 'YATA'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  4,  1, 'user'     , 'YATA'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  5,  1, 'password' , 'yata'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  6,  1, 'host'     , '127.0.0.1'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  7, 10, 'port'     , '3306'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1,  8,  1, 'descr'    , 'Operacional'   );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   1,   1, 10, 20, 'active'   , '1'             );
+                                                                               
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  1,  1, 'name'     , 'Test'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  2,  1, 'engine'   , 'MariaDB'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  3,  1, 'dbname'   , 'YATATest'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  4,  1, 'user'     , 'YATA'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  5,  1, 'password' , 'yata'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  6,  1, 'host'     , '127.0.0.1'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  7, 10, 'port'     , '3306'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2,  8,  1, 'descr'    , 'Datos de test' );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   2,   2, 10, 20, 'active'   , '1'             );
+                                                                               
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  1,  1, 'name'     , 'Simm'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  2,  1, 'engine'   , 'MariaDB'       );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  3,  1, 'dbname'   , 'YATASimm'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  4,  1, 'user'     , 'YATA'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  5,  1, 'password' , 'yata'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  6,  1, 'host'     , '127.0.0.1'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  7, 10, 'port'     , '3306'          );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3,  8,  1, 'descr'    , 'Simulacion'    );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3,   3, 10, 20, 'active'   , '1'             );
 
 -- ----------------------------------------------------
 -- Grupos 50 - Combos y grupos

@@ -6,9 +6,10 @@ modPosInput = function(id, title) {
                ,"Position"       = "Position", "Full Position"  = "PositionFull"
                ,"Best"           = "blkBest"
                ,"Best of Top"    = "blkTop"  , "Best of favorites" = "blkFav"
-               ,"Trending"       = "blkTrending"
+               ,"Trending"       = "blkTrend"
     )
-    vals = c("plotHist", "plotSession", "blkBest", "Position")
+    #vals = c("plotHist", "plotSession", "blkBest", "Position")
+    vals = c("blkTrend", "plotSession", "blkBest", "Position")
     mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", guiCheck(ns("chkMonitors"))))
 
 #   wdgLayout = wdgLayout$new(ns, c(2,2), blocks, values=vals, top = mon)

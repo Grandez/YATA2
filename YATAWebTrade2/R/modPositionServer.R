@@ -131,7 +131,6 @@ PNLPos = R6::R6Class("PNL.OPER"
           self$data$dfGlobal = NULL
           self$vars$trending = Sys.time() - (60 * 60) # subtract one hour
           private$ns = ns
-
      }
     ,loadPosition = function() {
         df = self$getGlobalPosition()
@@ -192,7 +191,6 @@ PNLPos = R6::R6Class("PNL.OPER"
  )
 
  moduleServer(id, function(input, output, session) {
-     browser()
             showNotification("Entra en POSITION")
     pnl = WEB$getPanel(id)
     if (is.null(pnl)) pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
@@ -239,11 +237,28 @@ prepareBest = function(df, table) {
    if (table != "Fav") buttons$Button_fav = yuiBtnIconFavAdd("Favorito")
 
    data$info=list( event=ns("tableBest"), target=table
-                  ,types=list(pvl = c("Hour", "Day", "Week", "Month"), imp=c("Price"))
+                  ,types=list(pvl = c("hour", "day", "week", "month"), imp=c("price"))
                   ,buttons = buttons # list(Button_buy=yuiBtnIconBuy("Comprar"))
                  )
    data
 }
+prepareTrending = function(df, table) {
+   if (is.null(df)) return (NULL)
+
+   df$symbol = paste(df$symbol, df$name,sep=" - ")
+   df =  df %>% select(symbol, price, day, week, month)
+   df$symbol = paste0(df$symbol, " - ", df$name)
+   df = df[1:pnl$cookies$best$top,]
+
+   data = list(df = df, cols=NULL, info=NULL)
+
+   data$info=list( event=ns("tableTrending"), target=table
+                  ,types=list(pvl = c("day", "week", "month"), imp=c("price"))
+                  ,buttons = NULL # list(Button_buy=yuiBtnIconBuy("Comprar"))
+                 )
+   data
+}
+
 initPage = function() {
    renderUIPosition()    # Preparar tabla posiciones
    updNumericInput("numInterval", pnl$cookies$interval)
@@ -321,19 +336,8 @@ renderBestTables = function() {
    if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
 }
 renderTrendingTable = function() {
-   # period = pnl$MSG$getBlockAsVector(2)
-   # lbl = period[as.integer(input$cboBestFrom)]
-   #
-   # output$lblBest = updLabelText(paste("Mejores", lbl))
-   # output$lblTop  = updLabelText(paste("Top:  Mejores", lbl))
-   # output$lblFav  = updLabelText(paste("Favoritos: Mejores", lbl))
-   #
-   # data1 = prepareBest(pnl$data$dfBest, "Best")
-   # if (!is.null(data1$df)) output$tblBest = updTableMultiple(data1)
-   # data2 = prepareBest(pnl$data$dfTop, "Top")
-   # if (!is.null(data2$df)) output$tblTop = updTableMultiple(data2)
-   # data3 = prepareBest(pnl$data$dfFav, "Fav")
-   # if (!is.null(data3$df)) output$tblFav = updTableMultiple(data3)
+   data1 = prepareTrending(pnl$data$dfTrending, "Trend")
+   if (!is.null(data1$df)) output$tblTrend = updTableMultiple(data1)
 }
 
 renderPlotSession = function(uiPlot) {
@@ -401,6 +405,7 @@ observeEvent(flags$refresh, ignoreInit = TRUE, {
    pnl$monitors$update()
    flags$position = isolate(!flags$position)
    renderBestTables()
+   renderTrendingTable()
    renderPlotSession()
 })
 observeEvent(flags$history, ignoreInit = TRUE, ignoreNULL = TRUE, {

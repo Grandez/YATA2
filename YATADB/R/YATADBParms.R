@@ -54,6 +54,7 @@ DBParms = list(
           ,password =  5
           ,host     =  6
           ,port     =  7
+          ,descr    =  8
           ,active   = 10
         )
     )

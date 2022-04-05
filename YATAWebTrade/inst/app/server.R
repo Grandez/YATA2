@@ -39,6 +39,12 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           }
           invisible(self)
       }
+      ,changeDB = function(id) {
+          oldDB = factory$parms$lastOpen()
+          if (oldDB$id == id) return()
+          factory$changeDB(id)
+          output$appTitle = updLabelText(factory$getDBName())
+      }
       #########################################################
       ### Exported
       #########################################################
@@ -89,9 +95,25 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
+dataModal <- function(failed = FALSE) {
+      modalDialog(
+        textInput("dataset", "Choose data set",
+          placeholder = 'Try "mtcars" or "abc"'
+        ),
+        span('(Try the name of a valid data object like "mtcars", ',
+             'then a name of a non-existent object like "abc")'),
+        if (failed)
+          div(tags$b("Invalid name of data object", style = "color: red;")),
+
+        footer = tagList(
+          modalButton("Cancel"),
+          actionButton("ok", "OK")
+        )
+      )
+}
+
    WEB$setSession(session)
    if (WEB$errorLevel > 0) {
-       browser()
        if (WEB$errorLevel == 99)
            return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
        return (yataErrGeneral(0, WEB$txtError, input, output, session))
@@ -121,18 +143,18 @@ function(input, output, session) {
                              ,''
                              ,pnl, parent=session)")))
     })
-   observeEvent(input$btnKO, { closePanel() })
-   observeEvent(input$btnDBChanged, {
-      oldDB = factory$getDBID()
-      if (input$lstDB != oldDB) {
-          factory$changeDB(input$lstDB)
-          output$appTitle = updLabelText(factory$getDBName())
-      }
-      message(factory$getDBName())
-      closePanel()
-      eval(parse(text=paste0( "mod", YATABase$str$titleCase(input$mainMenu)
-                             ,"Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
-   })
+   #observeEvent(input$btnKO, { closePanel() })
+   # observeEvent(input$btnDBChanged, {
+   #    oldDB = factory$getDBID()
+   #    if (input$lstDB != oldDB) {
+   #        factory$changeDB(input$lstDB)
+   #        output$appTitle = updLabelText(factory$getDBName())
+   #    }
+   #    message(factory$getDBName())
+   #    closePanel()
+   #    eval(parse(text=paste0( "mod", YATABase$str$titleCase(input$mainMenu)
+   #                           ,"Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
+   # })
    observeEvent(input$connected,    {
               showNotification("Connected")
        browser()
@@ -146,12 +168,14 @@ function(input, output, session) {
        browser()
        PUT("begin") })
    observeEvent(input$app_title,    {
-      data = frmChangeDBInput()
-      output$form = renderUI({data})
-      output$lblDBCurrent    = updLabelText(factory$getDBName())
-      shinyjs::show("yata-main-err")
+      showModal(frmChangeDB(pnl$factory))
    })
-   onclick("appTitle"     , changeDB()  )
+   observeEvent(input$dbOK,    {
+      removeModal()
+      pnl$changeDB(input$radDB)
+   })
+
+
    onStop(function() {
       # cat("Shiny Session stopped\n")
       # pnl$factory$finalize()

@@ -163,6 +163,3 @@ yuiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = 
   lbl = paste0("<span class='", cls, "'>",text,"</span>")
   renderUI({HTML(lbl)})
 }
-yuiRadio = function(id, label=NULL, choices, selected=NULL) {
-   shinyWidgets::awesomeRadio(id,label,choices,selected,inline = TRUE,checkbox = TRUE)
-}
