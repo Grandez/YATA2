@@ -57,6 +57,10 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            }
            df
        }
+       ,removeData = function (until) {
+           tblSession$deleteUntil(last=until, equal=TRUE, isolated=TRUE)
+           invisible(self)
+       }
     )
     ,private = list(
         tblSession    = NULL

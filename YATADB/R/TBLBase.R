@@ -133,12 +133,26 @@ YATATable <- R6::R6Class("YATA.TABLE"
          }
          created
       }
-      ,delete   = function(...)  {
+      ,delete   = function(..., isolated=FALSE)  {
          filter = mountWhere(list(...))
          sql = paste("DELETE FROM ", tblName, filter$sql)
          df = db$execute(sql, filter$values)
          invisible(self)
       }
+      ,deleteUntil = function(..., equal = FALSE, isolated=FALSE) {
+          # Borra registro por la clave primera < o <=
+          filter= makeWhereGL(gt=FALSE,equal=equal,...)
+          sql = paste("DELETE FROM ", tblName, filter$sql)
+          df = db$execute(sql, filter$values, isolated=isolated)
+          invisible(self)
+      }
+      ,deleteFrom = function(..., equal = FALSE, isolated=FALSE) {
+          # Borra registro por la clave primera < o <=
+          filter= makeWhereGL(gt=TRUE,equal=equal,...)
+          sql = paste("DELETE FROM ", tblName, filter$sql)
+          df = db$execute(sql, filter$values, isolated=isolated)
+          invisible(self)
+       }
       ,bulkAdd  = function(data, append=TRUE, isolated=FALSE) {
          colnames(data) = fields[colnames(data)]
          db$write(tblName, data, append, isolated)
@@ -426,5 +440,22 @@ YATATable <- R6::R6Class("YATA.TABLE"
            if (!is.null(DBDict$base  [[name]])) return (DBDict$base  [[name]])
            DBDict$data  [[name]]
        }
+      ,makeWhereGL = function (gt, equal, ...){
+          # Primer campo es el que no va por =
+          data=list(...)
+          key = data[1]
+          data[1] = NULL
+          filter = mountWhere(data)
+          match = ifelse(gt, ">", "<")
+          if (equal) match = paste0(match, "=")
+          prfx = paste("WHERE", fields[names(key)], match, "?")
+          if (nchar(filter$sql) > 0) {
+              filter$sql = sub("WHERE", paste(prfx, "AND"), fixed=TRUE)
+          } else {
+              filter$sql = prfx
+          }
+          filter$values = append(key, filter$values)
+          filter
+      }
    )
 )

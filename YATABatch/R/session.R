@@ -53,16 +53,22 @@ updateSession = function(max = 0) {
    batch$fact$setLogger(batch$logger)
    if (file.exists(pidfile)) return (batch$rc$RUNNING)
    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
-   session = batch$fact$getObject(batch$fact$CODES$object$session)
+browser()
 
-   while (count < 16) { # Para que se pare automaticamente
+   session = batch$fact$getObject(batch$fact$CODES$object$session)
+   info    = batch$fact$parms$getSessionData()
+   oldData = Sys.time() - (as.integer(info$history) * 60 * 60)
+
+   session$removeData(oldData)
+
+   while (count < as.integer(info$alive)) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())
                session$updateLastUpdate(last, 0)
                total = .getSessionData(batch, last, max, session)
                cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";")
-               cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
+#               cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
                session$updateLastUpdate(last, total)
                batch$logger$batch("OK")
                batch$rc$OK
@@ -72,7 +78,7 @@ updateSession = function(max = 0) {
                batch$rc$SEVERE
             })
       if (rc0 > rc) rc = rc0
-      Sys.sleep(15 * 60)
+      Sys.sleep(as.ineger(info$interval) * 60)
       count = count + 1
    }
 

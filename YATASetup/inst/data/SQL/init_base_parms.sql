@@ -29,23 +29,32 @@ DELETE FROM PARMS;
 --           3 - lastDB
 --  Sub  4 - Operaciones
 --           1 - alert - Dias para la proxima alerta
---  Sub  5 - Configuracion
+--  Sub  5 - Configuracion directories
 --           1 - Plugins/Extern information
 --           2 - Temporary directory
--- Sub 
+-- Sub  10 - Datos de temporizacion
+             1 - Session
 -- --------------------------------------------------- 
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 1,  1, 'Code'    , '$FIAT');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 2,  1, 'FIAT'    , 'EUR');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 1, 3,  1, 'convert' , 'eur');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  1,  1,  1, 'Code'       , '$FIAT');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  1,  2,  1, 'FIAT'       , 'EUR');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  1,  3,  1, 'convert'    , 'eur');
+                                                                                                 
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  2,  1,  1, 'camera'     , 'CASH');
+                                                                             
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  3,  1, 20, 'autoOpen'   , '1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  3,  2, 10, 'defaultDB'  , '1');
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  3,  3, 10, 'lastDB'     , '1');
+                                                                                                 
+INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (  1,  4,  1, 10, 'alert'      , '1');
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 2, 1,  1, 'camera'  , 'CASH');
-
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 1, 20, 'autoOpen' , '1');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 2, 10, 'defaultDB', '1');
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 3, 3, 10, 'lastDB'   , '1');
-
-INSERT INTO PARMS (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES (1, 4, 1, 10, 'alert'    , '1');
+-- Bloque Session
+-- interval - Cada cuanto tiempo chequeamos datos
+-- alive    - Cuantas veces obtenemos datos
+-- history  - Historia a mantener
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 10,  1,  1, 10, 'interval'    , '15');
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 10,  1,  2, 10, 'alive'       , '16');
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 10,  1,  3, 10, 'history'     , '48');
 
 -- ----------------------------------------------------
 -- Grupo 2 - Servers

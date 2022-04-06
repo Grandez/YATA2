@@ -94,6 +94,20 @@ TBLParameters = R6::R6Class("TBL.PARMS"
             df = table(grupo=group, subgroup=subgroup)
             lst = lapply(df$value, function(x) applyType())
         }
+        ,getBlock = function(group, subgroup, block) {
+            if (missing(subgroup)) { # Is a dictionary key?
+                keys = splitKeys(group)
+            } else {
+                keys = c(group, subgroup, block)
+            }
+            if (length(keys) == 2) {
+                df = table(group=keys[1], subgroup=keys[2])
+            } else {
+                df = table(group=keys[1], subgroup=keys[2], block=keys[3])
+            }
+            df = df[,c("subgroup","name","value")]
+            tidyr::spread(df,name,value)
+        }
         ####################################################
         ### Friendly methods
         ####################################################

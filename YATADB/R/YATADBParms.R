@@ -16,6 +16,9 @@ DBParms = list(
         ,closeTime   = "003 001 004"  # Hora de cierre de las sesiones
 
     )
+    ,block = list ( # grupo - subgrupo - [block]
+        session = "001 010 001"
+    )
     ,group = list(
        general   =  1
       ,servers   =  2

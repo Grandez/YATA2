@@ -91,8 +91,13 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             if (!all) df = df[df$active == 1,]
             df
          }
-         ,getDBActive = function() {
+        ,getDBActive = function() {
 
+         }
+        ,getSessionData = function(asList=TRUE) {
+            data = tblParms$getBlock(DBParms$block$session)
+            if (asList) data = as.list(data)
+            data
          }
          ##############################################
          ### REST
