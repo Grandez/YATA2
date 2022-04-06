@@ -1,4 +1,4 @@
-updateHistory = function(logoutput, loglevel) {
+updateHistory = function(logoutput, loglevel, backward=FALSE) {
 #JGG
 #  PARECE QUE HA HABIDO CAMBIOS Y SOLO DEVUELVE HASTA 180/1 DIAS EN LUGAR DE TODO EL RANGO
 #  y QUE ADEMAS SOLO DA UN AGNO
@@ -39,17 +39,14 @@ updateHistory = function(logoutput, loglevel) {
     rng  = hist$getRanges()
     df   = dplyr::left_join(ctc, rng, by=c("id", "symbol"))
 
-    df$min = "2019-12-31"
-    #JGG OJO AL 2021-01-01 COMO FECHA FIJA
+    #JGG OJO AL 2021-12-31 COMO FECHA FIJA
     df[is.na(df$min), "min"] = as.Date.character("2021-12-31")
     df[is.na(df$max), "max"] = as.Date.character("2021-12-31")
 
     pid  = Sys.getpid() %% 2
     from = ifelse(pid == 0, 1, nrow(ctc))
     to   = ifelse(pid == 0, nrow(ctc), 1)
-    browser()
-from = 1
-to = nrow(ctc)
+
     byChunks = FALSE
     for (row in from:to) {
        if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
@@ -79,7 +76,6 @@ to = nrow(ctc)
            }
            batch$rc$OK
          }, error = function(cond) {
-#             browser()
            cat(cond$message, "\n")
            # Nada. Ignoramos errores de conexion, duplicates, etc
            batch$rc$ERRORS
