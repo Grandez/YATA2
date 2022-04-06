@@ -36,13 +36,12 @@
           data = provider$getTickers(500, start)
         }
      }, error = function (cond) {
-         browser()
+         cat ("getSessionData", cond$message)
          # Nada, igonoramos errores de red
      })
      count
 }
 updateSession = function(max = 0) {
-    browser()
    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 
@@ -56,7 +55,7 @@ updateSession = function(max = 0) {
    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
    session = batch$fact$getObject(batch$fact$CODES$object$session)
 
-   while (count < 3) { # Para que se pare automaticamente
+   while (count < 16) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())
@@ -66,8 +65,6 @@ updateSession = function(max = 0) {
                cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
                session$updateLastUpdate(last, total)
                batch$logger$batch("OK")
-               Sys.sleep(15 * 60)
-               count = count + 1
                batch$rc$OK
             }, YATAERROR = function (cond) {
                batch$rc$FATAL
@@ -75,6 +72,8 @@ updateSession = function(max = 0) {
                batch$rc$SEVERE
             })
       if (rc0 > rc) rc = rc0
+      Sys.sleep(15 * 60)
+      count = count + 1
    }
 
   if (file.exists(pidfile)) file.remove(pidfile)
