@@ -196,7 +196,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
             list.merge(item$quote, l1)
         })
         df = do.call(rbind.data.frame,items)
-        as_tms(df, c(7,8,9))
+        if (nrow(df)> 0) df = as_tms(df, c(7,8,9))
+        df
     }
     ,getExchanges     = function() {
         # Aparte de 1000 campos devuelve el campo 2

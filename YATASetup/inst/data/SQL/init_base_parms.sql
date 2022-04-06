@@ -56,6 +56,9 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 1
 INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 10,  1,  2, 10, 'alive'       , '16');
 INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 10,  1,  3, 10, 'history'     , '48');
 
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 11,  1,  1, 10, 'each'        ,  '3');
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  1, 11,  1,  2, 10, 'sleep'       ,  '1');
+
 -- ----------------------------------------------------
 -- Grupo 2 - Servers
 --   Sub  1 - Web Server

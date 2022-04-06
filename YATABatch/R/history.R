@@ -43,6 +43,8 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
     df[is.na(df$min), "min"] = as.Date.character("2021-12-31")
     df[is.na(df$max), "max"] = as.Date.character("2021-12-31")
 
+    info    = batch$fact$parms$getHistoryData()
+
     pid  = Sys.getpid() %% 2
     from = ifelse(pid == 0, 1, nrow(ctc))
     to   = ifelse(pid == 0, nrow(ctc), 1)
@@ -52,6 +54,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
        if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
        rc2 = tryCatch({
            batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
+           cat(sprintf("%5d - Retrieving history for %s",row,df[row,"name"]))
            repeat {
                to = Sys.Date()
                byChunk = FALSE
@@ -59,12 +62,16 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
                    to = as.Date(df[row,"max"]) + 121
                    byChunk = TRUE
                }
-               data = prov$getHistory(df[row, "id"], as.Date(df[row,"max"]) + 1, to)
-               if (!is.null(data)) {
+               data = prov$getHistory(df[row, "id"], df[row,"max"], to)
+               if (nrow(data) > 0) {
                    data$id = df[row, "id"]
                    data$symbol = df[row, "symbol"]
                    .add2database(data, hist)
-                    if ((row %% 2) == 0) Sys.sleep(1) # Para cada 2
+                   cat("OK\n")
+                    if ((row %% info$each) == 0) Sys.sleep(info$sleep) # Para cada 2
+               }
+               else {
+                   cat("No data\n")
                }
                if (!byChunk) break
                rng  = hist$getRanges(df[row,"id"])
@@ -76,6 +83,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
            }
            batch$rc$OK
          }, error = function(cond) {
+             cat("KO\n")
            cat(cond$message, "\n")
            # Nada. Ignoramos errores de conexion, duplicates, etc
            batch$rc$ERRORS

@@ -18,6 +18,7 @@ DBParms = list(
     )
     ,block = list ( # grupo - subgrupo - [block]
         session = "001 010 001"
+       ,history = "001 011 001"
     )
     ,group = list(
        general   =  1

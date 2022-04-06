@@ -98,6 +98,11 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             data = tblParms$getBlock(DBParms$block$session)
             if (asList) data = as.list(data)
             data
+        }
+        ,getHistoryData = function(asList=TRUE) {
+            data = tblParms$getBlock(DBParms$block$history)
+            if (asList) data = as.list(data)
+            data
          }
          ##############################################
          ### REST
