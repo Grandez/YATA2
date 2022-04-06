@@ -125,10 +125,10 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1,  "6"         
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1, "10"                    ,"XX", "XX"     , "Regularizacion"  );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 1, "16"                    ,"XX", "XX"     , "Cierre"          );
 
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.BID"               ,"XX", "XX"     , "Bid"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.ASK"               ,"XX", "XX"     , "Ask"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.BUY"               ,"XX", "XX"     , "Comprar"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.SELL"              ,"XX", "XX"     , "Vender"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.BID"               ,"XX", "XX"     , "Bid"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.ASK"               ,"XX", "XX"     , "Ask"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.OPEN"              ,"XX", "XX"     , "Abrir posicion"                            );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, MSG) VALUES ( 2, "TXT.CLOSE"             ,"XX", "XX"     , "Cerrar posicion"                           );
 

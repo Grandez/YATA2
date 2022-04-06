@@ -82,18 +82,6 @@ moduleServer(id, function(input, output, session) {
           if (code == 21) return (pnl$codes$oper$sell)
           pnl$codes$oper$oepr
       }
-      resetValues = function() {
-          updNumericInput("impAmount", value=0)
-          updNumericInput("impPrice" , value=0)
-          updNumericInput("impValue" , value=0)
-          updNumericInput("impFee"   , value=0)
-          updNumericInput("impGas"   , value=0)
-          updTextArea("comment", "")
-          # Si es una venta puede ser que no queden monedas
-          if (!pnl$vars$buy) updateCboCurrency()
-#          yataMsgReset()#
-      }
-
       updatecboCurrency = function() {
          if (!pnl$vars$reload) return()
          if (pnl$vars$buy) {
@@ -125,6 +113,17 @@ moduleServer(id, function(input, output, session) {
          type = ifelse(pnl$vars$buy, 1, 2)
          updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
          processCommarea(1)
+      }
+      resetValues = function() {
+          updNumericInput("impAmount", value=0)
+          updNumericInput("impPrice" , value=0)
+          updNumericInput("impValue" , value=0)
+          updNumericInput("impFee"   , value=0)
+          updNumericInput("impGas"   , value=0)
+          updTextArea("comment", "")
+          # Si es una venta puede ser que no queden monedas
+          if (!pnl$vars$buy) updateCboCurrency()
+#          yataMsgReset()#
       }
       updateSummary = function() {
           if (is.null(pnl$vars$price))  pnl$vars$price  = 0
@@ -255,7 +254,7 @@ moduleServer(id, function(input, output, session) {
         # in - entra
         # out sale
         # A veces se generan dos triggers (debe ser por los renderUI)
-browser()
+
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
              pnl$vars$inEvent = !pnl$vars$inEvent
