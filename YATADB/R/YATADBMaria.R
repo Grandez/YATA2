@@ -102,7 +102,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                if (isolated) rollback()
                YATABase:::SQL("EXECUTE", origin=cond, sql=qry, action="execute")
           },error = function (cond) {
-               sqlcode =
+               sqlcode = getSQLCode(cond)
                if (sqlcode == SQL_LOCK) isolated = TRUE
                if (isolated) rollback()
                YATABase:::SQL( "SQL EXECUTE ERROR",origin=cond,sql=qry
@@ -164,8 +164,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
       ,getSQLCode = function (cond) {
           # Los codigos van al final del mensaje [nnnnn]
           # https://mariadb.com/kb/en/mariadb-error-codes/
-          browser()
-          rc = 0
+          rc = 99999 # Not found
           res = regexpr("\\[[0-9]+\\]", cond$message)
           if (length(res) > 0) {
               end = attr(res,"match.length")[1]
