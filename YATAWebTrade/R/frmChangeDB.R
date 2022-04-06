@@ -2,7 +2,7 @@ frmChangeDB <- function(factory, failed = FALSE) {
     data    = factory$parms$getDBData()
     current = factory$parms$lastOpen()
 
-    labels = paste0(data$name, " - ", data$descr)
+    labels = paste0(data$descr, " (", data$name, ")")
     values = data$subgroup
     names(values) = labels
 

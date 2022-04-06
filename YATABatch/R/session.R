@@ -56,11 +56,11 @@ updateSession = function(max = 0) {
 
    session = batch$fact$getObject(batch$fact$CODES$object$session)
    info    = batch$fact$parms$getSessionData()
-   oldData = Sys.time() - (as.integer(info$history) * 60 * 60)
+   oldData = Sys.time() - (info$history * 60 * 60)
 
    session$removeData(oldData)
 
-   while (count < as.integer(info$alive)) { # Para que se pare automaticamente
+   while (count < info$alive) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())
@@ -77,7 +77,7 @@ updateSession = function(max = 0) {
                batch$rc$SEVERE
             })
       if (rc0 > rc) rc = rc0
-      Sys.sleep(as.ineger(info$interval) * 60)
+      Sys.sleep(info$interval * 60)
       count = count + 1
    }
 

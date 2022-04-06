@@ -96,11 +96,13 @@ OBJParms = R6::R6Class("OBJ.PARMS"
          }
         ,getSessionData = function(asList=TRUE) {
             data = tblParms$getBlock(DBParms$block$session)
+            for (i in 1:ncol(data)) data[,i] = as.integer(data[,1])
             if (asList) data = as.list(data)
             data
         }
         ,getHistoryData = function(asList=TRUE) {
             data = tblParms$getBlock(DBParms$block$history)
+            for (i in 1:ncol(data)) data[,i] = as.integer(data[,1])
             if (asList) data = as.list(data)
             data
          }
