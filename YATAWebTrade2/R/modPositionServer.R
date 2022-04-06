@@ -142,9 +142,9 @@ PNLPos = R6::R6Class("PNL.OPER"
      }
     ,loadPosition = function() {
         df = self$getGlobalPosition()
-        if (is.null(df) || nrow(df) == 0) return()
+        if (nrow(df) == 0) return()
         df = private$appendVariations(df)
-        df = df[is.na(df)] = 0
+        df[is.na(df)] = 0
 
         self$data$dfGlobal = df
         self$vars$selected[["PosGlobal"]] = df$currency
@@ -166,7 +166,9 @@ PNLPos = R6::R6Class("PNL.OPER"
         j = ncol(dfp)
         for (idx in 1:length(periods)) {
             dfp[,idx] = dfp[,j] / dfp[,idx]
-            dfp[,idx] = ifelse (dfp[,idx] < 1, (1 - dfp[,idx]) * -1, dfp[,idx] - 1)
+            if (dfp[,idx] != 0) {
+                dfp[,idx] = ifelse (dfp[,idx] < 1, (1 - dfp[,idx]) * -1, dfp[,idx] - 1)
+            }
         }
         dfp = dfp[-ncol(dfp)]
         colnames(dfp) = c("day", "week", "month", "id")
