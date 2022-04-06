@@ -144,6 +144,7 @@ PNLPos = R6::R6Class("PNL.OPER"
         df = self$getGlobalPosition()
         if (is.null(df) || nrow(df) == 0) return()
         df = private$appendVariations(df)
+        df = df[is.na(df)] = 0
 
         self$data$dfGlobal = df
         self$vars$selected[["PosGlobal"]] = df$currency
