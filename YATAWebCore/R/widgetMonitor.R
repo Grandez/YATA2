@@ -59,6 +59,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
       ,clsDown  = "yata_cell_data_down"
       ,clsLbl   = "yata_cell_label"
       ,clsData  = "yata_cell_data"
+
       ,initMonitors  = function() {
           createMonitor = function(id, dfPos, dfLast, names) {
               mon         = as.list(dfLast[dfLast$id == id,])

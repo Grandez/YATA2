@@ -14,8 +14,9 @@ PNLPos = R6::R6Class("PNL.OPER"
       ,currencies  = NULL
       ,monitors    = NULL
       ,plots = list()
-      ,initialize    = function(id, pnlParent, session, ns) {
+      ,initialize    = function(id, pnlParent, session, ns, DBChanged) {
           super$initialize(id, pnlParent, session, ns)
+          private$DBChanged = DBChanged
           private$defaultValues(ns)
           self$position  = Factory$getObject(self$codes$object$position)
           self$cameras   = Factory$getObject(self$codes$object$cameras)
@@ -34,7 +35,8 @@ PNLPos = R6::R6Class("PNL.OPER"
               self$data$dfSession = self$session$getSessionPrices(ids)
               self$vars$sessionChanged = TRUE
           }
-          self$monitors$render()
+          if ( private$DBChanged) self$monitors$update()
+          if (!private$DBChanged) self$monitors$render()
           self$updateBest()
           js$yata_set_layout(id)
           self$loaded = TRUE
@@ -116,6 +118,7 @@ PNLPos = R6::R6Class("PNL.OPER"
  )
  ,private = list(
       ns = NULL
+     ,DBChanged = FALSE
      ,cboplots = c( "Position"  = "Hist", "Session"  = "Session"
                   ,"Best Info" = "Best", "Top Info" = "Top"
      )
@@ -135,6 +138,7 @@ PNLPos = R6::R6Class("PNL.OPER"
           self$data$dfGlobal = NULL
           self$vars$trending = Sys.time() - (60 * 60) # subtract one hour
           private$ns = ns
+
      }
     ,loadPosition = function() {
         df = self$getGlobalPosition()
@@ -198,7 +202,8 @@ PNLPos = R6::R6Class("PNL.OPER"
     showNotification("Entra en POSITION")
     pnl = WEB$getPanel(id)
     if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
-        pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id)))
+        DBChanged = ifelse(is.null(pnl), FALSE, TRUE)
+        pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id), DBChanged))
     }
     flags = reactiveValues(
          position  = FALSE

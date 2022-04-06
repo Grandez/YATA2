@@ -19,7 +19,6 @@ TBLSession = R6::R6Class("TBL.SESSION"
               df = df[,1:(ncol(df) - 2)]
               setColNames(df)
           }
-
      )
      ,private = list (
          fields = list(

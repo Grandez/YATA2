@@ -127,19 +127,21 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
 
              if (is.null(data) || length(data) == 0) break
 
-             resp$total  = as.integer(data[[2]])
+             resp$total  = as.integer(data$totalCount)
              resp$from   = parms$start
-             resp$count  = length(data[[1]])
+             resp$count  = length(data$cryptoCurrencyList)
              parms$start = parms$start + resp$count
-             data        = data[[1]]
+             data        = data$cryptoCurrencyList
              until       = ifelse (max == 0, resp$total, max)
 
-              items = lapply(data, function(x) makeList(x))
-              df    = do.call(rbind.data.frame,items)
-              df    = as_tms(df, c(17))
-              dfc   = rbind(dfc, df)
+             if (length(data) > 0) {
+                 items = lapply(data, function(x) makeList(x))
+                  df    = do.call(rbind.data.frame,items)
+                  df    = as_tms(df, c(17))
+                  dfc   = rbind(dfc, df)
+             }
            }, error = function (cond) {
-               browser()
+               cat("ERROR GetTickers", cond$message)
               #logger$done(3, FALSE)
            })
         }

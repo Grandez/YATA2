@@ -66,7 +66,7 @@ to = nrow(ctc)
                if (!is.null(data)) {
                    data$id = df[row, "id"]
                    data$symbol = df[row, "symbol"]
-                   .add2database(data, hist$getTableHistory())
+                   .add2database(data, hist)
                     if ((row %% 2) == 0) Sys.sleep(1) # Para cada 2
                }
                if (!byChunk) break

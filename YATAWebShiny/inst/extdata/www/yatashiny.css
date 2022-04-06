@@ -173,6 +173,7 @@
 
 .yata_brand {
     margin-left: 3px; /* Como los monitores */
+    width: 7rem;      /* Calculado a mano */
 }
 .yata_number {
   text-align: right;

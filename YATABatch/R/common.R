@@ -1,6 +1,6 @@
-.add2database = function (df, tbl) {
-    colNames = tbl$translateColNames(colnames(df))
-    tblName  = tbl$getDBTableName()
+.add2database = function (df, obj) {
+    colNames = obj$getColumnNames(colnames(df))
+    tblName  = obj$getDBTableName()
     datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp/", tblName)
     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
 
@@ -10,6 +10,6 @@
                             , row.names = FALSE, col.names=FALSE)
     closeAllConnections()
     exec = YATAExec$new()
-    res = exec$import(basename(datafile), tbl$getDB()$getName(), colNames)
+    res = exec$import(basename(datafile), obj$getDBName(), colNames)
     file.remove(datafile)
 }

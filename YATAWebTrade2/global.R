@@ -49,13 +49,12 @@ suppressMessages(library(future,   warn.conflicts = FALSE))
 ### Carga de fuentes
 ### En R busca subdirectorios
 #####################################
-library(YATABatch)
+
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
 WEB = YATAWebCore::YATAWebEnv$new()
-# YATABatch::startDaemons()
-# WEB$startDaemons()
+WEB$startDaemons()
 
 if (.Platform$OS.type != "windows") {
    future::plan(strategy="sequential")

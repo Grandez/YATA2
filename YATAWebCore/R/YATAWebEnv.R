@@ -128,8 +128,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         lst
     }
      ,startDaemons = function() {
-         exec = private$base$exec()
-         resp = exec$R("start_daemons")
+         YATABatch::startDaemons()
          invisible(self)
      }
   )

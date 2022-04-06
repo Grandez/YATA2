@@ -97,7 +97,7 @@ moduleServer(id, function(input, output, session) {
       updatecboCurrency = function() {
          if (!pnl$vars$reload) return()
          if (pnl$vars$buy) {
-             data = WEB$combo$currencies()
+             data = WEB$combo$currencies(id = FALSE)
          }
          else {
              df = pnl$getCurrenciesSell()
@@ -255,7 +255,7 @@ moduleServer(id, function(input, output, session) {
         # in - entra
         # out sale
         # A veces se generan dos triggers (debe ser por los renderUI)
-
+browser()
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
              pnl$vars$inEvent = !pnl$vars$inEvent

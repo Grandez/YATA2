@@ -4,42 +4,45 @@
     dft   = NULL
     provider      = batch$fact$getObject(batch$fact$CODES$object$providers)
     tblCurrencies = batch$fact$getTable(batch$fact$CODES$tables$currencies)
-    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/start_session.pid")
 
     tryCatch({
        data = provider$getTickers(500, 1)
        if (max == 0) max = data$total
 
        repeat {
-          df = data$df
-          df[,c("name", "slug")] = NULL
+          if (nrow(data$df) > 0) {
+              df = data$df
+              df[,c("name", "slug")] = NULL
 
-          df1 = df[,c("id", "symbol")]
-          ctc = tblCurrencies$table()
-          df2 = ctc[,c("id", "symbol")]
-          dfs = inner_join(df1, df2, by="id")
+              df1 = df[,c("id", "symbol")]
+              ctc = tblCurrencies$table()
+              df2 = ctc[,c("id", "symbol")]
+              dfs = inner_join(df1, df2, by="id")
 
-          df2 = dfs[,c(1,3)]
-          df  = left_join(df, df2, by="id")
+              df2 = dfs[,c(1,3)]
+              df  = left_join(df, df2, by="id")
 
-          df$symbol = df$symbol.y
-          df        = df[,-ncol(df)]
+              df$symbol = df$symbol.y
+              df        = df[,-ncol(df)]
 
-          df$last = last
-          dft = rbind(dft, df)
-          if (nrow(dft) > 0) .add2database(dft, session)
-          count = count + nrow(dft)
+              df$last = last
+              dft = rbind(dft, df)
+              count = count + nrow(dft)
+              .add2database(dft, session)
+          }
           start = data$from + data$count
 
           if (start >= max) break;
           data = provider$getTickers(500, start)
         }
      }, error = function (cond) {
+         browser()
          # Nada, igonoramos errores de red
      })
      count
 }
 updateSession = function(max = 0) {
+    browser()
    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 
@@ -53,7 +56,7 @@ updateSession = function(max = 0) {
    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
    session = batch$fact$getObject(batch$fact$CODES$object$session)
 
-   while (count < 17) { # Para que se pare automaticamente
+   while (count < 3) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())

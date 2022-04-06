@@ -90,7 +90,8 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
        ,import = function(file, database, columns) {
             private$.wd = paste0(Sys.getenv("YATA_SITE"), "/data/tmp")
             args = list( "--local"
-                        , "--replace"
+                        ,"--replace"
+                        ,"--force"
                         ,"--fields-terminated-by=;"
                         ,"--user=YATA"
                         ,"--password=yata"

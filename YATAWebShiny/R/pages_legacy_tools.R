@@ -150,11 +150,11 @@ yata_make_page_header <- function(parent, nav, titleActive = FALSE, titleWidth =
     divBrand = tags$div(id="yata_brand", class="col-lg-1")
     if (titleActive) {
         span = shiny::tags$span( class="navbar-brand yata_brand yata_clickable"
-                                ,onclick="Shiny.setInputValue('app_title', 'click');")
+                                ,onclick="Shiny.setInputValue('app_title', 'click', {priority: 'event'});")
     } else {
         span = shiny::tags$span( class="navbar-brand yata_brand")
     }
-    span     = tagAppendChild(span, textOutput("app_title", inline=TRUE))
+    span     = tagAppendChild(span, textOutput("appTitle", inline=TRUE))
     divBrand = tagAppendChildren(divBrand
         ,span
         ,shiny::tags$span(shiny::icon("bars"), style = "display:none;")   # para la dependencia
