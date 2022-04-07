@@ -10,6 +10,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
   ,public = list(
       MSG      = NULL
      ,initialize = function(factory) {
+         private$factory       = factory
          private$tblCameras    = factory$getTable(factory$CODES$tables$cameras)
          private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
          private$tblPosition   = factory$getTable(factory$CODES$tables$position)
@@ -44,6 +45,20 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          data = makeCombo(df, id=key)
          checkAll(all, data)
      }
+     ,getCurrenciesKey = function(id=TRUE, currencies) {
+         if (is.null(cache$currencies)) loadCurrencies()
+         if (id) {
+             df = cache$currencies[cache$currencies$id %in% currencies,]
+             data = df$symbol
+             names(data) = df$id
+         } else {
+             df = cache$currencies[cache$currencies$symbol %in% currencies,]
+             data = df$id
+             names(data) = df$symbol
+         }
+         data
+     }
+
      ##############################################################
      ## Using labels from messages
      ##############################################################
@@ -63,7 +78,8 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
 
   )
   ,private = list(
-      tblCameras    = NULL
+      factory       = NULL
+     ,tblCameras    = NULL
      ,tblCurrencies = NULL
      ,tblPosition   = NULL
      ,objParms      = NULL
@@ -75,9 +91,11 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
      ,loadCurrencies = function() { private$cache$currencies = tblCurrencies$table() }
      ,loadOperations = function() {
          data = objParms$getBlock(50, 1)
-         txts = objMsgs$getBlockBueno(2)
-         colnames(txts) = c("label", "msg")
-         df = dplyr::left_join(data,txts,by="label")
+         lst = objMsgs$getBlock(factory$CODES$labels$operation)
+         dft = data.frame(msg=unlist(lst))
+         dft$label = names(lst)
+
+         df = dplyr::left_join(data,dft,by="label")
          df = df[,c("key","msg")]
          colnames(df) = c("id", "name")
          private$cache$operations = df

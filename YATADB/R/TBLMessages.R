@@ -7,25 +7,29 @@ TBLMessages = R6::R6Class("TBL.MESSAGES"
         initialize = function(name, db=NULL) {
            super$initialize(name, fields=private$fields, key=private$key, db=db)
         }
-        ,get = function(code, lang, region) {
-            data = table(code=code,lang=lang,region=region)
-            if (nrow(data) == 0) {
-                return (paste("Missing message ", code))
-            }
-            data$msg
+        ,get = function(code, lang="XX", region="XX") {
+            df = table(code=code, lang=lang, region=region)
+            if (nrow(df) == 0) df = table(code = code, lang = lang, region = "XX")
+            if (nrow(df) == 0) df = table(code = code, lang = "XX", region = "XX")
+            if (nrow(df) == 0) return (paste("Missing message ", code))
+            data$value
         }
-        ,getBlock = function(block, lang, region) {
-            table(block=block,lang=lang,region=region)
+        ,getBlock = function(block, lang="XX", region="XX") {
+            # No puede fallar. seria corrupcion de datos en el sistema
+            df = table(block=block, lang=lang, region=region)
+            if (nrow(df) == 0) df = table(block=block, lang=lang, region="XX")
+            if (nrow(df) == 0) df = table(block=block, lang="XX", region="XX")
+            df[,c("code", "value")]
         }
      )
      ,private = list (
-           key = c("code", "lang", "region")
+           key = c("block", "code", "lang", "region")
           ,fields = list(
               block  = "BLOCK"
              ,code   = "CODE"
              ,lang   = "LANG"
              ,region = "REGION"
-             ,msg    = "MSG"
+             ,value  = "VALUE"
           )
      )
 )

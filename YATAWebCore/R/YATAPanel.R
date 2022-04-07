@@ -54,7 +54,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         }
         pp
     }
-     ,getRoot = function() {
+    ,getRoot   = function() {
          root = self
          pp   = root$parent
          while (!is.null(pp)) {
@@ -67,6 +67,9 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         data = as.list(df$id)
         names(data) = df$name
         data
+    }
+    ,getLabels = function(code) {
+        self$MSG$getBlock(code)
     }
     # ,setMsg = function(code, ...) {
     #    self$msg = self$MSG$get(code, ...)

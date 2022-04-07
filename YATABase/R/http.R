@@ -40,11 +40,12 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
       ,checkPageResponse = function(method, page, url, parms, accept) {
          rc = (page$status_code %/% 100) * 100
          if (rc == 0 || rc == 200) return (0)
+         resp = httr::content(page, type=page$headers$`content-type`, encoding="UTF-8")
          # Hacemos el trycatch para grabar siempre el error
          tryCatch({
-            YATABase:::HTTP( paste("HTTP ERROR:", "Page error")
+            YATABase:::HTTP( paste("HTTP ERROR:", resp)
                             ,action=method, code=page$status_code
-                            ,origin=page$url, message="Page error"
+                            ,origin=page$url, message=resp
                             ,parameters = parms
                            )
          }, error = function(cond){

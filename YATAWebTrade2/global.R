@@ -1,17 +1,10 @@
-# Esto es para las pruebas
-# unloadNamespace("YATAWebCore")
-# unloadNamespace("YATACore")
-# unloadNamespace("YATADT")
-# unloadNamespace("YATAProviders")
-# unloadNamespace("YATADB")
-# unloadNamespace("YATABase")
-
 # Core
 library(utils)
 library(R6)
 library(tibble)
 library(rlist)
 library(stringr)
+
 suppressMessages(library(plyr,  warn.conflicts = FALSE))
 suppressMessages(library(tidyr, warn.conflicts = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE))
@@ -22,8 +15,6 @@ suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 library(YATABatch)
-
-# suppressMessages(library(YATADT))
 
 # Shiny
 library(shiny)
@@ -54,7 +45,7 @@ files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, igno
 sapply(files,source)
 
 WEB = YATAWebCore::YATAWebEnv$new()
-WEB$startDaemons()
+# WEB$startDaemons() # Esto bloquea en windows
 
 if (.Platform$OS.type != "windows") {
    future::plan(strategy="sequential")

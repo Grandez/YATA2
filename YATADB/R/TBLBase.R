@@ -45,24 +45,20 @@ YATATable <- R6::R6Class("YATA.TABLE"
           pos = match(yataNames, names(fields))
           unlist(fields[pos])
       }
-      ,selected    = function() { .selected }
-      ,loadAll     = function() {
+      ,selected = function() { .selected }
+      ,loadAll  = function() {
          private$dfa = table()
          private$loaded = TRUE
          invisible(self)
       }
-      ,load        = function(...) {
+      ,load     = function(...) {
          filter = mountWhere(...)
          if (is.null(filter$values)) return (loadAll())
          private$dfa = table(...)
          private$loaded = TRUE
          invisible(self)
       }
-      # ,get = function() {
-      #    if (!loaded) loadAll()
-      #    private$dfa
-      # }
-      ,apply   = function(isolated = FALSE) {
+      ,apply    = function(isolated = FALSE) {
           items = which(private$changed == TRUE)
           if (length(items) == 0) return()
 
@@ -156,6 +152,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,bulkAdd  = function(data, append=TRUE, isolated=FALSE) {
          colnames(data) = fields[colnames(data)]
          db$write(tblName, data, append, isolated)
+      }
+      ,from     = function( ..., equal=FALSE) {
+          filter= makeWhereGL(gt=TRUE,equal=equal,...)
+          qry = paste("SELECT * FROM ", tblName, filter$sql)
+          db$query(qry, params=filter$values)
       }
       ###############################################
       # Operaciones sobre la tabla

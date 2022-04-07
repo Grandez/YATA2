@@ -231,12 +231,12 @@ INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (5,   3
 --   Sub  5 - Log aplica
 -- ----------------------------------------------------
 
-INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  1,  1,  1, 'label'      ,  'TXT.BID'      );
-INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  2,  1,  1, 'label'      ,  'TXT.ASK'      );
-INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  3,  1,  1, 'label'      ,  'TXT.BUY'      );
-INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  4,  1,  1, 'label'      ,  'TXT.SELL'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  5,  1,  1, 'label'      ,  'TXT.OPEN'     );
-INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  6,  1,  1, 'label'      ,  'TXT.CLOSE'    );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  1,  1,  1, 'label'      ,  'BID'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  2,  1,  1, 'label'      ,  'ASK'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  3,  1,  1, 'label'      ,  'BUY'      );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  4,  1,  1, 'label'      ,  'SELL'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  5,  1,  1, 'label'      ,  'OPEN'     );
+INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  6,  1,  1, 'label'      ,  'CLOSE'    );
 
 INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  1,  2, 10, 'key'       ,  '10'           );
 INSERT INTO PARMS (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  1,  2,  2, 10, 'key'       ,  '11'           );

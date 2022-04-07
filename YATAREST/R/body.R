@@ -32,17 +32,17 @@ top_body = function(top, count) {
     })
 }
 
-latest_body = function() {
-    tryCatch({
-    logger("latest")
-    fact = YATACore::YATAFACTORY$new()
-    sess = fact$getObject(fact$codes$object$session)
-    res = sess$getLatest()
-    fact$clear()
-    logger("latest", FALSE)
-    res
-}, error = function(e) print("ERROR en latest: \n")) #, e, "\n"))
-}
+# latest_body = function() {
+#     tryCatch({
+#     logger("latest")
+#     fact = YATACore::YATAFACTORY$new()
+#     sess = fact$getObject(fact$codes$object$session)
+#     res = sess$getLatest()
+#     fact$clear()
+#     logger("latest", FALSE)
+#     res
+# }, error = function(e) print("ERROR en latest: \n")) #, e, "\n"))
+# }
 execLatest = function() {
     fact = YATACore::YATAFACTORY$new()
     session = fact$getObject(fact$codesodes$object$session)

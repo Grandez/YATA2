@@ -96,6 +96,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
+    cat("main beg\n")
    WEB$setSession(session)
    if (WEB$errorLevel > 0) {
        if (WEB$errorLevel == 99)
@@ -107,10 +108,10 @@ function(input, output, session) {
 
    observeEvent(input$cookies, {
        WEB$cookies = jsonlite::fromJSON(input$cookies)
-       WEB$setWindow(input$cookies)
+#       WEB$setWindow(input$cookies)
    })
    observeEvent(input$resize, {
-       WEB$setWindow(input$resize)
+#       WEB$setWindow(input$resize)
    })
    observeEvent(input$mainMenu,{
       eval(parse(text=paste0( "mod"
@@ -159,11 +160,13 @@ function(input, output, session) {
       })
 
    if (!pnl$loaded) {
+
        pnl$loaded = TRUE
        pname = pnl$factory$getDBName()
        name = ifelse (is.null(pname), "YATA", pname)
        output$appTitle = renderText({ name })
        if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
    }
-   js$yata_req_cookies()
+#   js$yata_req_cookies()
+   cat("main end\n")
 }

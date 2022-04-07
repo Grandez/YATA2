@@ -9,13 +9,12 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
   ,portable   = FALSE
   ,lock_class = TRUE
   ,public = list(
-      initialize = function(id, pnl, env) {
+      initialize = function(id, pnl) {
           private$base = YATABase$new()
           private$monitors = YATABase::map()
           private$idDiv = paste0("#", id)
           private$pnl = pnl
-          private$env = env
-          private$msg = pnl$factory$MSG$getBlockAsMap(10)
+          private$labels = pnl$factory$MSG$getBlock(pnl$factory$CODES$labels$monitors)
           initMonitors()
      }
      ,render = function(size=2) {
@@ -47,8 +46,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
   ,private = list(
        monitors = NULL
       ,pnl      = NULL
-      ,msg      = NULL
-      ,env      = NULL
+      ,labels   = NULL
       ,session  = NULL
       ,pos      = NULL
       ,favorites = NULL
@@ -115,27 +113,27 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
                          ,width  = YATAWEBDEF$iconSize
                          ,height = YATAWEBDEF$iconSize,
                      onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$icon, ";")))
-             ,tags$td(class=clsLbl, msg$get("MON.CTC.COST"))
+             ,tags$td(class=clsLbl, labels$COST)
              ,tags$td(class=clsData,  id=paste0(idMon,"_cost_delta"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.CTC.SESSION"))
+              tags$td(class=clsLbl, labels$SESSION)
              ,tags$td(class=clsData, id=paste0(idMon,"_session_delta"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.CTC.HOUR"))
+              tags$td(class=clsLbl, labels$HOUR)
              ,tags$td(class=clsData, id=paste0(idMon,"_hour_delta"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.CTC.DAY"))
+              tags$td(class=clsLbl, labels$DAY)
              ,tags$td(class=clsData,  id=paste0(idMon,"_day_delta"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.CTC.WEEK"))
+              tags$td(class=clsLbl, labels$WEEK)
              ,tags$td(class=clsData,  id=paste0(idMon,"_week_delta"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.CTC.MONTH"))
+              tags$td(class=clsLbl, labels$MONTH)
              ,tags$td(class=clsData,  id=paste0(idMon,"_month_delta"))
            )
           ,tags$tr(
@@ -151,31 +149,31 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
               tags$td(rowspan="6", class="yata_cell_icon",
                      img(src="icons/currencies/EUR.png",width=YATAWEBDEF$iconSize, height=YATAWEBDEF$iconSize,
                      onerror=paste0("this.onerror=null;this.src=", YATAWEBDEF$iconDef, ";")))
-             ,tags$td(class=clsLbl, msg$get("MON.FIAT.TOTAL"))
+             ,tags$td(class=clsLbl, labels$TOTAL)
              ,tags$td(class=clsData,  id=paste0(base,"total"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.FIAT.REIMB"))
+              tags$td(class=clsLbl, labels$REIMB)
              ,tags$td(class=clsData, id=paste0(base,"reimb"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.FIAT.SUBTOTAL"))
+              tags$td(class=clsLbl, labels$SUBTOTAL)
              ,tags$td(class=clsData, id=paste0(base,"subtotal"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.FIAT.AVAILABLE"))
+              tags$td(class=clsLbl, labels$AVAILABLE)
              ,tags$td(class=clsData,id=paste0(base,"available"))
            )
           ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.FIAT.INVEST"))
+              tags$td(class=clsLbl, labels$INVEST)
              ,tags$td(class=clsData, id=paste0(base,"invest"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.FIAT.VALUE"))
+              tags$td(class=clsLbl, labels$VALUE)
              ,tags$td(class=clsData, id=paste0(base,"value"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, msg$get("MON.FIAT.ACT"))
+              tags$td(class=clsLbl, labels$ACT)
              ,tags$td(class=clsData, id=paste0(base,"act"))
            )
 

@@ -36,7 +36,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$hID    = base$map()
             private$hSym   = base$map()
             private$hCam   = base$map()
-            self$REST      = YATARest$new()
+            self$REST      = YATAServer$new()
             self$combo     = YATAWebCombos$new(self$factory)
 #            self$errorLevel = REST$check()
             private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
@@ -72,7 +72,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          panel = private$panels$get(name)
          if (!is.null(panel)) shinyjs::js$yata_set_page(name)
          panel
-      }
+     }
+     ,getPanelLabels = function() {
+         self$MSG$getBlock(factory$CODES$labels$panels)
+     }
      ,addPanel = function(panel) {
          private$panels$put(panel$name, panel)
          shinyjs::js$yata_add_page(panel$name)

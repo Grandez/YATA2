@@ -17,7 +17,7 @@ best_handler = function(req, .res) {
     group = .getParm(req, "group", 0)
     tryCatch({
         df = best_body(top, from, group)
-       .df_handler(df, .res)
+       .handler_ok(df, .res)
     }, error = function(e) {
       .res$set_status_code(500)
       .res$set_content_type("application/json")
@@ -36,7 +36,7 @@ hist_handler = function(.req, .res) {
        df   = hist$getHistory(id, from, to)
        message("HIST OK")
        message(df)
-      .df_handler(df, .res)
+      .handler_ok(df, .res)
     }, error = function(e) {
         message("HIST ERROR")
         print(e)
@@ -48,11 +48,43 @@ hist_handler = function(.req, .res) {
         .res
     })
 }
+test = function() {
+   message(Sys.time(), " latest Called")
+   df = tryCatch({
+       browser()
+      message(Sys.time(), " Antes de FACTORY")
+      fact = YATACore::YATAFactory$new(level=2) # Providers
+      message(Sys.time(), " Antes de Provider")
+      prov = fact$getDefaultProvider()
+      message(Sys.time(), " Antes de getTickers")
+      df = prov$getTickers()
+      message(Sys.time(), " Despues de getTickers")
+      browser()
+      #.handler_ok(df, .res)
+   }, error = function(cond) {
+       browser()
+       message(Sys.time(), cond$message)
+      #.handler_ko(cond, .res)
+   })
+   #.handler_ok(df, .res)
+}
 
 latest_handler = function(.req, .res) {
-    message(Sys.time(), "latest Called")
-    df = latest_body()
-    .df_handler(df, .res)
+   message(Sys.time(), " latest Called")
+   df = tryCatch({
+       browser()
+      message(Sys.time(), " Antes de FACTORY")
+      fact = YATACore::YATAFactory$new(level=2) # Providers
+      message(Sys.time(), " Antes de Provider")
+      prov = fact$getDefaultProvider()
+      message(Sys.time(), " Antes de getTickers")
+      df = prov$getTickers()
+      message(Sys.time(), paste(" Despues de getTickers ", nrow(df)))
+      .handler_ok(df$df, .res)
+   }, error = function(cond) {
+       message(Sys.time(), cond$message)
+      .handler_ko(cond, .res)
+   })
 }
 trending_handler = function(.req, .res) {
     browser()
@@ -62,15 +94,29 @@ trending_handler = function(.req, .res) {
      prov = fact$getDefaultProvider()
 
      df   = prov$getTrend()
-     .df_handler(df, .res)
+     .handler_ok(df, .res)
    }, error = function(cond) {
       .res$set_status_code(500)
       .res$set_content_type("text/html")
       .res$set_body("KO")
    })
 }
-.df_handler = function(df, .res) {
+.handler_ok = function(df, .res) {
+    message("entra en el OK")
   .res$set_status_code(200)
   .res$set_content_type("application/json")
+    message("entra en el set_body")
   .res$set_body(jsonlite::toJSON(df, data.frame = "rows"))
+    message("sale set body")
+    .res
+}
+.handler_ko = function(cond, .res) {
+    browser()
+    data = list(
+        status = 500
+        ,message = cond$message
+    )
+    .res$set_status_code(500)
+    .res$set_content_type("application/json")
+    .res$set_body(jsonlite::toJSON(data, pretty=TRUE))
 }

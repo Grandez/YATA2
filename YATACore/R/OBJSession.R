@@ -43,6 +43,14 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,getSessionPrices = function(currencies = NULL) {
            getLatest(0, currencies)
        }
+       ,getData = function(id=NULL, symbol=NULL) { # Return data session from -8 hours
+           browser()
+           from = Sys.time() - (8 * 60 * 60)
+           df = tblSession$from(last=from)
+           if (!is.null(ids))     df = df[df$id %in% ids,]
+           if (!is.null(symbols)) df = df[df$symbol %in% symbols,]
+           df
+       }
        ,getPrice = function(currency) {
            tblSession$select(symbol=currency,limit = 1)
            ifelse(is.null(tblSession$current), 0, tblSession$current$price)

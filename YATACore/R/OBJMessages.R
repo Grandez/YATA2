@@ -16,19 +16,22 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           txt = getMessage(code)
           sprintf(txt, ...)
       }
-      ,getBlockBueno = function(block) {
+       ,getWords = function() {
+           getBlockData(1) # Esto viene de codes
+       }
+      ,getBlockBueno = function(block, inverted=FALSE) {
+          browser()
+          stop("JGG HAY QUE REVISAR ESTA LLAMADA")
           df = tblMsg$table(block = block)
           df[,c("code","msg")]
       }
       ,getBlock = function(block, inverted=FALSE) {
-          stop("ESTA FUNCION DEBERIA SER getBlockBueno")
-        df = tblMsg$table(block = block)
-        if (inverted) {
-            data = df$code
-            names(data) = df$msg
+          lst = getBlockData(block)
+          if (inverted) {
+            data = names(lst)
+            names(data) = lst
         } else {
-            data = df$msg
-            names(data) = df$code
+            data = lst
         }
         data
       }
@@ -53,6 +56,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
        ,lang   = "XX"
        ,region = "XX"
        ,cache  = list()
+       ,cacheBlock = list()
        ,size   = 20      # Long. de la cache
        ,getMessage = function(code) {
            txt="ERROR"
@@ -65,6 +69,17 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
                # Nothing
            })
           txt
+       }
+       ,getBlockData = function(block) {
+           label = paste0("L", block)
+           if (!(label %in% names(cacheBlock))) {
+               df = tblMsg$getBlock(block, lang, region)
+               df$code = as.character(sub("[a-zA-z0-9]+\\.", "", df$code))
+               lst = as.list(df$value)
+               names(lst) = df$code
+               private$cacheBlock[[label]] = lst
+           }
+          private$cacheBlock[[label]]
        }
     )
 )

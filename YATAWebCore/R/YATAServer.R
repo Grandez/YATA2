@@ -1,5 +1,5 @@
 # Lo hacemos clase para configurarlo
-YATARest = R6::R6Class("YATA.REST"
+YATAServer = R6::R6Class("YATA.SERVER"
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,portable   = FALSE
@@ -17,7 +17,10 @@ YATARest = R6::R6Class("YATA.REST"
                             ,subclass=NULL, origin=cond, action="YATARest")
          })
      }
-     ,GET   = function(endpoint, ...) { future({ .restDfBody(endpoint, ...)}) }
+     ,GET   = function(endpoint, ...) {
+         .restDfBody(endpoint, ...)
+         # future({ .restDfBody(endpoint, ...)})
+      }
      ,PUT   = function(endpoint, ...) {
         future({ .restDfBody(endpoint, ...)})
         invisible(self)
@@ -58,8 +61,8 @@ YATARest = R6::R6Class("YATA.REST"
     ,.restDfBody = function(endpoint, ...) {
         browser()
         url = paste0(.url, endpoint)
-        http$get(url, query = args2list(...))
-        req = httr::GET(url, query = args2list(...))
+        req = http$get(url, parms = args2list(...))
+
         if (req$status_code == 200) {
             json = httr::content(req, type="application/json", encoding="UTF-8")
             as.data.frame(jsonlite::fromJSON(json))

@@ -4,18 +4,33 @@ WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,public = list(
-      initialize = function(ns, layout, options, values=NULL, full=TRUE) {
+      initialize = function(ns, layout=NULL, pairs=NULL, options=NULL, values=NULL, full=TRUE) {
          if (!missing(ns)) private$ns = ns
-         # full indica si se hace la gestion completa o solo se notifica
-         private$full = full
-         if (!missing(layout)) {
-              private$layout = layout
-              makeConfig(ns, layout, options, values)
-              makeLayout()
+         private$full = full # Gestionar o notificar
+         if (is.null(layout)) layout=c(2,2)
+         if (!is.null(pairs)) {
+             private$plots  = paste0("plot", pairs)
+             private$blocks = paste0("blk", pairs)
+             names(private$plots)  = paste("Plot", names(pairs))
+             names(private$blocks) = names(pairs)
+             options = c(plots, blocks)
           }
+          private$layout = layout
+          makeConfig(ns, layout, options, values)
       }
-     ,getConfig = function()    { private$config  }
-     ,getBody   = function(...) { makeLayout(...) }
+     ,getConfig = function()   { private$config  }
+     ,getLayout = function() {
+         uiPlots  = lapply(plots,  function(plot) yuiPlot(ns(plot)))
+         uiBlocks = lapply(blocks, function(block) {
+            name = substr(block, 4, nchar(block))
+            tags$div( id=ns(block), style="width: 100%",
+                     guiBox(ns(name), guiLabelText(ns(paste0("lbl", name)))
+                                    , yuiTable(ns(paste0("tbl", name)))))
+
+             })
+         makeLayout(tagList(uiPlots, uiBlocks))
+     }
+#     ,getBody   = function(...) { makeLayout(...) }
      ,update    = function(session, layout, ns) {
          browser()
          if (missing(ns)) ns = private$ns
@@ -33,6 +48,8 @@ WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
       ns     = NULL
      ,config = NULL
      ,layout = NULL
+     ,plots  = NULL
+     ,blocks = NULL
      ,full   = FALSE # si TRUE gestiona todo, si false notifica
      ,makeConfig = function(ns, layout, options, values) {
          opts = c("Hide"="none")
@@ -89,6 +106,5 @@ WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
         blocks = tagAppendChild(blocks, blocksui)
         tagAppendChild(blocks, tags$div(id=ns("blocks_container"), class="yata_blocks_container", ...))
     }
-
   )
 )
