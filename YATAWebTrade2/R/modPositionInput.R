@@ -26,7 +26,7 @@ modPosInput = function(id, title) {
         ,hr()
         ,yuiTitle(5, "Best")
         ,fluidRow(column(4, "Top"),    column(8, guiIntegerInput(ns("numBestTop"),value=15,step=1,min=5,max=30)))
-        ,fluidRow(column(4, "Period"), column(8, guiCombo(ns("cboBestFrom"),
+        ,fluidRow(column(4, "Period"), column(8, guiCombo(ns("cboBestPeriod"),
                                                    choices=c("Hora"=1,"Dia"=2,"Semana"=3,"Mes"=4),selected=2)))
         ,tags$br()
         ,yuiFlex(yuiBtnOK(ns("btnLayoutOK"),"Guardar"), yuiBtnKO(ns("btnLayoutKO"),"Cerrar"))

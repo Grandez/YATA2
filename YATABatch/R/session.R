@@ -26,6 +26,7 @@
               df        = df[,-ncol(df)]
 
               df$last = last
+              df = df %>% filter (price > 0 & volume > 0)
               dft = rbind(dft, df)
               count = count + nrow(dft)
               .add2database(dft, session)

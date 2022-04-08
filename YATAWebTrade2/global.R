@@ -4,6 +4,7 @@ library(R6)
 library(tibble)
 library(rlist)
 library(stringr)
+library(data.table)
 
 suppressMessages(library(plyr,  warn.conflicts = FALSE))
 suppressMessages(library(tidyr, warn.conflicts = FALSE))

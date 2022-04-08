@@ -13,7 +13,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
                self$session    = self$factory$getObject(self$codes$object$session)
                private$oper    = self$factory$getObject(self$codes$object$operation)
                private$pos     = self$factory$getObject(self$codes$object$position)
-               self$fiat       = pnlParent$factory$fiat
+               # self$fiat       = pnlParent$factory$fiat
                private$initVars()
            }
            ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
@@ -111,7 +111,7 @@ moduleServer(id, function(input, output, session) {
          # }
          updCombo("cboCurrency", choices=data, selected=selc)
          type = ifelse(pnl$vars$buy, 1, 2)
-         updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
+#         updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
          processCommarea(1)
       }
       resetValues = function() {
@@ -180,15 +180,16 @@ moduleServer(id, function(input, output, session) {
       observeEvent(input$cboCurrency, {
           enable("cboCamera")
           currency = ifelse(pnl$vars$buy, pnl$fiat, input$cboCurrency)
+          val = pnl$getCboCameras(currency)
           updCombo("cboCamera", choices=pnl$getCboCameras(currency))
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)
       observeEvent(input$cboCamera, {
-          updNumericInput("impAmount", pnl$vars$ctc)
+          browser()
           dfPos = pnl$getPosition(input$cboCamera)
           pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"available"]
-
+          updNumericInput("impAmount", pnl$vars$ctc)
           if (!pnl$vars$buy) {
               updNumericInput("impAmount", pnl$vars$ctc)
               updNumericInput("impValue",  round(pnl$vars$ctc * input$impPrice, 0))

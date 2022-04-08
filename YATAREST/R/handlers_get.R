@@ -48,28 +48,10 @@ hist_handler = function(.req, .res) {
         .res
     })
 }
-test = function() {
-   message(Sys.time(), " latest Called")
-   df = tryCatch({
-       browser()
-      message(Sys.time(), " Antes de FACTORY")
-      fact = YATACore::YATAFactory$new(level=2) # Providers
-      message(Sys.time(), " Antes de Provider")
-      prov = fact$getDefaultProvider()
-      message(Sys.time(), " Antes de getTickers")
-      df = prov$getTickers()
-      message(Sys.time(), " Despues de getTickers")
-      browser()
-      #.handler_ok(df, .res)
-   }, error = function(cond) {
-       browser()
-       message(Sys.time(), cond$message)
-      #.handler_ko(cond, .res)
-   })
-   #.handler_ok(df, .res)
-}
-
 latest_handler = function(.req, .res) {
+   from  = .req$parameters_query[["from"]]
+   limit = .req$parameters_query[["limit"]]
+
    message(Sys.time(), " latest Called")
    df = tryCatch({
        browser()
@@ -78,7 +60,8 @@ latest_handler = function(.req, .res) {
       message(Sys.time(), " Antes de Provider")
       prov = fact$getDefaultProvider()
       message(Sys.time(), " Antes de getTickers")
-      df = prov$getTickers()
+      df = prov$getTickers(max=limit,from = from)
+
       message(Sys.time(), paste(" Despues de getTickers ", nrow(df)))
       .handler_ok(df$df, .res)
    }, error = function(cond) {

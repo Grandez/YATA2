@@ -71,12 +71,14 @@ YATACODES = R6::R6Class("YATA.CODES"
       interval = 15
     )
     ,labels = list( # Bloques de mensajes/textos
-        words     =  1
-       ,panels    =  2
-       ,periods   =  3
-       ,monitors  =  5
-       ,opecodes  = 21
-       ,operation = 22
+        words     =   1
+       ,periods   =   3
+       ,monitors  =   5
+       ,menu      =  20
+       ,mnuOper   =  21
+       ,opecodes  =  31
+       ,operation =  32
+       ,reasons   =  33
     )
     #JGG A revisar
     ,log    = list(log=0,open=1,buy=2,sell=3,accept=10,executed=11, cancel=99,reject=98)

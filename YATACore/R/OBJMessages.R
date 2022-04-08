@@ -7,24 +7,13 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
        ,initialize     = function(tblMessages, dbf) {
            private$tblMsg = dbf$getTable(tblMessages)
            private$db     = dbf$getDBBase()
-       }
+        }
        ,setLang = function(lang, region) {
-          private$lang = lang
+          private$lang   = lang
           private$region = region
-       }
-      ,get = function(code, ...)  {
-          txt = getMessage(code)
-          sprintf(txt, ...)
-      }
-       ,getWords = function() {
-           getBlockData(1) # Esto viene de codes
-       }
-      ,getBlockBueno = function(block, inverted=FALSE) {
-          browser()
-          stop("JGG HAY QUE REVISAR ESTA LLAMADA")
-          df = tblMsg$table(block = block)
-          df[,c("code","msg")]
-      }
+        }
+      ,get      = function(code, ...) { sprintf(getMessage(code), ...) }
+      ,getWords = function()          { getBlockData(1) } # Esto viene de codes
       ,getBlock = function(block, inverted=FALSE) {
           lst = getBlockData(block)
           if (inverted) {

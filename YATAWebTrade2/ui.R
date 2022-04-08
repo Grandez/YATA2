@@ -6,13 +6,13 @@ my_theme = bslib::bs_theme(bootswatch = "default",
     font_scale = NULL
     )
 
-lbl = WEB$getPanelLabels()
+lbl = WEB$getLabelsMenuMain()
 
 #JGGDashboardFull(title="YATA", id = "mainMenu"
 #cat(paste(Sys.time(), " - Before YATAPage"), file="P:/R/YATA2/web.log", append=TRUE)
 YATAWebCore::YATAPage("YATA", id="mainMenu",titleActive = TRUE, theme =  my_theme,lang = NULL
   ,tabPanel(lbl$POSITION,  value="pos",    YATAWebShiny::YATAModule("pos")    )
-  # ,tabPanel(lbl$OPERATION, value="oper",   YATAWebShiny::YATAModule("oper")   )
+  ,tabPanel(lbl$OPERATION, value="oper",   YATAWebShiny::YATAModule("oper")   )
   # ,tabPanel(lbl$HISTORY,   value="hist",   YATAWebShiny::YATAModule("hist")   )
   # ,tabPanel(lbl$ANALYSIS,  value="ana",    YATAWebShiny::YATAModule("ana")    )
   # ,tabPanel(lbl$LOG,       value="log",    YATAWebShiny::YATAModule("log")    )

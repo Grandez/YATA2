@@ -27,8 +27,9 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            if (available) df = df[df$available > 0,]
            df
        }
-       ,getGlobalPosition = function(full = FALSE) {
+       ,getGlobalPosition = function(full = FALSE, fiat = FALSE) {
           df = tblPosition$getGlobalPosition()
+          if (!fiat) df = df[df$id != 0, ]
           if (!full) df = df[df$balance > 0,]
           df
         }

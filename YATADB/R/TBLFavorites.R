@@ -10,7 +10,7 @@ TBLFavorites = R6::R6Class("TBL.FAVORITES"
    )
    ,private = list (
        fields = list(
-          id     = "ID"
+          id     = "ID_FAV"
          ,symbol = "SYMBOL"
          ,prty   = "PRTY"
        )

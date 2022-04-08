@@ -139,8 +139,8 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)
           self$parms  = OBJParms$new   (private$DBFactory, self$MSG, self$CODES$tables$parameters)
 
-          self$fiat   = parms$getFIAT()
-          self$camera = parms$getCamera()
+          # self$fiat   = parms$getFIAT()
+          # self$camera = parms$getCamera()
 
           if (bitwAnd(level,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
 

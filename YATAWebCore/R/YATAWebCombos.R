@@ -36,16 +36,16 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          data = makeCombo(df, id="camera", name="desc")
          checkAll(all, data)
      }
-     ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge = TRUE) {
+    ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge=TRUE, invert=FALSE) {
          if (is.null(cache$currencies)) loadCurrencies()
          df = cache$currencies
-         if (!is.null(set)) df = filterCurrenciesByCurrencies (df, set)
+         if (!is.null(set)) df = filterCurrencies (df, set)
          if (merge) df$name = paste(df$symbol, "-", df$name)
          key = ifelse(id, "id", "symbol")
-         data = makeCombo(df, id=key)
+         data = makeCombo(df, id=key, invert=invert)
          checkAll(all, data)
      }
-     ,getCurrenciesKey = function(id=TRUE, currencies) {
+    ,getCurrenciesKey = function(id=TRUE, currencies) {
          if (is.null(cache$currencies)) loadCurrencies()
          if (id) {
              df = cache$currencies[cache$currencies$id %in% currencies,]
@@ -102,17 +102,25 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
      }
      ,loadReasons = function() {
          data = objParms$getBlock(50, 2)
-         txts = objMsgs$getBlockBueno(12)
-         colnames(txts) = c("label", "msg")
-         df = dplyr::left_join(data,txts,by="label")
+         data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)
+         txts = objMsgs$getBlock(factory$CODES$labels$reasons)
+         dft = as.data.frame(unlist(txts))
+         dft$id = row.names(dft)
+         colnames(dft) = c("msg", "label")
+         df = dplyr::left_join(data,dft,by="label")
          df = df[,c("block", "key","msg")]
          colnames(df) = c("block", "id", "name")
          private$cache$reasons = df
      }
 
-    ,makeCombo = function(df, id="id",name="name") {
-        data = as.list(df[,id])
-        names(data) = df[,name]
+    ,makeCombo = function(df, id="id",name="name", invert=FALSE) {
+        if (invert) {
+            data = as.list(df[,name])
+            names(data) = as.character(df[,id])
+        } else {
+            data = as.list(df[,id])
+            names(data) = df[,name]
+        }
         data
     }
    ,checkAll = function(all, data) {
@@ -123,7 +131,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
        names(lstAll) = objMsgs$get("WORD.ALL")
        list.merge(lstAll, data)
    }
-   ,filterCurrenciesByCurrencies = function (df, set) {
+   ,filterCurrencies = function (df, set) {
        values = set
        if (is.list(set)) values = unlist(set)
        if (is.integer(values[1])) return (df[df$id %in% values,])

@@ -9,14 +9,14 @@ startDaemons = function() {
        nfo = ifelse (resp$is_alive(), resp$get_pid(), "KO")
        cat(nfo, "\n")
    })
-   if (.launchRest()) {
-       cat("Daemon start_rest ")
-       resp = exec$R("start_rest")
-       nfo = ifelse (resp$is_alive(), resp$get_pid(), "KO")
-       cat(nfo, "\n")
-   } else {
-       cat("Daemon start_rest active\n")
-   }
+   # if (.launchRest()) {
+   #     cat("Daemon start_rest ")
+   #     resp = exec$R("start_rest")
+   #     nfo = ifelse (resp$is_alive(), resp$get_pid(), "KO")
+   #     cat(nfo, "\n")
+   # } else {
+   #     cat("Daemon start_rest active\n")
+   # }
    0
 }
 .launchRest = function(exec) {
