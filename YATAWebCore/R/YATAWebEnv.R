@@ -72,11 +72,13 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          panel = private$panels$get(name)
          if (!is.null(panel)) shinyjs::js$yata_set_page(name)
          panel
-      }
-     ,getLabelsMenuMain = function()    { getLabelsMenu(0) }
-     ,getLabelsMenuOper = function()    { getLabelsMenu(1) }
+     }
+     ,getLabelsPanel    = function()    { getLabelsMenu(0) }
+     ,getLabelsMenuMain = function()    { getLabelsMenu(1) }
+     ,getLabelsMenuOper = function()    { getLabelsMenu(2) }
+
      ,getLabelsMenu     = function(idx) {
-         key = factory$CODES$labels$menu + idx
+         key = factory$CODES$labels$lblPanels + idx
          self$MSG$getBlock(key)
       }
      ,addPanel = function(panel) {

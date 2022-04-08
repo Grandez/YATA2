@@ -1,6 +1,14 @@
 modPosInput = function(id, title) {
    ns = NS(id)
    WORDS  = WEB$MSG$getWords()
+   items = list(
+        Pos     = list(label = WORDS$POS,   plot=TRUE, table=TRUE)
+       ,Session = list(label = WORDS$SESS,  plot=TRUE, table=TRUE)
+       ,Top     = list(label = WORDS$TOP,   plot=TRUE, table=TRUE)
+       ,Trend   = list(label = WORDS$TREND, plot=TRUE, table=TRUE)
+       ,Fav     = list(label = WORDS$FAV,   plot=TRUE, table=TRUE)
+       ,Full = list(label = paste(WORDS$POS, WORDS$FULL),  plot=TRUE, table=TRUE)
+   )
    pairs        = c("Pos", "Session", "Top", "Best", "Trend", "Fav", "Full")
    names(pairs) = c( WORDS$POS,   WORDS$SESS, WORDS$TOP, WORDS$BEST
                     ,WORDS$TREND, WORDS$FAV,  paste(WORDS$POS, WORDS$FULL))

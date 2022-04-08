@@ -13,20 +13,48 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  1, "SESSION" 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  1, "FULL"                  ,"XX", "XX"     , "Completa"                                  );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  1, "PLOT"                  ,"XX", "XX"     , "Plot"                                      );
 
--- 2 - Paneles y Menus
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.OPERATION"        ,"XX", "XX"     , "Operacion"                                   );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.ANALYSIS"         ,"XX", "XX"     , "Analisis"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.LOG"              ,"XX", "XX"     , "Log"                                         );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.ADMIN"            ,"XX", "XX"     , "Admin"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "PNL.STATUS"           ,"XX", "XX"     , "Status"                                      );
+-- 2x - Paneles y Menus
+-- 20 Etiquetas de paneles
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.AMOUNT"          ,"XX", "XX"     , "Cantidad"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.AVAILABLE"       ,"XX", "XX"     , "Disponible"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CAMERA"          ,"XX", "XX"     , "Camara"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CONTROL"         ,"XX", "XX"     , "Control"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CTC"             ,"XX", "XX"     , "Moneda"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CURRENCY"        ,"XX", "XX"     , "Moneda"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.DEADLINE"        ,"XX", "XX"     , "Plazo"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FEE"             ,"XX", "XX"     , "Comision"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FIAT"            ,"XX", "XX"     , "FIAT"                                          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FROM"            ,"XX", "XX"     , "De"                                            );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.GAS"             ,"XX", "XX"     , "Gas"                                           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.IMPORT"          ,"XX", "XX"     , "Importe"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.LIMIT"           ,"XX", "XX"     , "Limite"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.OPER"            ,"XX", "XX"     , "Operacion"                                     );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.PRICE"           ,"XX", "XX"     , "Precio"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.REASON"          ,"XX", "XX"     , "Motivo"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.REVIEW"          ,"XX", "XX"     , "Revisar"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SINCE"           ,"XX", "XX"     , "Desde"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.STOP"            ,"XX", "XX"     , "Stop"                                          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SUMMARY"         ,"XX", "XX"     , "Resumen"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TARGET"          ,"XX", "XX"     , "Objetivo"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TOTAL"           ,"XX", "XX"     , "Total"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TO"              ,"XX", "XX"     , "A"                                             );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.VALUE"           ,"XX", "XX"     , "Valor"                                         );
 
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "MNU.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "MNU.OPER"             ,"XX", "XX"     , "Operar"                                      );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "MNU.XFER"             ,"XX", "XX"     , "Transferir"                                  );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "MNU.REGULARIZE"       ,"XX", "XX"     , "Regularizacion"                              );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "MNU.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
+-- 20 - Main Menu
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.OPERATION"        ,"XX", "XX"     , "Operacion"                                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.ANALYSIS"         ,"XX", "XX"     , "Analisis"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.LOG"              ,"XX", "XX"     , "Log"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.ADMIN"            ,"XX", "XX"     , "Admin"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.STATUS"           ,"XX", "XX"     , "Status"                                      );
+
+-- 21  Operaciones
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.OPER"             ,"XX", "XX"     , "Operar"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.XFER"             ,"XX", "XX"     , "Transferir"                                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.REGULARIZE"       ,"XX", "XX"     , "Regularizacion"                              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
 
 
 -- 3 = Periodos. Code numerico para ordenar                      
@@ -90,27 +118,6 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LABEL.BTN
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LABEL.BTN.APPLY"     ,"XX", "XX"     , "Aplicar"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LABEL.BTN.CHANGE"    ,"XX", "XX"     , "Cambiar"                                      );
 
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.AMOUNT"          ,"XX", "XX"     , "Cantidad"                                      );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.AVAILABLE"       ,"XX", "XX"     , "Disponible"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.CAMERA"          ,"XX", "XX"     , "Camara"                                        );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.CURRENCY"        ,"XX", "XX"     , "Moneda"                                        );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.DEADLINE"        ,"XX", "XX"     , "Plazo"                                         );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.FEE"             ,"XX", "XX"     , "Comision"                                      );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.FROM"            ,"XX", "XX"     , "De"                                            );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.GAS"             ,"XX", "XX"     , "Gas"                                           );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.IMPORT"          ,"XX", "XX"     , "Importe"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.LIMIT"           ,"XX", "XX"     , "Limite"                                        );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.OPER"            ,"XX", "XX"     , "Operacion"                                     );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.PRICE"           ,"XX", "XX"     , "Precio"                                        );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.REASON"          ,"XX", "XX"     , "Motivo"                                        );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.REVIEW"          ,"XX", "XX"     , "Revisar"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.STOP"            ,"XX", "XX"     , "Stop"                                          );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.SUMMARY"         ,"XX", "XX"     , "Resumen"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.TARGET"          ,"XX", "XX"     , "Objetivo"                                      );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.TO"              ,"XX", "XX"     , "A"                                             );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.VALUE"           ,"XX", "XX"     , "Valor"                                         );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LBL.SINCE"           ,"XX", "XX"     , "Desde"                                         );
-
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "SUBT.APPLY"           ,"XX", "XX"     , "Aplica"                                       );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 51, "LABEL.RANK.0"        ,"XX", "XX"     , "Fallida"                                      );
@@ -137,12 +144,12 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "PLOT.TIT.
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.REST.DOWN"        ,"XX", "XX"     , "El servidor no esta disponible"              );                                                                 
 
 --  5 Monitores
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON..COST"        ,"XX", "XX"     , "Coste"                                        );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON..SESSION"     ,"XX", "XX"     , "Sesion"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON..HOUR"        ,"XX", "XX"     , "Hora"                                         );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON..DAY"         ,"XX", "XX"     , "Dia"                                          );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON..WEEK"        ,"XX", "XX"     , "Semana"                                       );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON..MONTH"       ,"XX", "XX"     , "Mes"                                          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.COST"         ,"XX", "XX"     , "Coste"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.SESSION"      ,"XX", "XX"     , "Sesion"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.HOUR"         ,"XX", "XX"     , "Hora"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.DAY"          ,"XX", "XX"     , "Dia"                                          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.WEEK"         ,"XX", "XX"     , "Semana"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.MONTH"        ,"XX", "XX"     , "Mes"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.TOTAL"        ,"XX", "XX"     , "Total"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.REIMB"        ,"XX", "XX"     , "Reembolsado"                                  );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES (  5, "MON.SUBTOTAL"     ,"XX", "XX"     , "Subtotal"                                     );

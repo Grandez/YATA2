@@ -93,14 +93,12 @@ PNLPos = R6::R6Class("PNL.OPER"
        invisible(self)
     }
     ,getPosition = function (full=FALSE) {
-        browser()
         if (is.null(self$data$dfPos)) return (NULL)
         df = self$data$dfPos
         if (!full) df = df %>% filter(balance > 0)
         if (nrow(df) == 0) return (NULL)
 
         df = private$appendVariations(df)
-        browser()
     }
     ,loadHistory = function(id, symbol) {
         to = Sys.Date()
@@ -193,7 +191,6 @@ PNLPos = R6::R6Class("PNL.OPER"
 
      }
      ,loadPosition = function() {
-         browser()
         cat("loadPosition beg\n")
         df = self$getGlobalPosition()
         if (nrow(df) == 0) {
@@ -474,7 +471,6 @@ renderBestTables = function() {
    if (!is.null(data$df)) output$tblFav  = updTableMultiple(data)
 }
 renderPosTables = function() {
-    browser()
     df = pnl$getPosition(TRUE)
    types = list( imp = c("balance", "value","profit")
                 ,prc = c("day", "week", "month")
@@ -483,7 +479,6 @@ renderPosTables = function() {
 
    df = pnl$data$dfPos
    colnames(df) = c("currency", "balance", "value", "profit", "day", "week", "month", "since")
-   browser()
    if (nrow(df) == 0) return(NULL)
    if (!full) df = df[df$balance > 0, ]
 
@@ -526,7 +521,7 @@ observeEvent(flags$position2, ignoreInit = TRUE, {
            )
 
    df = pnl$data$dfGlobal
-   browser()
+
    if (!full) df = df[df$balance >0, ]
    if (nrow(df) == 0) return(NULL)
 
