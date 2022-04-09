@@ -100,8 +100,8 @@ function(input, output, session) {
    WEB$setSession(session)
    if (WEB$errorLevel > 0) {
        if (WEB$errorLevel == 99)
-           return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
-       return (yataErrGeneral(0, WEB$txtError, input, output, session))
+           return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  NULL, input, output, session))
+       return (yataErrGeneral(0, WEB$txtError, NULL, input, output, session))
    }
    pnl = WEB$getPanel("server")
    if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
@@ -138,7 +138,6 @@ function(input, output, session) {
       showModal(frmChangeDB(pnl$factory))
    })
    observeEvent(input$dbOK,    {
-       browser()
       pnl$changeDB(input$radDB)
       pp = pnl$factory$getDBName()
       output$appTitle = updLabelText(pnl$factory$getDBName())
@@ -148,6 +147,9 @@ function(input, output, session) {
                              ,''
                              ,pnl, parent=session)")))
       removeModal()
+   })
+   observeEvent(input$btnErrorSevere, {
+       browser()
    })
 
    closePanel = function() { shinyjs::hide("yata-main-err") }

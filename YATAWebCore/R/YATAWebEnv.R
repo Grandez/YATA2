@@ -74,6 +74,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          panel
      }
      ,getLabelsPanel    = function()    { getLabelsMenu(0) }
+     ,getLabelsPanelErr = function()    { getLabelsMenu(9) }
      ,getLabelsMenuMain = function()    { getLabelsMenu(1) }
      ,getLabelsMenuOper = function()    { getLabelsMenu(2) }
 

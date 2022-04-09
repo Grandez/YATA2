@@ -1,4 +1,4 @@
-frmChangeDB <- function(factory, failed = FALSE) {
+frmChangeDB = function(factory, failed = FALSE) {
     data    = factory$parms$getDBData()
     current = factory$parms$lastOpen()
 

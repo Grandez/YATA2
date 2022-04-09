@@ -4,16 +4,17 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
    ,lock_class = TRUE
    ,public = list(
       Warning = function(msg, action=NULL, subclass=NULL, ...) {
-         warn = structure( list( message = msg,action = action, ...)
-                          ,class = c("YATAWARNING", subclass, "warning", "condition")
+         warn = structure( list( message = msg, subclass=subclass, action = action, ...)
+                          ,class = c("YATAWARNING", "warning", "condition")
           )
           warning(warn)
       }
      ,error = function(msg, subclass, action, origin, ...) {
          data = list(...)
          data$message = msg
+         data$subclass = subclass
          data$stack   = sys.calls()
-         err = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
+         err = structure( data, class = c("YATAERROR", "error", "condition"))
          stop(err)
      }
      ,SQL = function(msg, action=NULL, origin=NULL, ...) {
@@ -37,7 +38,8 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
    logger = YATALogger$new("ERROR")
    data = list(...)
    data$message = msg
-   errdata = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
+   data$subclass = subclass
+   errdata = structure( data, class = c("YATAERROR", "error", "condition"))
    logger$fail(errdata)
    stop(errdata)
 }

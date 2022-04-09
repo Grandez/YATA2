@@ -96,7 +96,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           # Amount sale de base y entra en counter
           if (data$amount == 0 || data$value == 0) return (invisible(self))
           .updateBase(data)
-          .updateCounter(data)
+          if (data$major == 2) .updateCounter(data)
       }
        ,updateOper = function(camera, currency, amount, price, prcTaxes) {
           #JGG Hay que revisar modificado sin querer
@@ -197,35 +197,8 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
 
            if (data$base == "$FIAT") return (.updateBaseFiat(data)) # compra
 
-           if (current$sellLow == 0)  self$current$sellLow = data$price + 1
-
-           tblPosition$setField("sellLast",   data$price)
-           if (data$price > current$sellHigh) tblPosition$setField("sellHigh", data$price)
-           if (data$price < current$sellLow)  tblPosition$setField("sellLow",  data$price)
-
-           wrk = (current$sell * current$sellNet) + data$value
-           wrk = wrk / (current$sell + data$ctcOut)
-           self$current$sellNet = wrk
-           tblPosition$setField("sellNet",  current$sellNet)
-
-           self$current$sell = current$sell + data$ctcOut
-           tblPosition$setField("sell",  current$sell)
-
-           tblPosition$setField("balance",   current$balance   - data$ctcOut)
            tblPosition$setField("available", current$available - data$ctcOut)
-
-           wrk = (current$buy * current$buyNet) - (current$sell * current$sellNet)
-           den = current$buy - current$sell
-           wrk = ifelse(den == 0, 0, wrk / den)
-           self$current$value = wrk
-           tblPosition$setField("value", current$value)
-
-          # profit se actualiza si hay compras y ventas
-          if (current$buy > 0 && current$sell > 0) {
-              tblPosition$setField("profit", (current$sellNet * current$sell) -
-                                             (current$buyNet  * current$buy))
-          }
-
+           if (current$major == 2) .calculateBaseOperation()
            tblPosition$apply()
        }
       ,.updateCounter = function(data) {
@@ -265,33 +238,67 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$apply()
       }
       ,.updateBaseFiat = function (data) {
-           if (current$sellLow == 0)  self$current$sellLow = data$value + 1
-
-           tblPosition$setField("sellLast",   data$ctcOut)
-           if (data$value > current$sellHigh) tblPosition$setField("sellHigh", data$ctcOut)
-           if (data$value < current$sellLow)  tblPosition$setField("sellLow",  data$ctcOut)
-           tblPosition$setField("sellNet",  1)
-
-           tblPosition$setField("sell",  current$sell + data$ctcOut)
-           tblPosition$setField("value", 1)
-           tblPosition$setField("balance",   current$balance   - data$ctcOut)
            tblPosition$setField("available", current$available - data$ctcOut)
+           if (data$major == 2) { # Ejecutado
+               if (current$sellLow == 0)  self$current$sellLow = data$value + 1
+
+               tblPosition$setField("sellLast",   data$ctcOut)
+               if (data$value > current$sellHigh) tblPosition$setField("sellHigh", data$ctcOut)
+               if (data$value < current$sellLow)  tblPosition$setField("sellLow",  data$ctcOut)
+               tblPosition$setField("sellNet",  1)
+
+               tblPosition$setField("sell",  current$sell + data$ctcOut)
+               tblPosition$setField("value", 1)
+               tblPosition$setField("balance",   current$balance   - data$ctcOut)
+           }
            tblPosition$apply()
       }
       ,.updateCounterFiat = function (data) {
-           if (current$buyLow == 0)  self$current$buyLow = data$ctcIn + 1
-
-           tblPosition$setField("buyLast",   data$ctcIn)
-           if (data$value > current$buyHigh) tblPosition$setField("buyHigh", data$ctcIn)
-           if (data$value < current$buyLow)  tblPosition$setField("buyLow",  data$ctcIn)
-           tblPosition$setField("buyNet",  1)
-
-           tblPosition$setField("buy",  current$buy + data$ctcIn)
-           tblPosition$setField("value", 1)
-           tblPosition$setField("balance",   current$balance   + data$ctcIn)
            tblPosition$setField("available", current$available + data$ctcIn)
-           tblPosition$setField("profit", current$buy + data$ctcIn - current$sell)
+           if (data$major == 2) { # Ejecutado
+               if (current$buyLow == 0)  self$current$buyLow = data$ctcIn + 1
+
+               tblPosition$setField("buyLast",   data$ctcIn)
+               if (data$value > current$buyHigh) tblPosition$setField("buyHigh", data$ctcIn)
+               if (data$value < current$buyLow)  tblPosition$setField("buyLow",  data$ctcIn)
+               tblPosition$setField("buyNet",  1)
+
+               tblPosition$setField("buy",  current$buy + data$ctcIn)
+               tblPosition$setField("value", 1)
+               tblPosition$setField("balance",   current$balance   + data$ctcIn)
+               tblPosition$setField("profit", current$buy + data$ctcIn - current$sell)
+           }
            tblPosition$apply()
       }
+     ,.calculateBaseOperation = function() {
+           if (current$sellLow == 0)  self$current$sellLow = data$price + 1
+
+           tblPosition$setField("sellLast",   data$price)
+           if (data$price > current$sellHigh) tblPosition$setField("sellHigh", data$price)
+           if (data$price < current$sellLow)  tblPosition$setField("sellLow",  data$price)
+
+           wrk = (current$sell * current$sellNet) + data$value
+           wrk = wrk / (current$sell + data$ctcOut)
+           self$current$sellNet = wrk
+           tblPosition$setField("sellNet",  current$sellNet)
+
+           self$current$sell = current$sell + data$ctcOut
+           tblPosition$setField("sell",  current$sell)
+
+           tblPosition$setField("balance",   current$balance   - data$ctcOut)
+
+
+           wrk = (current$buy * current$buyNet) - (current$sell * current$sellNet)
+           den = current$buy - current$sell
+           wrk = ifelse(den == 0, 0, wrk / den)
+           self$current$value = wrk
+           tblPosition$setField("value", current$value)
+
+          # profit se actualiza si hay compras y ventas
+          if (current$buy > 0 && current$sell > 0) {
+              tblPosition$setField("profit", (current$sellNet * current$sell) -
+                                             (current$buyNet  * current$buy))
+          }
+     }
     )
 )

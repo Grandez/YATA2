@@ -39,6 +39,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
     ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge=TRUE, invert=FALSE) {
          if (is.null(cache$currencies)) loadCurrencies()
          df = cache$currencies
+         if (!all) df = df[df$id > 0,]
          if (!is.null(set)) df = filterCurrencies (df, set)
          if (merge) df$name = paste(df$symbol, "-", df$name)
          key = ifelse(id, "id", "symbol")

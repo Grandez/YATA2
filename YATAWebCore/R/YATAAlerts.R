@@ -44,7 +44,31 @@ yataNotify = function(txt) {
 # #   )
 # }
 
-yataErrGeneral = function(type, data, input, output, session) {
+yataErrSevere = function(WEB, objErr) {
+   lbl = WEB$getLabelsPanelErr()
+   dlg = YATAModalDialog(tags$table(
+            tags$tr( tags$td(class="yata_modal_severe_labels", lbl$MESSAGE)
+                    ,tags$td(objErr$message))
+           ,tags$tr( tags$td(class="yata_modal_severe_labels", lbl$CLASS)
+                    ,tags$td(objErr$subClass))
+           ,tags$tr( tags$td(class="yata_modal_severe_labels", lbl$ACTION)
+                    ,tags$td(objErr$action))
+           ,tags$tr( tags$td(class="yata_modal_severe_labels", lbl$CODE)
+                    ,tags$td(objErr$rc))
+           ,tags$tr( tags$td(class="yata_modal_severe_labels", lbl$SOURCE)
+                    ,tags$td(objErr$origin))
+            )
+          ,title =  span(WEB$MSG$get("TITLE.ERR.SEVERE"), style = "background-color: red; width: '100%'")
+          ,size = "l"
+          ,footer = tagList(actionButton(inputId="btnErrorsevere", WEB$MSG$get("LABEL.BTN.CHANGE")))
+      )
+      showModal(dlg)
+      TRUE
+}
+yataErrGeneral = function(type, data, objErr, input, output, session, web=NULL) {
+
+    if (type == 10) return (yataErrSevere(web, objErr))
+
     if (type == 0) {
         stop(cat(paste("ERROR yataMsgErr\n",data,"\n")))
     }

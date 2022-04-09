@@ -2,7 +2,7 @@
 #     No se por que
 modOperMovInput = function(id, title) {
   ns = YATANS(id)
-  lbl = WEB$getLabelsMenuMain()
+  lbl = WEB$getLabelsPanel()
   main = tagList(
       br()
      ,fluidRow( guiColumn(2)

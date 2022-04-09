@@ -24,12 +24,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         ,add   = function(type, ...) {
             tryCatch({
                 db$begin()
-                idOper = addNoTran(type, ...)
+                idOper = addOper(type, ...)
                 db$commit()
                 idOper
             },error = function(cond) {
                 db$rollback()
                 message(cond$message)
+                YATABase:::propagateError(cond)
                 0
           })
         }
@@ -42,6 +43,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             },error = function(cond) {
                 db$rollback()
                 message(cond)
+                YATABase:::propagateError(cond)
                 0
           })
         }
@@ -88,6 +90,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             },error = function(cond) {
                 message(cond)
                 db$rollback()
+                YATABase:::propagateError(cond)
                 TRUE
             })
         }
@@ -124,6 +127,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             },error = function(cond) {
                message(cond)
                db$rollback()
+               YATABase:::propagateError(cond)
                TRUE
             })
         }
@@ -152,6 +156,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             },error = function(cond) {
                 message(cond)
                 db$rollback()
+                YATABase:::propagateError(cond)
                 TRUE
             })
             if (delete) {
@@ -166,6 +171,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 }, error = function(cond) {
                    message(cond)
                    db$rollback()
+                   YATABase:::propagateError(cond)
                    TRUE
                 })
             }
@@ -186,6 +192,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             },error = function(cond) {
                 message(cond)
                 db$rollback()
+                YATABase:::propagateError(cond)
                 TRUE
             })
         }
@@ -225,11 +232,12 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 self$current$price  = data$price
                 self$current$parent = data$id
                 self$current$reason = data$reason
-                addNoTran(type=YATACodes$oper$sell, current)
+                addOper(type=YATACodes$oper$sell, current)
                 FALSE
             },error = function(cond) {
                 message(cond)
                 db$rollback()
+                YATABase:::propagateError(cond)
                 TRUE
             })
        }
@@ -244,6 +252,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             },error = function(cond) {
                 message(cond)
                 db$rollback()
+                YATABase:::propagateError(cond)
                 TRUE
             })
         }
@@ -419,34 +428,38 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
            self$current$idOper = idXfer
        }
-       ,addNoTran   = function(type, ...) {
+       ,addOper   = function(type, ...) {
             # Se llama desde add y desde close
             # Genera una operacion, devuelve el id
             # Si hay error devuelve TRUE
             self$current        = args2list(...)
             self$current$type   = type
+            self$current$major  = type %/% 10
+            self$current$minor  = type %%  10
             self$current$id     = Factory$getID()
             self$current$idOper = self$current$id
             # if (type %in% c(YATACodes$oper$sell, YATACodes$oper$close)) {
             #     self$current$amount = current$amount * -1
             # }
+            if (self$current$major < 3 ) makeOper()
             if (type == YATACodes$oper$xfer)  operXfer()
-            if (type == YATACodes$oper$oper)  operOper2()
-            if (type == YATACodes$oper$buy)   operOper2()
-            if (type == YATACodes$oper$sell)  operOper2()
+            # if (type == YATACodes$oper$buy)   operOper2()
+            # if (type == YATACodes$oper$sell)  operOper2()
 #            if (type == YATACodes$oper$close) operClose()
 #            if (type == YATACodes$oper$split) {}
             if (type == YATACodes$oper$net)  {}
             self$current$idOper
        }
-       ,operOper2     = function() {
+       ,makeOper     = function() {
            if (is.null(current$value)) current$value = current$price * current$amount
            objPos$updatePositions   (current)
-
-           self$current$active = ifelse (current$type == YATACodes$oper$oper
-                                                       , YATACodes$flag$active
-                                                       , YATACodes$flag$inactive)
-           self$current$status = YATACodes$status$executed
+           #JGG REVISAR
+           self$current$active = YATACodes$flag$active
+           # self$current$active = ifelse (current$type == YATACodes$oper$oper
+           #                                             , YATACodes$flag$active
+           #                                             , YATACodes$flag$inactive)
+           self$current$status = ifelse(current$major == 1, YATACodes$status$pending
+                                                          , YATACodes$status$executed)
 
            days = ifelse(is.null(self$current$alert), lubridate::days(parms$getAlertDays(1))
                                                     , self$current$alert)

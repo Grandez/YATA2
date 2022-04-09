@@ -75,3 +75,17 @@
 .yataIconDelta {
     display: flex;
 }
+
+.yata_modal_severe_header {
+    background-color: red;
+    color: white;
+}
+.yata_modal_severe_icon_container {
+   text-align: center;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.yata_modal_severe_labels {
+   font-weight: bold;
+}

@@ -223,19 +223,19 @@ modOperPosServer = function(id, full, pnlParent, parent) {
 # https://plotly-r.com/linking-views-with-shiny.html#shiny-plotly-inputs
 
        getHistorical = function(symbol,since) {
-           id = WEB$getCTCID(symbol)
-           if (id == 0) return()
-           to = Sys.Date()
-           from = since - as.difftime(7, unit="days")
-
-           WEB$REST$DF("hist",id=id,from=from,to=to) %>%
-                  then ( function(df) {
-                         if (is.data.frame(df)) renderPlot(df, symbol)
-                         }, function(err)    {
-                          WEB$log$message("hist resp: %d - %s - %s", id,from,to)
-                          browser()
-                          message("ha ido mal 3") ; message(err)
-                      })
+           # id = WEB$getCTCID(symbol)
+           # if (id == 0) return()
+           # to = Sys.Date()
+           # from = since - as.difftime(7, unit="days")
+           #
+           # WEB$REST$DF("hist",id=id,from=from,to=to) %>%
+           #        then ( function(df) {
+           #               if (is.data.frame(df)) renderPlot(df, symbol)
+           #               }, function(err)    {
+           #                WEB$log$message("hist resp: %d - %s - %s", id,from,to)
+           #                browser()
+           #                message("ha ido mal 3") ; message(err)
+           #            })
         }
 
       renderOpen = function(table) {
@@ -287,20 +287,20 @@ modOperPosServer = function(id, full, pnlParent, parent) {
              #))
       }
       renderPending = function() {
-         if (nrow(pnl$data$dfPending) == 0) {
-             output$tblPending = NULL
-             return()
-         }
-         df = pnl$prepareNotOpen(pnl$data$dfPending)
-
-         shinyjs::toggle(ns("opPending"))
-         table = "pending"
-             btns = c(  yuiTblButton(full, table, "Accept",   yuiBtnIconOK())
-                       ,yuiTblButton(full, table, "Rejected", yuiBtnIconRefuse())
-                       ,yuiTblButton(full, table, "Cancel",   yuiBtnIconDel()))
-             df = yataDTButtons(df, btns)
-             output$tblPending = yataDFOutput({df}, type='operation')
-
+         # if (nrow(pnl$data$dfPending) == 0) {
+         #     output$tblPending = NULL
+         #     return()
+         # }
+         # df = pnl$prepareNotOpen(pnl$data$dfPending)
+         #
+         # shinyjs::toggle(ns("opPending"))
+         # table = "pending"
+         #     btns = c(  yuiTblButton(full, table, "Accept",   yuiBtnIconOK())
+         #               ,yuiTblButton(full, table, "Rejected", yuiBtnIconRefuse())
+         #               ,yuiTblButton(full, table, "Cancel",   yuiBtnIconDel()))
+         #     df = yataDTButtons(df, btns)
+         #     output$tblPending = yataDFOutput({df}, type='operation')
+         #
       }
       renderAccepted = function() {
          if (nrow(pnl$data$dfAccepted) == 0) {
@@ -323,10 +323,10 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          .show(nrow(pnl$data$dfPending)  == 0 && nrow(pnl$data$dfAccepted) == 0, "divPend")
      }
      renderData = function() {
-        renderOpen()
-        showBoxes()
-        renderPending()
-        renderAccepted()
+        # renderOpen()
+        # showBoxes()
+        # renderPending()
+        # renderAccepted()
      }
      loadHistory = function() {
          df = pnl$getOpenCurrency()

@@ -68,7 +68,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
 
           cols   = fields[names(changes)]
           cols   = paste(paste(cols, "= ?"), collapse=",")
-          cols   = sub(",$", "", cols)
+#JGG Viejo?          cols   = sub(",$", "", cols)
 
           filter = mountWhere(self$current[private$key])
 

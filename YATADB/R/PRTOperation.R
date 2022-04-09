@@ -28,7 +28,7 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             tblOperControl$set(info$ctrl)
             tblOperControl$apply()
             info$log$id = current$id
-            tblOperLog$add(info$log)
+#JGG            tblOperLog$add(info$log)
         }
         ,get = function(...) {
             df = super$table(...)

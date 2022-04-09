@@ -18,14 +18,13 @@ modOperMovServer = function(id, full, pnlParent, parent) {
            }
            ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
            ,operation     = function(data)      {
-               tryCatch({private$oper$add(data$type, data)
-                         FALSE
-               }
-               ,error = function(cond) {
-                   return (yataErrGeneral(0, WEB$txtError, input, output, session))
+               tryCatch({
+                   private$oper$add(data$type, data)
                    TRUE
-                 }
-               )
+               },error = function(cond) {
+                   yataErrGeneral(10, WEB$txtError, cond, input, output, session, web=WEB)
+                   FALSE
+               })
            }
         # Inherit
           ,getCurrenciesBuy  = function()          { self$parent$getCurrenciesBuy() }
@@ -144,24 +143,25 @@ moduleServer(id, function(input, output, session) {
           output$lblGas     = updLabelNumber(pnl$vars$gas)
       }
       processCommarea = function(index) {
-          # 0 - Usa, 1 - Limpia
-          carea = pnl$getCommarea()
-          if (index == 0) {
-              op = 0
-              if (carea$action == "buy" ) op = 1
-              if (carea$action == "sell") op = 3
-              updNumericInput("impPrice", value=carea$data$price)
-              cant = 1000 / carea$data$price
-              rnd =  ifelse(carea$data$price > 1000, 3, 0)
-              updNumericInput("impAmount", value=round(cant, rnd))
-              if (op != 0) {
-                 updCombo("cboOper", selected=op)
-                  updatecboCurrency()
-              }
-          }
-          if (index == 1 && !is.null(carea$pending)) {
-              pnl$setCommarea(list())
-          }
+          # browser()
+          # # 0 - Usa, 1 - Limpia
+          # carea = pnl$getCommarea()
+          # if (index == 0) {
+          #     op = 0
+          #     if (carea$action == "buy" ) op = 1
+          #     if (carea$action == "sell") op = 3
+          #     updNumericInput("impPrice", value=carea$data$price)
+          #     cant = 1000 / carea$data$price
+          #     rnd =  ifelse(carea$data$price > 1000, 3, 0)
+          #     updNumericInput("impAmount", value=round(cant, rnd))
+          #     if (op != 0) {
+          #        updCombo("cboOper", selected=op)
+          #         updatecboCurrency()
+          #     }
+          # }
+          # if (index == 1 && !is.null(carea$pending)) {
+          #     pnl$setCommarea(list())
+          # }
       }
       observeEvent(input$cboOper, {
           # Punto de control de tabs (memoria)
@@ -185,11 +185,10 @@ moduleServer(id, function(input, output, session) {
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)
       observeEvent(input$cboCamera, {
-          browser()
           dfPos = pnl$getPosition(input$cboCamera)
           pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"available"]
-          updNumericInput("impAmount", pnl$vars$ctc)
+#          updNumericInput("impAmount", pnl$vars$ctc)
           if (!pnl$vars$buy) {
               updNumericInput("impAmount", pnl$vars$ctc)
               updNumericInput("impValue",  round(pnl$vars$ctc * input$impPrice, 0))
@@ -255,14 +254,13 @@ moduleServer(id, function(input, output, session) {
         # in - entra
         # out sale
         # A veces se generan dos triggers (debe ser por los renderUI)
-
          pnl$vars$inEvent = !pnl$vars$inEvent
          if (!pnl$vars$inEvent) {
              pnl$vars$inEvent = !pnl$vars$inEvent
              return()
          }
          data = list(
-             type    = xlateCode(input$cboOper)
+             type    = as.integer(input$cboOper) # xlateCode(input$cboOper)
             ,amount  = input$impAmount
             ,price   = input$impPrice
             ,value   = input$impValue
@@ -309,8 +307,6 @@ moduleServer(id, function(input, output, session) {
          }
          res = pnl$operation(data)
          if (res) {
-             yataMsgErr(ns2("msg"), pnl$MSG$get("OPER.MAKE.ERR"))
-         } else {
              #JGG txtxType falla
              # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
              # yataMsgSuccess(ns2("operMsg"), pnl$MSG$get(msgKey))
@@ -318,6 +314,10 @@ moduleServer(id, function(input, output, session) {
              resetValues()
           }
       }, ignoreInit = TRUE)
+   observeEvent(input$btnErrorSevere, {
+       browser()
+   })
+
       #observeEvent(input$btnKO, { resetValues() })
 
     #   carea = pnl$getCommarea()
