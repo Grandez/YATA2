@@ -246,7 +246,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             if (!is.null(id)) select(id)
             tryCatch({
                 db$begin()
-#                generateLog()
+                generateLog()
                 db$commit()
                 FALSE
             },error = function(cond) {

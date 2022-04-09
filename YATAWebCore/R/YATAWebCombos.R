@@ -18,12 +18,11 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          private$objMsgs       = factory$MSG
          refresh()
      }
-     ,refresh = function() {
+    ,refresh = function() {
          private$cache$cameras  = NULL
          private$cache$position = private$tblPosition$table()
      }
-     ,cameras = function( all=FALSE, inactive=FALSE, exclude = NULL
-                         ,balance=FALSE, available=FALSE) {
+    ,cameras = function( all=FALSE, inactive=FALSE, exclude=NULL,balance=FALSE, available=FALSE) {
          if (is.null(cache$cameras)) loadCameras()
          df = cache$cameras
          if (!inactive) df = df[df$active != 0,]

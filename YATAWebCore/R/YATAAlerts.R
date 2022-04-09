@@ -60,7 +60,7 @@ yataErrSevere = function(WEB, objErr) {
             )
           ,title =  span(WEB$MSG$get("TITLE.ERR.SEVERE"), style = "background-color: red; width: '100%'")
           ,size = "l"
-          ,footer = tagList(actionButton(inputId="btnErrorsevere", WEB$MSG$get("LABEL.BTN.CHANGE")))
+#          ,footer = tagList(actionButton(inputId="btnErrorsevere", WEB$MSG$get("LABEL.BTN.CHANGE")))#
       )
       showModal(dlg)
       TRUE

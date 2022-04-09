@@ -20,10 +20,9 @@ modOperMovServer = function(id, full, pnlParent, parent) {
            ,operation     = function(data)      {
                tryCatch({
                    private$oper$add(data$type, data)
-                   TRUE
                },error = function(cond) {
                    yataErrGeneral(10, WEB$txtError, cond, input, output, session, web=WEB)
-                   FALSE
+                   0
                })
            }
         # Inherit
@@ -110,7 +109,8 @@ moduleServer(id, function(input, output, session) {
          # }
          updCombo("cboCurrency", choices=data, selected=selc)
          type = ifelse(pnl$vars$buy, 1, 2)
-#         updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
+         pp = WEB$combo$reasons(type=type)
+         updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
          processCommarea(1)
       }
       resetValues = function() {
@@ -169,8 +169,7 @@ moduleServer(id, function(input, output, session) {
           pnl$vars$cboOper = input$cboOper
           enable("cboCurrency")
           pnl$vars$soper = input$cboOper
-          # Recargar el combo de monedas? Para compras es costoso
-          pnl$vars$reload = FALSE
+          pnl$vars$reload = FALSE # Recargar el combo de monedas? Para compras es costoso
           if (is.null(pnl$vars$buy) || !pnl$vars$buy) pnl$vars$reload = TRUE
           pnl$vars$buy = ifelse((as.integer(input$cboOper) %% 2) == 0, TRUE, FALSE)
           if (!pnl$vars$buy) pnl$vars$reload = TRUE
@@ -265,7 +264,7 @@ moduleServer(id, function(input, output, session) {
             ,price   = input$impPrice
             ,value   = input$impValue
             ,camera  = input$cboCamera
-            ,reason  = input$cboReasons
+            ,reason  = as.integer(input$cboReasons)
             ,alert   = input$alert
          )
          if (data$amount == 0) data$amount = input$impValue  / input$impPrice
@@ -301,17 +300,17 @@ moduleServer(id, function(input, output, session) {
          if (input$limit    > 0) data$limit    = input$limit
 
          cmt = trimws(input$comment)
-         if (nchar(cmt) > 0) {
+         if (nchar(cmt) > 0 || data$reason > 0) {
              data$comment = cmt
              data$idLog   = pnl$factory$getID()
          }
-         res = pnl$operation(data)
-         if (res) {
-             #JGG txtxType falla
-             # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
-             # yataMsgSuccess(ns2("operMsg"), pnl$MSG$get(msgKey))
-             pnl$setCommarea(position=TRUE)
+         id = pnl$operation(data)
+         if (id > 0) {
              resetValues()
+             #JGG Pendiente
+             # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
+             # yataMsgSuccess(ns2("operMsg"), sprintf(pnl$MSG$get(msgKey), id)
+             pnl$setCommarea(position=TRUE)
           }
       }, ignoreInit = TRUE)
    observeEvent(input$btnErrorSevere, {
