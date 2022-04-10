@@ -1,8 +1,8 @@
 modOperRegInput = function(id, title) {
-    
+
    ns = NS(id)
-   main = tagList(  
-   yataRow(align="center", h2(WEB$MSG$get("TITLE.REGULARIZATION")))
+   main = tagList(
+   guiRow(align="center", h2(WEB$MSG$get("TITLE.REGULARIZATION")))
    ,fluidRow(column(3)
       ,column(3
          ,yataFormTable(
@@ -13,7 +13,7 @@ modOperRegInput = function(id, title) {
          )
        )
     )
-    ,yuiYesNo(id=ns("reg"), "Transferir", "Cancelar") # , cols=3, left=3)     
+    ,guiYesNo(id=ns("reg"), "Transferir", "Cancelar") # , cols=3, left=3)
   )
   list(left=NULL, main=main, right=NULL)
 }

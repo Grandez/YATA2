@@ -342,6 +342,39 @@ YATAPlot = R6::R6Class("YATA.PLOT"
       }
   )
 )
+YATAPlotHistory = R6::R6Class("YATA.PLOT.HISTORY"
+  ,portable   = FALSE
+  ,cloneable  = FALSE
+  ,lock_class = TRUE
+  ,inherit    = YATAPlot
+  ,public = list(
+      plot    = NULL
+     ,id      = NULL
+     ,print      = function() { message("Plotly History Object")}
+     ,initialize = function(id, ...) {
+         super$initialize(id, ...)
+      }
+   )
+  ,private = list(
+  )
+)
+YATAPlotSession = R6::R6Class("YATA.PLOT.SESSION"
+  ,portable   = FALSE
+  ,cloneable  = FALSE
+  ,lock_class = TRUE
+  ,inherit    = YATAPlot
+  ,public = list(
+      plot    = NULL
+     ,id      = NULL
+     ,print      = function() { message("Plotly Session Object")}
+     ,initialize = function(id, ...) {
+         super$initialize(id, ...)
+      }
+   )
+  ,private = list(
+  )
+)
+
 isPlot = function(obj, full=TRUE) {
     if ("YATA.PLOT" %in% class(obj)) return (TRUE)
     if (full && "plotly" %in% class(obj)) return(TRUE)

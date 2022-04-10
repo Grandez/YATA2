@@ -15,20 +15,20 @@ modOperPosInput = function(id, title="") {
     main = tagList(
       tags$div(id=ns("plot"), yuiPlot(ns("plotOpen")))
 #      fluidRow(id=ns("block_1")), fluidRow(id=ns("block_2"))
-      #    ,yuiBlocks(ns("blocks")
+      #    ,guiBlocks(ns("blocks")
       #     ,tags$div(id=ns("data"), style="width: 100%;"
-                   ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  
+                   ,tags$div(style="width: 100%;", guiBox(ns("opOpen"), boxOpen,
                      # yuiDataTable(ns("tblOpen"))
                             yuiTable(ns("tblOpen"))
                            ,hidden(tags$span(id=ns("noOpen"), noOpen))
                    ))
                    ,hidden(fluidRow(id=ns("divPend")
-                             ,column(6, yuiBox(ns("opPending"),  boxPend,
+                             ,column(6, guiBox(ns("opPending"),  boxPend,
                                                 yuiTable(ns("tblPending"))
                                                ,hidden(tags$span(id=ns("noPending"), noAccept))
                                         )
                                     )
-                             ,column(6, yuiBox( ns("opAccepted"), boxExec
+                             ,column(6, guiBox( ns("opAccepted"), boxExec
                                                ,yuiTable(ns("tblAccepted"))
                                                ,hidden(tags$span(id=ns("noAccepted"), noExec))
                                         )

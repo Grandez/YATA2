@@ -23,7 +23,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,session  = NULL
      ,log      = NULL
      ,window  = list(width = 0, height = 0)
-     ,cookies = NULL
      ,combo    = NULL
      ,DBID     = 0     # Flag DB Changed
      ,initialize = function() {
@@ -65,7 +64,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          #JGG Revisr
          self$session = session
          data = parseQueryString(session$request$HTTP_COOKIE)
-         if (length(data) > 0 && !is.null(data$YATA)) self$cookies = fromJSON(data$YATA)
+         if (length(data) > 0 && !is.null(data$YATA)) private$cookies = fromJSON(data$YATA)
          invisible(self)
       }
      ,getPanel = function(name, loading=FALSE)  {
@@ -88,12 +87,25 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          self$getPanel(panel$name, loading=TRUE)
      }
     ,getMsg    = function(code, ...) { MSG$get(code, ...) }
-    ,getCookie = function(id) { self$cookies[[id]] }
+    ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
+    ,setCookies  = function(name, values) {
+        private$cookies[[name]] = values
+        updateCookie(self$session, yata=private$cookies)
+        invisible(self)
+    }
+    ,getCookies = function(block)    {
+        if (missing(block))
+            private$cookies
+        else
+            private$cookies[[block]]
+     }
+    ,getCookie = function(id) { private$cookies[[id]] }
     ,setCookie = function(id, data) {
         browser()
-       self$cookies[[id]] = data
-       updateCookie(self$session, YATA=self$cookies)
+       private$cookies[[id]] = data
+       updateCookie(self$session, YATA=private$cookies)
     }
+
     ,getCTCLabels = function(codes, type="medium", invert = FALSE) {
         # Acepta: id, sym, name, long, medium, short
         # Devuelve una lista
@@ -153,6 +165,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,hID     = NULL
      ,hSym    = NULL
      ,hCam    = NULL
+     ,cookies = NULL
      ,logsess = as.integer(Sys.time())
      # ,logs    = c(rep(0,10))
      # ,logn    = c(rep("", 10))

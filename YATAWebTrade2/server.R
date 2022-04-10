@@ -107,7 +107,8 @@ function(input, output, session) {
    if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
 
    observeEvent(input$cookies, {
-       WEB$cookies = jsonlite::fromJSON(input$cookies)
+       WEB$loadCookies(input$cookies)
+       browser()
 #       WEB$setWindow(input$cookies)
    })
    observeEvent(input$resize, {

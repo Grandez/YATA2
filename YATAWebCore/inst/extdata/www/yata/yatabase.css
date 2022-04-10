@@ -496,11 +496,6 @@ body {
   padding-right: 12px;
 }
 
-.yata_buttons {
-  display: flex;
-  justify-content: space-around;
-}
-
 .yataDown {
   color: Crimson;
   font-size: 150%;

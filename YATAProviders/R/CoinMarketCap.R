@@ -198,6 +198,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         df = do.call(rbind.data.frame,items)
         if (nrow(df)> 0) df = as_tms(df, c(7,8,9))
         df
+
     }
     ,getExchanges     = function() {
         # Aparte de 1000 campos devuelve el campo 2

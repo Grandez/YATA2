@@ -75,7 +75,22 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          data = makeCombo(df)
          checkAll(FALSE, data)
      }
-
+     ,periods = function() {
+         df = objMsgs$getBlock(factory$CODES$labels$periods)
+         makeCombo(df)
+     }
+     ,loadReasons = function() {
+         data = objParms$getBlock(50, 2)
+         data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)
+         txts = objMsgs$getBlock(factory$CODES$labels$reasons)
+         dft = as.data.frame(unlist(txts))
+         dft$id = row.names(dft)
+         colnames(dft) = c("msg", "label")
+         df = dplyr::left_join(data,dft,by="label")
+         df = df[,c("block", "key","msg")]
+         colnames(df) = c("block", "id", "name")
+         private$cache$reasons = df
+     }
   )
   ,private = list(
       factory       = NULL

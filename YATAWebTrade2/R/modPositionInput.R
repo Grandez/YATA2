@@ -1,17 +1,17 @@
 modPosInput = function(id, title) {
    ns = NS(id)
-   WORDS  = WEB$MSG$getWords()
+   WORD  = WEB$MSG$getWords()
    items = list(
-        Pos     = list(label = WORDS$POS,   plot=TRUE, table=TRUE)
-       ,Session = list(label = WORDS$SESS,  plot=TRUE, table=TRUE)
-       ,Top     = list(label = WORDS$TOP,   plot=TRUE, table=TRUE)
-       ,Trend   = list(label = WORDS$TREND, plot=TRUE, table=TRUE)
-       ,Fav     = list(label = WORDS$FAV,   plot=TRUE, table=TRUE)
-       ,Full = list(label = paste(WORDS$POS, WORDS$FULL),  plot=TRUE, table=TRUE)
+        Pos     = list(label = WORD$POS,   plot=TRUE, table=TRUE)
+       ,Session = list(label = WORD$SESS,  plot=TRUE, table=TRUE)
+       ,Top     = list(label = WORD$TOP,   plot=TRUE, table=TRUE)
+       ,Trend   = list(label = WORD$TREND, plot=TRUE, table=TRUE)
+       ,Fav     = list(label = WORD$FAV,   plot=TRUE, table=TRUE)
+       ,Full = list(label = paste(WORD$POS, WORD$FULL),  plot=TRUE, table=TRUE)
    )
    pairs        = c("Pos", "Session", "Top", "Best", "Trend", "Fav", "Full")
-   names(pairs) = c( WORDS$POS,   WORDS$SESS, WORDS$TOP, WORDS$BEST
-                    ,WORDS$TREND, WORDS$FAV,  paste(WORDS$POS, WORDS$FULL))
+   names(pairs) = c( WORD$POS,   WORD$SESS, WORD$TOP, WORD$BEST
+                    ,WORD$TREND, WORD$FAV,  paste(WORD$POS, WORD$FULL))
    vals = c("plotPos", "plotSession", "blkBest", "blkPos")
    wdgLayout = WDGLayout$new(ns, layout=c(2,2), pairs=pairs, values=vals)
 
@@ -33,11 +33,12 @@ modPosInput = function(id, title) {
           )
         ,hr()
         ,yuiTitle(5, "Best")
-        ,fluidRow(column(4, "Top"),    column(8, guiIntegerInput(ns("numBestTop"),value=15,step=1,min=5,max=30)))
-        ,fluidRow(column(4, "Period"), column(8, guiCombo(ns("cboBestPeriod"),
-                                                   choices=c("Hora"=1,"Dia"=2,"Semana"=3,"Mes"=4),selected=2)))
+        ,fluidRow(column(4, "Top"),
+            column(8, guiIntegerInput(ns("numBestTop"),value=15,step=1,min=5,max=30)))
+        ,fluidRow(column(4, "Period"),
+            column(8, guiCombo(ns("cboBestPeriod"), choices=WEB$combo$reasons(),selected=2)))
         ,tags$br()
-        ,yuiFlex(yuiBtnOK(ns("btnLayoutOK"),"Guardar"), yuiBtnKO(ns("btnLayoutKO"),"Cerrar"))
+        ,yuiFlex(yuiBtnOK(ns("btnSave"), WORD$SAVE), yuiBtnKO(ns("btnClose"),WORD$CLOSE))
     )
     # pattern = "tags$div( id=ns('__NAME__'),style='width: 100%', guiBox(ns('__VALUE__')"
     # pattern = paste0(pattern, ", guiLabelText(ns('paste0('")

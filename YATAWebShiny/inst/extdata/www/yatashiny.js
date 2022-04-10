@@ -14,25 +14,35 @@ class YATAShiny {
    }
    init(title, id)    {
        jQuery("#app_title").text(title);
-       jQuery(document).on('click', this.#leftSideIcon,  {yatashiny: this}, yatashiny.sidebarLeft);
-       jQuery(document).on('click', this.#rightSideIcon, {yatashiny: this}, yatashiny.sidebarRight);
+       jQuery(document).on('click', this.#leftSideIcon,  {yatashiny: this}, yatashiny.sidebar_left);
+       jQuery(document).on('click', this.#rightSideIcon, {yatashiny: this}, yatashiny.sidebar_right);
        this.#add_listeners();
-       var yata = {
-            "data1": "data 1"
-           ,"dataArr": [1, 2, 3]
-           ,"position": {
-                "pos1": "pos1"
-               ,"val1": 33
-           }
+       let client = {
+            "client": {
+               "browser": { "width": $(window).width(),   "height": $(window).height()   }
+              ,"page":    { "width": $(document).width(), "height": $(document).height() }
+              ,"window":  { "width": window.innerWidth,   "height": window.innerHeight   }
+              ,"language": navigator.language
+            }
        };
+
+       let yata = Cookies.get("yata");
+       if (yata !== undefined) {
+           yata = JSON.parse(yata);
+           yata.client = client.client;
+       } else {
+           yata = client;
+       }
        Cookies.set("yata", JSON.stringify(yata), { SameSite: "Strict"});
+       Shiny.setInputValue('resize', Cookies.get());
+
    }
    cookies_send() {
       let res = Cookies.get("yata");
       Shiny.setInputValue('cookies', res);
    }
    cookies_recv(data) {
-       alert("Recevie co")
+       alert("Receive cookie")
       let res = Cookies.get();
       Shiny.setInputValue('cookies', res);
    }
@@ -102,7 +112,7 @@ class YATAShiny {
    mainmenu_click(evt) {
        alert("mainmenu");
    }
-   sidebarLeft (evt) {
+   sidebar_left (evt) {
       // Se ha hecho click en el menu de abrir/cerrar panel
       // Icono del panel lateral clickado
       // No se por que, pero no hace el this
@@ -136,7 +146,7 @@ class YATAShiny {
        }
        yatashiny.update_page(page);
    }
-   sidebarRight(evt) {
+   sidebar_right(evt) {
 //       alert(evt.data.yata);
        if (evt.data.yata.page === undefined) return;
 

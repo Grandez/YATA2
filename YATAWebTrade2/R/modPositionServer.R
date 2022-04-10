@@ -14,6 +14,7 @@ PNLPos = R6::R6Class("PNL.OPER"
      ,monitors    = NULL
      ,server      = NULL
      ,plots = list()
+     ,bests = c("Top", "Best", "Fav", "Trend")
      ,initialize    = function(id, pnlParent, session, ns, DBChanged) {
          cat("initialize beg\n")
          super$initialize(id, pnlParent, session, ns)
@@ -23,8 +24,8 @@ PNLPos = R6::R6Class("PNL.OPER"
          self$data$lstHist = list()
          private$makePlots()
          cat("initialize end\n")
-     }
-   ,loadData = function() {
+      }
+     ,loadData = function() {
        self$data$dfPos  = self$position$getGlobalPosition(full = TRUE)
        self$data$dfFav  = self$favorites$get()
 
@@ -33,7 +34,6 @@ PNLPos = R6::R6Class("PNL.OPER"
        self$monitors = WDGMonitor$new(private$ns("monitor"), self, data)
 
        js$yata_set_layout(id)
-       self$loaded = TRUE
 
         # private$loadPosition()
         #
@@ -48,7 +48,7 @@ PNLPos = R6::R6Class("PNL.OPER"
 #        self$updateBest()
         invisible(self)
      }
-    ,updateData = function() {
+     ,updateData = function() {
         dfTrend = WEB$REST$trending(TRUE)
         lstID = WEB$combo$getCurrenciesKey(id=FALSE, dfTrend$symbol)
         dfid = as.data.frame(unlist(lstID))
@@ -62,7 +62,7 @@ PNLPos = R6::R6Class("PNL.OPER"
 
         self$data$lstID = WEB$combo$getCurrenciesKey(id=FALSE, currencies)
 
-        self$data$dfLast     = self$session$getLatest() # currencies=self$data$lstID)
+        self$data$dfLast     = self$session$getLatest(self$cookies$selective) # currencies=self$data$lstID)
         self$data$dfSession  = self$session$getData  (id=self$data$lstID)
 
         self$monitors$update()
@@ -92,22 +92,22 @@ PNLPos = R6::R6Class("PNL.OPER"
         # cat("updateData end\n")
        invisible(self)
     }
-    ,getPosition = function (full=FALSE) {
+     ,getPosition = function (full=FALSE) {
         if (is.null(self$data$dfPos)) return (NULL)
         df = self$data$dfPos
         if (!full) df = df %>% filter(balance > 0)
         if (nrow(df) == 0) return (NULL)
 
         df = private$appendVariations(df)
-    }
-    ,loadHistory = function(id, symbol) {
-        to = Sys.Date()
-        from = to - as.difftime(self$cookies$history, unit="days")
-        df = self$history$getHistory(id, from, to)
-        self$data$lstHist[[symbol]] = list(id=id,symbol=symbol, df=df)
-        invisible(self)
-     }
-    ,getGlobalPosition = function() {
+      }
+     # ,loadHistory = function(id, symbol) {
+     #    to = Sys.Date()
+     #    from = to - as.difftime(self$cookies$history, unit="days")
+     #    df = self$history$getHistory(id, from, to)
+     #    self$data$lstHist[[symbol]] = list(id=id,symbol=symbol, df=df)
+     #    invisible(self)
+     # }
+     ,getGlobalPosition = function() {
         df = self$position$getGlobalPosition(full = TRUE)
         if (nrow(df) > 0) {
             dfID = self$currencies$getID(df$currency)
@@ -115,21 +115,20 @@ PNLPos = R6::R6Class("PNL.OPER"
         }
         df[df$id > 0,]
      }
-    ,getHistory = function(symbol) { self$data$lstHist[[symbol]]$df }
-    ,getPlots   = function()       { private$cboplots   }
-    ,getPlot    = function(plot)   { self$plots[[plot]] }
-    ,getTables  = function()       { private$tables }
-    ,getDFTable = function(table)  {
-        if (table == "Best") return(self$data$dfBest)
-        if (table == "Top")  return(self$data$dfTop)
-        if (table == "Fav")  return(self$data$dfFav)
-        NULL
-     }
-    ,getLabelPeriods = function() {
-        self$getLabels(self$codes$labels$periods)
-    }
-    ,updateLatest = function(df) {
-        browser()
+    # ,getHistory = function(symbol) { self$data$lstHist[[symbol]]$df }
+    # ,getPlots   = function()       { private$cboplots   }
+    # ,getPlot    = function(plot)   { self$plots[[plot]] }
+    # ,getTables  = function()       { private$tables }
+    # ,getDFTable = function(table)  {
+    #     if (table == "Best") return(self$data$dfBest)
+    #     if (table == "Top")  return(self$data$dfTop)
+    #     if (table == "Fav")  return(self$data$dfFav)
+    #     NULL
+    # }
+     ,getLabelPeriods = function() {
+         self$getLabels(self$codes$labels$periods)
+      }
+     ,updateLatest = function(df) {
         if (missing(df)) { # Error
             self$vars$start = self$vars$start + self$vars$limit
             return()
@@ -141,17 +140,17 @@ PNLPos = R6::R6Class("PNL.OPER"
         pnl$vars$tickers = ifelse(nrow(df) == pnl$vars$limit, FALSE, TRUE)
         invisible(self)
     }
-    ,updateBest = function() {
-          #JGG 0,26,101 son numeros de rango
-          #JGG 0 - todos
-          #JGG 26 Serian los de mejor rango
-          #JGG 101 Pendiente de favoritoss
-         df = self$session$getLatest(self$cookies$selective)
-         self$data$dfBest = private$sortBest(df,   0)
-         self$data$dfTop  = private$sortBest(df,  26)
-         self$data$dfFav  = private$sortBest(df, 101)
-         invisible(self)
-      }
+    # ,updateBest = function() {
+    #       #JGG 0,26,101 son numeros de rango
+    #       #JGG 0 - todos
+    #       #JGG 26 Serian los de mejor rango
+    #       #JGG 101 Pendiente de favoritoss
+    #      df = self$session$getLatest(self$cookies$selective)
+    #      self$data$dfBest = private$sortBest(df,   0)
+    #      self$data$dfTop  = private$sortBest(df,  26)
+    #      self$data$dfFav  = private$sortBest(df, 101)
+    #      invisible(self)
+    #   }
       ,storeTrending = function (df) {
          if ( !is.null(self$data$dfTrending) &&
              (Sys.time() - self$vars$trendig) < 30) {
@@ -165,6 +164,74 @@ PNLPos = R6::R6Class("PNL.OPER"
          }
          TRUE
       }
+     ,selectDataBest = function() {
+         empty = data.frame(id=integer(), symbol=character())
+         info  = self$cookies$best
+
+         self$data$select$Top   = empty
+         self$data$select$Best  = empty
+         self$data$select$Trend = empty
+         self$data$select$Fav   = empty
+
+         df  = self$data$dfLast %>% filter(price > 0 & volume > 0) # clean data
+         if (nrow(df) == 0) return()
+
+         idx = which(colnames(df) == "hour") - 1 + info$period
+         df  = data.table::setorderv(df,colnames(df)[idx], -1)
+
+         self$data$select$Top = rbind(empty, df[df$rank <= info$top, c("id", "symbol")])
+
+         rows = ifelse(nrow(df) > info$top, info$top, nrow(df))
+         self$data$select$Best = rbind(empty, df[1:rows, c("id", "symbol")])
+
+         dft = df[df$id %in% self$data$dfTrend$id,]
+         rows = ifelse(nrow(dft) > info$top, info$top, nrow(dft))
+         self$data$select$Trend = rbind(empty, df[1:rows, c("id", "symbol")])
+
+         if (nrow(self$data$dfFav) > 0) {
+             dff  = self$data$dfFav[,"id"]
+             df   = dplyr::left_join(dff, df, by="id")
+             df   = df[order(colnames(df)[idx], decreasing = TRUE),]
+             rows = ifelse(nrow(df) > info$top, info$top, nrow(df))
+             self$data$select$Fav = rbind(empty, df[1:rows, c("id", "symbol")])
+         }
+         invisible(self)
+      }
+,prepareTableBest = function(lbl) {
+   df = self$data$dfLast %>% filter(id %in% self$data$select[[lbl]][,"id"])
+   if (is.null(df) || nrow(df) == 0) return (NULL)
+
+   labels = WEB$combo$currencies(set=df$id, merge=FALSE, invert=TRUE)
+
+   # Hay veces que falta alguna moneda
+   dfl = as.data.frame(unlist(labels))
+   dfl$id = as.integer(row.names(dfl))
+   colnames(dfl) = c("name", "id")
+   df = left_join(df, dfl, by="id")
+   df = na.omit(df)
+   df$symbol = paste(df$symbol,df$name,sep=" - ")
+
+   df =  df %>% select(symbol, price, hour, day, week, month)
+
+   data = list(df = df, cols=NULL, info=NULL)
+   buttons = list( Button_buy=yuiBtnIconBuy(WEB$MSG$get("WORD.BUY")))
+   if (lbl == "Fav") buttons$Button_fav = yuiBtnIconFavDel(WEB$MSG$get("WORD.DELETE"))
+   if (lbl != "Fav") buttons$Button_fav = yuiBtnIconFavAdd(WEB$MSG$get("WORD.FAV"))
+
+   data$info=list( event=ns(paste0("table", lbl)), target=lbl
+                  ,types=list(pvl = c("hour", "day", "week", "month"), imp=c("price"))
+                  ,buttons = buttons # list(Button_buy=yuiBtnIconBuy("Comprar"))
+                 )
+   data
+}
+,createPlots = function() {
+    lbls = c("Pos", self$bests)
+    self$data$plots = lapply(lbls, function(lbl) YATAPlotHistory$new(paste0("table", lbl)))
+    names(self$data$plots) = lbls
+
+    p = list("Session" = YATAPlotSession$new(paste0("tableSession")))
+    self$data$plots = list.merge(self$data$plots, p)
+}
  )
  ,private = list(
       ns = NULL
@@ -215,7 +282,6 @@ PNLPos = R6::R6Class("PNL.OPER"
         cat("loadPosition end\n")
     }
      ,appendVariations = function (df) {
-         browser()
         dfLast   = self$data$dfLast
         dfLast   = dfLast[dfLast$id %in% df$id,]
         dfPeriod = self$history$getPrices(df$id, c(1, 7, 30))
@@ -234,13 +300,13 @@ PNLPos = R6::R6Class("PNL.OPER"
         dplyr::inner_join(df, dfp, by="id")
     }
      ,makePlots = function() {
-         self$plots[["history"]] = YATAPlot$new("plotHistory"
+         self$plots[["history"]] = YATAPlotHistory$new("plotHistory"
                                                 ,scale="date"
                                                 ,type = "Line"
                                                 ,observer=ns("modebar")
                                                 ,width = WEB$window$width)
 
-         self$plots[["session"]] = YATAPlot$new("plotSession"
+         self$plots[["session"]] = YATAPlotSession$new("plotSession"
                                                 ,scale="time"
                                                 ,title="Current session"
                                                 ,width = WEB$window$width)
@@ -285,7 +351,6 @@ tryCatch({
         ,refresh   = FALSE
         #,rest      = FALSE
         ,position  = FALSE
-,position2  = FALSE
         ,plots     = FALSE
         ,best      = FALSE
         ,history   = 15
@@ -332,31 +397,7 @@ getTickers = function() {
 #    data$info=list( event=ns("tablePos"), target=table,types=types)
 #    data
 # }
-prepareBest = function(df, table) {
-   if (is.null(df) || nrow(df) == 0) return (NULL)
 
-   labels = WEB$combo$currencies(set=df$id, merge=FALSE, invert=TRUE)
-   # Hay veces que falta alguna moneda
-   dfl = as.data.frame(unlist(labels))
-   dfl$id = as.integer(row.names(dfl))
-   colnames(dfl) = c("name", "id")
-   df = left_join(df, dfl, by="id")
-   df = na.omit(df)
-   df$symbol = paste(df$symbol,df$name,sep=" - ")
-
-   df =  df %>% select(symbol, price, hour, day, week, month)
-
-   data = list(df = df, cols=NULL, info=NULL)
-   buttons = list( Button_buy=yuiBtnIconBuy("Comprar"))
-   if (table == "Fav") buttons$Button_fav = yuiBtnIconFavDel("Eliminar")
-   if (table != "Fav") buttons$Button_fav = yuiBtnIconFavAdd("Favorito")
-
-   data$info=list( event=ns("tableBest"), target=table
-                  ,types=list(pvl = c("hour", "day", "week", "month"), imp=c("price"))
-                  ,buttons = buttons # list(Button_buy=yuiBtnIconBuy("Comprar"))
-                 )
-   data
-}
 # prepareTrending = function(df, table) {
 #    if (is.null(df)) return (NULL)
 #
@@ -434,7 +475,7 @@ prepareBest = function(df, table) {
 #    }
 #    insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)
 # }
-renderBestTables = function() {
+renderTablesBest = function() {
    WORDS  = pnl$MSG$getWords()
    period = pnl$getLabelPeriods()
    lbl    = period[as.integer(input$cboBestPeriod)]
@@ -445,33 +486,14 @@ renderBestTables = function() {
    output$lblTrend = updLabelText(paste(paste0(WORDS$TREND,":"), WORDS$BEST, lbl))
 
    info = pnl$cookies$best
-
-   df  = pnl$data$dfLast %>% filter(price > 0 & volume > 0) # clean data
-   idx = which(colnames(df) == "hour") - 1 + info$period
-   df  = data.table::setorderv(df,colnames(df)[idx], -1)
-
-   data = prepareBest(df[df$rank <= info$top, ], "Top")
-   if (!is.null(data$df)) output$tblTop  = updTableMultiple(data)
-
-   rows = ifelse(nrow(df) > info$top, info$top, nrow(df))
-   data = prepareBest(df[1:rows, ], "Best")
-   if (!is.null(data$df)) output$tblBest = updTableMultiple(data)
-
-   dft = df[df$id %in% pnl$data$dfTrend$id,]
-   rows = ifelse(nrow(dft) > info$top, info$top, nrow(dft))
-   data = prepareBest(dft[1:rows, ], "Trend")
-   if (!is.null(data$df)) output$tblTrend = updTableMultiple(data)
-
-   if (nrow(pnl$data$dfFav) == 0) return()
-   dff = pnl$data$dfFav[,"id"]
-   df = dplyr::left_join(dff, df, by="id")
-   df = df[order(colnames(df)[idx], decreasing = TRUE),]
-   rows = ifelse(nrow(df) > info$top, info$top, nrow(df))
-   data = prepareBest(df[1:rows, ], "Best")
-   if (!is.null(data$df)) output$tblFav  = updTableMultiple(data)
+   pnl$selectDataBest()
+   lapply(pnl$bests, function(lbl) {
+       data = pnl$prepareTableBest(lbl)
+      if (!is.null(data$df)) eval(parse(text=paste0("output$tbl", lbl, "=updTableMultiple(data)")))
+   })
 }
-renderPosTables = function() {
-    df = pnl$getPosition(TRUE)
+renderTablesPos = function() {
+   df = pnl$getPosition(TRUE)
    types = list( imp = c("balance", "value","profit")
                 ,prc = c("day", "week", "month")
                 ,dat = c("since")
@@ -490,6 +512,14 @@ renderPosTables = function() {
    data$info=list( event=ns("tablePos"), target=table,types=types)
    data
 }
+renderPlotsBest = function() {
+
+   lapply(c("Top", "Best", "Fav", "trend"), function(lbl) {
+       data = preparePlotBest(lbl)
+      if (!is.null(data$df)) eval(parse(text=paste0("output$plot", lbl, "=plot$render()")))
+   })
+}
+
 # renderTrendingTable = function() {
 #    data1 = prepareTrending(pnl$data$dfTrending, "Trend")
 #    if (!is.null(data1$df)) output$tblTrend = updTableMultiple(data1)
@@ -583,7 +613,7 @@ observeEvent(flags$position2, ignoreInit = TRUE, {
 #    pnl$cookies$best$from      = from
 #    pnl$cookies$best$top       = input$numBestTop
 #    pnl$updateBest()
-#    renderBestTables()
+#    renderTablesBest()
 # })
 # observeEvent(flags$update, ignoreInit = TRUE, {
 #     pnl$vars$start =   0
@@ -594,7 +624,7 @@ observeEvent(flags$position2, ignoreInit = TRUE, {
 #    pnl$monitors$update()
 #    flags$position = isolate(!flags$position)
 #    flags$plots    = isolate(!flags$plots)
-#    renderBestTables()
+#    renderTablesBest()
 #    renderTrendingTable()
 #    renderPlotSession()
 #    cat("flags$refresh end\n")
@@ -608,8 +638,10 @@ observeEvent(flags$rest, ignoreInit = TRUE, {
 
 observeEvent(flags$refresh, ignoreInit = TRUE, {
    cat("flags$refresh beg\n")
-   renderBestTables()
-   renderPosTables()
+   renderTablesBest()
+   renderTablesPos()
+   pnl$createPlots()
+   #renderPlotsHistory()
 
 #
 #    future_promise ({
@@ -856,12 +888,12 @@ observeEvent(flags$refresh, ignoreInit = TRUE, {
 # observeEvent(input$radPosition, ignoreInit = TRUE, { flags$position = isolate(!flags$position) })
 observeEvent(input$cboBestPeriod, ignoreInit = TRUE, {
     pnl$cookies$best$period = as.integer(input$cboBestPeriod)
-    renderBestTables()
+    renderTablesBest()
 })
 observeEvent(input$numBestTop,    ignoreInit = TRUE, {
     if (!is.integer(input$numBestTop)) return()
     pnl$cookies$best$top = input$numBestTop
-    renderBestTables()
+    renderTablesBest()
 })
 # observeEvent(input$numInterval, ignoreInit = TRUE, {
 #    if (is.numeric(input$numInterval)) {
@@ -874,17 +906,26 @@ observeEvent(input$numBestTop,    ignoreInit = TRUE, {
 #    pnl$cookies$monitor = input$chkMonitors
 #    #JGGshinyjs::toggle("monitor", anim=TRUE)
 # })
-# observeEvent(input$btnLayoutOK, {
-#    pnl$setCookies()
-#    session$sendCustomMessage(type = 'closeLeftSide',message = "close")
-# })
-# observeEvent(input$btnLayoutKO, {
-#    session$sendCustomMessage(type = 'closeLeftSide',message = "close")
-# })
+observeEvent(input$btnSave, {
+   pnl$setCookies()
+   session$sendCustomMessage('leftside_close')
+})
+observeEvent(input$btnClose, {
+    #JGG Reset values (hay que guardarlos antes)
+   session$sendCustomMessage('leftside_close')
+})
 
 if (!pnl$loaded || pnl$getCommarea(item="position")) {
     pnl$loadData()
-#    renderPosTables()
+    renderTablesPos()
+    pnl$createPlots()
+    #* @get /slow/<k>
+# function() {
+#   promises::future_promise({
+#     slow_calc()
+#   })
+# }
+           pnl$loaded = TRUE
     pnl$setCommarea(position=FALSE)
 #    flags$refresh = isolate(!flags$refresh)
 }

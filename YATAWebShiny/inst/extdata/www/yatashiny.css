@@ -182,3 +182,8 @@
 .yata_layout_row  .form-group {
     margin-bottom: 0;
 }
+
+.yata_buttons {
+  display: flex;
+  justify-content: space-around;
+}

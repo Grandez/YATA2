@@ -22,6 +22,7 @@ WDGBase = R6::R6Class("YATA.WEB.WIDGETS"
 ############################
 #### Shiny
 ###########################
+yuiFlex = function(...) { tags$div(class="yata_flex_row", ...) }
 yuiRow = function(id=NULL, style=NULL, class=NULL, ...) {
   if (!is.null(id)) res = shiny::fluidRow(id=id,...)
   else              res = shiny::fluidRow(...)

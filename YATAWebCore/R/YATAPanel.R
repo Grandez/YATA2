@@ -22,7 +22,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,DBID       = 0     # Check DB changed
     ,data       = list()  # Datos
     ,vars       = list()  # Variables temporales con memoria
-    ,cookies    = list() # Variables con estado
+    ,cookies    = list()  # Variables con estado
     ,layout     = NULL
     ,visited    = 0
     ,print      = function() { message(paste("Panel object for", self$name)) }
@@ -37,8 +37,8 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         self$codes   = self$factory$CODES
         self$parms   = self$factory$parms
         self$MSG     = self$factory$MSG
+        self$cookies = WEB$getCookies(id)
 #        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
-#JGG        private$loadCookies()
         private$root = self$getRoot()
         # if (!missing(ns) && !is.null(self$cookies$layout)) {
         #     self$layout = OBJLayout$new(ns)
@@ -80,7 +80,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     # }
 #    ,getCookie = function(key) { self$vars$cookies[[key]] }
     ,setCookies = function() {
-#        WEB$setCookies(self$name, self$cookies)
+         WEB$setCookies(self$name, self$cookies)
         invisible(self)
     }
     #   browser()
