@@ -113,12 +113,19 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ##########################################################
     ### Acceso a root
     ##########################################################
-    ,getGlobalPosition = function(fiat=FALSE) { private$root$getGlobalPosition(fiat) }
-    ,getOpenCurrencies = function()           { private$root$getOpenCurrencies()     }
-    ,setCommarea       = function(...)        { private$root$setCommarea(...)        }
+    ,getGlobalPosition = function(fiat=FALSE)     { private$root$getGlobalPosition(fiat) }
+    ,getOpenCurrencies = function()               { private$root$getOpenCurrencies()     }
+    ,setCommarea       = function(...)            { private$root$setCommarea(...)        }
     ,getCommarea       = function(item=NULL, default=NULL) {
         private$root$getCommarea(item, default)
+    }
+    ,setCommareaBlock       = function(block, ...) {
+        private$root$setCommareaBlock(block=block, ...)
      }
+    ,getCommareaBlock       = function(block, item=NULL, default=NULL) {
+        private$root$getCommareaBlock(block, item, default)
+     }
+
   )
   ,private = list(
        invalid = c("")

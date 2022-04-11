@@ -51,14 +51,14 @@ TBLCurrencies = R6::R6Class("TBL.CURRENCIES"
           )
          ,hMap = NULL
          ,getData = function(codes, all) {
-             parms = list(active = YATACodes$flag$active)
-             if (all) parms = list()
+             params = list(active = YATACodes$flag$active)
+             if (all) params = list()
              if (missing(codes) || length(codes) == 0) {
-                 df = table(parms) # Fuerza el IN
+                 df = table(params) # Fuerza el IN
              }
              else {
                  if (is.vector(codes)) codes = as.list(codes)
-                 df = table(parms, inValues=list(id=codes)) # Fuerza el IN
+                 df = table(params, inValues=list(id=codes)) # Fuerza el IN
              }
              df
          }

@@ -18,6 +18,4 @@ shinyjs.yata_add_page    = function(name) { yatashiny.add_page(name); }; // Pagi
 shinyjs.yata_set_layout  = function(id)   { yatashiny.layout_set(id); }; // Hace layout
 shinyjs.yata_req_cookies = function()     { yatashiny.cookies_send(); }; // Envia las cookies
 
-$(document).on('shiny:connected', function(evt) {
-    alert("Connected");
-    yatashiny.cookies_send(); })
+$(document).on('shiny:connected', function(evt) { yatashiny.cookies_send(); })

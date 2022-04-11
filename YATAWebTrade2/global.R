@@ -27,6 +27,9 @@ suppressMessages(library(bslib,              warn.conflicts = FALSE))
 suppressMessages(library(promises, warn.conflicts = FALSE))
 suppressMessages(library(future,   warn.conflicts = FALSE))
 
+suppressMessages(library(plotly, warn.conflicts = FALSE))
+suppressMessages(library(reactable, warn.conflicts = FALSE))
+
 # options( warn = -1
 # #        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
 #         ,java.parameters = "-Xmx2048m"

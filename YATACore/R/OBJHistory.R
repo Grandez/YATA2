@@ -27,12 +27,8 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
         ,getSessionDays = function(symbol) {
             tblHistory$getDates(symbol)
         }
-        ,getHistory = function(symbol, from, to) {
-            df = tblHistory$getHistory(symbol, from, to)
-            nm = colnames(df)
-            nm[length(nm)] = "tms"
-            colnames(df) = nm
-            df[order(df$tms, decreasing = TRUE),]
+        ,getHistory = function(symbol, from=NULL, to=NULL, periods=0) {
+            tblHistory$getHistory(symbol, from, to, periods)
         }
         ,getPrices = function(ids, periods) {
             # Cuidado con FIAT, es id = 0

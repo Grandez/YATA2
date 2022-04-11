@@ -13,10 +13,9 @@ function yataTableclick (rowInfo, colInfo, evt, tgt) {
 */
   /* Botones en reactable
 
-    window.alert('YATATableClick Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id);
                                    //if (colInfo.id !== 'details') { return }
 */
-//window.alert('Details: row ' + rowInfo.index + 'col: ' +
+
 /*
 colInfo.id);
      if (window.Shiny) {
@@ -29,10 +28,9 @@ colInfo.id);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 function setTile() {
-alert("setTile");
+
 }
 function listenerTabClosable() {
-  alert("yatashiny listenerTabClosable");
   var elements = document.getElementsByClassName("yata_tab_closable");
   Array.from(elements).forEach(function(element) {
       element.addEventListener('click', function (event) { yataTabClose(event) });
@@ -67,7 +65,6 @@ function yataShowBlock(data) {
 }
 function yataMovePanel(data) {
    // Pone y quita bloques
-   //alert("MovePanel");
    const source = document.getElementById(data.from);
    const target = document.getElementById(data.to);
    target.appendChild(source);
@@ -81,9 +78,7 @@ function yataTableclick (rowInfo, colInfo, evt, tgt) {
   //CHECKED
   // Botones en reactable
 
-//    window.alert('Details for click: \\n Fila: ' + colInfo.index + '\\n' + "boton: " + colInfo.id//);
                                    //if (colInfo.id !== 'details') { return }
-//                         window.alert('Details: row ' + rowInfo.index + 'col: ' + colInfo.id);
 //     if (window.Shiny) {
          Shiny.setInputValue(evt, { row: rowInfo.index + 1, colName: colInfo.id, target: tgt
                                  }, { priority: 'event' });
@@ -93,7 +88,6 @@ function yataTableclick (rowInfo, colInfo, evt, tgt) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 function listenerButtonInTable(mode) {
-  alert("yatashiny listenerButtonInTable");
   // Aqui añade el listener a la clase de los botones
   var elements = document.getElementsByClassName("yataBtnClickable");
   Array.from(elements).forEach(function(element) {
@@ -103,8 +97,6 @@ function listenerButtonInTable(mode) {
 */
 /*
 function listenerLayout() {
-  alert("yatashiny listenerLayout");
-//  alert("Entro en creador de listener");
   // Aqui añade el listener a la clase de los botones
   var elements = document.getElementsByClassName("yata_layout");
   Array.from(elements).forEach(function(element) {
@@ -114,8 +106,6 @@ function listenerLayout() {
 */
 /*
 function yatabtnClickable(event) {
-  alert("yatashiny yatabtnClickable");
-  alert("Click en el menu " + event.target.id);
 }
 
 function _yataMoveChildren(from, to) {
@@ -129,30 +119,25 @@ function _yataMoveChildren(from, to) {
 }
 
 function yataTabClose(event) {
-  alert("yatashiny yataTabClose");
     Shiny.setInputValue(event.id, { id: event.id}, { priority: 'event' });
 }
 
 
 // Funcion que se ejecuta on document.ready
 jQuery(document).ready(function() {
-  //CHECKED alert( "JQuery Documento listo" );
 	$.yata.init();
 });
 */
 /*
 jQuery(document).on('shiny:connected', function(event) {
-    alert("Connected");
   Shiny.setInputValue("connected", new Date(), { priority: 'event' });
 });
 
 jQuery(document).on('shiny:sessioninitialized', function(event) {
-    alert("sessioninitialized");
   Shiny.setInputValue("initialized", new Date(), { priority: 'event' });
 });
 
 jQuery(document).on('shiny:disconnected', function(event) {
-    alert("disconnected");
   Shiny.setInputValue("disconnected", new Date(), { priority: 'event' });
 });
 */

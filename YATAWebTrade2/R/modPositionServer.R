@@ -224,9 +224,23 @@ PNLPos = R6::R6Class("PNL.OPER"
                  )
    data
 }
-,createPlots = function() {
-    lbls = c("Pos", self$bests)
-    self$data$plots = lapply(lbls, function(lbl) YATAPlotHistory$new(paste0("table", lbl)))
+,createPlots = function(per) {
+   WORD  = self$MSG$getWords()
+   period = self$getLabelPeriods()
+   lbl    = period[per]
+   lbls = c("Pos", self$bests)
+
+   titles = list()
+   titles$Pos   = WORD$POSITION
+   titles$Best  = paste(WORD$BEST, lbl)
+   titles$Top   = paste(paste0(WORD$TOP,":"),   WORD$BEST, lbl)
+   titles$Fav   = paste(paste0(WORD$FAV,":"),   WORD$BEST, lbl)
+   titles$Trend = paste(paste0(WORD$TREND,":"), WORD$BEST, lbl)
+
+
+    self$data$plots = lapply(lbls, function(lbl) {
+        YATAPlotHistory$new(paste0("table", lbl), title=titles[[lbl]])
+    })
     names(self$data$plots) = lbls
 
     p = list("Session" = YATAPlotSession$new(paste0("tableSession")))
@@ -300,16 +314,16 @@ PNLPos = R6::R6Class("PNL.OPER"
         dplyr::inner_join(df, dfp, by="id")
     }
      ,makePlots = function() {
-         self$plots[["history"]] = YATAPlotHistory$new("plotHistory"
-                                                ,scale="date"
-                                                ,type = "Line"
-                                                ,observer=ns("modebar")
-                                                ,width = WEB$window$width)
+         self$plots[["history"]] = YATAPlotHistory$new("plotHistory")
+                                                # ,scale="date"
+                                                # ,type = "Line"
+                                                # ,observer=ns("modebar")
+                                                # ,width = WEB$window$width)
 
-         self$plots[["session"]] = YATAPlotSession$new("plotSession"
-                                                ,scale="time"
-                                                ,title="Current session"
-                                                ,width = WEB$window$width)
+         self$plots[["session"]] = YATAPlotSession$new("plotSession")
+                                                # ,scale="time"
+                                                # ,title="Current session"
+                                                # ,width = WEB$window$width)
      }
     ,sortBest = function(df, first) {
         cols = c("hour", "day", "week", "month")
@@ -512,12 +526,37 @@ renderTablesPos = function() {
    data$info=list( event=ns("tablePos"), target=table,types=types)
    data
 }
-renderPlotsBest = function() {
-
-   lapply(c("Top", "Best", "Fav", "trend"), function(lbl) {
-       data = preparePlotBest(lbl)
-      if (!is.null(data$df)) eval(parse(text=paste0("output$plot", lbl, "=plot$render()")))
+renderPlot = function(id, df) {
+   items = pnl$data$select
+   lapply(names(items), function(item) {
+      dfc = items[[item]]
+      if (nrow(dfc[dfc$id == id,]) == 1) {
+          plot = pnl$data$plots[[item]]
+          plot$addData(df[1,2], df, source="session")
+          eval(parse(text=paste0("output$plot", item, "=plot$render()")))
+      }
    })
+
+}
+renderPlotsBest = function() {
+    items = pnl$data$select
+    data = unique(unlist(lapply(pnl$bests, function(x) pnl$data$select[[x]]$id)))
+
+    lapply(data, function(id) {
+       df = pnl$history$getHistory(id, periods=pnl$cookies$history)
+       renderPlot(id, df)
+    })
+   # lapply(c("Top", "Best", "Fav", "trend"), function(lbl) {
+   #     data = preparePlotBest(lbl)
+   #    if (!is.null(data$df)) eval(parse(text=paste0("output$plot", lbl, "=plot$render()")))
+   # })
+}
+renderPlotsHistory = function() {
+
+   # lapply(c("Top", "Best", "Fav", "trend"), function(lbl) {
+   #     data = preparePlotBest(lbl)
+   #    if (!is.null(data$df)) eval(parse(text=paste0("output$plot", lbl, "=plot$render()")))
+   # })
 }
 
 # renderTrendingTable = function() {
@@ -640,8 +679,8 @@ observeEvent(flags$refresh, ignoreInit = TRUE, {
    cat("flags$refresh beg\n")
    renderTablesBest()
    renderTablesPos()
-   pnl$createPlots()
-   #renderPlotsHistory()
+   renderPlotsBest()
+#   renderPlotsHistory()
 
 #
 #    future_promise ({
@@ -895,17 +934,27 @@ observeEvent(input$numBestTop,    ignoreInit = TRUE, {
     pnl$cookies$best$top = input$numBestTop
     renderTablesBest()
 })
-# observeEvent(input$numInterval, ignoreInit = TRUE, {
-#    if (is.numeric(input$numInterval)) {
-#        pnl$cookies$interval = input$numInterval
-#    }
-# })
-# observeEvent(input$numHistory,   ignoreInit = TRUE, { flags$history = isolate(input$numHistory) })
-# observeEvent(input$numSelective, ignoreInit = TRUE, { flags$refresh = isolate(!flags$refresh)   })
-# observeEvent(input$chkMonitors, ignoreInit = TRUE, {
-#    pnl$cookies$monitor = input$chkMonitors
-#    #JGGshinyjs::toggle("monitor", anim=TRUE)
-# })
+observeEvent(input$numInterval, ignoreInit = TRUE, {
+   if (is.numeric(input$numInterval)) {
+       pnl$cookies$interval = input$numInterval
+   }
+})
+observeEvent(input$numHistory,   ignoreInit = TRUE, {
+   if (is.numeric(input$numHistory)) {
+       pnl$cookies$history = input$numInterval
+       flags$history = isolate(input$numHistory)
+   }
+})
+observeEvent(input$numSelective, ignoreInit = TRUE, {
+   if (is.numeric(input$numSelective)) {
+       pnl$cookies$selective = input$numSelective
+       flags$refresh = isolate(!flags$refresh)
+   }
+})
+observeEvent(input$chkMonitors, ignoreInit = TRUE, {
+   pnl$cookies$monitor = input$chkMonitors
+   #JGGshinyjs::toggle("monitor", anim=TRUE)
+})
 observeEvent(input$btnSave, {
    pnl$setCookies()
    session$sendCustomMessage('leftside_close')
@@ -918,7 +967,7 @@ observeEvent(input$btnClose, {
 if (!pnl$loaded || pnl$getCommarea(item="position")) {
     pnl$loadData()
     renderTablesPos()
-    pnl$createPlots()
+    pnl$createPlots(as.integer(input$cboBestPeriod))
     #* @get /slow/<k>
 # function() {
 #   promises::future_promise({
@@ -936,7 +985,7 @@ if (!pnl$loaded || pnl$getCommarea(item="position")) {
 #####################################################
 
 observe({
-   invalidateLater(5 * 60000)
+   invalidateLater(pnl$cookies$interval * 60000)
    pnl$updateData()
    flags$refresh = isolate(!flags$refresh)
 })

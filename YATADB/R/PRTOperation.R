@@ -17,7 +17,7 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             if (is.null(info$ctrl$priceIn))   info$ctrl$priceIn   = info$oper$price
             if (is.null(info$ctrl$priceOut))  info$ctrl$priceOut  = info$oper$price
             tblOperControl$add(info$ctrl)
-            if (!is.null(info$log$idLog) tblOperLog$add(info$log)
+            if (!is.null(info$log$idLog)) tblOperLog$add(info$log)
         }
         ,update = function(lstData) {
             info = splitFields(lstData)

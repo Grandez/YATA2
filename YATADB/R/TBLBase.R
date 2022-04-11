@@ -161,26 +161,27 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ###############################################
       # Operaciones sobre la tabla
       ##############################################
-      ,queryRaw  = function(sql,parms=NULL) {
-         db$query(sql, params=parms)
+      ,queryRaw  = function(sql,params=NULL) {
+          # db$query(sql, params=params)
+          setColNames(db$query(sql, params=params))
       }
-      ,execRaw   = function(sql,parms=NULL,isolated = FALSE) {
-         db$execute(sql, params=parms, isolated = isolated)
+      ,execRaw   = function(sql,params=NULL,isolated = FALSE) {
+         db$execute(sql, params=params, isolated = isolated)
       }
       ,sql     = function(sql,...) {
-         parms = NULL
+         params = NULL
          args = list(...)
          stmt = paste(sql, "FROM", tblName)
          if (!is.null(args$where)) {
              filter = mountWhere(args$where)
-             parms = filter$values
+             params = filter$values
              stmt = paste(stmt, filter$sql)
          }
          if (!is.null(args$group)) {
             grp = paste(args$group, sep=",")
             stmt = paste(stmt, "GROUP BY", grp)
          }
-         setColNames(db$query(stmt, params=parms))
+         setColNames(db$query(stmt, params=params))
       }
       ,query   = function(sql, ...) {
          # Query personalizada
@@ -198,7 +199,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
          setColNames(df)
       }
       ,table   = function(..., inValues=NULL, includeKeys = TRUE) {
-          # Recupera los datos de la tabla completa en funcion de los parms
+          # Recupera los datos de la tabla completa en funcion de los params
          filter = mountWhere(..., inValues=inValues)
          sql = paste("SELECT * FROM ", tblName, filter$sql)
          df = db$query(sql, params=filter$values)
@@ -211,7 +212,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,tableInterval   = function(from=NULL, to=NULL, ..., inValues=NULL, includeKeys = TRUE) {
           if (is.null(from)) from = as.POSIXct("2020-01-01", tz="UTC")
           if (is.null(to))   to   = as.POSIXct(Sys.time(), tz="UTC")
-          # Recupera los datos de la tabla completa en funcion de los parms y between tms
+          # Recupera los datos de la tabla completa en funcion de los params y between tms
          filter = mountWhere(..., inValues=inValues)
          if (is.null(filter$sql)) {
             filter$sql = " WHERE TMS BETWEEN ? AND ?"
@@ -234,7 +235,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
          df
        }
       ,tableLimit = function(..., limit=1, inValues=NULL, includeKeys = TRUE) {
-          # Recupera los datos de la tabla completa en funcion de los parms
+          # Recupera los datos de la tabla completa en funcion de los params
          filter = mountWhere(..., inValues=inValues)
          if (is.null(filter$values)) {
             filter$values[limit_] = limit
@@ -309,19 +310,19 @@ YATATable <- R6::R6Class("YATA.TABLE"
           filter = mountWhere(self$current[private$primaryKey])
 
           sql = paste(sql, cols, filter$sql)
-          executeUpdate(sql, parms=list.append(values, filter$values), isolated=isolated)
+          executeUpdate(sql, params=list.append(values, filter$values), isolated=isolated)
       }
 
       ,refresh = function(method = NULL, ...) {
         if (is.null(self$dfa)) { # dfa tiene todo, no tiene sentido refrescarlo
               ##JGG mirar con substitute
-              #parms = as.list(...)
+              #params = as.list(...)
               # Cargar por tabla
               if (is.null(method))  {
                   method = "loadTable"
-                  parms = list(self$table)
+                  params = list(self$table)
               }
-              self$dfa = do.call(method, parms)
+              self$dfa = do.call(method, params)
               self$dfCurrent  = self$dfa
           }
           invisible(self)

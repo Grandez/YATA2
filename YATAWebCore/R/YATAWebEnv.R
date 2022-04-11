@@ -5,15 +5,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
   ,portable   = FALSE
   ,cloneable  = FALSE
   ,lock_class = TRUE
-  ,active = list(
-      logLevel = function(value) {
-         if (!missing(value)) {
-             private$.logLevel = value
-             log$setLevel(value)
-         }
-         .logLevel
-      }
-  )
   ,public = list(
       MSG      = NULL
      ,REST   = NULL
@@ -72,69 +63,68 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          if (!is.null(panel)) shinyjs::js$yata_set_page(name)
          panel
      }
-     ,getLabelsPanel    = function()    { getLabelsMenu(0) }
-     ,getLabelsPanelErr = function()    { getLabelsMenu(9) }
-     ,getLabelsMenuMain = function()    { getLabelsMenu(1) }
-     ,getLabelsMenuOper = function()    { getLabelsMenu(2) }
-
-     ,getLabelsMenu     = function(idx) {
-         key = factory$CODES$labels$lblPanels + idx
-         self$MSG$getBlock(key)
-      }
      ,addPanel = function(panel) {
          private$panels$put(panel$name, panel)
          shinyjs::js$yata_add_page(panel$name)
          self$getPanel(panel$name, loading=TRUE)
      }
-    ,getMsg    = function(code, ...) { MSG$get(code, ...) }
-    ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
-    ,setCookies  = function(name, values) {
+     ,getLabelsPanel    = function()    { getLabelsMenu(0) }
+     ,getLabelsPanelErr = function()    { getLabelsMenu(9) }
+     ,getLabelsMenuMain = function()    { getLabelsMenu(1) }
+     ,getLabelsMenuOper = function()    { getLabelsMenu(2) }
+     ,getLabelsMenu     = function(idx) {
+         key = factory$CODES$labels$lblPanels + idx
+         self$MSG$getBlock(key)
+      }
+
+     ,getMsg    = function(code, ...) { MSG$get(code, ...) }
+     ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
+     ,setCookies  = function(name, values) {
         private$cookies[[name]] = values
         updateCookie(self$session, yata=private$cookies)
         invisible(self)
     }
-    ,getCookies = function(block)    {
+     ,getCookies = function(block)    {
         if (missing(block))
             private$cookies
         else
             private$cookies[[block]]
      }
-    ,getCookie = function(id) { private$cookies[[id]] }
-    ,setCookie = function(id, data) {
-        browser()
+     ,getCookie = function(id) { private$cookies[[id]] }
+     ,setCookie = function(id, data) {
        private$cookies[[id]] = data
        updateCookie(self$session, YATA=private$cookies)
     }
 
-    ,getCTCLabels = function(codes, type="medium", invert = FALSE) {
-        # Acepta: id, sym, name, long, medium, short
-        # Devuelve una lista
-        # Invert se usa para combos, en vez de la lista de etiquetas las da de codes
-        if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, type))
-        else                   data = lapply(codes, function(code) .getNameBySym(code, type))
-        names(data) = codes
-        if (invert) {
-           names(codes) = data
-           data = codes
-        }
-        data
-    }
-    ,getCTCLabel = function(code, type="medium", invert = FALSE) {
-        data = getCTCLabels(code,type,invert)
-        data[[1]]
-    }
-    ,getCTCID = function(codes) {
-        cdg = codes
-        fiat = which(codes == "FIAT")
-        if (length(fiat)) cdg = codes[-fiat]
-        if (length(cdg) == 0) return(NULL)
-        df = tblCurrencies$table(inValues=list(symbol=cdg))
-        data = df$id
-        names(data) = df$symbol
-        if (length(fiat)) data = c(data,FIAT=0)
-        data
-    }
-    ,getCameraNames = function(codes) {
+    #  ,getCTCLabels = function(codes, type="medium", invert = FALSE) {
+    #     # Acepta: id, sym, name, long, medium, short
+    #     # Devuelve una lista
+    #     # Invert se usa para combos, en vez de la lista de etiquetas las da de codes
+    #     if (is.numeric(codes)) data = lapply(codes, function(code) .getNameByID(code, type))
+    #     else                   data = lapply(codes, function(code) .getNameBySym(code, type))
+    #     names(data) = codes
+    #     if (invert) {
+    #        names(codes) = data
+    #        data = codes
+    #     }
+    #     data
+    # }
+    #  ,getCTCLabel = function(code, type="medium", invert = FALSE) {
+    #     data = getCTCLabels(code,type,invert)
+    #     data[[1]]
+    # }
+    #  ,getCTCID = function(codes) {
+    #     cdg = codes
+    #     fiat = which(codes == "FIAT")
+    #     if (length(fiat)) cdg = codes[-fiat]
+    #     if (length(cdg) == 0) return(NULL)
+    #     df = tblCurrencies$table(inValues=list(symbol=cdg))
+    #     data = df$id
+    #     names(data) = df$symbol
+    #     if (length(fiat)) data = c(data,FIAT=0)
+    #     data
+    # }
+     ,getCameraNames = function(codes) {
         fun = function(code) {
             name = private$hCam$get(code)
             if (is.null(name)) {
@@ -213,31 +203,31 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
         if (type == "long")   return (info$lbl32)
         if (type == "medium") return (info$lbl20)
     }
-    # ,loadFiats = function() {
-    #      info = list()
-    #      info$id     = 99999
-    #      info$symbol = "EUR"
-    #      info$name   = "Euro"
-    #      info$lbl    = paste0(info$symbol, " - ", info$name)
-    #      info$lbl32  = info$lbl
-    #      info$lbl20  = info$lbl
-    #      hSym$put(info$symbol, info)
-    #      hID$put (info$id, info)
-    #      info$id     = 99998
-    #      info$symbol = "USD"
-    #      info$name   = "US Dollar"
-    #      info$lbl    = paste0(info$symbol, " - ", info$name)
-    #      info$lbl32  = info$lbl
-    #      info$lbl20  = info$lbl
-    #      hSym$put(info$symbol, info)
-    #      hID$put (info$id, info)
-    # }
+    ,loadFiats = function() {
+         info = list()
+         info$id     = 99999
+         info$symbol = "EUR"
+         info$name   = "Euro"
+         info$lbl    = paste0(info$symbol, " - ", info$name)
+         info$lbl32  = info$lbl
+         info$lbl20  = info$lbl
+         hSym$put(info$symbol, info)
+         hID$put (info$id, info)
+         info$id     = 99998
+         info$symbol = "USD"
+         info$name   = "US Dollar"
+         info$lbl    = paste0(info$symbol, " - ", info$name)
+         info$lbl32  = info$lbl
+         info$lbl20  = info$lbl
+         hSym$put(info$symbol, info)
+         hID$put (info$id, info)
+    }
 
   )
 )
 
-yataSetCookie = function(key, value) {
-    browser()
-  string = sprintf("Cookies.set(\'%s\', \'%s\');", key, value)
-  runjs(string)
-}
+# yataSetCookie = function(key, value) {
+#     browser()
+#   string = sprintf("Cookies.set(\'%s\', \'%s\');", key, value)
+#   runjs(string)
+# }

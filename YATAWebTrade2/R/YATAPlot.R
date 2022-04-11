@@ -6,15 +6,16 @@ YATAPlot = R6::R6Class("YATA.PLOT"
       plot    = NULL
      ,id      = NULL
      ,print      = function() { message("Plotly Object")}
-     ,initialize = function(id, ...) {
+     ,initialize = function(id, info) {
          self$id = id
          private$info$object = id
-         args = list(...)
-         if (!is.null(args$info)) {
-             private$info          = list.merge(info, args$info)
-             args$info = NULL
-         }
-         private$attrs = args
+#         private$attrs       = list(...)
+         private$info        = list.merge(private$info, info)
+         # if (!is.null(args$info)) {
+         #     private$info          = list.merge(info, args$info)
+         #     args$info = NULL
+         # }
+         # private$attrs = args
 
          # if (!is.null(args$type))     private$info$type     = args$type
          # if (!is.null(args$observer)) private$info$observer = args$observer
@@ -87,11 +88,12 @@ YATAPlot = R6::R6Class("YATA.PLOT"
       }
      ,Candlestick = function(df) {
          #JGG revisar, privatae$current es null
-         if (is.null(private$current)) {
-             candle(df)
-         } else {
-             if (private$current$visible) candle(df)
-         }
+         candle(df)
+         # if (is.null(private$current)) {
+         #     candle(df)
+         # } else {
+         #     if (private$current$visible) candle(df)
+         # }
          invisible(self)
       }
      ,Pie = function(df) {
@@ -123,23 +125,25 @@ YATAPlot = R6::R6Class("YATA.PLOT"
          private$generated = FALSE
          invisible(self)
      }
-    ,addData    = function(name, df, ui) {
+    ,addData    = function(name, df, source, ui) {
         if (is.null(df)) return(invisible(self))
-        dftype = "Value"
-        private$info$datasource = "value"
-        if (missing(name)) name = paste0("data", length(private$data))
-        if (ncol(df) > 3) {
-            if (sum(colnames(df) %in% c("high", "low", "open", "close")) > 0) {
-                dftype = "session"
-                if (info$datasource != "session") private$info$datasource = "session"
-            }
-        }
+        private$data[[name]] = list(source=source, data=df, visible=TRUE)
+        if (private$info$type == "Candlestick" && length(data) > 1) private$info$type = "Line"
+        # dftype = "Value"
+        # private$info$datasource = "value"
+        # if (missing(name)) name = paste#0("data", length(private$data))
+        # if (ncol(df) > 3) {
+        #     if (sum(colnames(df) %in% c("high", "low", "open", "close")) > 0) {
+        #         dftype = "session"
+        #         if (info$datasource != "session") private$info$datasource = "session"
+        #     }
+        # }
         # # Se actualizan datos. Hay que refrescar todo
         # if (!is.null(private$data$name)) {
         #     self$plot = private$base()
         #     private$generated = FALSE
         # }
-        private$data[[name]] = list(source=dftype, data=df, visible=TRUE)
+        #private$data[[name]] = list(source="JGG", data=df, visible=TRUE)
         # if (!generated) {
         #     render(ui, NULL, info$type)
         # } else {
@@ -210,15 +214,15 @@ YATAPlot = R6::R6Class("YATA.PLOT"
          self$plot
       }
      ,candle = function(df) {
-         self$plot = add_trace(plot, data=df, x=~tms, open=~open, close=~close, high=~high, low=~low
+         self$plot = add_trace(plot, data=df, x=~timestamp, open=~open, close=~close, high=~high, low=~low
                                    , type="candlestick")
          self$plot =  layout(plot, xaxis = list(rangeslider = list(visible = F)))
          self$plot
       }
      ,applyScale = function(x) {
-         if (is.null(scale)) return(x)
-         if (scale == "date") return (as.Date(x))
-         if (scale == "time") return (as.POSIXct(x, format="%H:%M:%S"))
+         if (is.null(info$scale)) return(x)
+         if (info$scale == "date") return (as.Date(x))
+         if (info$scale == "time") return (as.POSIXct(x, format="%H:%M:%S"))
          x
       }
      ,config = function(plot) {
@@ -237,12 +241,12 @@ YATAPlot = R6::R6Class("YATA.PLOT"
      ,prepareData = function(idx) {
          dat = data[[idx]]
          df = dat$data
-         df[,xAxis] = applyScale(df[,xAxis])
+
          if (info$type == "Candlestick") return (Candlestick(df))
+         df[,info$xAxis] = applyScale(df[,info$xAxis])
          if (dat$source == "session") {
-             df = dat$data[,c("tms", "close")]
+             df = dat$data[,c(info$xAxis, "close")]
              colnames(df) = c("tms", names(data)[idx])
-             df[,xAxis] = applyScale(df[,xAxis])
          }
          private$current = dat
          eval(parse(text=paste0(info$type, "(df)")))
@@ -251,14 +255,14 @@ YATAPlot = R6::R6Class("YATA.PLOT"
          private$generated = FALSE
          self$plot = private$base()
          if (!is.null(info)) private$info = list.merge(private$info, info)
-         if (!is.null(type)) private$info$type = calcType(type)
+#         if (!is.null(type)) private$info$type = calcType(type)
          if (length(data) > 0) {
              lapply(1:length(data), function(idx) prepareData(idx))
              if (!is.null(ui)) private$info$ui = ui
              buttons = getSVGGroup()
              if (!is.null(buttons))       self$plot = plotly::config(plot, modeBarButtonsToAdd = buttons)
              if (!is.null(private$title))
-                 self$plot = plotly::layout(plot, autosize = TRUE, title = private$title)
+                 self$plot = plotly::layout(plot, autosize = TRUE, title = info$title)
              private$generated = TRUE
          }
          private$generated
@@ -352,10 +356,22 @@ YATAPlotHistory = R6::R6Class("YATA.PLOT.HISTORY"
      ,id      = NULL
      ,print      = function() { message("Plotly History Object")}
      ,initialize = function(id, ...) {
-         super$initialize(id, ...)
+         args = list(...)
+         nfo = private$info
+         if (length(args) > 0) nfo = list.merge(nfo, args)
+         super$initialize(id, nfo)
       }
    )
   ,private = list(
+      info = list(
+         datavalue  = "Value"
+        ,datasource = "close"
+        ,observer   = "modebar"    # Nombre del evento
+        ,type       = "Candlestick"       # Tipo de plot
+        ,xAxis      = "timestamp"
+        ,scale      = "date"
+      )
+
   )
 )
 YATAPlotSession = R6::R6Class("YATA.PLOT.SESSION"
@@ -368,10 +384,21 @@ YATAPlotSession = R6::R6Class("YATA.PLOT.SESSION"
      ,id      = NULL
      ,print      = function() { message("Plotly Session Object")}
      ,initialize = function(id, ...) {
-         super$initialize(id, ...)
+         args = list(...)
+         nfo = private$info
+         if (length(args) > 0) nfo = list.merge(nfo, args)
+         super$initialize(id, nfo)
       }
    )
   ,private = list(
+      info = list(
+         datavalue  = "Value"
+        ,datasource = "close"
+        ,observer   = "modebar"    # Nombre del evento
+        ,type       = "Line"       # Tipo de plot
+        ,xAxis      = "timestamp"
+        ,scale      = "time"
+      )
   )
 )
 

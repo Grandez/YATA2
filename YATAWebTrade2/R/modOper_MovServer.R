@@ -142,6 +142,28 @@ moduleServer(id, function(input, output, session) {
           output$lblFee     = updLabelNumber(round(pnl$vars$fee, 0))
           output$lblGas     = updLabelNumber(pnl$vars$gas)
       }
+      updateInfo = function(data) {
+         if (input$target   > 0) {
+             data$target   = input$target
+             if (input$swTarget) data$target = data$price * (1 + (data$target / 100))
+         }
+         if (input$deadline > 0) data$deadline = input$deadline
+         if (input$stop    != 0) {
+             data$stop     = input$stop
+             if (input$swStop) {
+                 if (data$stop < 0) data$stop = data$stop * -1
+                 data$stop = data$price * (1 - (data$stop / 100))
+             }
+         }
+         if (input$limit    > 0) data$limit    = input$limit
+
+         cmt = trimws(input$comment)
+         if (nchar(cmt) > 0 || data$reason > 0) {
+             data$comment = cmt
+             data$idLog   = pnl$factory$getID()
+         }
+         data
+      }
       processCommarea = function(index) {
           # browser()
           # # 0 - Usa, 1 - Limpia
@@ -253,11 +275,9 @@ moduleServer(id, function(input, output, session) {
         # in - entra
         # out sale
         # A veces se generan dos triggers (debe ser por los renderUI)
-         pnl$vars$inEvent = !pnl$vars$inEvent
-         if (!pnl$vars$inEvent) {
-             pnl$vars$inEvent = !pnl$vars$inEvent
-             return()
-         }
+         if (pnl$vars$inEvent) return()
+         pnl$vars$inEvent = TRUE
+
          data = list(
              type    = as.integer(input$cboOper) # xlateCode(input$cboOper)
             ,amount  = input$impAmount
@@ -285,25 +305,7 @@ moduleServer(id, function(input, output, session) {
          data = validate(data)
          if (is.logical(data)) return() # Ha devuelto un error
 
-         if (input$target   > 0) {
-             data$target   = input$target
-             if (input$swTarget) data$target = data$price * (1 + (data$target / 100))
-         }
-         if (input$deadline > 0) data$deadline = input$deadline
-         if (input$stop    != 0) {
-             data$stop     = input$stop
-             if (input$swStop) {
-                 if (data$stop < 0) data$stop = data$stop * -1
-                 data$stop = data$price * (1 - (data$stop / 100))
-             }
-         }
-         if (input$limit    > 0) data$limit    = input$limit
-
-         cmt = trimws(input$comment)
-         if (nchar(cmt) > 0 || data$reason > 0) {
-             data$comment = cmt
-             data$idLog   = pnl$factory$getID()
-         }
+         data = updateInfo(data)
          id = pnl$operation(data)
          if (id > 0) {
              resetValues()
@@ -311,7 +313,8 @@ moduleServer(id, function(input, output, session) {
              # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
              # yataMsgSuccess(ns2("operMsg"), sprintf(pnl$MSG$get(msgKey), id)
              pnl$setCommarea(position=TRUE)
-          }
+         }
+         pnl$vars$inEvent = FALSE
       }, ignoreInit = TRUE)
    observeEvent(input$btnErrorSevere, {
        browser()

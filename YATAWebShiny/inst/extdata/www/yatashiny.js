@@ -34,17 +34,17 @@ class YATAShiny {
            yata = client;
        }
        Cookies.set("yata", JSON.stringify(yata), { SameSite: "Strict"});
-       Shiny.setInputValue('resize', Cookies.get());
+//       Shiny.setInputValue('resize', Cookies.get());
 
    }
    cookies_send() {
       let res = Cookies.get("yata");
-      Shiny.setInputValue('cookies', res);
+      //Shiny.setInputValue('cookies', res);
    }
    cookies_recv(data) {
        alert("Receive cookie")
       let res = Cookies.get();
-      Shiny.setInputValue('cookies', res);
+      //Shiny.setInputValue('cookies', res);
    }
    cookies_set(msg) {
        alert(msg);
@@ -55,12 +55,11 @@ class YATAShiny {
    window_resize(evt) {
       Cookies.set('window_width',  window.innerWidth,  { SameSite: "Strict"});
       Cookies.set('window_height', window.innerHeight, { SameSite: "Strict"});
-      Shiny.setInputValue('resize', Cookies.get());
+//      Shiny.setInputValue('resize', Cookies.get());
 
    }
    set_page(data) {
        /* Called from shinyjs, data is an array */
-//       alert("SET PAGE " + data[0]);
        if (this.#page !== undefined && this.#page.header !== undefined) {
            jQuery(this.#page.header).toggleClass('yata_header_hide');
        }
@@ -77,7 +76,6 @@ class YATAShiny {
        // Inserta la pagina en el map de paginas
        // Busca los id -left y -right para marcarlos y moverlos
        const name = data[0];
-//       alert("ADD PAGE " + name);
        const res = this.#panels.get(name);
        if (res !== undefined) return;
 

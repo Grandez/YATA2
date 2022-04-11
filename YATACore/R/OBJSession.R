@@ -57,11 +57,12 @@ OBJSession = R6::R6Class("OBJ.SESSION"
        ,getLatest = function(rank=0, currencies = NULL) {
            if (.invalidCache()) .loadCache()
            df = dfLast
-           if (!is.null(currencies)) {
+           if (rank > 0) df = df[df$rank <= rank,]
+           if (is.null(currencies)) return (df)
+           if (is.numeric(currencies))
                df = df[df$id %in% currencies,]
-           } else {
-               if (rank > 0) df = df[df$rank <= rank,]
-           }
+           else
+               df = df[df$symbol %in% currencies,]
            df
        }
        ,removeData = function (until) {

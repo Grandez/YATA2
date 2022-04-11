@@ -3,7 +3,7 @@
 # Y los combos que estan asociados a grupos de codigos
 # Es una parte de YATAWebEnv
 # Utiliza las tablas de manera directa
-YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
+YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
   ,portable   = FALSE
   ,cloneable  = FALSE
   ,lock_class = TRUE
@@ -18,11 +18,11 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          private$objMsgs       = factory$MSG
          refresh()
      }
-    ,refresh = function() {
+     ,refresh = function() {
          private$cache$cameras  = NULL
          private$cache$position = private$tblPosition$table()
      }
-    ,cameras = function( all=FALSE, inactive=FALSE, exclude=NULL,balance=FALSE, available=FALSE) {
+     ,cameras = function( all=FALSE, inactive=FALSE, exclude=NULL,balance=FALSE, available=FALSE) {
          if (is.null(cache$cameras)) loadCameras()
          df = cache$cameras
          if (!inactive) df = df[df$active != 0,]
@@ -35,7 +35,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          data = makeCombo(df, id="camera", name="desc")
          checkAll(all, data)
      }
-    ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge=TRUE, invert=FALSE) {
+     ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge=TRUE, invert=FALSE) {
          if (is.null(cache$currencies)) loadCurrencies()
          df = cache$currencies
          if (!all) df = df[df$id > 0,]
@@ -45,7 +45,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          data = makeCombo(df, id=key, invert=invert)
          checkAll(all, data)
      }
-    ,getCurrenciesKey = function(id=TRUE, currencies) {
+     ,getCurrenciesKey = function(id=TRUE, currencies) {
          if (is.null(cache$currencies)) loadCurrencies()
          if (id) {
              df = cache$currencies[cache$currencies$id %in% currencies,]
@@ -78,18 +78,6 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
      ,periods = function() {
          df = objMsgs$getBlock(factory$CODES$labels$periods)
          makeCombo(df)
-     }
-     ,loadReasons = function() {
-         data = objParms$getBlock(50, 2)
-         data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)
-         txts = objMsgs$getBlock(factory$CODES$labels$reasons)
-         dft = as.data.frame(unlist(txts))
-         dft$id = row.names(dft)
-         colnames(dft) = c("msg", "label")
-         df = dplyr::left_join(data,dft,by="label")
-         df = df[,c("block", "key","msg")]
-         colnames(df) = c("block", "id", "name")
-         private$cache$reasons = df
      }
   )
   ,private = list(
@@ -128,7 +116,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
          private$cache$reasons = df
      }
 
-    ,makeCombo = function(df, id="id",name="name", invert=FALSE) {
+     ,makeCombo = function(df, id="id",name="name", invert=FALSE) {
         if (invert) {
             data = as.list(df[,name])
             names(data) = as.character(df[,id])
@@ -138,7 +126,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
         }
         data
     }
-   ,checkAll = function(all, data) {
+     ,checkAll = function(all, data) {
        if (!all || length(data) == 0) return (data)
 
        checkNumber = suppressWarnings(as.integer(data[[1]]))
@@ -146,7 +134,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.ENV"
        names(lstAll) = objMsgs$get("WORD.ALL")
        list.merge(lstAll, data)
    }
-   ,filterCurrencies = function (df, set) {
+     ,filterCurrencies = function (df, set) {
        values = set
        if (is.list(set)) values = unlist(set)
        if (is.integer(values[1])) return (df[df$id %in% values,])

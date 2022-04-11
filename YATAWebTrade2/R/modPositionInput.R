@@ -12,7 +12,7 @@ modPosInput = function(id, title) {
    pairs        = c("Pos", "Session", "Top", "Best", "Trend", "Fav", "Full")
    names(pairs) = c( WORD$POS,   WORD$SESS, WORD$TOP, WORD$BEST
                     ,WORD$TREND, WORD$FAV,  paste(WORD$POS, WORD$FULL))
-   vals = c("plotPos", "plotSession", "blkBest", "blkPos")
+   vals = c("plotBest", "plotTrend", "blkBest", "blkPos")
    wdgLayout = WDGLayout$new(ns, layout=c(2,2), pairs=pairs, values=vals)
 
    mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", guiCheck(ns("chkMonitors"))))

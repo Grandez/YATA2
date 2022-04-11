@@ -16,8 +16,7 @@ TBLSession = R6::R6Class("TBL.SESSION"
               where = "WHERE A.ID = B.ID AND A.LAST = B.LAST"
               query = paste(qry, ",", subquery, where)
               df = queryRaw(query)
-              df = df[,1:(ncol(df) - 2)]
-              setColNames(df)
+              df[,1:(ncol(df) - 2)]
           }
      )
      ,private = list (

@@ -2,37 +2,37 @@ modOperPosServer = function(id, full, pnlParent, parent) {
    ns = NS(id)
    ns2 = NS(full)
    PNLPosOper = R6::R6Class("PNL.POS.OPER"
-        ,inherit    = YATAPanel
-        ,cloneable  = FALSE
-        ,lock_class = TRUE
-        ,public = list(
-            session    = NULL
-           ,operations = NULL
-           ,cameras    = NULL
-           ,plot       = NULL
-           ,nextAction = NULL
-           ,action     = NULL
-           ,info = list(
-                observer = "modebar"
-               ,id   = "plotOpen"
-               ,ui   = "plotOpen"
-               ,plot = "plotOpen"
-               ,src  = "price"
-               ,ype = "Linear"
-           )
-           ,valid = FALSE
-           ,initialize     = function(id, pnlParent, session) {
-               super$initialize(id, pnlParent, session)
-               self$operations = self$factory$getObject("Operation")
-               self$session    = self$factory$getObject(self$codes$object$session)
-               self$cameras    = self$factory$getObject(self$codes$object$cameras)
-               self$loadData()
-               self$plot = YATAPlot$new("plotPos", type="Line", scale="date")
-               self$vars$layout = c("plotOpen", "data")
-               self$data$dfHist = list()
+     ,inherit    = YATAPanel
+     ,cloneable  = FALSE
+     ,lock_class = TRUE
+     ,public = list(
+         session    = NULL
+        ,operations = NULL
+        ,cameras    = NULL
+        ,plot       = NULL
+        ,nextAction = NULL
+        ,action     = NULL
+        ,info = list(
+            observer = "modebar"
+           ,id   = "plotOpen"
+           ,ui   = "plotOpen"
+           ,plot = "plotOpen"
+           ,src  = "price"
+           ,type = "Linear"
+         )
+        ,valid = FALSE
+        ,initialize = function(id, pnlParent, session) {
+            super$initialize(id, pnlParent, session)
+            self$operations = self$factory$getObject("Operation")
+            self$session    = self$factory$getObject(self$codes$object$session)
+            self$cameras    = self$factory$getObject(self$codes$object$cameras)
+#           self$loadData()
+#           self$plot = YATAPlot$new("plotPos", type="Line", scale="date")
+            self$vars$layout = c("plotOpen", "data")
+            self$data$dfHist = list()
 #               private$applyCookies(session)
-           }
-        ,loadData = function() {
+         }
+        ,loadData   = function() {
             self$data$lstHist    = list()
             self$data$dfOpen     = self$operations$getOpen()
             self$data$dfPending  = self$operations$getPending()
@@ -67,54 +67,35 @@ modOperPosServer = function(id, full, pnlParent, parent) {
         ,getOpenCurrency = function() { self$data$dfOpen[,c("counter", "tms")] }
         ,prepareOpen = function () {
             df = self$data$dfOpen
-            df = df[,c("camera", "counter", "amount", "price", "target", "stop", "deadline")]
-            colnames(df) = c("camera", "currency", "amount", "price", "target", "stop", "deadline")
-            df$value = df$price * df$amount
+            df = df[,c("camera", "counter", "amount", "price", "value", "target", "stop", "deadline")]
+            last = self$session$getLatest(currencies=df$counter)
+            last = last[,c("symbol", "price")]
+            colnames(last) = c("counter", "last")
+            df = left_join(df, last, by="counter")
 
-            last = self$session$getLast()
+            var = (df$last / df$price) - 1
+            idx = which(var < 0)
+            var[idx] = (1 + var[idx]) * -1
 
-            if (is.null(last)) {
-                df = add_column(df, act   = 0, .after = "price")
-                df = add_column(df, var   = 0, .after = "act")
-            } else {
-                dfl = last[,c("symbol", "price")]
-                colnames(dfl) = c("currency", "act")
-                df = left_join(df, dfl, by="currency")
-                df$var = (df$act / df$price) - 1
-                df = df[,c("camera", "currency","amount","price", "act", "var", "target", "stop", "deadline")]
-            }
+            df$var = var
+
+            colnames(df)[2] = "currency"
 
             today = Sys.Date()
             df$deadline = today + df$deadline
             df[df$deadline == today, "deadline"] = NA
 
-            labels     = WEB$getCTCLabels(unique(df$currency), type="full")
+            labels     = WEB$combo$currencies(id=FALSE, set=unique(df$counter), invert=TRUE)
             df$currency = labels[df$currency]
-            cameras = WEB$getCameraNames(unique(df$camera))
-            df$camera = cameras[df$camera]
-      # df$cost = df$price
-      #
-      # for (idx in 1:nrow(df)) {
-      #      cc = df[idx, "counter"]
-      #      if (!is.null(last[[cc]])) df[idx, "price"] = last[[cc]]$price
-      # }
-      # df$delta = (df$price / df$cost) - 1
-      # df$balance = df$delta * df$cost * df$amount
-      # df = df[,c("camera", "counter", "amount", "cost", "price", "delta", "value", "balance")]
-            self$data$tblOpen = df
 
-             # btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
-             #          ,yuiTblButton(full, table, "View", yuiBtnIconView())
-             # )
-            tblDef = list()
-              tblDef$info=list( event=ns2("tableOpen"), target="Open"
-#                               , types=list(prc = c("Hour", "Day", "Week", "Month"))
-                               ,buttons = list(btnClose=yuiBtnIconCash(), btnView=yuiBtnIconView())
-                              )
-              tblDef$df = df
-
-            tblDef
-        }
+   info = list( event=ns2("tableOpen"), target="Open"
+               ,types=list(pvl = c("var"), imp=c("price", "value", "target","stop", "last"))
+               ,buttons = list( Button_close=yuiBtnIconCash(WEB$MSG$get("WORD.CLOSE_POS"))
+                              ,Button_view=yuiBtnIconView(WEB$MSG$get("WORD.VIEW"))
+                          )
+             )
+   list(df = df, cols=NULL, info=info)
+   }
         ,prepareNotOpen = function (df) {
             df = df[,c("camera", "counter", "amount", "price")]
             colnames(df) = c("camera", "currency", "amount", "price")
@@ -140,13 +121,11 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
           pnl = WEB$addPanel(PNLPosOper$new(full, pnlParent, session))
       }
-
-       flags = reactiveValues(
+      flags = reactiveValues(
             opClose   = FALSE
            ,opView    = FALSE
            ,best      = FALSE
            ,history   = 15
-           ,refresh   = FALSE
            ,update    = FALSE
            ,plotsBest = FALSE
            ,plotPos   = FALSE
@@ -155,8 +134,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            # ,tblTop    = getReactableState("tblTop", "selected")
            # ,tblFav   = getReactableState("tblFav", "selected")
            #
-       )
-
+    )
        updateLeftSide = function() {
           updCombo("cboUp",   selected = pnl$vars$layout[1])
           updCombo("cboDown", selected = pnl$vars$layout[2])
@@ -165,8 +143,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       refresh = function(reload) {
           pnl$loadData()
           pnl$nextAction = NULL
-          YATAFormClose()
-          loadHistory()
+#          YATAFormClose()
+#          loadHistory()
           renderData()
       }
       renderPlot = function(df, symbol) {
@@ -241,17 +219,14 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       renderOpen = function(table) {
 
          if (nrow(pnl$data$dfOpen) == 0) return()
+          #JGG Pending
           makejs = function(table) {
              stmt = paste0( "function(rowInfo, colInfo) { "
                            ,"yataTableclick('", ns2(table), "', rowInfo, colInfo)}" )
              JS(stmt)
           }
           data = pnl$prepareOpen()
-
-             table = "open"
-             btns = c( yuiTblButton(full, table, "Close", yuiBtnIconCash())
-                      ,yuiTblButton(full, table, "View", yuiBtnIconView())
-             )
+          output$tblOpen = updTable(data)
 #             dfb = yataDTButtons(df, btns)
 
              # opts = list(sortable=FALSE
@@ -278,7 +253,7 @@ modOperPosServer = function(id, full, pnlParent, parent) {
 
 #             output$tblOpen = renderReactable(reactable(df2, columns=cols, onClick=makejs("btnTableOpen")
 
-             output$tblOpen = updTable(data)
+#             output$tblOpen = updTable(data)
                  # , onClick=JS("function(rowInfo, colInfo) {
                  #                  window.alert('Details for row ' + rowInfo.index + ':\\n'
                  #                 + JSON.stringify(rowInfo.row, null, 2))
@@ -323,21 +298,15 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          .show(nrow(pnl$data$dfPending)  == 0 && nrow(pnl$data$dfAccepted) == 0, "divPend")
      }
      renderData = function() {
-        # renderOpen()
-        # showBoxes()
-        # renderPending()
-        # renderAccepted()
+        renderOpen()
+        showBoxes()
+        renderPending()
+        renderAccepted()
      }
      loadHistory = function() {
          df = pnl$getOpenCurrency()
         if (nrow(df) > 0) lapply(1:nrow(df), function(x) getHistorical(df[x,1], df[x,2]))
      }
-      if (!pnl$loaded) updateLeftSide()
-      if (!pnl$loaded || !pnl$parent$valid) {
-          refresh(TRUE)
-          pnl$loaded = TRUE
-          pnl$parent$valid = TRUE
-      }
 
       formChangeInit = function() {
          title = ""
@@ -464,6 +433,22 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       observeEvent(input$cboDown, {
          session$sendCustomMessage('yataShowBlock',list(ns=full,row=2,col=0,block=input$cboDown))
       }, ignoreNULL = TRUE)
+
+      if (!pnl$loaded || pnl$getCommarea(item="position")) {
+          if (!pnl$loaded) {
+              updateLeftSide()
+          }
+          if (pnl$loaded) {  # position changed
+              changes = pnl$getCommareaBlock(item="position_changed")
+              changes = changes$oper_pos
+              if (is.null(changes) || changes == FALSE ) {
+                  # cargar datos
+                  pnl$setCommareaBlock(block="position_changed", oper_pos=TRUE)
+              }
+          }
+          refresh()
+          pnl$loaded = TRUE
+      }
 
   })
 }

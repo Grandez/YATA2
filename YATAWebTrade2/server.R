@@ -33,8 +33,9 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,updateData  = function (init = FALSE) {
           df = self$position$getGlobalPosition()
-          ids = WEB$getCTCID(df$currency)
-          if (!is.null(ids)) {
+          ids = WEB$combo$getCurrenciesKey(id=FALSE, df$currency)
+          if (length(ids) > 0) {
+              browser()
               self$data$dfPosGlobal = dplyr::inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")
           }
           invisible(self)
@@ -68,18 +69,42 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
           val = private$commarea[[item]]
           if (is.null(val)) val = default
           val
-       }
-      ,setCommarea       = function(...) {
+      }
+      ,setCommarea      = function(..., block=NULL) {
+          data = list()
           items = list(...)
           if (is.list(items[[1]])) {
-              private$commarea = items[[1]]
+              data = items[[1]]
           } else {
-             for (idx in 1:length(items)) {
-                  private$commarea[[names(items)[idx]]] = items[[idx]]
-             }
+             for (idx in 1:length(items)) data[[names(items)[idx]]] = items[[idx]]
+          }
+          if (is.null(block)) {
+              private$commarea = list.merge(private$commarea, data)
+          } else {
+              private$commarea[[block]] = list.merge(private$commarea[[block]], data)
           }
           invisible(self)
       }
+      ,getCommareaBlock       = function(block, item=NULL, default=NULL)     {
+          if (is.null(item)) return (private$commarea[[block]])
+          val = private$commarea[[item]]
+          if (is.null(val)) val = default
+          val
+      }
+      ,setCommareaBlock      = function(block, ...) {
+          items = list(...)
+          if (is.list(items[[1]])) items = items[[1]]
+          if (is.null(block)) {
+              private$commarea = list.merge(private$commarea, items)
+          } else {
+              if (is.null(private$commarea[[block]]))
+                  private$commarea[[block]] = items
+              else
+                  private$commarea[[block]] = list.merge(private$commarea[[block]], items)
+          }
+          invisible(self)
+      }
+
       ,getDFSession      = function() { self$data$dfSession   }
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() {
@@ -108,7 +133,6 @@ function(input, output, session) {
 
    observeEvent(input$cookies, {
        WEB$loadCookies(input$cookies)
-       browser()
 #       WEB$setWindow(input$cookies)
    })
    observeEvent(input$resize, {

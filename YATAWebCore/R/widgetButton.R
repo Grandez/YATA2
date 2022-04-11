@@ -21,10 +21,17 @@ updBtn          = function(id, session=getDefaultReactiveDomain(), ...) {
 }
 .btnIcon = function(id, color, ico, title) {
    sty = paste("simple; background-color:", color, ";")
-   yuiActionBtn( id=id, title=title, style = "simple", color=color
+   yuiActionBtn( id=id, title=title, style = sty # "simple", color=color
+                ,class="yata_btn_icsty # on"
+                ,icon = icon(ico, class="yata_btn_icon"))
+}
+.btnIconWhite = function(id, color, ico, title) {
+   sty = paste("simple; background-color:", color, ";color: snow;")
+   yuiActionBtn( id=id, title=title, style = sty #, color=color
                 ,class="yata_btn_icon"
                 ,icon = icon(ico, class="yata_btn_icon"))
 }
+
 yuiBtnIconAlert    = function(title,id=NULL) {.btnIcon(id, "yellow"      , "bell"               ,ifelse(missing(title), "Alert"      ,title)) }
 yuiBtnIconCancel   = function(title,id=NULL) {.btnIcon(id, "red"         , "times"              ,ifelse(missing(title), "Cancel"     ,title)) }
 yuiBtnIconOK       = function(title,id=NULL) {.btnIcon(id, "green"       , "check"              ,ifelse(missing(title), "Accept"     ,title)) }
@@ -32,8 +39,8 @@ yuiBtnIconDel      = function(title,id=NULL) {.btnIcon(id, "orange"      , "tras
 yuiBtnIconRefuse   = function(title,id=NULL) {.btnIcon(id, "navy"        , "thumbs-down"        ,ifelse(missing(title), "Refuse"     ,title)) }
 yuiBtnIconCloud    = function(title,id=NULL) {.btnIcon(id, "aqua"        , "cloud-upload-alt"   ,ifelse(missing(title), "Cloud"      ,title)) }
 yuiBtnIconEdit     = function(title,id=NULL) {.btnIcon(id, "darkgreen"   , "pen"                ,ifelse(missing(title), "Edit"       ,title)) }
-yuiBtnIconCash     = function(title,id=NULL) {.btnIcon(id, "violet"      , "wallet"             ,ifelse(missing(title), "Close"      ,title)) }
-yuiBtnIconView     = function(title,id=NULL) {.btnIcon(id, "mediumblue"  , "search-dollar"      ,ifelse(missing(title), "View"       ,title)) }
+yuiBtnIconCash     = function(title,id=NULL) {.btnIconWhite(id, "darkgreen"   , "wallet"             ,ifelse(missing(title), "Close"      ,title)) }
+yuiBtnIconView     = function(title,id=NULL) {.btnIconWhite(id, "mediumblue"  , "search-dollar"      ,ifelse(missing(title), "View"       ,title)) }
 yuiBtnIconActive   = function(title,id=NULL) {.btnIcon(id, "limegreen"   , "plus-circle"        ,ifelse(missing(title), "Activate"   ,title)) }
 yuiBtnIconInactive = function(title,id=NULL) {.btnIcon(id, "maroon"      , "minus-circle"       ,ifelse(missing(title), "Deactivate" ,title)) }
 yuiBtnIconBuy      = function(title,id=NULL) {.btnIcon(id, "green"       , "shopping-cart"      ,ifelse(missing(title), "Buy"        ,title)) }
@@ -82,10 +89,10 @@ yuiActionBtn = function (id=NULL, title=NULL, icon = NULL, style = "unite", clas
 {
     label = NULL
     #JGG value <- shiny::restoreInput(id = inputId, default = NULL)
-    style <- match.arg(arg = style, choices = c("simple",
-        "bordered", "minimal", "stretch", "jelly",
-        "gradient", "fill", "material-circle",
-        "material-flat", "pill", "float", "unite"))
+    # style <- match.arg(arg = style, choices = c("simple",
+    #     "bordered", "minimal", "stretch", "jelly",
+    #     "gradient", "fill", "material-circle",
+    #     "material-flat", "pill", "float", "unite"))
     size <- match.arg(arg = size, choices = c("xs", "sm", "md", "lg"))
     tagBttn <- tags$button( id=id, type = "button"
                            ,title=title
