@@ -70,6 +70,9 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.NEG.G
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.NO.AVAILABLE"      ,"XX", "XX"     , "No hay suficiente disponible"              );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.NO.DATA"           ,"XX", "XX"     , "Faltan datos"                              );
 
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.MODEL.SCOPE"       ,"XX", "XX"     , "El modelo '%s' requiere un scope"          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.MODEL.FACTORY"     ,"XX", "XX"     , "El modelo '%s' requiere una factoria de objetos" );
+
 -- -------------------------------------------------------------------------------------------------------
 -- Titulos de ventanas, cajas, titulos en si
 -- -------------------------------------------------------------------------------------------------------

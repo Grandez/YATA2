@@ -1,10 +1,10 @@
 guiTitle = function(level, txt, ...) {
   data = sprintf(txt, ...)
-  eval(parse(text=paste0("h", level, "(class='yata_title_", level, "', '", data, "')")))
+  eval(parse(text=paste0("h", level, "(class='jgg_title_", level, "', '", data, "')")))
 }
 
 guiRow = function(...) {
-  tags$div(class="row yata_fluid_row", ...)
+  tags$div(class="row jgg_fluid_row", ...)
 }
 guiColumn = function(width, ...) {
     if (!is.numeric(width) || (width < 1) || (width > 12)) stop("column width must be between 1 and 12")
@@ -53,7 +53,7 @@ guiNumericInput = function(id, label=NULL, value=0, step, min, max) {
   mn = NA ; if (!missing(min))  mn=min
   ma = NA ; if (!missing(max))  ma=max
   widget = shiny::numericInput(id, label = label, value = value, mn, ma,st, width="auto")
-  widget[[3]][[2]]$attribs$class = "form-control yata_number"
+  widget[[3]][[2]]$attribs$class = "form-control jgg_number"
   widget
 }
 updNumericInput = function(id, value, session=getDefaultReactiveDomain()) {
@@ -96,11 +96,11 @@ updTextArea = function(id, text, label=NULL, session=getDefaultReactiveDomain())
   updateTextAreaInput(session, id, label=label, value=text)
 }
 
-# Cambiamos selectInput para añadir la clase yata_layout
+# Cambiamos selectInput para añadir la clase jgg_layout
 guiLayoutSelect = function (inputId, choices, selected = NULL, full=TRUE) {
    cls = "form-control"
-   if (full) cls = paste(cls, "yata_layout")
-   else      cls = paste(cls, "yata_layout_notify")
+   if (full) cls = paste(cls, "jgg_layout")
+   else      cls = paste(cls, "jgg_layout_notify")
 
    selected = restoreInput(id = inputId, default = selected)
    choices = shiny:::choicesWithNames(choices)

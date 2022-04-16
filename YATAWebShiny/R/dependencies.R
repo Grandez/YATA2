@@ -1,3 +1,8 @@
+yata_dashboard_deps = function(tag, md, options = NULL) {
+    dashboardDeps = list()
+  shiny::tagList(tag, dashboardDeps)
+}
+
 # Add an html dependency, without overwriting existing ones
 appendDependencies <- function(x, value) {
   if (inherits(value, "html_dependency"))

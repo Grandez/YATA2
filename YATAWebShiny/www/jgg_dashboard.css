@@ -1,0 +1,9 @@
+/*********************************/
+/* Sobreescribe SHINYDASHBOARD   */
+/*********************************/
+.box-body {
+  padding: 0;
+}
+.box-header {
+    padding: 0.25em;
+}

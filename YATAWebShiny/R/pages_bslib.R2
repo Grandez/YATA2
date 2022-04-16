@@ -1,3 +1,10 @@
+"%||%" = function(x,y) {
+    if (is.null(x))
+        y
+    else
+        x
+}
+
 bslib_page_navbar <- function(..., title = NULL, id = NULL, selected = NULL,
                         position = c("static-top", "fixed-top", "fixed-bottom"),
                         header = NULL, footer = NULL,
@@ -229,7 +236,7 @@ bslib_p_randomInt <- function(...) {
 # by bslib_buildTabset.
 bslib_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
                          divTag = NULL, textFilter = NULL) {
-browser()
+
   divTag <- divTag %||% tabs[[index]]
 
   # Handles navlistPanel() headers and dropdown dividers

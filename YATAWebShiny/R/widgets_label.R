@@ -1,11 +1,11 @@
 guiLabelNumber = function(id, label=NULL, inline=TRUE) {
-  textOutput(id) %>% tagAppendAttributes(class = 'yata_number')
+  textOutput(id) %>% tagAppendAttributes(class = 'jgg_number')
 }
 guiLabelText = function(id, label=NULL, value="") {
   textOutput(outputId=id, inline=TRUE)
 }
 guiLabelBold = function(id, class) {
-  cls = "yata_txt_bold"
+  cls = "jgg_txt_bold"
   if (!missing(class)) cls = class
   tags$span(class=cls, textOutput(outputId=id, inline=TRUE))
 }
@@ -13,10 +13,10 @@ updLabelText = function(txt) {
   renderText({ txt })
 }
 guiLabelNumber = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yata_text_right")
+  htmlOutput(outputId=id, inline=TRUE, class="jgg_text_right")
 }
 guiLabelNumeric = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yata_text_right")
+  htmlOutput(outputId=id, inline=TRUE, class="jgg_text_right")
 }
 updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
   text = format(value, big.mark = ".", decimal.mark=",")
@@ -24,14 +24,14 @@ updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
   .updLabelNumber(value, text, bold, color)
 }
 guiLabelInteger = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yata_text_right")
+  htmlOutput(outputId=id, inline=TRUE, class="jgg_text_right")
 }
 updLabelInteger   = function(value, bold=TRUE, color=FALSE) {
   text = format(round(value), big.mark = ".", decimal.mark=",")
   .updLabelNumber(value, text, bold, color)
 }
 guiLabelPercentage = function(id, label=NULL, inline=TRUE) {
-  htmlOutput(outputId=id, inline=TRUE, class="yata_text_right")
+  htmlOutput(outputId=id, inline=TRUE, class="jgg_text_right")
 }
 updLabelPercentage   = function(value, bold=TRUE, color=FALSE) {
   text = format(value, big.mark = ".", decimal.mark=",", nsmall=2)

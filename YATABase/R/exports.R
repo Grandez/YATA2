@@ -19,7 +19,7 @@ loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
     datafile = paste0(datafile, suffix)
 
     write.table(df, file=file(datafile,"wb"), dec=".", sep=";", quote=FALSE, eol="\n"
-                            , row.names = FALSE, col.names=FALSE)
+                            , row.names = FALSE, col.names=FALSE, na="NULL")
     suppressWarnings(closeAllConnections())
     exec = YATAExec$new()
     res = exec$import(basename(datafile), dbname, colnames(df))

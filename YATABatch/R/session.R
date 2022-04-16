@@ -60,7 +60,7 @@ updateSession = function(max = 0) {
    oldData = Sys.time() - (info$history * 60 * 60)
 
    session$removeData(oldData)
-browser()
+
    while (count < info$alive) { # Para que se pare automaticamente
       rc0 = tryCatch({
                batch$logger$batch("Retrieving tickers")

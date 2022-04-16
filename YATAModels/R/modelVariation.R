@@ -87,10 +87,9 @@ ModelVariation = R6::R6Class("YATA.MODEL.VARIATION"
                  data[[lbls[2]]] = NA
                  data[[lbls[3]]] = NA
                  data[[lbls[4]]] = NA
-
              }
-
          }
+         data = predict(data, scope)
          data
      }
      ,getHistoryData = function(from, to, date) {
@@ -100,7 +99,7 @@ ModelVariation = R6::R6Class("YATA.MODEL.VARIATION"
          df     = tblh$db$query(qry,params)
          df
      }
-     ,calculate = function(last, first, periods) {
+     ,calculate = function(last, first, periods=1) {
          last = signif(last)
          first = signif(first)
          if (last == 0 || first == 0) return (NA)
@@ -111,8 +110,34 @@ ModelVariation = R6::R6Class("YATA.MODEL.VARIATION"
      }
      ,loadData = function(df, block) {
          colnames(df) = toupper(colnames(df))
-         df[is.na(df)] = 0
          YATABase::loadTable(df, table="MODEL_VAR", dbname="YATAData", suffix=sprintf(".%03d", block))
+     }
+     ,predict = function(data,scope) {
+         len = max(scope)
+         labels = c("PRICE", "VOLUME")
+         x = 1:len
+         y = rep(NA, len)
+         z = rep(NA, len)
+         for (idx in 1:length(scope)) {
+             lbls = sprintf("%s%02d", labels, idx)
+             y[len - scope[idx]] = data[[lbls[1]]]
+             z[len - scope[idx]] = data[[lbls[2]]]
+         }
+         df = data.frame(x=x, y=y)
+         mod = lm(formula = y ~ x + I(x^2) + I(x^3), data = df)
+         data$IND_VAR = calculate(makePredict(mod, len + 1), data$PRICE00)
+
+         df = data.frame(x=x, y=Z)
+         mod = lm(formula = y ~ x + I(x^2) + I(x^3), data = df)
+         data$IND_VOL = calculate(makePredict(mod, len + 1), data$VOL00)
+         data
+     }
+     ,makePredict = function(model, point) {
+        res = 0
+        for (idx in 1:length(model$coefficients)) {
+             res = res + (input * (model$coefficients[idx] ^ (idx - 1)))
+        }
+        res
      }
    )
 )

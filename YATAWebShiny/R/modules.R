@@ -1,5 +1,6 @@
-YATAModule = function(id, title="",mod=NULL, ...) {
+JGGModule = function(id, title="",mod=NULL, ...) {
    ns = shiny::NS(id)
+
    if (is.null(mod)) {
        modName =  paste0(stringr::str_to_title(strsplit(id, "-")[[1]]), collapse="")
        data = eval(parse(text=paste0("mod", modName, "Input('", id, "')")))
@@ -10,24 +11,24 @@ YATAModule = function(id, title="",mod=NULL, ...) {
    idForm = paste0(id, "_div_form")
    idErr  = paste0(id, "_div_err")
 
-   divLeft   = tags$div(id=paste0(id, "_container_left"),   class="yata_page_left   yata_side_hide")
-   divRight  = tags$div(id=paste0(id, "_container_right"),  class="yata_page_right  yata_side_hide")
-   divHeader = tags$div(id=paste0(id, "_container_header"), class="yata_page_header yata_header_hide")
+   divLeft   = tags$div(id=paste0(id, "_container_left"),   class="jgg_page_left   jgg_side_hide")
+   divRight  = tags$div(id=paste0(id, "_container_right"),  class="jgg_page_right  jgg_side_hide")
+   divHeader = tags$div(id=paste0(id, "_container_header"), class="jgg_page_header jgg_header_hide")
 
    if (!is.null(data$left))  divLeft  = tagAppendChildren(divLeft, data$left)
    if (!is.null(data$right)) divRight = tagAppendChildren(divRight, data$right)
 
    # El collapse va a nivel contenedor para activar las clases left y principal
-   divMain    = tags$div(id=paste0(id, "_container_main"), class="yata_panel_main", data$main)
-   divContent = tags$div( id=paste0(id, "_container"), class="yata_panel_content"
+   divMain    = tags$div(id=paste0(id, "_container_main"), class="jgg_panel_main", data$main)
+   divContent = tags$div( id=paste0(id, "_container"), class="jgg_panel_content"
                          ,divLeft, divMain, divRight)
-   divForm = tags$div(id=paste0(id, "_form_panel"), class="yata_panel_form"
+   divForm = tags$div(id=paste0(id, "_form_panel"), class="jgg_panel_form"
                       ,tags$div(id=paste0( idForm, "-container")
-                                          ,class="yata_form_center"
+                                          ,class="jgg_form_center"
                                           ,uiOutput(ns("form")))
                      )
-   divErr = tags$div(id=paste0(id, "_err_panel"), class="yata_panel_err"
-                      ,tags$div(id=paste0(idErr, "_container"), class="yata_form_center", uiOutput(ns("err")))
+   divErr = tags$div(id=paste0(id, "_err_panel"), class="jgg_panel_err"
+                      ,tags$div(id=paste0(idErr, "_container"), class="jgg_form_center", uiOutput(ns("err")))
                      )
 
    tagList( left=divLeft, main=divMain, right=divRight #, header=data$header
@@ -49,21 +50,21 @@ YATASubModule = function(id, title="",mod=NULL, ...) {
     idForm = paste0(id, "_div_form")
     idErr  = paste0(id, "_div_err")
 
-    divLeft  = tags$div(id=paste0(id, "_container_left"),  class="yata_panel_left  yata_side_closed")
-    divRight = tags$div(id=paste0(id, "_container_right"), class="yata_panel_right yata_side_closed")
+    divLeft  = tags$div(id=paste0(id, "_container_left"),  class="jgg_panel_left  jgg_side_closed")
+    divRight = tags$div(id=paste0(id, "_container_right"), class="jgg_panel_right jgg_side_closed")
 
     if (!is.null(data$left))  divLeft  = tagAppendChildren(divLeft,  tags$div(id=paste0(id, "_left"),  data$left))
     if (!is.null(data$right)) divRight = tagAppendChildren(divRight, tags$div(id=paste0(id, "_right"), data$right))
 
     # El collapse va a nivel contenedor para activar las clases left y principal
-    divMain    = tags$div(id=paste0(id, "_container_main"), class="yata_panel_main", data$main)
-    divContent = tags$div( id=paste0(id, "_container"), class="yata_panel_content"
+    divMain    = tags$div(id=paste0(id, "_container_main"), class="jgg_panel_main", data$main)
+    divContent = tags$div( id=paste0(id, "_container"), class="jgg_panel_content"
                           ,divLeft, divMain, divRight)
-    divForm = tags$div(id=paste0(id, "_form_panel"), class="yata_panel_form"
-                       ,tags$div(id=paste0(idForm, "-container"), class="yata_form_center", uiOutput(ns("form")))
+    divForm = tags$div(id=paste0(id, "_form_panel"), class="jgg_panel_form"
+                       ,tags$div(id=paste0(idForm, "-container"), class="jgg_form_center", uiOutput(ns("form")))
         )
-    divErr = tags$div(id=paste0(id, "_err_panel"), class="yata_panel_err"
-                      ,tags$div(id=paste0(idErr, "-container"), class="yata_form_center", uiOutput(ns("err")))
+    divErr = tags$div(id=paste0(id, "_err_panel"), class="jgg_panel_err"
+                      ,tags$div(id=paste0(idErr, "-container"), class="jgg_form_center", uiOutput(ns("err")))
         )
     tagList( divContent # data
             ,shinyjs::hidden(divForm)
