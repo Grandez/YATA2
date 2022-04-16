@@ -6,14 +6,14 @@
 updateCurrencies = function(console=1, log=1) {
    browser()
    begin = as.numeric(Sys.time())
-   logger = YATABase::YATALogger$new("Currencies", console, log)
+   logger = YATABase::YATALogger$new("Currencies")
    logger$process(1, "Retrieving currencies from CoinMarketCap")
 
    beg   = 1
 
    codes = YATACore::YATACODES$new()
    fact  = YATACore::YATAFactory$new()
-   prov  = fact$getProviderBase()
+   prov  = fact$getDefaultProvider()
    tbl   = fact$getTable(codes$tables$currencies)
 
    logger$info(2,"Retrieving currencies from %d", beg)

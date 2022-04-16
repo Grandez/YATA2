@@ -71,6 +71,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                          ,since = since
                          ,icon = paste0(x$id, ".png")
                          ,active = as.integer(x$isActive)
+                         ,token = ifelse(is.null(x$platform), 0, 1)
                      )
                    })
              df = do.call(rbind.data.frame,as.list(lst))

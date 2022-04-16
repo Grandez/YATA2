@@ -12,7 +12,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
 #         - LO PARTIMOS EN TROZOS (EVITAR EL LIMITE DE 180)
 #         - EJECUTAMOS DE NUEVO LA DETECCION DEL RANGO EXISTENTE (EVITAR PROBLEMA DE BUFFER)
 #         - SI HAY FALLO EN EL PROCESO PASAMOS AL SIGUIENTE (EVITAR SALTOS)
-
+browser()
     process = "history"
     logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
     pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")

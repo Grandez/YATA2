@@ -1,0 +1,66 @@
+# Variations
+
+El objetivo es obtener la variación del precio y el volumen de mercado de las monedas con respecto a determinados periodos de tiempo para poder identificar ciertas tendencias.
+
+Identificar la variación de precio es lógica en si misma.
+
+Identificar la variación en los volumenes de mercado tiene su sentido como indicador de tendencia a subir o bajar.
+
+## Periodos
+
+Los periodos de tiempo a monitorizar tienen su sentido en función del enfoque de la cartera; si estamos trabajando en una cartera a corto plazo o intradia, las variaciones respecto al último mes o trimestre no son significativas mientras que si estamos con una cartera planteada en el largo plazo carece de relevancia la variación de precios durante la sesión o en las últimas 24 horas.
+
+Para mantener una coherencia dentro de las bases de datos gestionamos **cinco** puntos de control en función del tipo de cartera
+
+| Cartera|  1   | 2      |    3     |   4      |   5       |
+|--------|------|--------|----------|----------|-----------|
+| corto  | ayer | 2 dias | 3 dias   | 7 dias   | 14 dias   | 
+| medio  | ayer | 3 dias | semana   | quincena | mes       |
+| largo  | ayer | semana | quincena | mes      | trimestre |
+
+## Tolerancia a fallos y validez de datos
+
+La informacion se obtiene de las tablas historicas y de sesion, por lo que puede que no exista toda la informacion en el momento del calculo.
+
+Ademas, puede ser que las monedas registradas no esten operativas o no esten monitorizadas
+
+## tecnica
+
+Considerando el volumen de monedas, el proceso se realizara mediante cargas masivas en tabla reemplazando los datos existentes.
+
+Esto implica que a priori no podemos saber si los datos son validos o no.
+
+## Proceso
+
+1. Marcamos los datos como invalidados en el campo UPDATED, esto nos permitira identificar si hay datos pendientes de procesar y si los datos son validos
+
+2. Cogemos las monedas registradas
+3. Obtenemos la ultima cotizacion con price o volume = 0. 
+4. Cargamos estos con los datos a 0 para ignorarlos
+Eliminamos esas monedas
+5. Obtenemos los datos de session de las otras monedas
+6 Hacemos el proceso
+Cuando acabemos tendremos algunas monedas con UPDATE=NULL
+Repetimos el proceso mientras no haya ninguna con UPDATE=NULL ahora considerando solo esas
+
+
+
+How does CoinMarketCap calculate market cap?
+It's calculated by multiplying the Price by the Circulating Supply. Market Cap = Price X Circulating Supply.
+
+The volume for each market pair is calculated by taking the 24h volume reported directly from the exchange in quote units, and converting it to USD using CoinMarketCap’s existing reference prices. Let’s take LTC/BTC market as an example:
+
+Let (E) be the 24h volume of LTC/BTC reported directly from the exchange in quote units.
+Let (C) be the last known reference price of BTC from CoinMarketCap in USD.
+Let (D) be the derived volume reported on CoinMarketCap for the market.
+
+For this example, let (E) = 100 BTC and let (C) = 10,000 USD / 1 BTC.
+
+D = E * C
+D = (100 BTC * 10,000 USD / 1 BTC) = 1,000,000 USD
+
+Therefore, the derived volume for LTC/BTC on this specific market pair is $1,000,000 USD.
+
+Note: Any conversion into other fiat currencies (for example, EUR) are converted from the USD volume based on current FX rates.
+6. procesamos las que existan en los dos sitios (inner_join)
+

@@ -59,12 +59,10 @@ Warning = function(msg, action=NULL, subclass=NULL, ...) {
       msg = paste0(msg, " (", data$sqlcode, ")")
      .error(msg, subclass="SQL", ...)
 }
-HTTP = function(msg, ...) {
-     .error(msg, subclass="HTTP", ...)
-}
-EXEC = function(msg, ...) {
-     .error(msg, subclass="EXEC", ...)
-}
+HTTP  = function(msg, ...) { .error(msg, subclass="HTTP",  ...) }
+EXEC  = function(msg, ...) { .error(msg, subclass="EXEC",  ...) }
+MODEL = function(msg, ...) { .error(msg, subclass="MODEL", ...) }
+
 logical = function(msg, ...) {
      .error(msg, subclass="LOGICAL", ...)
 }

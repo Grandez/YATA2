@@ -229,7 +229,7 @@ bslib_p_randomInt <- function(...) {
 # by bslib_buildTabset.
 bslib_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
                          divTag = NULL, textFilter = NULL) {
-
+browser()
   divTag <- divTag %||% tabs[[index]]
 
   # Handles navlistPanel() headers and dropdown dividers

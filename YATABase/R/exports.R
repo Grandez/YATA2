@@ -11,3 +11,19 @@ args2list = function(...) {
 }
 map = function() { YATABaseMap$new() }
 str = function() { YATABaseStr$new() }
+loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
+    datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp/", table)
+    datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
+
+    if (is.null(suffix)) suffix = ".dat"
+    datafile = paste0(datafile, suffix)
+
+    write.table(df, file=file(datafile,"wb"), dec=".", sep=";", quote=FALSE, eol="\n"
+                            , row.names = FALSE, col.names=FALSE)
+    suppressWarnings(closeAllConnections())
+    exec = YATAExec$new()
+    res = exec$import(basename(datafile), dbname, colnames(df))
+    file.remove(datafile)
+    res
+}
+

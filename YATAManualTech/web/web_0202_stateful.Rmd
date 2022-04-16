@@ -1,0 +1,240 @@
+## Gestión de estados e información
+
+En el apartado anterior hemos una pequeña descripción del flujo de navegación de la página Web y de la problematica asociada a la falta de mantener un estado de la sesión (stateless vs Stateful).
+
+En este apartado abordaremos otras problemáticas asociadas a la navegación Web y el método para solucionarlas.
+
+### Lainformación
+Bla bla bla
+
+#### Datos persistentes
+
+El sistema esta basado en un conjunto de Bases de datos (BBDD)  que son interrogadas para presentar la información según diferentes criterios; además, mucha de esa información se utiliza de manera recurrente, posiblemente mostrada desde diferentes perspectivas; por ejemplo, mensajes de usuario, listas de monedas, proveedores, sesiones, etc.
+
+Si cada vez que necesitamos ciertos datos de la BBDD debemos abrir una conexión a la misma, recuperar los datos y cerrarla, estaremos incurriendo en uno de los procesos mas costosos del proceso: Conexiones a bases de datos, de una manera altamente repetitiva e ineficaz, consumiendo un alto nivel de recursos del sistema sin contar con la duplicidad de peticiones (que el SGDB puede gestionar adecuadamente o no, pero que no está bajo nuestro control)
+
+#### Datos externos
+
+De igual forma, cuando el acceso a datos es via Web nos enfrentamos al mismo problema, o mejor dicho a dos tipos de problemas, con algun matiz añadido
+
+El primer tema a considerar, al igual que con los SGDB, es el tiempo de conexión y desconexión; de la misma manera, este es el proceso mas costoso, pero aqui tenemos dos agravantes:
+
+1. **Tiempo de latencia**: Es decir, el tiempo hasta llegar al servidor/servidores que depende de situaciones ajenas a nuestro control: sobrecargas, disponibilidad, fallos de caché,etc.
+2. **Numero de peticiones**: En función de la actividad del usuario, del tipo de proveedor y otros factores que no son controlables, se pueden generar un número excesivo de peticiones que, en ciertos casos, pueden provocar una disminución de la calidad del servicio o incluso una Denegación de Servicio (bloqueo temporal o permamente por parte del proveedor de información)
+
+El segundo tema a considerar es el clásico concepto de "__vida útil de la información__" y el de validez de la misma:
+
+Respecto al tiempo de vida útil, consideremos los siguientes ejemplos: 
+
+1. Cotización EUR/USD el 1 de Enero del 2021 (     1,2212)
+2. Cotización BTC/USD el 1 de Enero del 2021 (29.374,15)
+3. Cotizacion BTC/USD hoy hace 15 minutos    (Depende de hoy y de ahora)
+4. Cotizacion BTC/USD ahora                  (Depende de ahora) 
+
+Es evidente que los dos primeros casos, por muchas veces que los solicitemos siempre nos van a dar la misma información (o al menos debería), mientras que los dos últimos dependen del día y la hora a la que los solicitemos. Ahora bien, supongamos que hoy es 1 de marzo del 2.022 y que la cotización BTC/USD a las 10:00 era 43.197,50 USD (Dato real de Coinmarketcap) ¿Es relevante pedir la cotización a las 10:02 (43.198,25 USD)?¿Se puede tomar esa información como valida a las 10:30 que es la hora a la que se va a registrar la operación? 
+
+Por mucha volatilidad que exista, el problema de la misma no es suficientemente relevante para ciertos intervalos de tiempo. Dicho de otro modo, si la cotización media a las 10::00 era de unos 43.200 USD, a las 10:15 es altamente improbable que sea de 45.000 o 39.000 USD.
+
+A esta situación la llamaremos: **Vida útil de la información** y nos lleva a la siguiente tipologia de la información:
+
+- Datos XXX
+- Datos XXX
+- Datos volatiles
+
+
+### Optimización y performance
+
+Abordemos ahora los problemas identificados. Recordemos primero que en una aplicación basada en menús y modular de shiny hay dos tipos de módulos de eventos:
+
+1. Gestionan las acciones asociadas a un menú
+2. Gestionan las acciones asociadas a una página
+
+Cada uno de ellos tiene unas responsabilidades y unas necesidades diferentes por lo que vamos a definir dos objetos, ahora sí, clases, diferentes:
+
+- **DataServer**
+- **DataUI**
+
+Donde DataServer es un objeto que maneja información de los módulos __servidores__ y DataUI de los módulos de interfaz de usuario.
+
+Y vamos a asociar uno de ellos a cada módulo en función de su responsabilidad. Esto nos ofrece el siguiente diagrama de clases equivalente a los diagramas de navegación.
+
+**AQUI EL DIAGRAMA**
+
+En este punto debeos recordar que las clases R6 (Objetos en el sentido mas o menos clásico) a diferencia del resto de objetos R **no se copian cuando se modifican ni cuando se asignan** si no que son modificados __in place__ y asignados por referencia.
+
+Como se puede observar, cada página implementa su propio objeto heredado de DataUI y cada servidor el suyo heredado de DataServer, con lo que cada módulo tiene asociado un objeto especializado asociado a sus caracteristicas concretas, mas especificamente, los objetos de tipo DataUI mantienen, entre otras cosas, el estado de la pagina implementando un flag indicando si es la primera vez o no, de manera que si hay datos validos cargados no es necesario volver a recuperarlos (manteniendo un metodo de recuperación a petición)
+
+#### Singletons 1
+
+Ahora bien, como se ha indicado, cada vez que se activa una página se ejecuta todo el código incluido en el módulo servidor, con lo que podemos caer en el problema de crear un objeto Dataxxx cada vez que se ejecuta el código de servidor con lo que cada vez sería "una primera vez"
+
+Para evitar esto tenemos que chequear si es la primera vez o no, o dicho de otro modo, chequear si existe el objeto Dataxxx asociado y en ese caso recuperarlo.
+
+Siguiendo el ciclo de vida de una aplicación Shiny sabemos que el primer módulo que se ejecuta, y logicamente una única vez, es el server de la pagina de inicio; dado que este módulo, como hemos indicado, tiene asociado un objeto DataServer, tambien tenemos la certeza de que solo puede existir una instancia del mismo, luego es un singleton y es el lugar indicado para almacenar los objetos creados en otras páginas.
+
+Por otro lado, este objeto debe ser visible para toda la aplicación Web, para ello solo tenemos que codificar como primera linea del módulo servidor principal lo siguiente (asumiendo que la variable la llamamos WEB y al objeto APPWEB)
+
+```{r eval=FALSE, echo=TRUE}
+if (!exists("WEB")) assign("WEB", APPWEB$new(session), envir = .GlobalEnv)
+```
+
+Y en cada modulo lo siguiente:
+
+```{r eval=FALSE, echo=T}
+pnl = WEB$getObject(panel_def, id, session, ...)
+```
+
+
+`getObject` Definido en DataServer, se encarga de crear y almacenar la instancia del objeto asociado o devolver la existente de manera que se garantiza que solo existe una instancia de ese objeto.
+
+### Paginas con estado
+
+Una vez registrado el objeto asociado a cada página mantener su estado y conocer si es la primera vez que se ejecuta o no consiste en simplemente en invocar el método `pnl$loaded()` que indica si es la primera vez o no (La situación en que los datos ya cargados no son validos: "Coherencia de datos" está contemplada en el método y se explicará mas adelante) y actuar en consecuencia.
+
+La información que se debe mantener en cada objeto es dependiente del diseño de la página.
+
+### Coherencia de datos
+
+Como hemos indicado anteriormente, este es el caso en el que ciertos cambios realizados en una página afectan a la información mostrada en otra.
+
+Dicho de otra forma, necesitamos un procedimiento mediante el cual una acción cualquiera ocurrida en una página deba ser notificada u observada por otras páginas en un ecosistema en el que cada página vive "aislada" de las otras.
+
+Esta casuística se asemeja a los sistemas clásicos de broadcasting o publish/subscribe. Una entidad "notifica al mundo un cambio" y otras entidades interesadas en esos cambios lo reciben y actuan en consecuencia, de tal forma que el emisor no sabe quien ni cuando recibira la notificación.
+
+Retomando el caso de uso anterior:
+XXXXXX
+Supongamos 
+
+Proceso:
+
+1. En tiempo de diseño/desarrollo cada página conoce que eventos le pueden afectar así que su objeto se suscribe a ellos, estos eventos están predefinidos puesto que conocemos cuales pueden ser.
+2. Cuando un emisor se activa, notifica que no hay cambios, si hay cosas pendientes ya están registradas
+2. Si el emisor registra un cambio, lo notifica
+3. El server activa todos los suscriptores
+3. Cuando un receptor ejecuta `pnl$load()` el servidor verifica que
+   3.1 No este pendiente de procesar
+   3.2 No haya cambiado el estado
+4. El receptor ejecuta `pnl$loaded()`
+
+Una vez registrado el objeto asociado a cada página mantener su estado y conocer si es la primera vez que se ejecuta o no consiste en simplemente en invocar el método `pnl$loaded()` que indica si es la primera vez o no (La situación en que los datos ya cargados no son validos: "Coherencia de datos" está contemplada en el método y se explicará mas adelante) y actuar en consecuencia.
+
+##### Codigo
+
+El proceso descrito se implementa de la siguiente manera
+
+**WEB**
+
+Implementa los metodos:
+```{r, echo=FALSE}
+methods = c("subscribe (id, subscriptions)", "notify (change)", "unnotify (change)", "notified (id)")
+desc   =  c( "Suscribe la pagina id a la lista de suscripciones"
+            ,"Notifica que se producido el evento 'change'"
+            ,"Anula el evento 'change'.<br>Se genera automaticamente al activarse la pagina"
+            ,"Notifica que la pagina indicada en 'id' ha sido informada"
+           )
+table_declarations(list(methods, desc))
+```
+
+**DataUI**
+
+Define el atributo **events** como 
+```{r, eval=F, echo=T}
+events = list(
+   listen = c(...)  # Eventos que escucha
+   events = c(...)  # eventos que genera
+)
+```
+
+donde los eventos que escucha y genera son indicados en tiempo de desarrollo
+y los metodos:
+
+`valid()`   Que indica si tenemos información cargada y si es valida
+`invalid()` Que indica si no tenemos información cargada o no valida
+
+**moduleServer**
+
+La plantilla del código del servidor es:
+
+```{r, eval=FALSE, echo=TRUE}
+moduleServer(id, function(input, output, session) {
+   pnl = WEB$getPanel(id)
+   # Codigo de servidor
+   ...
+   if (!pnl$valid()) {
+      # Codigo de carga/recarga de la pagina
+      ...
+   }
+})  
+```
+
+La información que se debe mantener en cada objeto es dependiente del diseño de la página.
+
+Con el objeto de facilitar la problematica de la navegacion tomaremos como base la aplicacion _abstracta_ sencilla siguiente:
+
+Supongamos un sistema Web que se caracteriza por:
+
+1. Tiene una barra  de navegacion (Menu)
+2. Tiene dos objetos QUID como base, Query y Delete se manejan en el mismo panel
+3. Un panel tipo _dashboard__ que es, por decirlo asi, la __landing page__
+4. Un panel con submenus para cada uno de los objetos QUID
+5. Un tercer panel con submenus que muestra información agregada por diferentes ejes y permite ademas ciertas modificaciones en los datos
+
+En base a este caso de uso, el diagrama de navegación según los criterios actuales sería algo parecido a este:
+
+**AQUI EL DIAGRAMA**
+
+Ahora bien, este diagrama es incorrecto en el sentido de que no diferencia páginas de opciones de menú. Dicho de otro modo, cuando existe un menú este no representa una página sino un conjunto de páginas de las cuales solo una está activa en un instante dado.
+
+De esta forma, un diagrama mas correcto sería el siguiente, donde los rombos representan puntos de bifurcación; o dicho de otro modo, menús:
+
+**AQUI EL DIAGRAMA**
+
+Ahora ya podemos identificar claramente que, en nuestro caso, el sistema está formado por ocho páginas.
+
+Dentro de estas páginas, es posible pasar de una a otra directamente (a un __click__ de distancia) dependiendo del flujo anterior y del estado actual; en el siguiente diagrama se muestra el estado despues de XXXX:
+
+**AQUI EL DIAGRAMA**
+
+Ahora bien, como hemos indicado, los dos objetos base del sistema son de tipo QUID; es decir, se pueden dar altas, modificaciones, etc. sobre ellos y, lógicamente, cuando se produce una modificación, tanto la página de dashboard como las que muestran información agregada por diferentes ejes se vuelve obsoleta y las páginas mostrarían información incorrecta o desactualizada si no son actualizadas.
+
+A esta situación la llamaremos: **Coherencia de datos**
+
+### Navegacion Shiny
+
+Ahora veamos el sistema anterior desde el punto de vista de Shiny modularizado; es decir, cada página esta asociada a un módulo.
+
+Shiny estructura la aplicación en dos partes:
+
+1. La definición de interfaz de usuario (módulo Input)
+2. El código para manejar la interacción con el mismo (Módulo Server)
+
+En páginas sencillas existe una relación uno-a-uno entre estas partes, pero cuando lo modularizamos y en una de ellas contiene un menú el sistema varía un poco:
+
+- El concepto y funcionalidad es la misma, pero ahora cada página, entendida como hoja del árbol de navagación, tiene su interfaz y su código
+- Es necesario un módulo general que maneje el menú (y opcionalmente ciertos eventos)
+
+De este modo, por cada elemento en el diagrama, tenemos dos módulos:
+
+1. La definición de la interfaz (Input)
+2. La implementación de los eventos (Server)
+
+Con la salvedad de que el módulo Server que gestiona el componente del menú solo necesita controlar el evento "__menu clickado__"; o dicho de otro modo, no interactúa con ningún __widget__ de usuario (__a priori__)
+
+#### Ciclo de vida
+
+Analizemos ahora el ciclo de vida de una aplicación Shiny.
+
+Cuando una aplicación se inicia, utiliza dos parámetros:
+
+1. **UI*: La interfaz de usuario
+2. **Server**: el módulo de control de esa interfaz
+
+Carga y analiza toda la interfaz, registrando los __bindings__ y carga en memoria el modulo de control y ejecuta y lo ejecuta, activando los __observers__ que existan.
+
+A partir de ese momento la interfaz de usuario responde a sus eventos Javascript y el sistema solo responde a eventos controlados por el usuario; es decir, si no tenemos un __observer__ sobre el menú, al hacer click en él, la página cambiará pero no se habrá activado el módulo asociado a esa página y no se procesarán los eventos.
+
+Por otro lado, cuando se invoca a un módulo, como se ha indicado anteriormente, si no está en memoria se carga (y se queda cargado) y posteriormente se ejecuta todo el código incluido en él activando los __observers__ y con respecto a al componente de Interfaz, si este ya ha sido cargado y ejecutado, no se modifica.
+
+Esto quiere decir que no existe memoria de estado en el módulo de control. Por ejemplo; supongamos que tenemos una página que presenta un grafico de 10 puntos y una tabla asociada, la primera vez que se cargue el módulo, recupera los datos (Internet, Base da datos, fichero, etc) y los carga en la página. La segunda vez que se active vuelve a ocurrir lo mismo, independientemente de las acciones que haya realizado el usuario y con el consiguiente gasto de recursos si no se han producido cambios en los datos respecto de la primera vez, esto puede no ser relevante en pruebas de concepto o situaciones sencillas pero ¿Que pasa si en vez de 10 puntos son 10.000? ¿O 100.000?. Evidentemente recargar cada vez la misma información se convierte en un problema aparte de ser totalmente ineficaz.
+
+A esta situación la llamaremos: **Necesidad de estados de página**

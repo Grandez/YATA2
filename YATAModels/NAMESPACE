@@ -1,1 +1,7 @@
-exportPattern("^[[:alpha:]]+")
+import(parallel)
+import(doParallel)
+import(dplyr)
+import(YATABase)
+
+exportPattern("Model.*")
+

@@ -1,0 +1,1 @@
+HashMap = function() { JGGHashMap$new() }

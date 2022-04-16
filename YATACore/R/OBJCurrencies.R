@@ -60,9 +60,18 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
         }
         ,getCurrencies = function(currencies, active=TRUE) {
             if (missing(currencies)) {
-                df = tblCurrencies$table()
+                df = tblCurrencies$table(token=0)
             } else {
-               df = tblCurrencies$table(inValues=list(symbol=currencies))
+               df = tblCurrencies$table(token=0, inValues=list(symbol=currencies))
+            }
+            if (active) df = df[df$active == 1, ]
+            df
+        }
+        ,getTokens = function(currencies, active=TRUE) {
+            if (missing(currencies)) {
+                df = tblCurrencies$table(token=1)
+            } else {
+               df = tblCurrencies$table(token=1, inValues=list(symbol=currencies))
             }
             if (active) df = df[df$active == 1, ]
             df

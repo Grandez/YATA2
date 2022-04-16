@@ -1,0 +1,77 @@
+## Navegacion y sincronización de datos
+
+Con el objeto de facilitar la problematica de la navegacion tomaremos como base la aplicacion _abstracta_ sencilla siguiente:
+
+Supongamos un sistema Web que se caracteriza por:
+
+1. Tiene una barra  de navegacion (Menu)
+2. Tiene dos objetos QUID como base, Query y Delete se manejan en el mismo panel
+3. Un panel tipo _dashboard__ que es, por decirlo asi, la __landing page__
+4. Un panel con submenus para cada uno de los objetos QUID
+5. Un tercer panel con submenus que muestra información agregada por diferentes ejes y permite ademas ciertas modificaciones en los datos
+
+En base a este caso de uso, el diagrama de navegación según los criterios actuales sería algo parecido a este:
+
+**AQUI EL DIAGRAMA**
+
+Ahora bien, este diagrama es incorrecto en el sentido de que no diferencia páginas de opciones de menú. Dicho de otro modo, cuando existe un menú este no representa una página sino un conjunto de páginas de las cuales solo una está activa en un instante dado.
+
+De esta forma, un diagrama mas correcto sería el siguiente, donde los rombos representan puntos de bifurcación; o dicho de otro modo, menús:
+
+**AQUI EL DIAGRAMA**
+
+Ahora ya podemos identificar claramente que, en nuestro caso, el sistema está formado por once páginas.
+
+Dentro de estas páginas, es posible pasar de una a otra directamente (a un __click__ de distancia) dependiendo del flujo anterior y del estado actual; en el siguiente diagrama se muestra el estado despues de XXXX:
+
+**AQUI EL DIAGRAMA**
+
+Ahora bien, como hemos indicado, los dos objetos base del sistema son de tipo QUID; es decir, se pueden dar altas, modificaciones, etc. sobre ellos y, lógicamente, cuando se produce una modificación, tanto la página de dashboard como las que muestran información agregada por diferentes ejes se vuelve obsoleta y las páginas mostrarían información incorrecta o desactualizada si no son actualizadas.
+
+A esta situación la llamaremos: **Coherencia de datos**
+
+### Navegacion Shiny
+
+Ahora veamos el sistema anterior desde el punto de vista de Shiny modularizado; es decir, cada página esta asociada a un módulo.
+
+Shiny estructura la aplicación en dos partes:
+
+1. La definición de interfaz de usuario (módulo Input)
+2. El código para manejar la interacción con el mismo (Módulo Server)
+
+En páginas sencillas existe una relación uno-a-uno entre estas partes, pero cuando lo modularizamos y en una de ellas contiene un menú el sistema varía un poco:
+
+- El concepto y funcionalidad es la misma, pero ahora cada página, entendida como hoja del árbol de navagación, tiene su interfaz y su código
+- Es necesario un módulo general que maneje el menú (y opcionalmente ciertos eventos)
+
+De este modo, por cada elemento en el diagrama, tenemos dos módulos:
+
+1. La definición de la interfaz (Input)
+2. La implementación de los eventos (Server)
+
+Con la salvedad de que el módulo Server que gestiona el componente del menú solo necesita controlar el evento "__menu clickado__"; o dicho de otro modo, no interactúa con ningún __widget__ de usuario (__a priori__)
+
+#### Ciclo de vida
+
+Analizemos ahora el ciclo de vida de una aplicación Shiny.
+
+Cuando una aplicación se inicia, utiliza dos parámetros:
+
+1. **UI*: La interfaz de usuario
+2. **Server**: el módulo de control de esa interfaz
+
+Carga y analiza toda la interfaz, registrando los __bindings__ y carga en memoria el modulo de control y ejecuta y lo ejecuta, activando los __observers__ que existan.
+
+A partir de ese momento la interfaz de usuario responde a sus eventos Javascript y el sistema solo responde a eventos controlados por el usuario; es decir, si no tenemos un __observer__ sobre el menú, al hacer click en él, la página cambiará pero no se habrá activado el módulo asociado a esa página y no se procesarán los eventos.
+
+Por otro lado, cuando se invoca a un módulo, como se ha indicado anteriormente, si no está en memoria se carga (y se queda cargado) y posteriormente se ejecuta todo el código incluido en él activando los __observers__ y con respecto a al componente de Interfaz, si este ya ha sido cargado y ejecutado, no se modifica.
+
+Esto quiere decir que no existe memoria de estado en el módulo de control. Por ejemplo; supongamos que tenemos una página que presenta un grafico de 10 puntos y una tabla asociada, la primera vez que se cargue el módulo, recupera los datos (Internet, Base da datos, fichero, etc) y los carga en la página. La segunda vez que se active vuelve a ocurrir lo mismo, independientemente de las acciones que haya realizado el usuario y con el consiguiente gasto de recursos si no se han producido cambios en los datos respecto de la primera vez, esto puede no ser relevante en pruebas de concepto o situaciones sencillas pero ¿Que pasa si en vez de 10 puntos son 10.000? ¿O 100.000?. Evidentemente recargar cada vez la misma información se convierte en un problema aparte de ser totalmente ineficaz.
+
+O por poner un ejemplo de interacción de usuario (XXX Se puede poner un ejemplo XXX)
+
+En la página hay un switch que indica si los datos se ordenan ascendente o descendentemente según un criterio preestablecido. Por defecto el orden es ascendente, cuando la pagina se ha cargado la primera vez, se ha establecido el switch a suvalor por defecto y se han cargado los  datos.
+Posteriormente el usuario ha cambiado el orden a descendente y ha cambiado de página.
+Cuando vuelve a esa página, el módulo vuelve a actualizar el switch a ascendente y muestra la información en consecuencia, todo correcto pero no parece que sea "muy del gusto del usuario", o peor todavía, el switch no se actualiza en el código si no en inicialización, con lo que cuando se vuelven a cargar los datos __en modo ascendente__ el switch indica que el orden es descendente.
+
+A esta situación la llamaremos: **Necesidad de estados de página**

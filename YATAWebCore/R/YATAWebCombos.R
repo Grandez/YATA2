@@ -76,9 +76,11 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          checkAll(FALSE, data)
      }
      ,periods = function() {
-         df = objMsgs$getBlock(factory$CODES$labels$periods)
-         makeCombo(df)
-     }
+         data = objMsgs$getBlock(factory$CODES$labels$periods)
+         lst = names(data)
+         names(lst) = data
+         lst
+      }
   )
   ,private = list(
       factory       = NULL

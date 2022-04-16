@@ -1,0 +1,40 @@
+$header_height: 42px;
+$footer_height: 32px;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top:    0.5rem;
+    margin-bottom: 0.25rem;
+}
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    margin-top:    0.5rem;
+    margin-bottom: 0.25rem;
+}
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.yata_container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  height: $header_height;
+  display: -webkit-flex;
+  -webkit-flex-wrap: nowrap;
+}
+footer {
+  height: $footer_height;
+}
+.yata_container {
+  flex: 1;
+  overflow: auto;
+}

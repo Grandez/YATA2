@@ -129,6 +129,13 @@ YATATable <- R6::R6Class("YATA.TABLE"
          }
          created
       }
+      ,first    = function(...) {
+         filter = mountWhere(...)
+         qry = paste("SELECT * FROM ", tblName, filter$sql)
+         filter$values = list.append(filter$values, limit_=1)
+         qry = paste(qry, "LIMIT ?")
+         db$query(qry, params=filter$values)
+      }
       ,delete   = function(..., isolated=FALSE)  {
          filter = mountWhere(list(...))
          sql = paste("DELETE FROM ", tblName, filter$sql)

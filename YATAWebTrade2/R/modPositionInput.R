@@ -1,14 +1,14 @@
 modPosInput = function(id, title) {
    ns = NS(id)
    WORD  = WEB$MSG$getWords()
-   items = list(
-        Pos     = list(label = WORD$POS,   plot=TRUE, table=TRUE)
-       ,Session = list(label = WORD$SESS,  plot=TRUE, table=TRUE)
-       ,Top     = list(label = WORD$TOP,   plot=TRUE, table=TRUE)
-       ,Trend   = list(label = WORD$TREND, plot=TRUE, table=TRUE)
-       ,Fav     = list(label = WORD$FAV,   plot=TRUE, table=TRUE)
-       ,Full = list(label = paste(WORD$POS, WORD$FULL),  plot=TRUE, table=TRUE)
-   )
+   # items = list(
+   #      Pos     = list(label = WORD$POS,   plot=TRUE, table=TRUE)
+   #     ,Session = list(label = WORD$SESS,  plot=TRUE, table=TRUE)
+   #     ,Top     = list(label = WORD$TOP,   plot=TRUE, table=TRUE)
+   #     ,Trend   = list(label = WORD$TREND, plot=TRUE, table=TRUE)
+   #     ,Fav     = list(label = WORD$FAV,   plot=TRUE, table=TRUE)
+   #     ,Full = list(label = paste(WORD$POS, WORD$FULL),  plot=TRUE, table=TRUE)
+   # )
    pairs        = c("Pos", "Session", "Top", "Best", "Trend", "Fav", "Full")
    names(pairs) = c( WORD$POS,   WORD$SESS, WORD$TOP, WORD$BEST
                     ,WORD$TREND, WORD$FAV,  paste(WORD$POS, WORD$FULL))
@@ -36,9 +36,10 @@ modPosInput = function(id, title) {
         ,fluidRow(column(4, "Top"),
             column(8, guiIntegerInput(ns("numBestTop"),value=15,step=1,min=5,max=30)))
         ,fluidRow(column(4, "Period"),
-            column(8, guiCombo(ns("cboBestPeriod"), choices=WEB$combo$reasons(),selected=2)))
+            column(8, guiCombo(ns("cboBestPeriod"), choices=WEB$combo$periods(),selected=2)))
         ,tags$br()
         ,yuiFlex(yuiBtnOK(ns("btnSave"), WORD$SAVE), yuiBtnKO(ns("btnClose"),WORD$CLOSE))
+
     )
     # pattern = "tags$div( id=ns('__NAME__'),style='width: 100%', guiBox(ns('__VALUE__')"
     # pattern = paste0(pattern, ", guiLabelText(ns('paste0('")

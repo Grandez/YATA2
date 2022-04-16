@@ -1,8 +1,8 @@
---- 
+---
 title: "Yet Another Trading Algorithm"
-subtitle: "Technical Manual"
 author: "Grandez"
 date: "`r Sys.Date()`"
+subtitle: Technical Manual
 site: bookdown::bookdown_site
 documentclass: book
 link-citations: yes
@@ -10,8 +10,12 @@ link-citations: yes
 
 # Prerequisites
 
-```{r eval=FALSE, echo=FALSE}
-library("bookdown")
+```{r, echo=FALSE}
+library(dplyr)
+library(bookdown)
+library(knitr)
+library(kableExtra)
+
 #library(abind)
 #library(png)
 #library(grid)
@@ -19,6 +23,7 @@ library("bookdown")
 
 # or the development version
 # devtools::install_github("rstudio/bookdown")
+# knitr::opts_chunk$set(fig.width = 8, collapse = TRUE, echo=FALSE)
 ```
 
 ```{r include=FALSE}
@@ -39,3 +44,8 @@ colorize <- function(color, x) {
 }
 ```
 
+```{r, include=FALSE}
+  sys.source("R/code.R", envir = knitr::knit_global())
+```
+
+INICIO

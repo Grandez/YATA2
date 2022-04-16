@@ -66,8 +66,8 @@ modOperPosServer = function(id, full, pnlParent, parent) {
          }
         ,getOpenCurrency = function() { self$data$dfOpen[,c("counter", "tms")] }
         ,prepareOpen = function () {
-            df = self$data$dfOpen
-            df = df[,c("camera", "counter", "amount", "price", "value", "target", "stop", "deadline")]
+            df = self$data$dfOpen %>%
+                 select(camera,counter,amount,price,value,target,stop,deadline)
             last = self$session$getLatest(currencies=df$counter)
             last = last[,c("symbol", "price")]
             colnames(last) = c("counter", "last")

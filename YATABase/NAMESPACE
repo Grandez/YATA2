@@ -6,4 +6,5 @@ import(httr)
 
 exportPattern("YATA.*")
 export(args2list)
+export(loadTable)
 export(map)

@@ -1,1 +1,51 @@
 # Conceptos {-}
+
+
+## Supply
+
+Podemos traducirlo como cantidad, número de monedas. A partir de ahi tenemos los conceptos:
+
+- **Max Supply**: Cantidad maxima de unidades que exisitirán
+- **Total Supply**: Numero de unidades existentes actualmente (excluyendo las que ya no existen)
+- **Circulating Supply**: Número de monedas en el mercado
+
+Es importante indicar aqui que no todas las monedas existentes están en el mercado por lo que desde el punto de vista del sistema es como si no existieran y por lo tanto no afectan al precio de mercado, aunque pueden existir en algún momento dado.
+
+
+## Marketcap (Market Capitalization)
+
+Es una forma de valorar la importancia/volumen relativa de una moneda, su valor es
+
+$MarketCap = Price * Circulating_Supply$
+
+## Volumen
+
+The 24-hour volume section at the top of CoinMarketCap website shows the total value of crypto traded in the past 24 hours.
+
+Volume is an extremely important indicator for traders to determine the future profitability of cryptocurrencies.
+It also helps exchanges make money by charging fees on cryptocurrency trades offered on their platforms.
+
+A greater volume of cryptocurrency transactions leads to fair cryptocurrency prices and removes the chance of distorted pricing.
+
+A low cryptocurrency exchange volume signals inefficient or low trades, as the asking prices of sellers fail to meet the bids of potential buyers.
+Cryptocurrency volume is similar to the concept of liquidity, but they are both not the same.
+
+Volume is the sum total of actual trades taking place, meanwhile liquidity is the amount available for trading at any single price.
+
+Usually, the higher the volume of cryptocurrency transactions, the more liquid the crypto market will be.
+
+Low cryptocurrency volume exchanges, however, do create great arbitrage opportunities for investors.
+
+Some cryptocurrencies can be bought at a very low price and sold for a premium elsewhere.
+
+This normally occurs if the coin or token is not in high demand or there is something wrong with the exchange’s operational features. 
+What is "Market Capitalization" and how is it calculated?
+
+
+## Monedas o tokens
+
+- Una moneda (coin) es una cryptomoneda que opera independientemente y como tal tiene su propio blockchain
+
+- Un token (token) es una criptomoneda que depende de otra (un derivado). Es decir, no se puede intercambiar con moneda FIAT directamente.
+
+Por ejemplo, Tether (USDT) es una criptomoneda usada por la compañia Tether que esta equiparada al USD y se usa internamente para comprar/vender otras criptomonedas

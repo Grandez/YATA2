@@ -1,0 +1,170 @@
+<!DOCTYPE html>                                                                                                                                                             
+<html lang="en">                                                                                                                                                            
+<head>                                                                                                                                                                      
+<title>CSS Template</title>                                                                                                                                                 
+<meta charset="utf-8">                                                                                                                                                      
+<meta name="viewport" content="width=device-width, initial-scale=1">                                                                                                        
+<link rel="stylesheet" href="yata_sass.css">
+<style>   
+/*                                                                          
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+    background: linear-gradient(to top, rgba(0,0,0,1) , rgba(0,0,0,0.75), rgba(0,0,0,0.5) , rgba(0,0,0,0.75), rgba(0,0,0,1) );
+    color: whitesmoke;
+}
+footer {
+  background: silver;
+}
+*/
+.container {
+  flex: 1;
+  overflow: auto;
+  background: pink;
+}    
+/*                                                                                                
+* {                                                                                                                                                                         
+  box-sizing: border-box;                                                                                                                                                   
+}                                                                                                                                                                           
+                                                                                                                                                                            
+body {                                                                                                                                                                      
+  font-family: Arial, Helvetica, sans-serif;      
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow:hidden;
+}                                                                                                                                                                           
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+header {
+    flex-shrink: 0;
+    background-color: #666;
+}
+.body{
+    flex-grow: 1;
+    overflow: auto;
+    min-height: 2em;
+}
+footer{
+    flex-shrink: 0;
+    background-color: #666;
+}
+*/
+                                                                                                                                                                            
+/*
+header {                                                                                                                                                                    
+  background-color: #666;
+}                                                                                                                                                                           
+
+footer {
+   position: fixed;
+    bottom: 0;
+    height: 32px;                                                                                                        
+  background-color: #777;
+                                                                                                                                     
+}                                                                                                                                                                           
+
+.content {
+     overflow-y: auto;
+   /* min-height: 60vh; */
+    height:calc(100% - 20px);
+}
+*/                                                                                                                                                                            
+/* Container for flexboxes */                                                                                                                                               
+section {                                                                                                                                                                   
+  display: -webkit-flex;                                                                                                                                                    
+  display: flex;                                                                                                                                                            
+}                                                                                                                                                                           
+                                                                                                                                                                            
+/* Style the navigation menu */                                                                                                                                             
+nav {                                                                                                                                                                       
+  -webkit-flex: 1;                                                                                                                                                          
+  -ms-flex: 1;                                                                                                                                                              
+  flex: 1;                                                                                                                                                                  
+  background: #ccc;                                                                                                                                                         
+  padding: 20px;                                                                                                                                                            
+}                                                                                                                                                                           
+                                                                                                                                                                            
+/* Style the list inside the menu */                                                                                                                                        
+nav ul {                                                                                                                                                                    
+  list-style-type: none;                                                                                                                                                    
+  padding: 0;                                                                                                                                                               
+}                                                                                                                                                                           
+                                                                                                                                                                            
+/* Style the content */                                                                                                                                                     
+article {                                                                                                                                                                   
+  -webkit-flex: 3;                                                                                                                                                          
+  -ms-flex: 3;                                                                                                                                                              
+  flex: 3;                                                                                                                                                                  
+  background-color: #f1f1f1;                                                                                                                                                
+  padding: 10px;                                                                                                                                                            
+}                                                                                                                                                                           
+                                                                                                                                                                            
+                                                                                                                                                                            
+/* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */                                        
+/*
+@media (max-width: 600px) {                                                                                                                                                 
+  section {                                                                                                                                                                 
+    -webkit-flex-direction: column;                                                                                                                                         
+    flex-direction: column;                                                                                                                                                 
+  }                                                                                                                                                                         
+} 
+*/                                                                                                                                                                          
+</style>                                                                                                                                                                    
+</head>                                                                                                                                                                     
+<body>                                                                                                                                                                      
+<div class="yata_container">
+<header>  
+  <h2>Cities</h2>                                                                                                                                                           
+</header>
+<div id="container", class="container">
+    <h2>uno</h2>
+<h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2>
+<!--
+<h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2>
+<h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2>
+
+<h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2><h2>uno</h2>
+-->
+</div>                                                                                                                                                                   
+<!--                                                                                                                                                                            
+<section>                                                                                                                                                                   
+  <nav>                                                                                                                                                                     
+    <ul>                                                                                                                                                                    
+      <li><a href="#">London</a></li>                                                                                                                                       
+      <li><a href="#">Paris</a></li>                                                                                                                                        
+      <li><a href="#">Tokyo</a></li>                                                                                                                                        
+    </ul>                                                                                                                                                                   
+  </nav>                                                                                                                                                                    
+                                                                                                                                                                            
+  <article>                                                                                                                                                                 
+    <h1>London</h1>                                                                                                                                                         
+    <p>London is the capital city of England. It is the most populous city in the  United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>             
+    <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.</p>
+  </article>                                                                                                                                                                
+</section>                                                                                                                                                                  
+-->                                                                                                                                                                            
+<footer>                                                                                                                                                                    
+  <p>Footer</p>                                                                                                                                                             
+</footer>            
+</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+</body>                                                                                                                                                                     
+</html>                                                                                                                                                                     
+                                                                                                                                                                            

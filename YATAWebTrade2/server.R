@@ -135,9 +135,9 @@ function(input, output, session) {
        WEB$loadCookies(input$cookies)
 #       WEB$setWindow(input$cookies)
    })
-   observeEvent(input$resize, {
-#       WEB$setWindow(input$resize)
-   })
+   # observeEvent(input$resize, {
+   #     WEB$setWindow(input$resize)
+   # })
    observeEvent(input$mainMenu,{
       eval(parse(text=paste0( "mod"
                              ,str_to_title(input$mainMenu)

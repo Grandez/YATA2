@@ -43,8 +43,8 @@ PNLPos = R6::R6Class("PNL.OPER"
         #     self$data$dfSession = self$session$getData(id=ids) # self$session$getSessionPrices(ids)
         #     self$vars$sessionChanged = TRUE
         # }
-        if ( private$DBChanged) self$monitors$update()
-        if (!private$DBChanged) self$monitors$render()
+if ( private$DBChanged) self$monitors$update()
+if (!private$DBChanged) self$monitors$render()
 #        self$updateBest()
         invisible(self)
      }

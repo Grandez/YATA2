@@ -20,14 +20,13 @@ updBtn          = function(id, session=getDefaultReactiveDomain(), ...) {
    #do.call(shinyBS::updateButton, args)
 }
 .btnIcon = function(id, color, ico, title) {
-   sty = paste("simple; background-color:", color, ";")
-   yuiActionBtn( id=id, title=title, style = sty # "simple", color=color
-                ,class="yata_btn_icsty # on"
+   yuiActionBtn( id=id, title=title, style = "simple", back=color
+                ,class="yata_btn_icon"
                 ,icon = icon(ico, class="yata_btn_icon"))
 }
 .btnIconWhite = function(id, color, ico, title) {
    sty = paste("simple; background-color:", color, ";color: snow;")
-   yuiActionBtn( id=id, title=title, style = sty #, color=color
+   yuiActionBtn( id=id, title=title, style = "simple", back=color, front="snow"
                 ,class="yata_btn_icon"
                 ,icon = icon(ico, class="yata_btn_icon"))
 }
@@ -84,25 +83,25 @@ yuiCustomIcon = function(icon, event, value) {
 #         Removed attach
 yuiActionBtn = function (id=NULL, title=NULL, icon = NULL, style = "unite", class=NULL,
 #JGG yataActionBttn = function (inputId, label = NULL, icon = NULL, style = "unite",
-    color = "default", size = "md", block = FALSE,
+    back = "default", front="black", size = "md", block = FALSE,
     no_outline = TRUE)
 {
     label = NULL
     #JGG value <- shiny::restoreInput(id = inputId, default = NULL)
-    # style <- match.arg(arg = style, choices = c("simple",
-    #     "bordered", "minimal", "stretch", "jelly",
-    #     "gradient", "fill", "material-circle",
-    #     "material-flat", "pill", "float", "unite"))
+    style <- match.arg(arg = style, choices = c("simple",
+        "bordered", "minimal", "stretch", "jelly",
+        "gradient", "fill", "material-circle",
+        "material-flat", "pill", "float", "unite"))
     size <- match.arg(arg = size, choices = c("xs", "sm", "md", "lg"))
     tagBttn <- tags$button( id=id, type = "button"
                            ,title=title
                            ,class = paste("action-button bttn", class)
                            ,class = paste0("bttn-", style)
                            ,class = paste0("bttn-",size)
-                           ,list(icon,label)
                            ,class = if (block) "bttn-block"
                            ,class = if (no_outline) "bttn-no-outline"
-                           ,style = paste("background:", color)
+                           ,list(icon,label)
+                           ,style = paste("background:", back, ";color: ", front, ";")
     )
     tagBttn
 }
