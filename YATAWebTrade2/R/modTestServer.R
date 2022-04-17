@@ -4,7 +4,7 @@
 modTestServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLTest = R6::R6Class("PNL.TEST"
-      ,inherit = YATAPanel
+      ,inherit = WEBPanel
       ,cloneable  = FALSE
       ,lock_class = TRUE
       ,public = list(
@@ -12,11 +12,11 @@ modTestServer <- function(id, full, pnlParent, parent=NULL) {
              super$initialize(id, pnlParent, session)
              private$definition$id = id
           }
-      )   
+      )
       ,private = list(
          definition = list(id = "",left = 0, right=0)
       )
-      
+
    )
     moduleServer(id, function(input, output, session) {
       pnl = WEB$getPanel(id)
@@ -31,6 +31,6 @@ modTestServer <- function(id, full, pnlParent, parent=NULL) {
       observeEvent(input$cboBlk3, {
           session$sendCustomMessage('yataShowBlock',list(ns=id,row=3,col=0,block=input$cboBlk3))
       })
-      
+
   })
-}    
+}

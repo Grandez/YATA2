@@ -1,7 +1,7 @@
 modLogServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLBlog = R6::R6Class("PNL.BLOG"
-        ,inherit    = YATAPanel
+        ,inherit    = WEBPanel
         ,cloneable  = FALSE
         ,lock_class = TRUE
         ,public = list(

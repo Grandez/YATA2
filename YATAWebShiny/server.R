@@ -1,7 +1,7 @@
 # Panel Raiz
 # Mantiene la informacion de la session y de la posicion
 APPWEB = R6::R6Class("PNL.TRADE.MAIN"
-   ,inherit    = JGGWeb
+   ,inherit    = JGGWEBROOT
    ,portable   = TRUE
    ,cloneable  = FALSE
    ,lock_class = TRUE
@@ -25,7 +25,7 @@ APPWEB = R6::R6Class("PNL.TRADE.MAIN"
 )
 function(input, output, session) {
     cat("main beg\n")
-    if (!exists("WEB")) assign("WEB", WEBROOT$new(session), envir = .GlobalEnv)
+    if (!exists("WEB")) assign("WEB", APPWEB$new(session), envir = .GlobalEnv)
     observeEvent(input$cookies, {
         WEB$loadCookies(input$cookies) })
 

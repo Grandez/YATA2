@@ -2,7 +2,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
    ns = NS(id)
    ns2 = NS(full)
    PNLHistDetail = R6::R6Class("PNL.HISTORY.DETAIL"
-      ,inherit = YATAPanel
+      ,inherit = WEBPanel
       ,cloneable  = FALSE
       ,lock_class = TRUE
       ,public = list(
@@ -15,7 +15,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
          ,data        = NULL
          ,act         = NULL
          ,plotChanged = 0
-         ,tab = "" 
+         ,tab = ""
          ,initialize    = function(session) {
              private$defaultValues()
              super$initialize(full, pnlParent, session, ns)
@@ -24,7 +24,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
              private$definition$id = full
              private$initPanel()
          }
-         ,ctcLoaded = function(symbol) { ifelse(is.null(private$tabs[[symbol]]), FALSE, TRUE) } 
+         ,ctcLoaded = function(symbol) { ifelse(is.null(private$tabs[[symbol]]), FALSE, TRUE) }
          ,ctcLoad   = function() {
              symbol = self$vars$active
              df     = self$vars$df
@@ -38,7 +38,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
                                       )
              self$act = private$tabs[[symbol]]
          }
-         ,setActive = function() { 
+         ,setActive = function() {
              self$act = private$tabs[[self$vars$active]]
              invisible(self)
          }
@@ -62,7 +62,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
                  info$id   = ns(idPlot)
                  info$ui   = uiPlot
                  info$render = idPlot
-                 info$datavalue = "Value" 
+                 info$datavalue = "Value"
                  if (idPlot %in% c("plotSession", "plotHist")) {
                      info$datasource  = "value"
                      info$plot = "Line"
@@ -102,13 +102,13 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
        }
      )
   )
-   
+
    moduleServer(id, function(input, output, session) {
      browser()
       YATAWEB$beg("modHist_Detail")
        pnl = YATAWEB$getPanel(full)
        if (is.null(pnl)) pnl = YATAWEB$addPanel(PNLHistDetail$new(session))
-      
+
       prepareSession = function() {
          dff =  pnl$act$flows[,c("amount", "price", "tms")]
          dff$tms = as.Date(dff$tms)
@@ -132,7 +132,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
          if (type == "session") pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Candlestick", data=df)
          if (type == "volume")  pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Bar", data=df[,c("tms", "volume")])
          if (type == "cap")     pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Bar", data=df[,c("tms", "market_cap")])
-         if (type == "price")   pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Line",data=df) 
+         if (type == "price")   pnl$act$plots[[tgt]] = YATAPlot$new(type, observer=ns2("modebar"), type="Line",data=df)
       }
       makeSubPlots = function(p1, p2, rows = TRUE) {
          plots = pnl$act$plots
@@ -159,18 +159,18 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       refreshPage = function() {
           # esto es flags$refresh, pero ahi veces que no lo lanza
          pnl$setActive()
-         output$title = renderText({pnl$act$label}) 
+         output$title = renderText({pnl$act$label})
          renderPlots(flags$plots)
          output$session = updTable(prepareSession())
          output$flows   = updTable(prepareFlows())
          renderPlots(flags$plots)
          yuiLoaded()
       }
-      
+
       flags = reactiveValues(
           loaded  = FALSE
          ,update  = FALSE
-         ,refresh = FALSE          
+         ,refresh = FALSE
          ,plots  = 0
 
        )
@@ -178,7 +178,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       #####################################################
       ### Reactives                                     ###
       #####################################################
-      observeEvent(flags$loaded, ignoreInit = TRUE, { 
+      observeEvent(flags$loaded, ignoreInit = TRUE, {
           browser()
          if (!is.data.frame(pnl$vars$df)) {
              showNotification("Error de datos", duration = NULL)
@@ -192,7 +192,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
           refreshPage()
          #  browser()
          # pnl$setActive()
-         # output$title = renderText({pnl$act$label}) 
+         # output$title = renderText({pnl$act$label})
          # renderPlots(flags$plots)
          # output$session = updTable(prepareSession())
          # output$flows   = updTable(prepareFlows())
@@ -208,10 +208,10 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       getHistorical = function() {
         browser()
           symbol = pnl$vars$active
-          dfs = pnl$data$dfSymbols 
+          dfs = pnl$data$dfSymbols
           df = dfs[dfs$symbol == symbol,]
           restdf("hist",id=df$id,from=df$since,to=Sys.Date())  %>% then (
-                 function(df) { 
+                 function(df) {
                      browser()
                     pnl$vars$df = df
                     flags$loaded = isolate(!flags$loaded)
@@ -220,13 +220,13 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
       }
       getFlows = function() {
           # sym = pnl$active
-          # dfs = pnl$act$dfSymbols 
+          # dfs = pnl$act$dfSymbols
           # df = dfs[dfs$symbol == sym,]
           # restdf("hist",id=df$id,from=df$since,to=Sys.Date())  %>% then(
           #      function(df) {
           #          if (is.data.frame(df)) {
           #              pnl$ctcLoad(sym, df)
-          #              updatePage() 
+          #              updatePage()
           #          }
           #      }, function(err) { })
       }
@@ -239,7 +239,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
          browser()
       })
 
-      
+
       observeEvent(input$chkOper, ignoreInit = TRUE, {
          data = pnl$getActive()
          if (input$chkOper && is.null(data$flows)) {
@@ -249,9 +249,9 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
          if (!input$chkOper) pnl$plot$removeXLines()
          if (input$chkOper) pnl$plot$addXLines(data$flows)
          output$plot1 = pnl$plot$render()
-         
+
       })
-      
+
       observeEvent(input$modebar, {
          browser()
           info = input$modebar
@@ -266,7 +266,7 @@ modHistDetailServer = function(id, full, pnlParent, parent) {
 #          flags$refresh = isolate(!flags$refresh)
           refreshPage()
       }
-          
+
       if (!loaded) getHistorical()
 
       YATAWEB$end("modHist_Detail")

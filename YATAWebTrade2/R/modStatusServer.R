@@ -4,7 +4,7 @@
 modStatusServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLStatus = R6::R6Class("PNL.HISTORY"
-      ,inherit = YATAPanel
+      ,inherit = WEBPanel
       ,cloneable  = FALSE
       ,lock_class = TRUE
       ,public = list(

@@ -1,4 +1,4 @@
-WEBROOT = R6::R6Class("JGG.INFO.APP"
+JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
   ,portable   = TRUE
   ,cloneable  = FALSE
   ,lock_class = TRUE

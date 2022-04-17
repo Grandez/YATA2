@@ -24,7 +24,7 @@ modHistInput = function(id, title) {
     )
    main = tagList(
       tabsetPanel( id=ns("tabHist")
-                  ,tabPanel("Summary",   value=ns("summ"),  YATAModule(ns("summ")))
+                  ,tabPanel("Summary",   value=ns("summ"),  YATAWebShiny::JGGModule(ns("summ")))
                       # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
                       # ,tabPanel("",   value=ns("dummy"),     "")
       )

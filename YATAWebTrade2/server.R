@@ -1,7 +1,7 @@
 # Panel Raiz
 # Mantiene la informacion de la session y de la posicion
-PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
-   ,inherit    = YATAPanel
+YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
+   ,inherit    = JGGWEBROOT
    ,portable   = TRUE
    ,cloneable  = FALSE
    ,lock_class = TRUE
@@ -122,6 +122,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
 )
 function(input, output, session) {
     cat("main beg\n")
+        if (!exists("WEB")) assign("WEB", YATAWebRoot$new(session), envir = .GlobalEnv)
    WEB$setSession(session)
    if (WEB$errorLevel > 0) {
        if (WEB$errorLevel == 99)

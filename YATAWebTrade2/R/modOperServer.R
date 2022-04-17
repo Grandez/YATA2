@@ -1,7 +1,7 @@
 modOperServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLOper = R6::R6Class("PNL.OPER"
-        ,inherit    = YATAPanel
+        ,inherit    = WEBPanel
         ,cloneable  = FALSE
         ,lock_class = TRUE
         ,public = list(
