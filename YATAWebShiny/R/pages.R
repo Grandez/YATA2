@@ -8,7 +8,29 @@ JGGDashboard = function( id = NULL, ...
    if (!is.null(paths)) {
        lapply(names(paths), function(path) shiny::addResourcePath(path, paths[[path]]))
    }
-   page  = bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
+
+#    page  = bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
+# bslib_navs_bar_full = function (webtitle, titleActive, id, ...) {
+    # Tiene Panel derecho y panel izquiero
+    webtitle=NULL
+
+    tabset = bslib_navbarPage(id, ...)
+
+    divNav = div(class = "container-fluid"
+                       # ,div(class = "navbar-header"
+                       #      ,span(class = "navbar-brand", webtitle)
+                       #  )
+                        ,tabset$navList)
+
+    classNav = "navbar jgg_navbar"
+    nav = tags$nav(class = classNav, role = "navigation", divNav)
+
+    # content = div(class = containerClass)
+    # content = tagAppendChild(content, tabset$content)
+
+    page = make_container_full(nav, tabset$content, titleActive)
+#}
+
    heads = tags$head( extendShinyjs(script="jggshiny_shiny.js", functions=parseShinyJS())
                      ,custom_css(cssFiles), custom_js(jsFiles)
                      ,document_ready_script(jsInit, title, id))

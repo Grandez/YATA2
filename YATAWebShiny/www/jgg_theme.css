@@ -9,4 +9,23 @@ footer {
   color: whitesmoke;
 }
 
+.jgg_navbar {
+  background: black;
+  color: whitesmoke;
+}
+
+.jgg_navbar a {
+  background: black;
+  color: whitesmoke;
+}
+
+.jgg_navbar a:hover {
+  background-color: gold;
+}
+
+.jgg_navbar .active {
+  color: #FDFEFF;
+  font-weight: bold;
+}
+
 /*# sourceMappingURL=jgg_theme.css.map */

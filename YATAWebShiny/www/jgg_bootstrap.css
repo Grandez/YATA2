@@ -148,4 +148,12 @@ JGG END */
   padding-left: 3px;
 }
 
+.navbar {
+  padding: 0 3px 0 3px;
+}
+
+.navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
+  margin-bottom: 0;
+}
+
 /*# sourceMappingURL=jgg_bootstrap.css.map */

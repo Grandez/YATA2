@@ -36,20 +36,20 @@ class JGGShiny {
        Cookies.set(this.#app, JSON.stringify(cookies), { SameSite: "Strict"});
    }
    cookies_send() {
-       alert("JGGShiny cookies_send")
+       console.log("JGGShiny cookies_send")
       let res = Cookies.get(this.#app);
       Shiny.setInputValue('cookies', res);
    }
    cookies_recv(data) {
-       alert("JGGShiny cookies_recv")
+       console.log("JGGShiny cookies_recv")
 //      let res = Cookies.get();
 //      Shiny.setInputValue('cookies', res);
    }
    cookies_set(msg) {
-       alert(msg);
+       console.log("cookies_set: " + msg);
    }
    cookies_delete(msg) {
-       alert(msg);
+       console.log("cookies_delete: " + msg);
    }
    window_resize(evt) {
       Cookies.set('window_width',  window.innerWidth,  { SameSite: "Strict"});
@@ -107,7 +107,7 @@ class JGGShiny {
       this.#panels.set(page.name, page);
    }
    mainmenu_click(evt) {
-       alert("mainmenu");
+       console.log("mainmenu");
    }
    sidebar_left (evt) {
       // Se ha hecho click en el menu de abrir/cerrar panel

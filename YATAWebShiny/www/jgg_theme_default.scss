@@ -13,3 +13,18 @@ header {
 footer {
   @include header_theme;
 }
+.jgg_navbar {
+   @include header_theme;
+}
+
+// Se sobreescribe en adminlte
+.jgg_navbar a {
+    @include header_theme;
+}
+.jgg_navbar a:hover {
+  background-color: gold;
+}
+.jgg_navbar .active {
+    color: #FDFEFF;
+    font-weight: bold;
+}

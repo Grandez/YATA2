@@ -4,38 +4,6 @@ dashboard_bslib_page = function(..., title = NULL, theme = bs_theme(), lang = NU
    data
 }
 
-bslib_navs_bar_full = function (webtitle, titleActive, id, ...) {
-    # Tiene Panel derecho y panel izquiero
-    webtitle=NULL
-    tabset = bslib_navbarPage(id, ...)
-
-    containerDiv = div(class = "container-fluid"
-                       ,div(class = "navbar-header"
-                            ,span(class = "navbar-brand", webtitle)
-                        )
-                       , tabset$navList)
-
-    containerClass = "navbar navbar-default"
-    nav = tags$nav(class = containerClass, role = "navigation", containerDiv)
-
-    # content = div(class = containerClass)
-    # content = tagAppendChild(content, tabset$content)
-
-    make_container_full(nav, tabset$content, titleActive)
-}
-
-parseYATAShinyJS = function() {
-    #JGg jsfile = system.file("extdata/www/yatashiny_shiny.js", package=packageName())
-
-    lines = readLines("www/jggshiny_shiny.js")
-    resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
-    lens = attr(resp, "match.length")
-    res = lapply(which(resp != -1), function(idx) {
-        txt = substr(lines[idx], resp[idx], lens[idx] - 1)
-        substr(trimws(txt), 9, nchar(txt))
-    })
-    unlist(res)
-}
 # -----------------------------------------------------------------------
 # 'Internal' tabset logic that was pulled directly from shiny/R/bootstrap.R
 #  (with minor modifications)
@@ -43,7 +11,8 @@ parseYATAShinyJS = function() {
 
 bslib_navbarPage = function(id, ...) {
 
-  navbarClass <- "navbar navbar-default navbar-static-top"
+  #JGG navbarClass <- "navbar navbar-default navbar-static-top"
+  navbarClass = "navbar jgg_navbar"
   tabset = bslib_buildTabset( ...
                              ,ulClass = "nav navbar-nav", textFilter=NULL, id = id
                              ,selected = NULL, foundSelected = FALSE)
@@ -59,9 +28,9 @@ bslib_navbarPage = function(id, ...) {
 }
 make_container_full = function (nav, content, titleActive) {
    contentDiv = shiny::tags$div(id="jgg_page")
-   divHeader  = shiny::tags$header(class="jgg_header" )
-   divBody    = shiny::tags$div(id="jgg_page_body",   class="jgg_body container-fluid"   )
-   divFooter  = shiny::tags$footer(class="jgg_footer" )
+   divHeader  = shiny::tags$header()
+   divBody    = shiny::tags$div(id="jgg_body",   class="jgg_body"   )
+   divFooter  = shiny::tags$footer()
    divHeader = jgg_make_page_header(divHeader, nav, titleActive)
 
    divMain  = shiny::tags$div(id="jgg_page_main",  class="jgg_page_main"  )

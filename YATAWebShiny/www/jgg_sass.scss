@@ -20,21 +20,38 @@ h1, h2, h3, h4, h5, h6 {
     margin-right: 0px;
     margin-left: 0px;
 }
-
+/*
 .yata_container {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-header {
-  height: $header_height;
-  display: -webkit-flex;
-  -webkit-flex-wrap: nowrap;
-}
-footer {
-  height: $footer_height;
-}
 .yata_container {
   flex: 1;
   overflow: auto;
 }
+
+*/
+.jgg_page {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+header {
+  height: $header_height;
+  display: -webkit-flex;
+  -webkit-flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.jgg_body {
+    flex-grow: 1;
+    overflow: auto;
+    min-height: 2em;
+}
+footer {
+  height: $footer_height;
+  flex-shrink: 0;
+}
+

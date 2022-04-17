@@ -15,7 +15,6 @@ WEBROOT = R6::R6Class("JGG.INFO.APP"
          invisible(self)
       }
      ,getPanel   = function(object, id, parent, session) {
-         browser()
          panel = private$panels$get(id)
          if (is.null(panel)) {
              panel = object$new(id, parent,session)

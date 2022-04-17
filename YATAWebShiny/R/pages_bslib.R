@@ -74,100 +74,101 @@ bslib_navs_bar = function (..., title = NULL, id = NULL, selected = NULL, positi
     bslib_as_fragment(navbar, page = page)
 }
 
-# -----------------------------------------------------------------------
-# 'Internal' tabset logic that was pulled directly from shiny/R/bootstrap.R
-#  (with minor modifications)
-# -----------------------------------------------------------------------
-
-bslib_navbarPage_ <- function(title,
-                       ...,
-                       id = NULL,
-                       selected = NULL,
-                       position = c("static-top", "fixed-top", "fixed-bottom"),
-                       header = NULL,
-                       footer = NULL,
-                       inverse = FALSE,
-                       collapsible = FALSE,
-                       fluid = TRUE,
-                       theme = NULL,
-                       windowTitle = title,
-                       lang = NULL) {
-
-  # alias title so we can avoid conflicts w/ title in withTags
-  pageTitle <- title
-
-  # navbar class based on options
-  navbarClass <- "navbar navbar-default"
-  position <- match.arg(position)
-  if (!is.null(position)) navbarClass <- paste0(navbarClass, " navbar-", position)
-  if (inverse)            navbarClass <- paste(navbarClass, "navbar-inverse")
-  if (!is.null(id))       selected <- shiny::restoreInput(id = id, default = selected)
-
-  # build the tabset
-  tabset <- bslib_buildTabset(..., ulClass = "nav navbar-nav", id = id, selected = selected)
-
-  containerClass <- paste0("container", if (fluid) "-fluid")
-
-  # built the container div dynamically to support optional collapsibility
-  if (collapsible) {
-    navId <- paste0("navbar-collapse-", bslib_p_randomInt(1000, 10000))
-    containerDiv <- div(
-      class = containerClass,
-      div(
-        class = "navbar-header",
-        tags$button(
-          type = "button",
-          class = "navbar-toggle collapsed",
-          `data-toggle` = "collapse",
-          `data-target` = paste0("#", navId),
-          # data-bs-* is for BS5+
-          `data-bs-toggle` = "collapse",
-          `data-bs-target` = paste0("#", navId),
-          span(class="sr-only", "Toggle navigation"),
-          span(class = "icon-bar"),
-          span(class = "icon-bar"),
-          span(class = "icon-bar")
-        ),
-        span(class = "navbar-brand", pageTitle)
-      ),
-      div(
-        class = "navbar-collapse collapse",
-        id = navId, tabset$navList
-      )
-    )
-  } else {
-    containerDiv <- div(
-      class = containerClass,
-      div(
-        class = "navbar-header",
-        span(class = "navbar-brand", pageTitle)
-      ),
-      tabset$navList
-    )
-  }
-
-  # Bootstrap 3 explicitly supported "dropup menus" via .navbar-fixed-bottom,
-  # but BS4+ requires .dropup on menus with .navbar.fixed-bottom
-  if (position == "fixed-bottom") {
-    containerDiv <- tagQuery(containerDiv)$
-      find(".dropdown-menu")$
-      parent()$
-      addClass("dropup")$
-      allTags()
-  }
-
-  # build the main tab content div
-  contentDiv <- div(class = containerClass)
-  if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", header))
-  contentDiv <- tagAppendChild(contentDiv, tabset$content)
-  if (!is.null(footer)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
-
-  # *Don't* wrap in bootstrapPage() (shiny::navbarPage()) does that part
-  tagList(
-    tags$nav(class = navbarClass, role = "navigation", containerDiv),
-    contentDiv
-  )
-}
+# # -----------------------------------------------------------------------
+# # 'Internal' tabset logic that was pulled directly from shiny/R/bootstrap.R
+# #  (with minor modifications)
+# # -----------------------------------------------------------------------
+#
+# bslib_navbarPage_ <- function(title,
+#                        ...,
+#                        id = NULL,
+#                        selected = NULL,
+#                        position = c("static-top", "fixed-top", "fixed-bottom"),
+#                        header = NULL,
+#                        footer = NULL,
+#                        inverse = FALSE,
+#                        collapsible = FALSE,
+#                        fluid = TRUE,
+#                        theme = NULL,
+#                        windowTitle = title,
+#                        lang = NULL) {
+#
+#   # alias title so we can avoid conflicts w/ title in withTags
+#   pageTitle <- title
+#
+#   # navbar class based on options
+# #JGG  navbarClass <- "navbar navbar-default"
+#   navbarClass = "navbar"
+#   position <- match.arg(position)
+# #JGG  if (!is.null(position)) navbarClass <- paste0(navbarClass, " navbar-", position)
+# #JGG  if (inverse)            navbarClass <- paste(navbarClass, "navbar-inverse")
+#   if (!is.null(id))       selected <- shiny::restoreInput(id = id, default = selected)
+#
+#   # build the tabset
+#   tabset <- bslib_buildTabset(..., ulClass = "nav navbar-nav", id = id, selected = selected)
+#
+#   containerClass <- paste0("container", if (fluid) "-fluid")
+#
+#   # built the container div dynamically to support optional collapsibility
+#   if (collapsible) {
+#     navId <- paste0("navbar-collapse-", bslib_p_randomInt(1000, 10000))
+#     containerDiv <- div(
+#       class = containerClass,
+#       div(
+#         class = "navbar-header",
+#         tags$button(
+#           type = "button",
+#           class = "navbar-toggle collapsed",
+#           `data-toggle` = "collapse",
+#           `data-target` = paste0("#", navId),
+#           # data-bs-* is for BS5+
+#           `data-bs-toggle` = "collapse",
+#           `data-bs-target` = paste0("#", navId),
+#           span(class="sr-only", "Toggle navigation"),
+#           span(class = "icon-bar"),
+#           span(class = "icon-bar"),
+#           span(class = "icon-bar")
+#         ),
+#         span(class = "navbar-brand", pageTitle)
+#       ),
+#       div(
+#         class = "navbar-collapse collapse",
+#         id = navId, tabset$navList
+#       )
+#     )
+#   } else {
+#     containerDiv <- div(
+#       class = containerClass,
+#       div(
+#         class = "navbar-header",
+#         span(class = "navbar-brand", pageTitle)
+#       ),
+#       tabset$navList
+#     )
+#   }
+#
+#   # Bootstrap 3 explicitly supported "dropup menus" via .navbar-fixed-bottom,
+#   # but BS4+ requires .dropup on menus with .navbar.fixed-bottom
+#   if (position == "fixed-bottom") {
+#     containerDiv <- tagQuery(containerDiv)$
+#       find(".dropdown-menu")$
+#       parent()$
+#       addClass("dropup")$
+#       allTags()
+#   }
+#
+#   # build the main tab content div
+#   contentDiv <- div(class = containerClass)
+#   if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", header))
+#   contentDiv <- tagAppendChild(contentDiv, tabset$content)
+#   if (!is.null(footer)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
+# browser()
+#   # *Don't* wrap in bootstrapPage() (shiny::navbarPage()) does that part
+#   tagList(
+#     tags$nav(class = navbarClass, role = "navigation", containerDiv),
+#     contentDiv
+#   )
+# }
 
 bslib_navbarMenuTextFilter <- function(text) {
   if (grepl("^\\-+$", text)) tags$li(class = "divider")
