@@ -25,7 +25,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
 #               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"
               )
 
-    YATADashboardFull( title,  id
+    JGGDashboard( title,  id
                        ,theme    = theme
                        ,paths    = paths
                        ,cssFiles = customCSS
@@ -54,4 +54,17 @@ parseShinyJS = function() {
         substr(trimws(txt), 9, nchar(txt))
     })
     unlist(res)
+}
+
+# Wrappers
+YATAModule      = function (id, title="",mod=NULL, ...) {
+   JGGModule(id,title=title,mod=mod,...)
+}
+YATATabsetPanel = function (id = NULL, selected = NULL, ...) {
+    browser()
+    JGGTabsetPanel(..., id=id,selected=selected)
+}
+YATATabPanel    = function (title, value=title, icon = NULL, ...) {
+    browser()
+    JGGTabPanel(title, ..., value=value, icon = icon)
 }

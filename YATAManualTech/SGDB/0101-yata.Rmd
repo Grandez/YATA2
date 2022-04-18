@@ -1,0 +1,40 @@
+## Sistema
+
+Estas son las bases de datos que afectan al comportamiento del sistema independientemente del usuario y que aportan información a todos ellos.
+
+Esta compuesto por las siguientes bases de datos:
+
+- **YATABase**: Contiene la informacion de configuración del sistema
+- **YATAData**: Contiene información para el resto de usuarios
+
+### YATABase
+
+```{r, echo=F}
+tables = c("PARAMETERS", "PROVIDERS", "MESSAGES")
+description = c( "Parametros de configuración del sistema"
+                ,"Proveedores de información, Camaras, etc<br>Sobre los que opera el sistema"
+                ,"Mensajes, etiquetas, textos y literales localizados"
+                )
+table_declarations(list(tables, description))
+```
+
+### YATAData
+
+Contiene la información de las monedas, cotizaciones, valores, etc.
+
+- **CONTROL**: Información de control de procesos de carga y actualziacion
+- **CURRENCIES**: Datos relativos a monedas
+- **EXCHANGES**: Datos relativos a cámaras y exchanges
+- **EXCHANGES_CTC**: Relación de las monedas operadas por cámara
+- **EXCHANGES_FIAT**: Relación cámaras contra monedas FIAT
+- **EXCHANGES_PAIR**: Pares de monedas en formato BASE/COUNTER
+- **FIATS**: Monedas fiduciarias
+- **FIATS_EXCHANGE**: Historico de cotización de FIATS contra moneda de referencia
+- **HISTORY**: Datos históricos de cotización
+- **SESSION**: Datos de cotización de la sesión
+
+```{r, echo=FALSE, fig.cap="YATAData E/R Diagram", out.width = '100%'}
+knitr::include_graphics("img/YATAData_ER_01.png")
+```
+
+

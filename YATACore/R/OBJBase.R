@@ -16,7 +16,7 @@ OBJBase = R6::R6Class("OBJ.BASE"
            self$Factory = Factory
            self$parms   = Factory$parms
            self$db      = Factory$getDB()
-           self$codes   = Factory$CODES
+           self$codes   = Factory$codes
        }
        ,getColumnNames = function(yataNames) {
            if(is.null(tblBase)) return("")

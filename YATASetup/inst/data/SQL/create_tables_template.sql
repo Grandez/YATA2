@@ -249,5 +249,41 @@ CREATE TABLE ALERTS     (
    ,INDEX (ACTIVE, TYPE)
 );
 
+DROP TABLE  IF EXISTS MODEL_VAR;
+CREATE TABLE MODEL_VAR  (
+    ID        INTEGER       NOT NULL
+   ,SYMBOL    VARCHAR(64)   NOT NULL
+   ,RANK      INTEGER     DEFAULT 99999 
+   ,PRICE00   DOUBLE      
+   ,PRICE01   DOUBLE      
+   ,PRICE02   DOUBLE      
+   ,PRICE03   DOUBLE      
+   ,PRICE04   DOUBLE               
+   ,PRICE05   DOUBLE      
+   ,VOLUME00  DOUBLE      
+   ,VOLUME01  DOUBLE      
+   ,VOLUME02  DOUBLE      
+   ,VOLUME03  DOUBLE      
+   ,VOLUME04  DOUBLE      
+   ,VOLUME05  DOUBLE                  
+   ,VAR01     DOUBLE      
+   ,VAR02     DOUBLE      
+   ,VAR03     DOUBLE      
+   ,VAR04     DOUBLE      
+   ,VAR05     DOUBLE      
+   ,VOL01     DOUBLE      
+   ,VOL02     DOUBLE      
+   ,VOL03     DOUBLE      
+   ,VOL04     DOUBLE      
+   ,VOL05     DOUBLE      
+   ,IND_PRICE DOUBLE      
+   ,IND_VOL   DOUBLE      
+   ,IND_VAR   DOUBLE      
+   ,UPDATED   DATE        
+   ,TMS       TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP
+                           ON UPDATE CURRENT_TIMESTAMP      
+   ,PRIMARY KEY (ID)
+);
+
 INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "FIAT", 10000, 10000);
 COMMIT;

@@ -1,5 +1,6 @@
 # Tabla de parametros
-# Necesita la DB Base
+# Maneja los parametros de sistema y de usuario
+#JGG PEND de crear la lista completa de friendly names
 OBJParms = R6::R6Class("OBJ.PARMS"
     ,cloneable  = FALSE
     ,lock_class = FALSE
@@ -7,16 +8,90 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     ,public = list(valid = TRUE
         ,err = NULL
         ,print = function() { message("YATA Parameters")}
-        ,initialize = function(dbf, msg, table) {
-            if (missing(table)) table = YATACODES$new()$tables$parameters
+        ,initialize = function(dbf, msg) {
             tryCatch({
-                private$tblParms = dbf$getTable(table)
+                private$tblParms  = dbf$getTable("Parameters") # , dbf$getDBBase())
+                private$tblConfig = dbf$getTable("Config") #,     dbf$getDBUser())
                 private$objMsg   = msg
-                private$db       = dbf$getDBBase()
              }, error = function(cond) {
                  YATABase:::error("Error de inicializacion de OBJParms", subclass=NULL, origin="OBJParms", cond)
             })
         }
+        ################################################
+        ### Friendly methods
+        ################################################
+        ### User - Group 1
+        ################################################
+        ,getUser    = function() { tblConfig$getString(group = 1, subgroup = 1, id = 1) }
+        ,getPwd     = function() { tblConfig$getString(group = 1, subgroup = 1, id = 2) }
+        ,getFIAT    = function() { tblConfig$getString(group = 1, subgroup = 1, id = 3) }
+        ,getLang    = function() { tblConfig$getString(group = 1, subgroup = 1, id = 4) }
+        ,getDialect = function() { tblConfig$getString(group = 1, subgroup = 1, id = 5) }
+
+        ,setUser    = function(value, isolated=T) {
+            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 1, isolated=isolated)
+            invisible (self)
+         }
+        ,setPwd     = function(value, isolated=T) {
+            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 2, isolated=isolated)
+            invisible (self)
+         }
+        ,setFIAT    = function(value, isolated=T) {
+            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 3, isolated=isolated)
+            invisible (self)
+         }
+        ,setLang    = function(value, isolated=T) {
+            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 4, isolated=isolated)
+            invisible (self)
+         }
+        ,setDialect = function(value, isolated=T) {
+            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 5, isolated=isolated)
+            invisible (self)
+         }
+
+        ################################################
+        ### User - Group 2 - Camera
+        ################################################
+        ,getDefaultCamera = function() { tblConfig$getInteger (group=1, subgroup=2, id=1, default=1) }
+        ,getAutoOpen      = function() { tblConfig$getBoolean (group=1, subgroup=2, id=2, default=FALSE) }
+        ,getLastCamera    = function() { tblConfig$getInteger (group=1, subgroup=2, id=3, default=1) }
+
+        ,setDefaultCamera    = function(value, isolated=T) {
+            value = as.character(value)
+            tblConfig$update(lst(value=value), group=1, subgroup=2, id=1, isolated=isolated)
+            invisible (self)
+         }
+        ,setAutoOpen    = function(value, isolated=T) {
+            value = as.character(as.integer(value))
+            tblConfig$update(lst(value=value), group=1, subgroup=2, id=2, isolated=isolated)
+            invisible (self)
+         }
+        ,setLastCamera = function(value, isolated=T) {
+            value = as.character(value)
+            tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
+            invisible (self)
+         }
+        ,getCameraInfo = function(camera) {
+            data = tblConfig$getSubgroup(group = 5, subgroup=camera, asList=TRUE)
+            db = getDBInfo(data$db, TRUE)
+            list(camera=data, db=db)
+        }
+#        ,getDefaultDB      = function() tblParms$getInteger(DBParms$ids$DBDefault)
+        # ,lastOpen          = function() {
+        #     getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen))
+        # }
+        ,defaultDB         = function() {
+            id = getDefaultDb()
+            getList(DBParms$group$databases, id)
+        }
+        ,setLastOpen       = function(iddb) {
+            keys = splitKeys(DBParms$ids$lastOpen)
+            tblParms$update( list(value=as.character(iddb))
+                            ,group = keys[1], subgroup = keys[2], id = keys[3]
+                            ,isolated=TRUE)
+            invisible(self)
+        }
+
         ,get         = function(group, subgroup, id) { tblParms$table(group=group, subgroup=subgroup,id=id) }
         ,getGroup    = function(group)               { tblParms$table(group=group) }
         ,getSubgroup = function(group, subgroup)     { tblParms$table(group=group, subgroup=subgroup) }
@@ -38,32 +113,6 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             data
         }
 
-        ################################################
-        ### Metodos friendly
-        ################################################
-        ,getFIAT           = function() tblParms$getString(DBParms$ids$fiat)
-        ,getCamera         = function() tblParms$getString(DBParms$ids$camera)
-        ,autoConnect       = function() tblParms$getBoolean(DBParms$ids$autoConnect)
-        ,getDefaultDb      = function() tblParms$getInteger(DBParms$ids$DBDefault)
-        ,getDBInfo         = function(id) {
-            data = getList(DBParms$group$databases, id)
-            data$id = id
-            data
-        }
-        ,lastOpen          = function() {
-            getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen))
-        }
-        ,defaultDB         = function() {
-            id = getDefaultDb()
-            getList(DBParms$group$databases, id)
-        }
-        ,setLastOpen       = function(iddb) {
-            keys = splitKeys(DBParms$ids$lastOpen)
-            tblParms$update( list(value=as.character(iddb))
-                            ,group = keys[1], subgroup = keys[2], id = keys[3]
-                            ,isolated=TRUE)
-            invisible(self)
-        }
         ,currencies        = function(codes) {
              tblCurrencies$codeNames(codes)
          }
@@ -159,8 +208,9 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     )
     ,private = list(
         cfg           = NULL
-       ,db            = NULL
        ,tblParms      = NULL
+       ,tblConfig     = NULL
+
        ,tblCurrencies = NULL
        ,tblProviders  = NULL
        ,objMsg        = NULL
@@ -170,6 +220,13 @@ OBJParms = R6::R6Class("OBJ.PARMS"
            if (type == 11 && !is.numeric(value)) stop("Debe ser numerico")
            if (type == 20) {}  #JGG Tirar de as.boolean
            #JGG etc
+       }
+      ,getDBInfo         = function(id, user) {
+          tbl     = tblParms
+          if (user) tbl = tblConfig
+          data    = tbl$getSubgroup(group=10, subgroup=id, asList=TRUE)
+          data$id = id
+          data
        }
     )
 )

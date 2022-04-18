@@ -38,3 +38,10 @@ JGGDashboard = function( id = NULL, ...
    bspage = dashboard_bslib_page(title=title,theme=theme,lang=lang,shinyjs::useShinyjs(),heads,page)
    addDeps(shiny::tags$body(bspage))
 }
+
+JGGTabsetPanel = function (..., id = NULL, selected = NULL) {
+    shiny::tabsetPanel(..., id=id,selected=selected,type="tabs")
+}
+JGGTabPanel = function(id, title=id, icon = NULL, ...) {
+    bslib::nav(title, ..., value=id, icon=icon)
+}

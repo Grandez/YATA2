@@ -9,8 +9,10 @@ args2list = function(...) {
   }
   args
 }
-map = function() { YATABaseMap$new() }
-str = function() { YATABaseStr$new() }
+ini = function(iniFile) { YATABaseIni$new(iniFile) }
+map = function()        { YATABaseMap$new()        }
+str = function()        { YATABaseStr$new()        }
+
 loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
     datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp/", table)
     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix

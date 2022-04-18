@@ -1,0 +1,43 @@
+## Usuario
+
+Un usuario tiene una base de datos de usuario asociada y un cojunto de bases de datos por cada cartera.
+
+El acceso a estas bases de datos se realiza por la propia contraseña del usuario; de esta manera es imposible acceder a los datos de los usuarios obteniendo una contraseña, todo lo mas los datos de ese usuario.
+
+Cada cartera, dado que mantiene diferente información, se almacena en su propia base de datos.
+
+La base de datos de ususario se llama como el propio usuario (actualmente harcoded **USER**)
+Las bases de datos asociadas a sus carteras tienen nombre libre asignado por el usuario y prefijada con **USER_**
+### Usuario
+
+la base de datos de usuario contiene los datos generales del usuario
+
+- **CONFIG**: Datos de configuracion
+
+### Cartera
+
+Cada base de datos asociada a una cartera esta formada por las siguientes tablas:
+
+- **CAMERAS**: Camaras en las que opera la cartera
+- **POSITION**: Posicion de la cartera
+- **POSITION_HIST**: Datos historicos de la posicion
+- **OPERATIONS**: Datos de las operaciones
+- **OPERATIONS_CONTROL**: Datos extendidos de las operaciones
+- **OPERATIONS_LOG**: Comentarios y notas acerca de las operaciones
+- **FLOWS**: Flujos asociados a las operaciones
+- **TRANSFERS**: Historico de transferencias entre camaras
+- **REGULARIZATION**: Historico de regularizaciones
+- **FAVORITES**: Monedas favoritas
+- **ALERTS**: Tabla de alertas
+- **BLOG**: Blog de la cartera
+
+Opcionalmente pueden existir tablas asociadas a modelos que las requieran
+
+- **MODEL_VAR**: Tabla para el modelo de Variaciónes
+
+
+```{r, echo=FALSE, fig.cap="YATAData E/R Diagram", out.width = '100%'}
+knitr::include_graphics("img/YATAData_ER_01.png")
+```
+
+

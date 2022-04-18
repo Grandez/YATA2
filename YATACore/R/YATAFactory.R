@@ -7,7 +7,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
-       CODES  = NULL
+       codes  = NULL
       ,parms  = NULL
       ,MSG    = NULL  # Like WEB
       ,logger = NULL
@@ -53,7 +53,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
        }
       ,clear     = function(){
           message("Clearing factory")
-         # if (!is.null(DBFactory))   DBFactory$finalize()
+         # if (!is.null(YATADBFactory))   YATADBFactory$finalize()
          # if (!is.null(ProvFactory)) ProvFactory$finalize()
          # self$parms = NULL
          # self$MSG  = NULL
@@ -70,12 +70,12 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           if (!is.null(db)) db$name
           else              NULL
       }
-      ,getDBID   = function() { DBFactory$getID() }
-      ,getDB     = function()                    { DBFactory$getDB()       }
-      ,getDBBase = function()                    { DBFactory$getDBBase()   }
+      ,getDBID   = function() { YATADBFactory$getID() }
+      ,getDB     = function()                    { YATADBFactory$getDB()       }
+      ,getDBBase = function()                    { YATADBFactory$getDBBase()   }
       ,setDB     = function(connData)            {
          connInfo = list.merge(cfg$sgdb, connData)
-         DBFactory$setDB(connInfo)
+         YATADBFactory$setDB(connInfo)
          invisible(self)
        }
       ,changeDB  = function(id) {
@@ -85,7 +85,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           parms$setLastOpen(id)
           invisible(self)
        }
-      ,getTable    = function(name, force = FALSE) { DBFactory$get(name, force) }
+      ,getTable    = function(name, force = FALSE) { YATADBFactory$get(name, force) }
       ,getProvider = function(code, object, force = FALSE) {
           setProvFactory() # Necesita tener Base creado
           ProvFactory$get(code, object, force)
@@ -112,7 +112,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,print = function()     { message("Factoria de objetos YATA") }
    )
    ,private = list(
-       DBFactory   = NULL
+       YATADBFactory   = NULL
       ,ProvFactory = NULL
       ,objects     = NULL
       ,classes     = NULL
@@ -130,29 +130,23 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
 
-          self$CODES          = YATACore::YATACODES$new()
+          self$codes          = YATACore::YATACODES$new()
           private$base        = YATABase$new()
-          private$objects     = base$map()
-          private$classes     = base$map()
-          private$DBFactory   = YATADB::YATADBFactory$new()
+          private$objects     = YATABase::map()
+          private$classes     = YATABase::map()
+          private$YATADBFactory   = YATADB::YATADBFactory$new("YATA")
 
-          self$MSG    = OBJMessages$new(self$CODES$tables$messages, private$DBFactory)
-          self$parms  = OBJParms$new   (private$DBFactory, self$MSG, self$CODES$tables$parameters)
-
-          # self$fiat   = parms$getFIAT()
-          # self$camera = parms$getCamera()
+          self$MSG    = OBJMessages$new(self$codes$tables$messages, private$YATADBFactory)
+          self$parms  = OBJParms$new   (private$YATADBFactory, self$MSG)
 
           if (bitwAnd(level,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
 
           if (auto && bitwAnd(level, 1) != 0) {
-              if (parms$autoConnect()) {
-                  setDB(parms$lastOpen())
-              } else {
-                  setDB(parms$defaultDB())
-              }
+              camera = ifelse(parms$getAutoOpen(), parms$getLastCamera(), parms$getDefaultCamera())
+              data = parms$getCameraInfo(camera)
+              setDB(data$db)
           }
       }
-
    )
 )
 

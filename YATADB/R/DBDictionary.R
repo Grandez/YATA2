@@ -7,8 +7,8 @@ DBDict = list(
     )
     ,base = list(
        Messages     = "MESSAGES"
-      ,Parameters   = "PARMS"
-      ,Parms        = "PARMS"
+      ,Parameters   = "PARAMETERS"
+      ,Parms        = "PARAMETERS"
       ,Providers    = "PROVIDERS"
     )
     ,data = list(
@@ -23,6 +23,10 @@ DBDict = list(
       ,ModelVar      = "MODEL_VAR"
       ,Session       = "SESSION"
 
+    )
+    ,user = list(
+       Config = "CONFIG"
+      ,Blog   = "BLOG"
     )
     ,tables = list(
        Alerts         = "ALERTS"

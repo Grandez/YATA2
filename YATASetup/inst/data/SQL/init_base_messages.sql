@@ -220,6 +220,11 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 33, "REASON.AC
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 33, "REASON.CANCEL"         ,"XX", "XX"     , "Operacion cancelada"                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 33, "REASON.REJECT"         ,"XX", "XX"     , "Operacion rechazada"                       );
 
+-- Scopes
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "1"                    ,"XX", "XX"     , "Corto / Intradia"                          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "2"                    ,"XX", "XX"     , "Medio plazo"                               );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "3"                    ,"XX", "XX"     , "Largo plazo / inversion"                   );
+
 -- Menus
 -- 7x YATAWebModels
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 70, "MODEL.MODEL"        ,"XX", "XX"     , "Modelos"                                       );

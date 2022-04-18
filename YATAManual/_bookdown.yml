@@ -1,5 +1,6 @@
 book_filename: "YATAManual"
 delete_merged_file: true
+output_dir: "output"
 language:
   ui:
     chapter_name: "Capitulo "

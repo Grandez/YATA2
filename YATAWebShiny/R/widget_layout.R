@@ -1,5 +1,5 @@
 # Objeto para crear las paginas con layout
-WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
+WDGLayout = R6::R6Class("JGG.WEB.LAYOUT"
   ,portable   = FALSE
   ,cloneable  = FALSE
   ,lock_class = TRUE
@@ -39,7 +39,7 @@ WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
                  cbo = paste("cbolayout",r,c, sep="_")
                  tgt = layout[r,c]
                  updateSelectInput(session, cbo, selected = tgt)
-                 shinyjs::js$yata_layout(ns(cbo), tgt)
+                 shinyjs::js$jgg_layout(ns(cbo), tgt)
              }
          }
      }
@@ -54,20 +54,20 @@ WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
      ,makeConfig = function(ns, layout, options, values) {
          opts = c("Hide"="none")
          if (!missing(options)) opts = c(opts,options)
-         tbl = tags$table(class="yata_layout_table")
+         tbl = tags$table(class="jgg_layout_table")
          iVal = 1
          for (idx in 1:length(layout)) {
               cbo = paste0("cbolayout_", idx)
               if (layout[idx] == 1) {
                   td = tags$td( colspan="2"
                                ,guiLayoutSelect(ns(paste0(cbo, "_0")), opts, values[iVal], full))
-                  tr = tags$tr(class="yata_layout_row", td)
+                  tr = tags$tr(class="jgg_layout_row", td)
               } else {
-                  td1 = tags$td( class="yata_layout_left"
+                  td1 = tags$td( class="jgg_layout_left"
                                 ,guiLayoutSelect(ns(paste0(cbo, "_1")), opts, values[iVal], full))
                   iVal = iVal + 1
                   td2 = tags$td(guiLayoutSelect(ns(paste0(cbo, "_2")), opts, values[iVal], full))
-                  tr  = tags$tr(class="yata_layout_row", td1, td2)
+                  tr  = tags$tr(class="jgg_layout_row", td1, td2)
               }
               iVal = iVal + 1
               tbl = htmltools::tagAppendChild(tbl, tr)
@@ -104,7 +104,7 @@ WDGLayout = R6::R6Class("YATA.WEB.LAYOUT"
                    )
         blocksui = tagAppendChild(blocksui, block2)
         blocks = tagAppendChild(blocks, blocksui)
-        tagAppendChild(blocks, tags$div(id=ns("blocks_container"), class="yata_blocks_container", ...))
+        tagAppendChild(blocks, tags$div(id=ns("blocks_container"), class="jgg_blocks_container", ...))
     }
   )
 )

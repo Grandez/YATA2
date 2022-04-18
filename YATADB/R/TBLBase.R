@@ -446,6 +446,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
        }
        ,getTblName = function(name) {
            if (!is.null(DBDict$tables[[name]])) return (DBDict$tables[[name]])
+           if (!is.null(DBDict$user  [[name]])) return (DBDict$user  [[name]])
            if (!is.null(DBDict$base  [[name]])) return (DBDict$base  [[name]])
            DBDict$data  [[name]]
        }

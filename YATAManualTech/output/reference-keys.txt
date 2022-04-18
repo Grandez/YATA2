@@ -58,3 +58,11 @@ optimización-y-performance
 singletons-1
 navegacion-shiny-1
 ciclo-de-vida-1
+fig:unnamed-chunk-8
+fig:unnamed-chunk-9
+modelo-de-datos
+sistema
+yatabase
+yatadata
+usuario
+cartera

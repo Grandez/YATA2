@@ -5,8 +5,8 @@ use YATABase;
 -- Y la configuracion inicial
 -- -------------------------------------------------------------------
 -- Tabla de Parametros
-DROP TABLE  IF EXISTS PARMS CASCADE;
-CREATE TABLE PARMS  (
+DROP TABLE  IF EXISTS PARAMETERS CASCADE;
+CREATE TABLE PARAMETERS  (
     GRUPO    INTEGER     NOT NULL -- Grupo, no usamos GROUP para evitar problemas de nombres
    ,SUBGROUP INTEGER     NOT NULL -- Parametro
    ,BLOCK    INTEGER     DEFAULT 0

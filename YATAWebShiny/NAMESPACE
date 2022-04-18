@@ -8,7 +8,7 @@ import(shinyWidgets)
 import(shinydashboard)
 
 export(runExample)
-exportPattern("YATA.+")
+exportPattern("JGG.+")
 exportPattern("WDG.+")
 exportPattern("gui.+")
 exportPattern("upd.+")

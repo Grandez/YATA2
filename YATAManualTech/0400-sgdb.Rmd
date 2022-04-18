@@ -1,0 +1,16 @@
+# Modelo de datos 
+
+XXXX
+
+La estructura es:
+
+Base de datos del sistema
+Base de datos de datos del sistema
+
+Por cada usuario:
+Base de datos del usuario
+Bases de datos de carteras
+
+```{r, child=list.files("SGDB", "[0-9]+.+.Rmd$", full.names=TRUE), echo=FALSE}
+```
+

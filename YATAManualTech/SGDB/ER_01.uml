@@ -5,6 +5,7 @@ skinparam  class {
     BackgroundColor business
     HeaderBackgrounColor yellowgreen
 }
+
 skinparam linetype ortho
 
 entity "CURRENCIES" as CTC {

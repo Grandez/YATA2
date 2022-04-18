@@ -1,10 +1,10 @@
-TBLParameters = R6::R6Class("TBL.PARMS"
+TBLParms = R6::R6Class("TBL.PARMS.BASE"
     ,inherit    = YATATable
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = FALSE
     ,public = list(
-        initialize = function(name, db=NULL) {
+        initialize = function(name, db) {
             super$initialize(name, fields=private$fields, key=private$key, db=db)
         }
         ####################################################
@@ -33,6 +33,10 @@ TBLParameters = R6::R6Class("TBL.PARMS"
         ,applyType = function(value, type) {
              if (type == DBDict$types$integer) return (as.integer(value))
              if (type == DBDict$types$numeric) return (as.numeric(value))
+             if (type == DBDict$types$date)    return (as.Date(value))
+             if (type == DBDict$types$time)    return (strptime(value, tz="UTC"))
+             if (type == DBDict$types$tms)     return (as.POSIXct(value, tz="UTC"))
+
              if (type == DBDict$types$boolean) {
                  if (is.logical(value)) return (value)
                  if (is.character(value)) {
@@ -85,14 +89,18 @@ TBLParameters = R6::R6Class("TBL.PARMS"
             if (res == "0" || res == "FALSE") return (FALSE)
             TRUE
         }
-        ,getSubGroup = function(group, subgroup) { table(group=group, subgroup=subgroup) }
-        ,getByName   = function(name)            { table(name = name) }
         ####################################################
         ### Generic methods by subgroup
         ####################################################
-        ,getSubgroup = function(group, subgroup) {
-            df = table(grupo=group, subgroup=subgroup)
-            lst = lapply(df$value, function(x) applyType())
+        ,getByName   = function(name)            { table(name = name) }
+        ,getSubgroup = function(group, subgroup, asList=FALSE) {
+            df = table(group=group, subgroup=subgroup)
+            if (asList) {
+                data = lapply(1:nrow(df), function(row) applyType(df[row,"value"], df[row,"type"]))
+                names(data) = df$name
+                df = data
+            }
+            df
         }
         ,getBlock = function(group, subgroup, block) {
             if (missing(subgroup)) { # Is a dictionary key?
@@ -108,28 +116,28 @@ TBLParameters = R6::R6Class("TBL.PARMS"
             df = df[,c("subgroup","name","value")]
             tidyr::spread(df,name,value)
         }
-        ####################################################
-        ### Friendly methods
-        ####################################################
-        ,getDatabases = function() {
-            # Devuelve la lista de bases de datos
-            ids = uniques( "subgroup", list(group=DBParms$databases$id))
-            uniques( list("subgroup", "value")
-                    ,list(group = DBParms$databases$id, subgroup=ids, id = DBParms$databases$keys$name))
-        }
-        ,getDBInfo    = function(id) {
-            # Recupera la informacion de la conexion de base de datos
-            df = table(group=DBParms$groups$databases, subgroup = id)
-        }
+        # ####################################################
+        # ### Friendly methods
+        # ####################################################
+        # ,getDatabases = function() {
+        #     # Devuelve la lista de bases de datos
+        #     ids = uniques( "subgroup", list(group=DBParms$databases$id))
+        #     uniques( list("subgroup", "value")
+        #             ,list(group = DBParms$databases$id, subgroup=ids, id = DBParms$databases$keys$name))
+        # }
+        # ,getDBInfo    = function(id) {
+        #     # Recupera la informacion de la conexion de base de datos
+        #     df = table(group=DBParms$groups$databases, subgroup = id)
+        # }
         ####################################################
         ### Updates
         ####################################################
-        ,setByName = function(name, value) {
-            update(value=as.character(value), )
-        }
+        # ,setByName = function(name, value) {
+        #     update(value=as.character(value), )
+        # }
      )
      ,private = list (
-           key = c("group", "subgroup", "id")
+           key = c("group", "subgroup", "block", "id")
           ,fields = list(
                group     = "GRUPO"
               ,subgroup  = "SUBGROUP"

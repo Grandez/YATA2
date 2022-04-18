@@ -1,0 +1,7 @@
+## Monedas o tokens
+
+- Una moneda (coin) es una cryptomoneda que opera independientemente y como tal tiene su propio blockchain
+
+- Un token (token) es una criptomoneda que depende de otra (un derivado). Es decir, no se puede intercambiar con moneda FIAT directamente.
+
+Por ejemplo, Tether (USDT) es una criptomoneda usada por la compañia Tether que esta equiparada al USD y se usa internamente para comprar/vender otras criptomonedas
