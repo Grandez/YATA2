@@ -29,9 +29,26 @@ guiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
                                   ,onInitialize = I('function() { this.setValue(""); }')
                             ))
 }
+guiListbox = function( id, label=NULL, choices=NULL, selected = NULL, size=10, multiple=FALSE) {
+    lbl = NULL
+    choice = c("")
+    if (!is.null(label))   lbl    = label
+    if (!is.null(choices)) choice = choices
+    shiny::selectInput(id, lbl, choice
+                         , selected = selected
+                         , width="auto"
+                         , size=size
+                         , multiple = multiple
+                         ,selectize=FALSE)
+}
+
 updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
 }
+updListbox = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
+    shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
+}
+
 updComboSelect = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     shiny::updateSelectizeInput( session  = session,  inputId = id, choices = choices
                                 ,selected = selected, server  = TRUE)
@@ -112,4 +129,22 @@ guiLayoutSelect = function (inputId, choices, selected = NULL, full=TRUE) {
    div( class = "form-group shiny-input-container"
        ,style = css(width = validateCssUnit("auto"))
        ,shiny:::shinyInputLabel(inputId, NULL), div(selectTag))
+}
+guiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
+    shinyWidgets::switchInput( inputId = id
+                ,onLabel = onLbl ,offLabel = offLbl
+                ,onStatus = "success" ,offStatus = "danger"
+                , value = value, width="auto")
+}
+updSwitch = function(id,value=NULL, disabled=NULL) {
+   shinyWidgets::updateSwitchInput( session = getDefaultReactiveDomain()
+                                   ,inputId = id
+                                   ,value   = value
+                                   ,disable = disabled
+   )
+  # label = NULL,
+  # onLabel = NULL,
+  # offLabel = NULL,
+  # onStatus = NULL,
+  # offStatus = NULL,
 }

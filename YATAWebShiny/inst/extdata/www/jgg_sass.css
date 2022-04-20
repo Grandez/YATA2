@@ -57,4 +57,9 @@ footer {
   flex-shrink: 0;
 }
 
+.jgg_div_center {
+  margin: auto;
+  width: 50%;
+}
+
 /*# sourceMappingURL=jgg_sass.css.map */

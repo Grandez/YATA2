@@ -36,7 +36,11 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           df = tblMsg$table(block = block)
           c(df$msg)
       }
-
+      ,tooltip  = function(code)  {
+          data = tblMsg$getItem(block = 99, code = paste("POPUP", code, sep="."))
+          if (nrow(data) == 0) return ("Not Found")
+          data[1,2]
+      }
       ,title    = function(code)  { getMessage(paste0("TITLE.", code)) }
     )
     ,private = list(
@@ -63,7 +67,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
            label = paste0("L", block)
            if (!(label %in% names(cacheBlock))) {
                df = tblMsg$getBlock(block, lang, region)
-               df$code = as.character(sub("[a-zA-z0-9]+\\.", "", df$code))
+               df$code = as.character(sub("([A-Z0-9]+\\.)+", "", df$code, ignore.case = TRUE))
                lst = as.list(df$value)
                names(lst) = df$code
                private$cacheBlock[[label]] = lst

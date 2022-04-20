@@ -8,18 +8,35 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
      name       = NULL
     ,parent     = NULL  # Puntero al padre
     ,root       = NULL  # Puntero a raiz
+    ,session    = NULL
+    ,factory    = NULL
     ,loaded     = FALSE # Flag de carga
     ,data       = list()  # Datos
     ,vars       = list()  # Variables temporales con memoria
     ,cookies    = list()  # Variables con estado
     ,events     = list(listen = c(""), events=c(""))
-
+    ,DBID       = 0     # Check DB changed
+    ,codes      = NULL
+    ,parms      = NULL
+    ,MSG        = NULL
     ,print      = function() { message(paste("Panel object for", self$name)) }
     ,initialize = function(id, parent, session, ns = NULL) {
-        self$name   = id
-        self$parent = parent
-        self$root   = private$getRoot()
+        web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})
+
+        self$name    = id
+        self$parent  = parent
+        self$session = session
+        self$root    = private$getRoot()
+
+        self$DBID    = web$DBID
+        self$factory = web$factory
+
+        self$codes   = self$factory$codes
+        self$parms   = self$factory$parms
+        self$MSG     = self$factory$MSG
+
     }
+
     ,getParent = function(name) {
         pp = self$parent
         while (!is.null(pp)) {

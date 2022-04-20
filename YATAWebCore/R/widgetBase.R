@@ -115,12 +115,6 @@ yuiLabelDate = function(id, label=NULL, inline=TRUE) {
      textOutput(outputId=id, inline=TRUE)
   }
 }
-yuiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
-    shinyWidgets::switchInput( inputId = id
-                ,onLabel = onLbl ,offLabel = offLbl
-                ,onStatus = "success" ,offStatus = "danger"
-                , value = value, width="auto")
-}
 yuiCheck = function(id, value=TRUE) {
   awesomeCheckbox(id, NULL, value = value)
 }

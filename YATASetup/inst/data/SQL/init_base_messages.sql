@@ -90,7 +90,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.CANCEL"    ,"XX", "XX"     , "Cancelar Operación"                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.REJECT"    ,"XX", "XX"     , "Operacion rechazada"                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.CLOSE"     ,"XX", "XX"     , "Deshacer posición"                           );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.DB.CHANGE"      ,"XX", "XX"     , "Cambiar Base de Datos"                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.DBCHANGE"       ,"XX", "XX"     , "Cambiar Base de Datos"                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.ERR.SEVERE"     ,"XX", "XX"     , "Error Fatal"                                 );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LABEL.PLOT.MAIN"     ,"XX", "XX"     , "Main Plot"                                    );
@@ -165,7 +165,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TOTAL
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TO"              ,"XX", "XX"     , "A"                                             );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.VALUE"           ,"XX", "XX"     , "Valor"                                         );
 
--- 20 - Main Menu
+-- 21 - Main Menu
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.OPERATION"        ,"XX", "XX"     , "Operacion"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
@@ -181,12 +181,17 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.XFER"
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.REGULARIZE"       ,"XX", "XX"     , "Regularizacion"                              );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
 
+-- 25  Administracion
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.PREF"         ,"XX", "XX"     , "Preferencias"                                );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.PORTFOLIO"    ,"XX", "XX"     , "Carteras"                                    );
+
 -- 29  Panel de error
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 29, "PNLERR.MESSAGE"       ,"XX", "XX"     , "Message"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 29, "PNLERR.CLASS"         ,"XX", "XX"     , "Clase"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 29, "PNLERR.CODE"          ,"XX", "XX"     , "Codigo"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 29, "PNLERR.ACTION"        ,"XX", "XX"     , "Accion"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 29, "PNLERR.SOURCE"        ,"XX", "XX"     , "Origen"                                      );
+
 
 -- 3x = Operaciones
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 31,  "1"                    ,"XX", "XX"     , "Posicion"        );
@@ -224,6 +229,11 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 33, "REASON.RE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "1"                    ,"XX", "XX"     , "Corto / Intradia"                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "2"                    ,"XX", "XX"     , "Medio plazo"                               );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "3"                    ,"XX", "XX"     , "Largo plazo / inversion"                   );
+
+-- 40 Etiquetas de paneles de adminitracion
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.AUTOOPEN"    ,"XX", "XX"     , "Abrir automaticamente"                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.DEFAULT"     ,"XX", "XX"     , "Cartera principal"                             );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.LAYOUT"      ,"XX", "XX"     , "Mantener layouts"                              );
 
 -- Menus
 -- 7x YATAWebModels

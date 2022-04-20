@@ -15,21 +15,27 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,log      = NULL
 #     ,window  = list(width = 0, height = 0)
      ,combo    = NULL
+     ,root     = NULL
      ,DBID     = 0     # Flag DB Changed
+     ,print    = function() { message("Singleton for APP WEB")}
      ,initialize = function() {
          tryCatch({
             private$base   = YATABase$new()
             private$panels = base$map()
-            self$factory   = YATACore::getFactory(TRUE)
+            if (exists("YATAFactory")) {
+                self$factory = YATAFactory
+            } else {
+                self$factory   = YATACore::YATAFACTORY$new()
+            }
             self$MSG       = factory$MSG
             self$log       = YATALogger$new("WEB")
             private$hID    = base$map()
             private$hSym   = base$map()
             private$hCam   = base$map()
-            self$REST      = YATAServer$new()
             self$combo     = YATAWebCombos$new(self$factory)
+#JGGPEND            self$REST      = YATAServer$new()
 #            self$errorLevel = REST$check()
-            private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
+            private$tblCurrencies = factory$getTable(factory$codes$tables$currencies)
          }, YATAERROR = function (cond) {
              browser()
              self$errorLevel = 97
@@ -51,32 +57,34 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      #     # self$window$width  = data$window_width
      #     # self$window$height = data$window_height
      # }
-     ,setSession = function(session) {
-         #JGG Revisr
-         self$session = session
-         data = parseQueryString(session$request$HTTP_COOKIE)
-         if (length(data) > 0 && !is.null(data$YATA)) private$cookies = fromJSON(data$YATA)
-         invisible(self)
-      }
-     ,getPanel = function(name, loading=FALSE)  {
-         panel = private$panels$get(name)
-         if (!is.null(panel)) shinyjs::js$yata_set_page(name)
-         panel
+     # ,setSession = function(session) {
+     #     #JGG Revisr
+     #     self$session = session
+     #     data = parseQueryString(session$request$HTTP_COOKIE)
+     #     if (length(data) > 0 && !is.null(data$YATA)) private$cookies = fromJSON(data$YATA)
+     #     invisible(self)
+     #  }
+     # ,getPanel = function(name, loading=FALSE)  {
+     #     panel = private$panels$get(name)
+     #     if (!is.null(panel)) shinyjs::js$yata_set_page(name)
+     #     panel
+     # }
+     # ,addPanel = function(panel) {
+     #     private$panels$put(panel$name, panel)
+     #     shinyjs::js$yata_add_page(panel$name)
+     #     self$getPanel(panel$name, loading=TRUE)
+     # }
+     ,tooltip            = function(id)  { MSG$tooltip(id)   }
+     ,getLabelsPanel     = function()    { getLabelsMenu( 0) }
+     ,getLabelsMenuMain  = function()    { getLabelsMenu( 1) }
+     ,getLabelsMenuOper  = function()    { getLabelsMenu( 2) }
+     ,getLabelsMenuAdmin = function()    { getLabelsMenu( 5) }
+     ,getLabelsPanelErr  = function()    { getLabelsMenu( 9) }
+     ,getLabelsMenu      = function(idx) {
+         key = factory$codes$labels$lblPanels + idx
+         MSG$getBlock(key)
      }
-     ,addPanel = function(panel) {
-         private$panels$put(panel$name, panel)
-         shinyjs::js$yata_add_page(panel$name)
-         self$getPanel(panel$name, loading=TRUE)
-     }
-     ,getLabelsPanel    = function()    { getLabelsMenu(0) }
-     ,getLabelsPanelErr = function()    { getLabelsMenu(9) }
-     ,getLabelsMenuMain = function()    { getLabelsMenu(1) }
-     ,getLabelsMenuOper = function()    { getLabelsMenu(2) }
-     ,getLabelsMenu     = function(idx) {
-         key = factory$CODES$labels$lblPanels + idx
-         self$MSG$getBlock(key)
-      }
-
+     ,getLabelsAdmin     = function() { MSG$getBlock(40) }
      ,getMsg    = function(code, ...) { MSG$get(code, ...) }
      ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
      ,setCookies  = function(name, values) {

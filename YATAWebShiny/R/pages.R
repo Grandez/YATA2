@@ -1,10 +1,9 @@
-JGGDashboard = function( id = NULL, ...
+JGGDashboard = function( id = NULL
                         ,title       = NULL,  theme    = bs_theme()
                         ,paths       = NULL,  cssFiles = NULL,jsFiles  = NULL,jsInit   = NULL
-                        ,titleActive = FALSE, lang     = NULL) {
-#JGG    pathShiny = normalizePath(system.file("extdata/www", package = packageName()))
-#JGG    shiny::addResourcePath("yatashiny", "www/yata")
-
+                        ,titleActive = FALSE, lang     = NULL, ...) {
+    pathShiny = normalizePath(system.file("extdata/www", package = "YATAWebShiny"))
+    shiny::addResourcePath("jggshiny", pathShiny)
    if (!is.null(paths)) {
        lapply(names(paths), function(path) shiny::addResourcePath(path, paths[[path]]))
    }
@@ -31,7 +30,7 @@ JGGDashboard = function( id = NULL, ...
     page = make_container_full(nav, tabset$content, titleActive)
 #}
 
-   heads = tags$head( extendShinyjs(script="jggshiny_shiny.js", functions=parseShinyJS())
+   heads = tags$head( extendShinyjs(script="jggshiny/jggshiny_shiny.js", functions=parseShinyJS())
                      ,custom_css(cssFiles), custom_js(jsFiles)
                      ,document_ready_script(jsInit, title, id))
 
@@ -40,8 +39,22 @@ JGGDashboard = function( id = NULL, ...
 }
 
 JGGTabsetPanel = function (..., id = NULL, selected = NULL) {
-    shiny::tabsetPanel(..., id=id,selected=selected,type="tabs")
+#    shiny::tabsetPanel(..., id=id,selected=selected,type="tabs")
+# function (..., id = NULL, selected = NULL, type = c("tabs",
+#     "pills", "hidden"), header = NULL, footer = NULL)
+#{
+
+#    func <- switch(match.arg(type), tabs = bslib::navs_tab, pills = bslib::navs_pill,
+#        func <- switch(match.arg(type), tabs = bslib::navs_tab, pills = bslib::navs_pill,
+#        hidden = bslib::navs_hidden)
+browser()
+    data = bslib::navs_tab(..., id = id, selected = selected,
+        header = NULL, footer = NULL)
+    data$attribs$class = c(data$attribs$class, "jgg_navbar")
+    # remove_first_class(func(..., id = id, selected = selected,
+    #     header = header, footer = footer))
+data
 }
-JGGTabPanel = function(id, title=id, icon = NULL, ...) {
-    bslib::nav(title, ..., value=id, icon=icon)
+JGGTab = function(id, title=id, ...) {
+    bslib::nav(title, ..., value=id, icon=NULL)
 }

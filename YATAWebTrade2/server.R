@@ -7,15 +7,18 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
    ,lock_class = TRUE
 
    ,public = list(
-       position     = NULL
+       factory      = NULL
+      ,position     = NULL
       ,operations   = NULL
       ,cameras      = NULL
       ,providers    = NULL
-      ,initialize   = function(id, parent, session) {
-          super$initialize(id, parent, session)
-          self$position   = self$factory$getObject(self$codes$object$position)
-          self$providers  = self$factory$getObject(self$codes$object$providers)
-          self$updateData(TRUE)
+      ,initialize   = function(session) {
+          super$initialize(session)
+          self$factory = WEB$factory
+          #self$factory =
+          # self$position   = self$factory$getObject(self$codes$object$position)
+          # self$providers  = self$factory$getObject(self$codes$object$providers)
+          # self$updateData(TRUE)
       }
       ,isRoot      = function() { TRUE }
       ,invalidate  = function(panel) {
@@ -121,45 +124,61 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
-    cat("main beg\n")
-        if (!exists("WEB")) assign("WEB", YATAWebRoot$new(session), envir = .GlobalEnv)
-   WEB$setSession(session)
-   if (WEB$errorLevel > 0) {
-       if (WEB$errorLevel == 99)
-           return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  NULL, input, output, session))
-       return (yataErrGeneral(0, WEB$txtError, NULL, input, output, session))
-   }
-   pnl = WEB$getPanel("server")
-   if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
+   cat("main beg\n")
 
-   observeEvent(input$cookies, {
-       WEB$loadCookies(input$cookies)
-#       WEB$setWindow(input$cookies)
-   })
-   # observeEvent(input$resize, {
-   #     WEB$setWindow(input$resize)
-   # })
-   observeEvent(input$mainMenu,{
+   if (is.null(WEB$root)) WEB$root = YATAWebRoot$new(session)
+   pnl = WEB$root
+
+   # if (WEB$errorLevel > 0) {
+   #     if (WEB$errorLevel == 99)
+   #         return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  NULL, input, output, session))
+   #     return (yataErrGeneral(0, WEB$txtError, NULL, input, output, session))
+   # }
+   #
+
+   flags = reactiveValues(
+         db = NULL
+   )
+
+   observeEvent(flags$df, {
+      pnl$changeDB(input$radDB)
+      pp = pnl$factory$getDBName()
+      output$appTitle = updLabelText(pnl$factory$getDBName())
       eval(parse(text=paste0( "mod"
                              ,str_to_title(input$mainMenu)
                              ,"Server(input$mainMenu
                              ,''
                              ,pnl, parent=session)")))
-    })
-   observeEvent(input$connected,    {
-       showNotification("Connected")
-       browser()
-       PUT("begin")
-    })
-   observeEvent(input$disconnected, {
-       browser()
-              showNotification("Disconnected")
-       PUT("end")   })
-   observeEvent(input$initialized,  {
-       browser()
-       showNotification("Initialized")
-       browser()
-       PUT("begin") })
+      removeModal()
+
+   }, ignoreInit = TRUE)
+
+   if (pnl$factory$hasPortfolio()) {
+       message("tiene portfolio")
+   } else {
+       showModal(frmChangeDB(pnl$factory))
+   }
+   # observeEvent(input$cookies, {
+   #     WEB$loadCookies(input$cookies)
+   # })
+   observeEvent(input$mainMenu,{
+      mod = paste0( "mod",str_to_title(input$mainMenu),"Server")
+      eval(parse(text=paste0( mod, "(input$mainMenu, '', pnl, session)")))
+   })
+   # observeEvent(input$connected,    {
+   #     showNotification("Connected")
+   #     browser()
+   #     PUT("begin")
+   #  })
+   # observeEvent(input$disconnected, {
+   #     browser()
+   #            showNotification("Disconnected")
+   #     PUT("end")   })
+   # observeEvent(input$initialized,  {
+   #     browser()
+   #     showNotification("Initialized")
+   #     browser()
+   #     PUT("begin") })
    observeEvent(input$app_title,    {
       showModal(frmChangeDB(pnl$factory))
    })
@@ -174,27 +193,27 @@ function(input, output, session) {
                              ,pnl, parent=session)")))
       removeModal()
    })
-   observeEvent(input$btnErrorSevere, {
-       browser()
-   })
-
-   closePanel = function() { shinyjs::hide("yata-main-err") }
-
-   onStop(function() {
-       #JGG Se lanza desde el navegador
-
-      # cat("Shiny Session stopped\n")
-      # pnl$factory$finalize()
-      })
-
-   if (!pnl$loaded) {
-
-       pnl$loaded = TRUE
-       pname = pnl$factory$getDBName()
-       name = ifelse (is.null(pname), "YATA", pname)
-       output$appTitle = renderText({ name })
-       if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
-   }
-#   js$yata_req_cookies()
+   # observeEvent(input$btnErrorSevere, {
+   #     browser()
+   # })
+   #
+   # closePanel = function() { shinyjs::hide("yata-main-err") }
+   #
+   # onStop(function() {
+   #     #JGG Se lanza desde el navegador
+   #
+   #    # cat("Shiny Session stopped\n")
+   #    # pnl$factory$finalize()
+   #    })
+   #
+   # if (!pnl$loaded) {
+   #
+   #     pnl$loaded = TRUE
+   #     pname = pnl$factory$getDBName()
+   #     name = ifelse (is.null(pname), "YATA", pname)
+   #     output$appTitle = renderText({ name })
+   #     if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
+   # }
+###   js$yata_req_cookies()
    cat("main end\n")
 }

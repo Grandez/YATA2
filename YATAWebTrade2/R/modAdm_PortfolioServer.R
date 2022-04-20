@@ -1,7 +1,7 @@
 # Cada modulo lleva asociado un objeto
 # es el que gestiona la creacion del objeto y guarda sus variables
 
-modAdminServer <- function(id, full, pnlParent, parent=NULL) {
+modAdminPortfolioServer <- function(id, full, pnlParent, parent=NULL) {
    ns = NS(id)
    PNLAdmin = R6::R6Class("PNL.ADMIN"
       ,inherit = YATAPanel

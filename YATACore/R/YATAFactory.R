@@ -2,7 +2,7 @@
 # Los dejamos en lazy para no crear referencias circulares con los
 # singletons YATABase.
 
-YATAFactory = R6::R6Class("YATA.FACTORY"
+YATAFACTORY = R6::R6Class("YATA.FACTORY"
    ,portable  = FALSE
    ,cloneable = FALSE
    ,lock_class = TRUE
@@ -16,14 +16,13 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,fiat    = "$FIAT"  # Codigo moneda FIAT
       ,camera  = "CASH"   # Codigo camara FIAT
       ,id = 0
-      ,initialize = function(auto=TRUE, level=3) {
-          # auto: Conectar a la ultima BBDD / si no a la de por defecto
+      ,user = "YATA"
+      ,initialize = function(load=3) {
           # level: Cosas a conectarpara hacer la carga rapida
           #    0 - Nada
           #    1 - BBDD de usuario (la de sistema siempre se conecta)
           #    2 - Providers
-
-          init(auto, level)
+          init(load)
           self$logger = YATALogger$new("yata")
        }
       ,finalize   = function() { clear() }
@@ -40,6 +39,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       ,remove = function() {
           message("Removing")
       }
+      ,hasPortfolio = function() { !is.null(getDB()) }
       ,delete     = function(){
           # message("Deleting Factory")
           # pf = parent.frame()
@@ -126,11 +126,11 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
          ProvFactory$setCloseTime      (parms$getCloseTime())
          ProvFactory$setBaseCurrency   (parms$getBaseCurrency())
       }
-      ,init      = function(auto, level){
+      ,init      = function(load){
           sf = system.file("extdata", "yata.ini", package=packageName())
           private$cfg         = read.config(file=sf)
 
-          self$codes          = YATACore::YATACODES$new()
+          self$codes          = YATACore:::YATACODES$new()
           private$base        = YATABase$new()
           private$objects     = YATABase::map()
           private$classes     = YATABase::map()
@@ -139,12 +139,15 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
           self$MSG    = OBJMessages$new(self$codes$tables$messages, private$YATADBFactory)
           self$parms  = OBJParms$new   (private$YATADBFactory, self$MSG)
 
-          if (bitwAnd(level,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
+          if (bitwAnd(load,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
 
-          if (auto && bitwAnd(level, 1) != 0) {
-              camera = ifelse(parms$getAutoOpen(), parms$getLastCamera(), parms$getDefaultCamera())
-              data = parms$getCameraInfo(camera)
-              setDB(data$db)
+          if (bitwAnd(load, 1) != 0) { # Load portfolio
+              open = parms$getAutoOpen()
+              if (open != 0) {
+                  camera = ifelse(open == 1, parms$getLastCamera(), parms$getDefaultCamera())
+                  data = parms$getCameraInfo(camera)
+                  setDB(data$db)
+              }
           }
       }
    )

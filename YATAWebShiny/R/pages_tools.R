@@ -1,9 +1,9 @@
 "%||%" = function(x,y) { if (is.null(x)) y else x }
 parseShinyJS = function() {
     # Obtiene la extensiones a shiny
-    #JGg jsfile = system.file("extdata/www/yatashiny_shiny.js", package=packageName())
+    jsfile = system.file("extdata/www/jggshiny_shiny.js", package=packageName())
 
-    lines = readLines("www/jggshiny_shiny.js")
+    lines = readLines(jsfile)
     resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
     lens = attr(resp, "match.length")
     res = lapply(which(resp != -1), function(idx) {
@@ -12,28 +12,28 @@ parseShinyJS = function() {
     })
     unlist(res)
 }
-parseYATAShinyJS = function() {
-    browser()
-    #JGg jsfile = system.file("extdata/www/yatashiny_shiny.js", package=packageName())
-
-    lines = readLines("www/jggshiny_shiny.js")
-    resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
-    lens = attr(resp, "match.length")
-    res = lapply(which(resp != -1), function(idx) {
-        txt = substr(lines[idx], resp[idx], lens[idx] - 1)
-        substr(trimws(txt), 9, nchar(txt))
-    })
-    unlist(res)
-}
+# parseYATAShinyJS = function() {
+#     browser()
+#     #JGg jsfile = system.file("extdata/www/yatashiny_shiny.js", package=packageName())
+#
+#     lines = readLines("www/jggshiny_shiny.js")
+#     resp = regexpr("[ ]*shinyjs\\.[a-zA-Z0-9_-]+[ ]*=", lines)
+#     lens = attr(resp, "match.length")
+#     res = lapply(which(resp != -1), function(idx) {
+#         txt = substr(lines[idx], resp[idx], lens[idx] - 1)
+#         substr(trimws(txt), 9, nchar(txt))
+#     })
+#     unlist(res)
+# }
 
 custom_css = function(cssFiles) {
     # Take care for order: bootstrap, shiny. sass, css, theme
     base = tagList(
-         tags$link  (rel="stylesheet", type="text/css", href="jgg_bootstrap.css")
-        ,tags$link  (rel="stylesheet", type="text/css", href="jgg_shiny.css")
-        ,tags$link  (rel="stylesheet", type="text/css", href="jgg_sass.css")
-        ,tags$link  (rel="stylesheet", type="text/css", href="jgg_theme.css")
-        ,tags$link  (rel="stylesheet", type="text/css", href="jgg_css.css")
+         tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_bootstrap.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_shiny.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_sass.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_theme.css")
+        ,tags$link  (rel="stylesheet", type="text/css", href="jggshiny/jgg_css.css")
     )
     cssLink = NULL
     if (!is.null(cssFiles)) {
@@ -43,9 +43,9 @@ custom_css = function(cssFiles) {
     tagList(base, cssLink)
 }
 custom_js = function(jsFiles) {
-    base = tagList( tags$script(src='js_cookie.js')
-                   ,tags$script(src='jggshiny.js')
-                   ,tags$script(src='jggshiny_shiny.js')
+    base = tagList( tags$script(src='jggshiny/js_cookie.js')
+                   ,tags$script(src='jggshiny/jggshiny.js')
+                   ,tags$script(src='jggshiny/jggshiny_shiny.js')
                    )
     jsLink = NULL
     if (is.null(jsFiles)) return (tagList(base))

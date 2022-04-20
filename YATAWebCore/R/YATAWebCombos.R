@@ -11,9 +11,9 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
       MSG      = NULL
      ,initialize = function(factory) {
          private$factory       = factory
-         private$tblCameras    = factory$getTable(factory$CODES$tables$cameras)
-         private$tblCurrencies = factory$getTable(factory$CODES$tables$currencies)
-         private$tblPosition   = factory$getTable(factory$CODES$tables$position)
+         private$tblCameras    = factory$getTable(factory$codes$tables$cameras)
+         private$tblCurrencies = factory$getTable(factory$codes$tables$currencies)
+         private$tblPosition   = factory$getTable(factory$codes$tables$position)
          private$objParms      = factory$parms
          private$objMsgs       = factory$MSG
          refresh()
@@ -76,7 +76,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          checkAll(FALSE, data)
      }
      ,periods = function() {
-         data = objMsgs$getBlock(factory$CODES$labels$periods)
+         data = objMsgs$getBlock(factory$codes$labels$periods)
          lst = names(data)
          names(lst) = data
          lst
@@ -96,7 +96,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
      ,loadCurrencies = function() { private$cache$currencies = tblCurrencies$table() }
      ,loadOperations = function() {
          data = objParms$getBlock(50, 1)
-         lst = objMsgs$getBlock(factory$CODES$labels$operation)
+         lst = objMsgs$getBlock(factory$codes$labels$operation)
          dft = data.frame(msg=unlist(lst))
          dft$label = names(lst)
 
@@ -108,7 +108,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
      ,loadReasons = function() {
          data = objParms$getBlock(50, 2)
          data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)
-         txts = objMsgs$getBlock(factory$CODES$labels$reasons)
+         txts = objMsgs$getBlock(factory$codes$labels$reasons)
          dft = as.data.frame(unlist(txts))
          dft$id = row.names(dft)
          colnames(dft) = c("msg", "label")

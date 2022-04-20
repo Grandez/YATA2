@@ -1,3 +1,5 @@
+unloadNamespace("YATABatch")
+unloadNamespace("YATACore")
 # Core
 library(utils)
 library(R6)
@@ -15,7 +17,7 @@ suppressMessages(library(YATABase,       warn.conflicts = FALSE))
 suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
-library(YATABatch)
+# library(YATABatch)
 
 # Shiny
 library(shiny)
@@ -49,6 +51,7 @@ files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, igno
 sapply(files,source)
 
 WEB = YATAWebCore::YATAWebEnv$new()
+
 # WEB$startDaemons() # Esto bloquea en windows
 
 if (.Platform$OS.type != "windows") {

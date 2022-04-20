@@ -46,7 +46,17 @@ TBLParms = R6::R6Class("TBL.PARMS.BASE"
                  return (ifelse(as.integer(value) == 0, FALSE, TRUE))
              }
              value
+        }
+        ,applyType2df = function(df, column, type) {
+             if (type == DBDict$types$integer) df[,column] = as.integer(df[,column])
+             if (type == DBDict$types$numeric) df[,column] = as.numeric(df[,column])
+             if (type == DBDict$types$date)    df[,column] = as.Date(df[,column])
+             if (type == DBDict$types$time)    df[,column] = strptime(df[,column])
+             if (type == DBDict$types$tms)     df[,column] = as.POSIXct(df[,column])
+             if (type == DBDict$types$boolean) df[,column] = as.logical(as.integer(df[,column]))
+             df
          }
+
         ,getRaw      = function(group, subgroup, id) {
             df = table(group=group, subgroup=subgroup, id=id)
             if (nrow(df) == 0) {
@@ -100,6 +110,22 @@ TBLParms = R6::R6Class("TBL.PARMS.BASE"
                 names(data) = df$name
                 df = data
             }
+            df
+        }
+        ,getBlocks = function(group) {
+            df = NULL
+            data = table(group = group)
+            if (nrow(data) == 0) return (df)
+            types = NULL
+            blocks = unique(data$block)
+            dft = data %>% filter(block == blocks[1])
+            types = tidyr::spread(dft[,c("name", "type")], name, type)
+            for (blk in blocks) {
+                dft = data %>% filter(block == blk)
+                dfv = dft[,c("name", "value")]
+                df = rbind(df, tidyr::spread(dfv, name, value))
+            }
+            for (col in 1:ncol(types)) df = applyType2df(df, col, types[1,col])
             df
         }
         ,getBlock = function(group, subgroup, block) {

@@ -1,16 +1,15 @@
 frmChangeDB = function(factory, failed = FALSE) {
-    data    = factory$parms$getDBData()
-    current = factory$parms$lastOpen()
+    data    = factory$parms$getPortfolios()
+    current = factory$parms$getLastCamera()
+    values  = data$id
 
-    labels = paste0(data$descr, " (", data$name, ")")
-    values = data$subgroup
-    names(values) = labels
+    names(values) = data$name
 
    modalDialog(
-      title =  WEB$MSG$get("TITLE.DB.CHANGE")
+      title =  WEB$MSG$get("TITLE.DBCHANGE")
      ,easyClose = TRUE
      ,size = "m"
-     ,guiRadio("radDB", label=NULL, choices=values, selected=current$id, inline=FALSE)
+     ,guiRadio("radDB", label=NULL, choices=values, selected=current, inline=FALSE)
      ,footer = tagList(
           modalButton ("Cancel") #, WEB$MSG$get("LABEL.BTN.KO")),
           ,actionButton("dbOK",     WEB$MSG$get("LABEL.BTN.CHANGE"))

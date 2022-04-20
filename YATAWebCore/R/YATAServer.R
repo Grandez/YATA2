@@ -6,7 +6,8 @@ YATAServer = R6::R6Class("YATA.SERVER"
   ,public = list(
      initialize = function(type) {
          tryCatch({
-            private$fact  = YATACore::getFactory()
+             browser()
+            private$fact  = WEB$factory # YATACore::getFactory()
             servers = fact$parms$getServers()
             if (missing(type)) type = "REST"
             private$parms = servers[[type]]

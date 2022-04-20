@@ -3,6 +3,7 @@
 modOperMovInput = function(id, title) {
   ns = YATANS(id)
   lbl = WEB$getLabelsPanel()
+
   main = tagList(
       br()
      ,fluidRow( guiColumn(2)
@@ -30,10 +31,10 @@ modOperMovInput = function(id, title) {
                          ,tags$td(colspan="2", guiNumericInput(ns("impValue")))
                          ,tags$td(yuiBtnIconCalc(id=ns("btnCalcValue"))))
                 ,tags$tr( tags$td(lbl$FEE)
-                         ,tags$td(yuiSwitch(ns("swFee"),onLbl="%", offLbl="Value"))
+                         ,tags$td(guiSwitch(ns("swFee"),onLbl="%", offLbl="Value"))
                          ,tags$td(guiNumericInput(ns("impFee"),  NULL, value = 0)))
                 ,tags$tr( tags$td(lbl$GAS)
-                         ,tags$td(yuiSwitch(ns("swGas"),onLbl="%", offLbl="Value"))
+                         ,tags$td(guiSwitch(ns("swGas"),onLbl="%", offLbl="Value"))
                          ,tags$td(guiNumericInput(ns("impGas"),  NULL, value = 0)))
                 ,tags$tr( tags$td(lbl$REASON)
                          ,tags$td(colspan="2", guiCombo(ns("cboReasons"))))
@@ -43,12 +44,12 @@ modOperMovInput = function(id, title) {
             ,fluidRow(h2(lbl$TARGET))
             ,fluidRow(tags$table(
                  tags$tr( tags$td(lbl$TARGET)
-                         ,tags$td(yuiSwitch(ns("swTarget"),onLbl="%", offLbl="Value"))
+                         ,tags$td(guiSwitch(ns("swTarget"),onLbl="%", offLbl="Value"))
                          ,tags$td(guiNumericInput(ns("target"), NULL, value = 5)))
                 ,tags$tr( tags$td(lbl$DEADLINE)
                          ,tags$td(colspan=2, guiIntegerInput(ns("deadline"), NULL, value = 7)))
                 ,tags$tr( tags$td(lbl$STOP)
-                         ,tags$td(yuiSwitch(ns("swStop"),onLbl="%", offLbl="Value"))
+                         ,tags$td(guiSwitch(ns("swStop"),onLbl="%", offLbl="Value"))
                          ,tags$td(guiNumericInput(ns("stop"), NULL, value = 3)))
                 ,tags$tr( tags$td(lbl$LIMIT)
                          ,tags$td(colspan=2, guiNumericInput(ns("limit"), NULL, value = 0)))

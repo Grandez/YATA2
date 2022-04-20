@@ -162,7 +162,6 @@ bslib_navs_bar = function (..., title = NULL, id = NULL, selected = NULL, positi
 #   if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", header))
 #   contentDiv <- tagAppendChild(contentDiv, tabset$content)
 #   if (!is.null(footer)) contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
-# browser()
 #   # *Don't* wrap in bootstrapPage() (shiny::navbarPage()) does that part
 #   tagList(
 #     tags$nav(class = navbarClass, role = "navigation", containerDiv),
@@ -263,10 +262,8 @@ bslib_buildTabItem <- function(index, tabsetId, foundSelected, tabs = NULL,
     return(bslib_buildNavItem(divTag, tabsetId, index))
   }
 
-  if (is_nav_item(divTag) || is_nav_spacer(divTag)) {
-    return(
-      list(liTag = divTag, divTag = NULL)
-    )
+  if (bslib_is_nav_item(divTag) || bslib_is_nav_spacer(divTag)) {
+    return (list(liTag = divTag, divTag = NULL))
   }
 
   # The behavior is undefined at this point, so construct a condition message
@@ -337,16 +334,16 @@ bslib_markTabAsSelected <- function(x) {
 bslib_buildTabset = function(..., ulClass, textFilter = NULL, id = NULL,
                         selected = NULL, foundSelected = FALSE) {
   tabs = bslib_dropNulls(rlang::list2(...))
-  res = bslib:::findAndMarkSelectedTab(tabs, selected, foundSelected)
+  res  = bslib:::findAndMarkSelectedTab(tabs, selected, foundSelected)
   tabs = res$tabs
-  foundSelected <- res$foundSelected
+  foundSelected = res$foundSelected
 
   # add input class if we have an id
   if (!is.null(id)) ulClass <- paste(ulClass, "shiny-tab-input")
 
   if (bslib_anyNamed(tabs)) {
-    nms <- names(tabs)
-    nms <- nms[nzchar(nms)]
+    nms = names(tabs)
+    nms = nms[nzchar(nms)]
     stop("Tabs should all be unnamed arguments, but some are named: ",
          paste(nms, collapse = ", "))
   }
@@ -483,4 +480,22 @@ bslib_as_page <- function(x) {
 
 bslib_dropNulls <- function(x) {
   x[!vapply(x, is.null, FUN.VALUE=logical(1))]
+}
+bslib_is_nav_item <- function(x) {
+  bslib_tag_has_class(x, "bslib-nav-item")
+}
+
+#' @describeIn nav Adding spacing between nav items.
+#' @export
+bslib_nav_spacer <- function() {
+  div(class = "bslib-nav-spacer")
+}
+
+bslib_is_nav_spacer <- function(x) {
+  bslib_tag_has_class(x, "bslib-nav-spacer")
+}
+
+bslib_tag_has_class <- function(x, class) {
+  if (!inherits(x, "shiny.tag")) return(FALSE)
+  tagQuery(x)$hasClass(class)
 }

@@ -40,7 +40,7 @@ make_container_full = function (nav, content, titleActive) {
    divRight = shiny::tags$div( id="jgg_page_right"
                               ,class="w-25 h-100 jgg_page_right jgg_side_hide" )
 
-   divFooter = tagAppendChild(divFooter, tags$span("YATA - Grandez"))
+   divFooter = tagAppendChild(divFooter, tags$span("Grandez"))
 
   #  children = content$children
   #  children = children[[1]]$children
@@ -67,6 +67,7 @@ make_container_full = function (nav, content, titleActive) {
 }
 
 jgg_make_container = function (nav, content, titleActive) {
+    browser()
    contentDiv = shiny::tags$div(id="jgg_page")
    divHeader  = shiny::tags$div(id="jgg_page_header", class="jgg_header row" )
    divBody    = shiny::tags$div(id="jgg_page_body",   class="jgg_body"   )
@@ -79,7 +80,7 @@ jgg_make_container = function (nav, content, titleActive) {
    divRight = shiny::tags$div(id="jgg_page_right", class="jgg_page_right" )
 
    divBody   = tagAppendChild(divBody, content)
-   divFooter = tagAppendChild(divFooter, tags$span("YATA - Grandez"))
+   divFooter = tagAppendChild(divFooter, tags$span("Grandez"))
 
    page = tags$div(class="jgg_page", divHeader, divBody, divFooter)
    tags$div(id="jgg_container", class="jgg_container", page, .mainFormError())

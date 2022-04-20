@@ -108,3 +108,13 @@ WDGLayout = R6::R6Class("JGG.WEB.LAYOUT"
     }
   )
 )
+
+guiDivCenter = function(..., id=NULL, width=NULL) {
+   sty = ""
+   if (!is.null(width)) {
+       tags$div(id=id, class = "jgg_div_center", style=paste("width:", sty, ";"), ...)
+   } else {
+       tags$div(id=id, class = "jgg_div_center", ...)
+   }
+
+}

@@ -5,7 +5,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     ,cloneable  = FALSE
     ,lock_class = FALSE
     ,portable   = FALSE
-    ,public = list(valid = TRUE
+    ,public = list(valid=TRUE
         ,err = NULL
         ,print = function() { message("YATA Parameters")}
         ,initialize = function(dbf, msg) {
@@ -22,38 +22,38 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ################################################
         ### User - Group 1
         ################################################
-        ,getUser    = function() { tblConfig$getString(group = 1, subgroup = 1, id = 1) }
-        ,getPwd     = function() { tblConfig$getString(group = 1, subgroup = 1, id = 2) }
-        ,getFIAT    = function() { tblConfig$getString(group = 1, subgroup = 1, id = 3) }
-        ,getLang    = function() { tblConfig$getString(group = 1, subgroup = 1, id = 4) }
-        ,getDialect = function() { tblConfig$getString(group = 1, subgroup = 1, id = 5) }
+        ,getUser    = function() { tblConfig$getString(group=1, subgroup=1, id=1) }
+        ,getPwd     = function() { tblConfig$getString(group=1, subgroup=1, id=2) }
+        ,getFIAT    = function() { tblConfig$getString(group=1, subgroup=1, id=3) }
+        ,getLang    = function() { tblConfig$getString(group=1, subgroup=1, id=4) }
+        ,getDialect = function() { tblConfig$getString(group=1, subgroup=1, id=5) }
 
         ,setUser    = function(value, isolated=T) {
-            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 1, isolated=isolated)
+            tblConfig$update(lst(value=value), group=1, subgroup=1, id=1, isolated=isolated)
             invisible (self)
          }
         ,setPwd     = function(value, isolated=T) {
-            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 2, isolated=isolated)
+            tblConfig$update(lst(value=value), group=1, subgroup=1, id=2, isolated=isolated)
             invisible (self)
          }
         ,setFIAT    = function(value, isolated=T) {
-            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 3, isolated=isolated)
+            tblConfig$update(lst(value=value), group=1, subgroup=1, id=3, isolated=isolated)
             invisible (self)
          }
         ,setLang    = function(value, isolated=T) {
-            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 4, isolated=isolated)
+            tblConfig$update(lst(value=value), group=1, subgroup=1, id=4, isolated=isolated)
             invisible (self)
          }
         ,setDialect = function(value, isolated=T) {
-            tblConfig$update(lst(value=value), group = 1, subgroup = 1, id = 5, isolated=isolated)
+            tblConfig$update(lst(value=value), group=1, subgroup=1, id=5, isolated=isolated)
             invisible (self)
          }
 
         ################################################
-        ### User - Group 2 - Camera
+        ### User - 1-2 Actions
         ################################################
         ,getDefaultCamera = function() { tblConfig$getInteger (group=1, subgroup=2, id=1, default=1) }
-        ,getAutoOpen      = function() { tblConfig$getBoolean (group=1, subgroup=2, id=2, default=FALSE) }
+        ,getAutoOpen      = function() { tblConfig$getInteger (group=1, subgroup=2, id=2, default=0) }
         ,getLastCamera    = function() { tblConfig$getInteger (group=1, subgroup=2, id=3, default=1) }
 
         ,setDefaultCamera    = function(value, isolated=T) {
@@ -70,24 +70,30 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             value = as.character(value)
             tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
             invisible (self)
-         }
+        }
+
+        ################################################
+        ### User - Group 5 - Camera/portfolios
+        ################################################
+        ,getPortfolios = function() { tblConfig$getBlocks(group=5) }
         ,getCameraInfo = function(camera) {
-            data = tblConfig$getSubgroup(group = 5, subgroup=camera, asList=TRUE)
+            data = tblConfig$getSubgroup(group=5, subgroup=camera, asList=TRUE)
             db = getDBInfo(data$db, TRUE)
             list(camera=data, db=db)
         }
+
 #        ,getDefaultDB      = function() tblParms$getInteger(DBParms$ids$DBDefault)
         # ,lastOpen          = function() {
         #     getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen))
         # }
         ,defaultDB         = function() {
-            id = getDefaultDb()
+            id=getDefaultDb()
             getList(DBParms$group$databases, id)
         }
         ,setLastOpen       = function(iddb) {
             keys = splitKeys(DBParms$ids$lastOpen)
             tblParms$update( list(value=as.character(iddb))
-                            ,group = keys[1], subgroup = keys[2], id = keys[3]
+                            ,group = keys[1], subgroup = keys[2], id=keys[3]
                             ,isolated=TRUE)
             invisible(self)
         }
@@ -134,7 +140,8 @@ OBJParms = R6::R6Class("OBJ.PARMS"
          ### Databases
          ##############################################
         ,getDBData = function(all=FALSE) {
-            df = getGroup(DBParms$group$databases)
+            browser()
+            df = getGroup(5)
             df = df[,c("subgroup","name","value")]
             df = spread(df,name,value)
             if (!all) df = df[df$active == 1,]
@@ -181,7 +188,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ################################################
         ,updateParameter = function(group, subgroup, id, value, transactional = TRUE) {
             # Debe existir. transaccional es por si son varias actualizaciones
-            tblParms$select(group=group, subgroup=subgroup, id = id)
+            tblParms$select(group=group, subgroup=subgroup, id=id)
             if (nrow(df) == 0) stop("El parametro debe existir")
             checkParameterType(value, df[1,"type"])
             if (transactional) db$begin()
@@ -197,7 +204,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
                     tblParms$update(list(value=as.character(parms[[item]])),
                                     group    = df[1,"group"]
                                    ,subgroup = df[1,"subgroup"]
-                                   ,id = df[1,"id"])
+                                   ,id=df[1,"id"])
                 }
                 db$commit()
             },error = function(cond) {
@@ -225,7 +232,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
           tbl     = tblParms
           if (user) tbl = tblConfig
           data    = tbl$getSubgroup(group=10, subgroup=id, asList=TRUE)
-          data$id = id
+          data$id=id
           data
        }
     )

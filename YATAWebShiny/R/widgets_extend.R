@@ -2,8 +2,13 @@
 guiCheck = function(id, value=TRUE) {
   shinyWidgets::awesomeCheckbox(id, NULL, value = value)
 }
-guiRadio = function(id, label=NULL, choices, selected=NULL, inline=TRUE) {
-   shinyWidgets::awesomeRadio(id,label,choices,selected,inline = inline,checkbox = TRUE)
+guiRadio = function(id, label=NULL, choices, selected=NULL, inline=TRUE, tooltip=NULL) {
+   wdg = shinyWidgets::awesomeRadio(id,label,choices,selected,inline = inline,checkbox = TRUE)
+   if (!is.null(tooltip)) {
+       tagList(wdg, tooltip(id, tooltip))
+   } else {
+       wdg
+   }
 }
 updRadio = function(id, selected=NULL) {
    shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)

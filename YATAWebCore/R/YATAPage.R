@@ -1,6 +1,6 @@
-YATAPage = function( title="YATA", id = "mainMenu"
-         ,titleActive = TRUE
+YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE
          ,theme =  my_theme,lang = NULL, ...) {
+
    theme = bs_theme(bootswatch = "default",
                      base_font = font_collection(font_google("Source Sans Pro"),
     "-apple-system", "BlinkMacSystemFont", "Segoe UI",
@@ -25,7 +25,7 @@ YATAPage = function( title="YATA", id = "mainMenu"
 #               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"
               )
 
-    JGGDashboard( title,  id
+    JGGDashboard( title=title,  id=id
                        ,theme    = theme
                        ,paths    = paths
                        ,cssFiles = customCSS
@@ -57,14 +57,13 @@ parseShinyJS = function() {
 }
 
 # Wrappers
-YATAModule      = function (id, title="",mod=NULL, ...) {
-   JGGModule(id,title=title,mod=mod,...)
+YATAModule = function (id)                  { JGGModule(id=id) }
+YATATab    = function (title, id, ...) {
+    shiny::tabPanel(title=title, ..., value=id)
+    #JGGTab(title=title, id=id, ...)
 }
-YATATabsetPanel = function (id = NULL, selected = NULL, ...) {
-    browser()
-    JGGTabsetPanel(..., id=id,selected=selected)
+YATATabsetPanel = function (id, selected = NULL, ...) {
+    shiny::tabsetPanel(...,id=id,selected=selected,type="tabs")
+#    JGGTabsetPanel(..., id=id,selected=selected)
 }
-YATATabPanel    = function (title, value=title, icon = NULL, ...) {
-    browser()
-    JGGTabPanel(title, ..., value=value, icon = icon)
-}
+
