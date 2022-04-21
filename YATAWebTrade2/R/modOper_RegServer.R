@@ -31,11 +31,10 @@ modOperRegServer = function(id, full, pnlParent, parent) {
            ,operations = NULL
         )
    )
-   moduleServer(id, function(input, output, session) {
-        pnl = WEB$getPanel(id)
-        if (is.null(pnl)) pnl = WEB$addPanel(PNLOperReg$new(id, pnlParent, session))
+moduleServer(id, function(input, output, session) {
+  pnl = WEB$getPanel(PNLOperReg, id, pnlParent, session)
 
-       validate = function() {
+  validate = function() {
           if (input$impAmount <= 0)
               return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
           FALSE

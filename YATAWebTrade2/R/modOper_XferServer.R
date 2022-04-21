@@ -48,9 +48,8 @@ modOperXferServer = function(id, full, pnlParent, parent) {
             ,cameraIn  = NULL
         )
    )
-   moduleServer(id, function(input, output, session) {
-      pnl = WEB$getPanel(id)
-      if (is.null(pnl)) pnl = WEB$addPanel(PNLOperXfer$new(id, pnlParent, session))
+moduleServer(id, function(input, output, session) {
+   pnl = WEB$getPanel(PNLOperXfer, id, pnlParent, session)
 
       validate = function() {
           if (input$impAmount <= 0)

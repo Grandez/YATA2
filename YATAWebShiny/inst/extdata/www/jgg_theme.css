@@ -28,4 +28,15 @@ footer {
   font-weight: bold;
 }
 
+/* cajas de adminlte */
+.box.box-solid.box-primary {
+  border: 1px solid navy;
+}
+
+.box.box-solid.box-primary > .box-header {
+  color: white;
+  background: navy;
+  background-color: navy;
+}
+
 /*# sourceMappingURL=jgg_theme.css.map */

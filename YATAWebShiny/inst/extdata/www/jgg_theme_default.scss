@@ -7,6 +7,10 @@ $gradient: linear-gradient(to top, rgba(0,0,0,1) , rgba(0,0,0,0.75), rgba(0,0,0,
   color: whitesmoke;
 }
 
+// AdminLTE
+$box_color_bar: navy;
+$box_color_text: white;
+
 header {
   @include header_theme;
 }
@@ -27,4 +31,14 @@ footer {
 .jgg_navbar .active {
     color: #FDFEFF;
     font-weight: bold;
+}
+
+/* cajas de adminlte */
+.box.box-solid.box-primary {
+	border: 1px solid $box_color_bar;
+}
+.box.box-solid.box-primary > .box-header {
+	color: $box_color_text;
+	background: $box_color_bar;
+	background-color: $box_color_bar;
 }

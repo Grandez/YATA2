@@ -1,4 +1,4 @@
-modOperMovServer = function(id, full, pnlParent, parent) {
+modOperMovServer = function(id, full, pnlParent, session) {
    ns  = NS(id)
    ns2 = NS(full)
    PNLOperMov = R6::R6Class("PNL.OPER.MOV"
@@ -44,8 +44,7 @@ modOperMovServer = function(id, full, pnlParent, parent) {
 
 
 moduleServer(id, function(input, output, session) {
-        pnl = WEB$getPanel(id)
-        if (is.null(pnl)) pnl = WEB$addPanel(PNLOperMov$new(id, pnlParent, session))
+   pnl = WEB$getPanel(PNLOperMov, id, pnlParent, session)
 
       validate = function(data) {
           if (is.null(input$cboOper)     || nchar(trimws(input$cboOper)) == 0)

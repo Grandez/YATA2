@@ -116,11 +116,11 @@ modOperPosServer = function(id, full, pnlParent, parent) {
       )
    )
 
-   moduleServer(id, function(input, output, session) {
-      pnl = WEB$getPanel(PNLPosOper, id, parent, session)
-      if (pnl$DBID != WEB$DBID) { # first time or DB Changed
-          pnl = WEB$addPanel(PNLPosOper$new(full, pnlParent, session))
-      }
+moduleServer(id, function(input, output, session) {
+   pnl = WEB$getPanel(PNLPosOper, id, parent, session)
+   if (pnl$DBID != WEB$DBID) { # first time or DB Changed
+       pnl = WEB$addPanel(PNLPosOper$new(full, pnlParent, session))
+   }
       flags = reactiveValues(
             opClose   = FALSE
            ,opView    = FALSE

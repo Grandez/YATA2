@@ -144,7 +144,7 @@ moduleServer(id, function(input, output, session) {
        carea = pnl$getCommarea()
 
        if (is.null(carea$pending) || !carea$pending) {
-           eval(parse(text=paste0(module, "(act, input$mnuOper, pnlParent, session)")))
+           eval(parse(text=paste0(module, "(act, input$mnuOper, parent, session)")))
        } else {
            carea$pending = FALSE
            pnl$setCommarea(carea)

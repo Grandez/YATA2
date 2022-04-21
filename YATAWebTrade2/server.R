@@ -12,6 +12,7 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
       ,operations   = NULL
       ,cameras      = NULL
       ,providers    = NULL
+      ,loaded       = FALSE
       ,initialize   = function(id, parent, session) {
           super$initialize()
           self$factory = WEB$factory
@@ -123,20 +124,18 @@ function(input, output, session) {
       mod = paste0( "mod",str_to_title(input$mainMenu),"Server")
       eval(parse(text=paste0( mod, "(input$mainMenu, '', pnl, session)")))
    })
-   # observeEvent(input$connected,    {
-   #     showNotification("Connected")
-   #     browser()
-   #     PUT("begin")
-   #  })
-   # observeEvent(input$disconnected, {
-   #     browser()
-   #            showNotification("Disconnected")
-   #     PUT("end")   })
-   # observeEvent(input$initialized,  {
-   #     browser()
-   #     showNotification("Initialized")
-   #     browser()
-   #     PUT("begin") })
+   observeEvent(input$connected,    {
+       showNotification("Connected")
+       #PUT("begin")
+    })
+   observeEvent(input$disconnected, {
+      showNotification("Disconnected")
+       #PUT("end")
+    })
+   observeEvent(input$initialized,  {
+       showNotification("Initialized")
+       #PUT("begin")
+   })
    observeEvent(input$app_title,    {
       showModal(frmChangeDB(pnl$factory))
    })
@@ -164,14 +163,14 @@ function(input, output, session) {
    #    # pnl$factory$finalize()
    #    })
    #
-   # if (!pnl$loaded) {
-   #
-   #     pnl$loaded = TRUE
-   #     pname = pnl$factory$getDBName()
-   #     name = ifelse (is.null(pname), "YATA", pname)
-   #     output$appTitle = renderText({ name })
-   #     if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
-   # }
+   if (!pnl$loaded) {
+
+       pnl$loaded = TRUE
+       pname = pnl$factory$getDBName()
+       name = ifelse (is.null(pname), "YATA", pname)
+       output$appTitle = renderText({ name })
+       if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
+   }
 ###   js$yata_req_cookies()
    cat("main end\n")
 }

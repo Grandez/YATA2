@@ -12,12 +12,12 @@ lbl = WEB$getLabelsMenuMain()
 #cat(paste(Sys.time(), " - Before YATAPage"), file="P:/R/YATA2/web.log", append=TRUE)
 YATAWebCore::YATAPage("YATA", id="mainMenu",titleActive = TRUE, theme =  my_theme,lang = NULL
 #  ,YATATabPanel(lbl$POSITION,  value="pos",    YATAModule("pos")    )
-    ,YATATab(lbl$ADMIN,    id="admin", YATAModule("admin") )
+
    ,YATATab(lbl$OPERATION, id="oper",   YATAModule("oper"))
   # ,YATATabPanel(lbl$HISTORY,   value="hist",   YATAModule("hist")   )
   # ,YATATabPanel(lbl$ANALYSIS,  value="ana",    YATAModule("ana")    )
   # ,YATATabPanel(lbl$LOG,       value="log",    YATAModule("log")    )
-  # ,YATATabPanel(lbl$ADMIN,     value="admin",  YATAModule("admin")  )
+    ,YATATab(lbl$ADMIN,    id="admin", YATAModule("admin") )
   # ,YATATabPanel(lbl$STATUS,    value="status", YATAModule("status") )
 
 )

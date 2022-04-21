@@ -54,8 +54,19 @@ footer {
   height: $footer_height;
   flex-shrink: 0;
 }
-
 .jgg_div_center {
     margin: auto;
     width: 50%;
+}
+.jgg_side_hide {
+  display: none;
+}
+.jgg_header_hide {
+  display: none;
+}
+.jgg_clickable:hover {
+    cursor: pointer;
+}
+.jgg_fluid_row {
+    margin: 0px;
 }
