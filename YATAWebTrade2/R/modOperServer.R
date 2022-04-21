@@ -122,7 +122,7 @@ PNLOper = R6::R6Class("PNL.OPER"
   )
 )
 moduleServer(id, function(input, output, session) {
-    pnl = WEB$root$getPanel(PNLOper, id, parent, session)
+    pnl = WEB$getPanel(PNLOper, id, parent, session)
 
     flags = reactiveValues(
         commarea  = FALSE

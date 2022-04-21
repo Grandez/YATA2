@@ -8,7 +8,7 @@ library(YATAProviders)
 # YATACodes = YATACore:::YATACODES$new()
 .onLoad <- function(libname, pkgname){
   message("Loading YATACore")
-  YATAFactory <<- YATAFACTORY$new()
+#  YATAFactory <<- YATAFACTORY$new()
 # getFactory = function(force = FALSE) {
 #    if (length(ls(".GlobalEnv", pattern="Factory")) == 0 || is.null(Factory)) {
 #        force = TRUE

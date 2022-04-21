@@ -17,6 +17,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,camera  = "CASH"   # Codigo camara FIAT
       ,id = 0
       ,user = "YATA"
+      ,print = function()     { message("Factoria de objetos YATA") }
       ,initialize = function(load=3) {
           # level: Cosas a conectarpara hacer la carga rapida
           #    0 - Nada
@@ -109,7 +110,6 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       #      if (is.null(private$environ)) private$environ = YATAENV$new()
       #      private$environ
       # }
-      ,print = function()     { message("Factoria de objetos YATA") }
    )
    ,private = list(
        YATADBFactory   = NULL
@@ -142,9 +142,9 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           if (bitwAnd(load,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
 
           if (bitwAnd(load, 1) != 0) { # Load portfolio
-              open = parms$getAutoOpen()
-              if (open != 0) {
-                  camera = ifelse(open == 1, parms$getLastCamera(), parms$getDefaultCamera())
+              prefs = parms$getPreferences()
+              if (prefs$autoOpen != 0) {
+                  camera = ifelse(prefs$autoOpen == 1, prefs$last, prefs$default)
                   data = parms$getCameraInfo(camera)
                   setDB(data$db)
               }

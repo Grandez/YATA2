@@ -35,6 +35,12 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          data = makeCombo(df, id="camera", name="desc")
          checkAll(all, data)
      }
+     ,portfolios = function() {
+         df = objParms$getPortfolios()
+         lst = df$id
+         names(lst) = paste(df$title, df$name, sep = " - ")
+         lst
+     }
      ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge=TRUE, invert=FALSE) {
          if (is.null(cache$currencies)) loadCurrencies()
          df = cache$currencies

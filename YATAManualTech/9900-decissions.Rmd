@@ -1,0 +1,35 @@
+# Decisiones
+
+En este capítulo se documentan las decisiones que se han tomado tanto a nivel funcional, de diseño, técnicas así como el porqué y sus alternativas.
+
+El objetivo es mantener la trazabilidad y ofrecer un mejor conocimiento del sistema, evitando "repensar" de manera repetida la solución a ciertos problemas.
+
+Por facilidad de uso y documentación, cada decisión va en su propio archivo prefijado con la tipología
+
+Personalmente, opino que es una de las partes mas importantes de cualquier documentación puesto que documenta y argumenta el porqué de las cosas y las alternativas que se han planteado, evitando de esta forma enfrentarse a los mismos problemas y aclarando las motivaciones por las que se adoptó una determinada acción.
+
+## General
+
+```{r, child=list.files("decissions", "gral_[0-9]+.+.Rmd$", full.names=TRUE), echo=FALSE}
+```
+
+## Funcionales
+
+```{r, child=list.files("decissions", "func_[0-9]+.+.Rmd$", full.names=TRUE), echo=FALSE}
+```
+
+## Tecnicas
+
+```{r, child=list.files("decissions", "tech_[0-9]+.+.Rmd$", full.names=TRUE), echo=FALSE}
+```
+
+## Paquetes
+
+El sistema hace un uso relativamente alto de paquetes de terceros que implementan diferentes funcionalidades. 
+Normalmente cada paquete tiene su propio "__sabor__"; es decir, aunque la funcionalidad sea basicamente la misma, está implementada de diferente forma, bien sea esta es términos de API, rendimiento, cobertura de la funcionalidad, etc.
+
+Además, el "ecosistema" de R está en constante evolución, por lo que donde en un instante dado solo existían, por ejemplo, dos paquetes para resolver un problema, mas tarde pueden existir otro dos mas.
+
+
+```{r, child=list.files("decissions", "tech_[0-9]+.+.Rmd$", full.names=TRUE), echo=FALSE}
+```

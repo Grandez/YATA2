@@ -26,7 +26,7 @@ bslib_navbarPage = function(id, ...) {
   )
 
 }
-make_container_full = function (nav, content, titleActive) {
+make_container = function (nav, content, titleActive) {
    contentDiv = shiny::tags$div(id="jgg_page")
    divHeader  = shiny::tags$header()
    divBody    = shiny::tags$div(id="jgg_body",   class="jgg_body"   )
@@ -62,7 +62,11 @@ make_container_full = function (nav, content, titleActive) {
   #   contentDiv <- tagAppendChild(contentDiv, div(class = "row", footer))
 
    divBody   = tagAppendChildren(divBody, content) # divLeft, divMain, divRight)
-   page = tags$div(class="jgg_page", divHeader, divBody, divFooter)
+   page = tags$div(id="jgg_page", class="jgg_page", divHeader, divBody, divFooter)
+}
+
+make_container_full = function (nav, content, titleActive) {
+   page = make_container(nav, content, titleActive)
    tags$div(id="jgg_container", class="jgg_container", page, .mainFormError())
 }
 

@@ -24,6 +24,7 @@ modAdminPrefInput = function(id, title) {
                 # ,tags$tr( tags$td(lbl$REASON)
                 #          ,tags$td(colspan="2", guiCombo(ns("cboReasons"))))
             )
+            ,guiYesNo(id=ns("prefs"))
        )
   ))
   list(left=NULL, main=main, right=NULL)

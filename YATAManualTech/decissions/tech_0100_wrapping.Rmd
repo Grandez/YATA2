@@ -1,0 +1,91 @@
+### Encapsulación de paquetes de terceros
+
+El sistema hace un uso relativamente alto de paquetes de terceros que implementan diferentes funcionalidades. El ejemplo mas evidente y crítico puede ser el sistema Web, aunque esta basado en Shiny, usa otros paquetes que extienden el mismo, también es un sistema muy propenso a cambios y evoluciones, desde las propias versiones de HTML y CSS a los widgets utilizados.
+
+No obstante, y siguiendo con el ejemplo de shiny, la funcionalidad de los componentes utilizados es básicamente constante, por ejemplo, si necesitamos utilizar un "switch" independientemente de lo "bonito" o "feo" que sea, y de los atributos que puedan enriquecerlo, su funcionalidad es que debe indicar únicamente si esta activado o no.
+
+Por otro lado, el uso de paquetes lleva consigo el problema del espacios de nombre, diferentes funciones en diferentes paquetes comparten el mismo nombre, con lo que estas funciones se solapan entre si generando efectos colaterales de difícil identificación y/o solución puesto que depende básicamente del orden en el que se carguen los paquetes.
+
+Para solventar estos problemas la política seguida es:
+
+#### Funciones prefijadas y explicativas
+
+Todas las funciones públicas usan un prefijo que indica el origen de la misma y donde está definida.
+Por ejemplo, los widgets del paquete YATAWebShiny comienzan por **gui** y los especificos de YATA por **yui**.
+
+El nombre de la función se debe intentar que sea lo mas aclarativa y general posible.
+
+#### Prefijar con __namespace__
+
+Las funciones de paquetes de terceros **deben incluir el paquete**; es decir, usando la nomenclatura `nombre_paquete::funcion`; de esta forma evitamos el solapamiento de nombres y podemos identificar claramente el origen de la función.
+
+De igual forma, cuando se sustituya un paquete por otro, bastará con buscar el nombre del paquete para realizar el análisis de impacto.
+
+La únicas excepciones a este criterio, y únicamente con el objetivo de facilitar la codificación son:
+
+- Cuando la función es muy común tanto en uso, como nombre y funcionalidad. Por ejemplo, `str_to_title` existe en diferentes paquetes, pero sea cual sea el paquete cargado, su funcionamiento será siempre el mismo; en este ejemplo, poner un texto en modo título.
+
+- Cuando la función y su paquete asociado sea conocido. Por ejemplo, el paquete `ggplot2` o las funciones de `tidyverse`.
+
+- Funciones del propio sistema comunes, por que tenemos la garantia de que serán los ultimos espacios de nombres en cargarse.
+
+#### Encapsular la funcionalidad (__wrapping__)
+
+La necesidad de utilizar paquetes de terceros surge de la necesidad de implementar funcionalidades especificas no cubiertas por los paquetes base. En estos casos, la necesidad de la funcionalidad es una constante (existe a lo largo del tiempo) mientras que su implementación puede variar, bien por cambios en el paquete que la provee, bien por otros motivos -implementación interna, por ejemplo-.
+
+Este tipo de funciones se declaran con la funcionalidad que implementan encapsulando el paquete que lo implementa.
+
+Los ejemplos mas evidentes de este enfoque son los widgets HTML. 
+
+#### Encapsular la funcionalidad (__specialization__)
+
+Muchos paquetes pensados como herramientas genéricas suelen utilizar funciones con un alto número de parámetros de personalización, normalmente basados en parámetros por defecto.
+
+El uso de funciones con muchos parámetros suele dar lugar a errores tanto en tiempo de desarrollo: Demasiadas palabras a escribir; como de ejecución: Parámetros no especificados que usan valores por defecto, parametros actualizados no contemplados, etc.
+
+Para evitar estas situaciones preferimos encapsular la función general en nuestras propias funciones limitando el número de parámetros aceptados y rellenandolos a sus valores adecuados dentro de la función.
+
+
+#### Resumen
+
+Resumiendo todo lo explicado, aqui se muestra la implementación de tres componentes Web:
+
+- Un combo desplegable
+- Un combo desplegable con busqueda
+- Una listbox
+
+```{r, eval=FALSE, echo=TRUE}
+guiCombo = function( id, label=NULL, choices=NULL, selected = NULL) {
+    lbl = NULL
+    choice = c("")
+    if (!is.null(label))   lbl    = label
+    if (!is.null(choices)) choice = choices
+    shiny::selectInput(id, lbl, choice, selected=selected,width="auto", selectize=FALSE)
+}
+guiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = NULL) {
+    lbl = NULL
+    choice = c("")
+    if (!is.null(label))   lbl    = label
+    if (!is.null(choices)) choice = choices
+    shinyWidgets::selectizeInput(id,lbl,choice,selected=selected,
+                   options = list( placeholder = text
+                                  ,onInitialize = I('function() { this.setValue(""); }')
+                            ))
+}
+guiListbox = function( id, label=NULL, choices=NULL, selected = NULL, size=10, multiple=FALSE) {
+    lbl = NULL
+    choice = c("")
+    if (!is.null(label))   lbl    = label
+    if (!is.null(choices)) choice = choices
+    shiny::selectInput(id, lbl, choice
+                         , selected = selected
+                         , width="auto"
+                         , size=size
+                         , multiple = multiple
+                         ,selectize=FALSE)
+}
+```
+
+Obsérvese que shiny no maneja estos conceptos, todos ellos son el widget `selectInput` con diferentes parametrizaciones. 
+
+Además, para el combo con búsqueda usamos la implementación ofrecida por otro paquete.

@@ -36,7 +36,6 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
         self$MSG     = self$factory$MSG
 
     }
-
     ,getParent = function(name) {
         pp = self$parent
         while (!is.null(pp)) {
@@ -46,10 +45,10 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
         pp
     }
 #    ,getCookie = function(key) { self$vars$cookies[[key]] }
-    ,setCookies = function() {
-         WEB$setCookies(self$name, self$cookies)
-        invisible(self)
-    }
+    # ,setCookies = function() {
+    #      WEB$setCookies(self$name, self$cookies)
+    #     invisible(self)
+    # }
     ,invalidate = function(panel) {
        if (!is.null(self$parent)) self$parent$invalidate(panel)
        invisible(self)
@@ -61,15 +60,15 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
         if (!is.null(self$parent)) self$parent$reset(self$name)
         invisible(self)
     }
-    ,setCommarea       = function(...)            { private$root$setCommarea(...)        }
+    ,setCommarea       = function(...)            { WEB$setCommarea(...)        }
     ,getCommarea       = function(item=NULL, default=NULL) {
-        private$root$getCommarea(item, default)
+        WEB$getCommarea(item, default)
     }
     ,setCommareaBlock       = function(block, ...) {
-        private$root$setCommareaBlock(block=block, ...)
+        WEB$setCommareaBlock(block=block, ...)
      }
     ,getCommareaBlock       = function(block, item=NULL, default=NULL) {
-        private$root$getCommareaBlock(block, item, default)
+        WEB$getCommareaBlock(block, item, default)
      }
 
   )

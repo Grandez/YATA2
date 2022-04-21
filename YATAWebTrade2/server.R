@@ -12,8 +12,8 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
       ,operations   = NULL
       ,cameras      = NULL
       ,providers    = NULL
-      ,initialize   = function(session) {
-          super$initialize(session)
+      ,initialize   = function(id, parent, session) {
+          super$initialize()
           self$factory = WEB$factory
           #self$factory =
           # self$position   = self$factory$getObject(self$codes$object$position)
@@ -38,7 +38,6 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
           df = self$position$getGlobalPosition()
           ids = WEB$combo$getCurrenciesKey(id=FALSE, df$currency)
           if (length(ids) > 0) {
-              browser()
               self$data$dfPosGlobal = dplyr::inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")
           }
           invisible(self)
@@ -66,47 +65,6 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
          # df$label = labels[df$currency]
          # df
       }
-      # common commarea across panels
-      ,getCommarea       = function(item=NULL, default=NULL)     {
-          if (is.null(item)) return (private$commarea)
-          val = private$commarea[[item]]
-          if (is.null(val)) val = default
-          val
-      }
-      ,setCommarea      = function(..., block=NULL) {
-          data = list()
-          items = list(...)
-          if (is.list(items[[1]])) {
-              data = items[[1]]
-          } else {
-             for (idx in 1:length(items)) data[[names(items)[idx]]] = items[[idx]]
-          }
-          if (is.null(block)) {
-              private$commarea = list.merge(private$commarea, data)
-          } else {
-              private$commarea[[block]] = list.merge(private$commarea[[block]], data)
-          }
-          invisible(self)
-      }
-      ,getCommareaBlock       = function(block, item=NULL, default=NULL)     {
-          if (is.null(item)) return (private$commarea[[block]])
-          val = private$commarea[[item]]
-          if (is.null(val)) val = default
-          val
-      }
-      ,setCommareaBlock      = function(block, ...) {
-          items = list(...)
-          if (is.list(items[[1]])) items = items[[1]]
-          if (is.null(block)) {
-              private$commarea = list.merge(private$commarea, items)
-          } else {
-              if (is.null(private$commarea[[block]]))
-                  private$commarea[[block]] = items
-              else
-                  private$commarea[[block]] = list.merge(private$commarea[[block]], items)
-          }
-          invisible(self)
-      }
 
       ,getDFSession      = function() { self$data$dfSession   }
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
@@ -126,8 +84,8 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
 function(input, output, session) {
    cat("main beg\n")
 
-   if (is.null(WEB$root)) WEB$root = YATAWebRoot$new(session)
-   pnl = WEB$root
+   pnl = WEB$getPanel(YATAWebRoot, "root", NULL, session)
+   if (is.null(WEB$root)) WEB$root = pnl
 
    # if (WEB$errorLevel > 0) {
    #     if (WEB$errorLevel == 99)

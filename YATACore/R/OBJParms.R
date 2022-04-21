@@ -52,30 +52,56 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ################################################
         ### User - 1-2 Actions
         ################################################
-        ,getDefaultCamera = function() { tblConfig$getInteger (group=1, subgroup=2, id=1, default=1) }
-        ,getAutoOpen      = function() { tblConfig$getInteger (group=1, subgroup=2, id=2, default=0) }
-        ,getLastCamera    = function() { tblConfig$getInteger (group=1, subgroup=2, id=3, default=1) }
-
-        ,setDefaultCamera    = function(value, isolated=T) {
-            value = as.character(value)
-            tblConfig$update(lst(value=value), group=1, subgroup=2, id=1, isolated=isolated)
-            invisible (self)
-         }
-        ,setAutoOpen    = function(value, isolated=T) {
-            value = as.character(as.integer(value))
-            tblConfig$update(lst(value=value), group=1, subgroup=2, id=2, isolated=isolated)
-            invisible (self)
-         }
-        ,setLastCamera = function(value, isolated=T) {
-            value = as.character(value)
-            tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
-            invisible (self)
+        ,getPreferences   = function() {
+            tblConfig$getSubgroup(group=1, subgroup=2, asList=TRUE)
         }
-
+        ,setPreferences   = function(lst) {
+            prefs = c(default=1,autoOpen=2,last=3,cookies=4)
+            old = getPreferences()
+            tblConfig$db$begin()
+            for (idx in 1:length(lst)) {
+                lbl = names(lst)[idx]
+                if (old[[lbl]] != lst[[lbl]]) {
+                    value = as.character(lst[[lbl]])
+                    if(is.logical(lst[[lbl]])) value = ifelse(lst[[lbl]], "1", "0")
+                    tblConfig$update(lst(value=value), group=1, subgroup=2, id=prefs[lbl], isolated=F)
+                }
+            }
+            tblConfig$db$commit()
+        }
+        # ,getDefaultCamera = function() { tblConfig$getInteger (group=1, subgroup=2, id=1, default=1) }
+        # ,getAutoOpen      = function() { tblConfig$getInteger (group=1, subgroup=2, id=2, default=0) }
+        # ,getLastCamera    = function() { tblConfig$getInteger (group=1, subgroup=2, id=3, default=1) }
+        # ,getCookies       = function() { tblConfig$getBoolean (group=1, subgroup=2, id=4, default=TRUE) }
+        # ,setDefaultCamera    = function(value, isolated=T) {
+        #     value = as.character(value)
+        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=1, isolated=isolated)
+        #     invisible (self)
+        #  }
+        # ,setAutoOpen    = function(value, isolated=T) {
+        #     value = as.character(as.integer(value))
+        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=2, isolated=isolated)
+        #     invisible (self)
+        #  }
+        # ,setLastCamera = function(value, isolated=T) {
+        #     value = as.character(value)
+        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
+        #     invisible (self)
+        # }
+        # ,setCookies = function(value, isolated=T) {
+        #     value = ifelse (value, 1, 0)
+        #     value = as.character(vallue)
+        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=4, isolated=isolated)
+        #     invisible (self)
+        # }
         ################################################
         ### User - Group 5 - Camera/portfolios
         ################################################
-        ,getPortfolios = function() { tblConfig$getBlocks(group=5) }
+        ,getPortfolios = function(all=FALSE) {
+            df = tblConfig$getBlocks(group=5)
+            if (!all) df = df[df$active == TRUE,]
+            df
+        }
         ,getCameraInfo = function(camera) {
             data = tblConfig$getSubgroup(group=5, subgroup=camera, asList=TRUE)
             db = getDBInfo(data$db, TRUE)
@@ -140,7 +166,6 @@ OBJParms = R6::R6Class("OBJ.PARMS"
          ### Databases
          ##############################################
         ,getDBData = function(all=FALSE) {
-            browser()
             df = getGroup(5)
             df = df[,c("subgroup","name","value")]
             df = spread(df,name,value)

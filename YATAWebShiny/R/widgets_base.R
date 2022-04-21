@@ -136,11 +136,11 @@ guiSwitch = function(id, value=TRUE, onLbl="Yes", offLbl="No") {
                 ,onStatus = "success" ,offStatus = "danger"
                 , value = value, width="auto")
 }
-updSwitch = function(id,value=NULL, disabled=NULL) {
+updSwitch = function(id, value=NULL) {
    shinyWidgets::updateSwitchInput( session = getDefaultReactiveDomain()
                                    ,inputId = id
                                    ,value   = value
-                                   ,disable = disabled
+                                   ,disable = NULL
    )
   # label = NULL,
   # onLabel = NULL,

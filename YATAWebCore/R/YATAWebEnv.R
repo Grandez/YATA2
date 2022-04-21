@@ -2,9 +2,10 @@
 # Y los objetos
 # Almacenamos tambien las monedas y sus nombres
 YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
-  ,portable   = FALSE
+  ,portable   = TRUE
   ,cloneable  = FALSE
   ,lock_class = TRUE
+  ,inherit    = JGGWEBROOT
   ,public = list(
       MSG      = NULL
      ,REST   = NULL
@@ -15,29 +16,27 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,log      = NULL
 #     ,window  = list(width = 0, height = 0)
      ,combo    = NULL
-     ,root     = NULL
      ,DBID     = 0     # Flag DB Changed
      ,print    = function() { message("Singleton for APP WEB")}
-     ,initialize = function() {
+     ,initialize = function(factory) {
          tryCatch({
+            super$initialize()
             private$base   = YATABase$new()
-            private$panels = base$map()
-            if (exists("YATAFactory")) {
-                self$factory = YATAFactory
-            } else {
-                self$factory   = YATACore::YATAFACTORY$new()
-            }
-            self$MSG       = factory$MSG
+            private$panels = private$base$map()
+            if        (!missing(factory))     self$factory = factory
+            else if   (exists("YATAFactory")) self$factory = YATAFactory
+                 else                         self$factory = YATACore::YATAFACTORY$new()
+
+            self$MSG       = self$factory$MSG
             self$log       = YATALogger$new("WEB")
-            private$hID    = base$map()
-            private$hSym   = base$map()
-            private$hCam   = base$map()
+            private$hID    = private$base$map()
+            private$hSym   = private$base$map()
+            private$hCam   = private$base$map()
             self$combo     = YATAWebCombos$new(self$factory)
 #JGGPEND            self$REST      = YATAServer$new()
 #            self$errorLevel = REST$check()
-            private$tblCurrencies = factory$getTable(factory$codes$tables$currencies)
+            private$tblCurrencies = self$factory$getTable(factory$codes$tables$currencies)
          }, YATAERROR = function (cond) {
-             browser()
              self$errorLevel = 97
              self$txtError = cond
          }, error = function(cond) {
@@ -51,7 +50,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
          private$hID    = NULL
          private$hSym   = NULL
          private$hCam   = NULL
-      #   factory$clear()
+      #   self$factory$clear()
      }
      # ,setWindow = function(data) {
      #     # self$window$width  = data$window_width
@@ -74,18 +73,18 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      #     shinyjs::js$yata_add_page(panel$name)
      #     self$getPanel(panel$name, loading=TRUE)
      # }
-     ,tooltip            = function(id)  { MSG$tooltip(id)   }
-     ,getLabelsPanel     = function()    { getLabelsMenu( 0) }
-     ,getLabelsMenuMain  = function()    { getLabelsMenu( 1) }
-     ,getLabelsMenuOper  = function()    { getLabelsMenu( 2) }
-     ,getLabelsMenuAdmin = function()    { getLabelsMenu( 5) }
-     ,getLabelsPanelErr  = function()    { getLabelsMenu( 9) }
+     ,tooltip            = function(id)  { self$MSG$tooltip(id)   }
+     ,getLabelsPanel     = function()    { self$getLabelsMenu( 0) }
+     ,getLabelsMenuMain  = function()    { self$getLabelsMenu( 1) }
+     ,getLabelsMenuOper  = function()    { self$getLabelsMenu( 2) }
+     ,getLabelsMenuAdmin = function()    { self$getLabelsMenu( 5) }
+     ,getLabelsPanelErr  = function()    { self$getLabelsMenu( 9) }
      ,getLabelsMenu      = function(idx) {
-         key = factory$codes$labels$lblPanels + idx
-         MSG$getBlock(key)
+         key = self$factory$codes$labels$lblPanels + idx
+         self$MSG$getBlock(key)
      }
-     ,getLabelsAdmin     = function() { MSG$getBlock(40) }
-     ,getMsg    = function(code, ...) { MSG$get(code, ...) }
+     ,getLabelsAdmin     = function() { self$MSG$getBlock(40) }
+     ,getMsg    = function(code, ...) { self$MSG$get(code, ...) }
      ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
      ,setCookies  = function(name, values) {
         private$cookies[[name]] = values
