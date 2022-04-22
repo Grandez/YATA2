@@ -28,61 +28,100 @@ INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  
 
 -- 5 - Carteras/Portfolios
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   1,  10, 'id'             , '1'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   2,   1, 'name'           , 'Cartera Windows'           );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   3,   1, 'title'          , 'WINDOWS'                   );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   2,   1, 'name'           , 'Cartera General'           );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   3,   1, 'title'          , 'GENERAL'                   );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   4,   1, 'scope'          , '1'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   5,  10, 'target'         , '3'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   6,  10, 'selective_ctc'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   7,  10, 'selective_tok'  , '0'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   8,   1, 'comment'        , 'Cartera de pruebas'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   8,   1, 'comment'        , 'Cartera de pruebas'        );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   9,  10, 'db'             , '1'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,  10,  20, 'active'         , '1'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,  11,  31, 'since'          , '1970-01-01'                );
 
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   1,  10, 'id'             , '2'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   2,   1, 'name'           , 'Cartera 1'                 );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   3,   1, 'title'          , 'SHORT'                     );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   4,   1, 'scope'          , '1'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   5,  10, 'target'         , '3'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   2,   1, 'name'           , 'Tokens'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   3,   1, 'title'          , 'TOKENS'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   4,   1, 'scope'          , '2'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   5,  10, 'target'         , '2'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   6,  10, 'selective_ctc'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   7,  10, 'selective_tok'  , '0'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   8,   1, 'comment'        , 'Simulacion'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   8,   1, 'comment'        , 'Solo tokens'               );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   9,  10, 'db'             , '2'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,  10,  20, 'active'         , '1'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,  11,  31, 'since'          , '1970-01-01'                );
 
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   1,  10, 'id'             , '3'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   2,   1, 'name'           , 'Cartera 2'                 );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   3,   1, 'title'          , 'SHORT'                     );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   4,   1, 'scope'          , '1'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   5,  10, 'target'         , '3'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   2,   1, 'name'           , 'Coins'                     );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   3,   1, 'title'          , 'COINS'                     );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   4,   1, 'scope'          , '2'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   5,  10, 'target'         , '1'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   6,  10, 'selective_ctc'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   7,  10, 'selective_tok'  , '0'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   8,   1, 'comment'        , 'Simulacion'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   8,   1, 'comment'        , 'Solo monedas'              );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   9,  10, 'db'             , '3'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,  10,  20, 'active'         , '1'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,  11,  31, 'since'          , '1970-01-01'                );
+
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   1,  10, 'id'             , '4'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   2,   1, 'name'           , 'Short'                     );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   3,   1, 'title'          , 'SHORT'                     );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   4,   1, 'scope'          , '1'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   5,  10, 'target'         , '3'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   6,  10, 'selective_ctc'  , '0'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   7,  10, 'selective_tok'  , '0'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   8,   1, 'comment'        , 'Corto plazo'               );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,   9,  10, 'db'             , '4'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,  10,  20, 'active'         , '1'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   4,   4,  11,  31, 'since'          , '1970-01-01'                );
+
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   1,  10, 'id'             , '5'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   2,   1, 'name'           , 'Medium'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   3,   1, 'title'          , 'MEDIUM'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   4,   1, 'scope'          , '2'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   5,  10, 'target'         , '3'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   6,  10, 'selective_ctc'  , '100'                       );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   7,  10, 'selective_tok'  , '100'                       );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   8,   1, 'comment'        , 'Medio plazo'               );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,   9,  10, 'db'             , '3'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,  10,  20, 'active'         , '1'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   5,   5,  11,  31, 'since'          , '1970-01-01'                );
                                                                                                                                                         
 -- 10 - Databases                                                                                                                                       
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   1,   1, 'name'          , 'Normal'                     );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   2,   1, 'descr'         , 'YATA Pruebas'               );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   3,   1, 'engine'        , 'MariaDB'                    );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   4,   1, 'dbname'        , 'YATA_YATA'                  );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   4,   1, 'dbname'        , 'YATA_GRAL'                  );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   5,   1, 'host'          , '127.0.0.1'                  );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   1,   1,   6,  10, 'port'          , '3306'                       );
 
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   1,   1,   1, 'name'          , 'Simm'                       );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   1,   2,   1, 'descr'         , 'YATA Simulacion'            );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   1,   3,   1, 'engine'        , 'MariaDB'                    );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   1,   4,   1, 'dbname'        , 'YATA_SIMM'                  );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   1,   5,   1, 'host'          , '127.0.0.1'                  );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   1,   6,  10, 'port'          , '3306'                       );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   2,   1,   1, 'name'          , 'Tokens'                     );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   2,   2,   1, 'descr'         , 'YATA Tokens'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   2,   3,   1, 'engine'        , 'MariaDB'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   2,   4,   1, 'dbname'        , 'YATA_TOKENS'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   2,   5,   1, 'host'          , '127.0.0.1'                  );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   2,   2,   6,  10, 'port'          , '3306'                       );
 
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   2,   1,   1, 'name'          , 'Test'                       );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   2,   2,   1, 'descr'         , 'YATA Test'                  );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   2,   3,   1, 'engine'        , 'MariaDB'                    );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   2,   4,   1, 'dbname'        , 'YATA_TEST'                  );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   2,   5,   1, 'host'          , '127.0.0.1'                  );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   2,   6,  10, 'port'          , '3306'                       );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   3,   1,   1, 'name'          , 'Coins'                      );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   3,   2,   1, 'descr'         , 'YATA Coins'                 );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   3,   3,   1, 'engine'        , 'MariaDB'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   3,   4,   1, 'dbname'        , 'YATA_COINS'                 );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   3,   5,   1, 'host'          , '127.0.0.1'                  );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   3,   3,   6,  10, 'port'          , '3306'                       );
+
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   4,   4,   1,   1, 'name'          , 'Short'                      );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   4,   4,   2,   1, 'descr'         , 'YATA Short'                 );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   4,   4,   3,   1, 'engine'        , 'MariaDB'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   4,   4,   4,   1, 'dbname'        , 'YATA_SHORT'                 );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   4,   4,   5,   1, 'host'          , '127.0.0.1'                  );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   4,   4,   6,  10, 'port'          , '3306'                       );
+
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   5,   5,   1,   1, 'name'          , 'Medium'                     );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   5,   5,   2,   1, 'descr'         , 'YATA Medium'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   5,   5,   3,   1, 'engine'        , 'MariaDB'                    );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   5,   5,   4,   1, 'dbname'        , 'YATA_MEDIUM'                );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   5,   5,   5,   1, 'host'          , '127.0.0.1'                  );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 10,   5,   5,   6,  10, 'port'          , '3306'                       );
+
 
 COMMIT;
