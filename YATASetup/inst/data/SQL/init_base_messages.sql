@@ -84,7 +84,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.SUM
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.DETAIL"         ,"XX", "XX"     , "Detail"                                      );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.XFER"           ,"XX", "XX"     , "Transferencias entre camaras"                );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.REGULARIZATION" ,"XX", "XX"     , "Regularizaciones"                            );
+
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.ACCEPT"    ,"XX", "XX"     , "Aceptar Operación"                           );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.EXECUTE"   ,"XX", "XX"     , "Ejecutar Operación"                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.CANCEL"    ,"XX", "XX"     , "Cancelar Operación"                          );
@@ -162,11 +162,11 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.POSIT
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.OPERATION"        ,"XX", "XX"     , "Operacion"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.ANALYSIS"         ,"XX", "XX"     , "Analisis"                                    );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.LOG"              ,"XX", "XX"     , "Log"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.BLOG"             ,"XX", "XX"     , "Blog"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.ADMIN"            ,"XX", "XX"     , "Admin"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.STATUS"           ,"XX", "XX"     , "Status"                                      );
 
--- 21  Operaciones
+-- 22  Operaciones
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.POSITION"          ,"XX", "XX"     , "Posicion"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.OPER"              ,"XX", "XX"     , "Operar"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "MNU.XFER"              ,"XX", "XX"     , "Transferir"                                  );
@@ -183,6 +183,14 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "TXT.OPER.
 -- 25  Administracion
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.PREF"         ,"XX", "XX"     , "Preferencias"                                );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.PORTFOLIO"    ,"XX", "XX"     , "Carteras"                                    );
+
+-- 26  Blog target
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.GRAL"            ,"XX", "XX"     , "General"                                     );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.CURRENCY"        ,"XX", "XX"     , "Moneda"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.EXCHANGE"        ,"XX", "XX"     , "Exchange"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.CAMERA"          ,"XX", "XX"     , "Camara"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.OPER"            ,"XX", "XX"     , "Operacion"                                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.NOTE"            ,"XX", "XX"     , "Notas"                                       );
 
 -- 29  Panel de error
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 29, "PNLERR.MESSAGE"       ,"XX", "XX"     , "Message"                                     );

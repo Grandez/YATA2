@@ -1,4 +1,4 @@
-modLogServer <- function(id, full, pnlParent, parent=NULL) {
+modBlogServer <- function(id, full, parent, session) {
    ns = NS(id)
    PNLBlog = R6::R6Class("PNL.BLOG"
         ,inherit    = WEBPanel
@@ -8,8 +8,8 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
             blog       = NULL
            ,currencies = NULL
            ,data       = NULL
-           ,initialize = function(id, pnlParent, session, ns) {
-               super$initialize(id, pnlParent, session, ns)
+           ,initialize = function(id, parent, session) {
+               super$initialize(id, parent, session)
                self$blog  = self$factory$getObject("Blog")
                self$currencies = self$factory$getObject("Currencies")
            }
@@ -39,11 +39,10 @@ modLogServer <- function(id, full, pnlParent, parent=NULL) {
         )
    )
 moduleServer(id, function(input, output, session) {
-   pnl = WEB$getPanel(id)
-
-   if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
-       pnl = WEB$addPanel(PNLBlog$new(id, pnlParent, session, NS(id)))
-   }
+   pnl = WEB$getPanel(PNLBlog, id, parent, session)
+   if (pnl$DBID != WEB$DBID) { # first time or DB Changed
+       pnl = WEB$addPanel(PNLBlog$new(id, parent, session))
+    }
 
        reset = function() {
           output$msg = renderText({""})

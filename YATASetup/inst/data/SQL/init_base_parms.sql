@@ -282,4 +282,35 @@ INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  33,  2,  10,  'key'    , '92'   );
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  2,  43,  2,  10,  'key'    , '93'   );
 
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  1,  1,   1, 'label'    , 'BLOG.GRAL'        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  2,  1,   1, 'label'    , 'BLOG.CURRENCY'    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  3,  1,   1, 'label'    , 'BLOG.EXCHANGE'    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  4,  1,   1, 'label'    , 'BLOG.CAMERA'      );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  5,  1,   1, 'label'    , 'BLOG.OPER'        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  6,  1,   1, 'label'    , 'BLOG.NOTE'        );
+
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  1,  2,   1, 'key'      , 'GRAL'            );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  2,  2,   1, 'key'      , 'CURRENCY'        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  3,  2,   1, 'key'      , 'EXCHANGE'        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  4,  2,   1, 'key'      , 'CAMERA'          );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  5,  2,   1, 'key'      , 'OPER'            );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  6,  2,   1, 'key'      , 'NOTE'            );
+
+-- ----------------------------------------------------
+-- Grupo 15 - Motivos 
+--  El subgrupo coincide cn el codigo  de la operacion
+--  ID esta codificado
+--     xx0 - Todos
+--     xx1 - Compras
+--     xx2 - Ventas
+--     xx3 - Eventos en operaciones
+-- ----------------------------------------------------
+
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,   0,  1,   1, 'label'    , 'REASON.NONE'       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  10,  1,   1, 'label'    , 'REASON.FAIL'       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  20,  1,   1, 'label'    , 'REASON.OTHER'      );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  11,  1,   1, 'label'    , 'REASON.UP'         );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  21,  1,   1, 'label'    , 'REASON.SUGGEST'    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  31,  1,   1, 'label'    , 'REASON.TOP'        );
+
 COMMIT;

@@ -1,4 +1,4 @@
-modLogInput = function(id, title="") {
+modBlogInput = function(id, title="") {
     ns = NS(id)
     targets = c("General"="gral", "Moneda"="currency", "Operacion"="oper", "Notas"="note")
     targets2 = c("Todo"="all",targets)
@@ -6,20 +6,20 @@ modLogInput = function(id, title="") {
     lblTitle = WEB$MSG$get("TITLE.TITLE")
     lblDetail  = WEB$MSG$get("TITLE.DETAIL")
     lblApply   = WEB$MSG$get("SUBT.APPLY")
-    
+
     left = tagList(
-         yuiTitle(5, "Filter")
+         guiTitle(5, "Filter")
         ,fluidRow(column(4, "Select")
                   ,column(8, guiCombo( ns("cboFilter"),choices=targets2,selected="currency")))
         ,fluidRow( column(4, "Desde")
                   ,column(8, style="text-align: right;"
                             , dateInput(ns("dfFrom"), NULL, format = "yyyy-mm-dd", startview = "month",language = "es"))
           )
-      ,fluidRow(column(4, "Orden"),column(8, yuiSwitch(ns("swOrder"),onLbl="Asc", offLbl="Desc")))      
+      ,fluidRow(column(4, "Orden"),column(8, guiSwitch(ns("swOrder"),onLbl="Asc", offLbl="Desc")))
       ,yuiBtnOK(ns("btnFilter"),lblFilter)
     )
     main = tagList(
-        yuiBox(ns("item"),"Crear nota", tags$br()
+        guiBox(ns("item"),"Crear nota", tags$br()
               ,fluidRow( guiColumn(2, h4(lblApply))
                         ,guiColumn(2, guiCombo( ns("cboApply"),choices=targets,selected="oper"))
                         ,guiColumn(1)
@@ -27,13 +27,13 @@ modLogInput = function(id, title="") {
                         ,guiColumn(3,guiComboSelect(ns("cboTarget"),text="Counter"))
               )
         ,fluidRow(guiColumn(2, h4(lblTitle)), column(7, yuiTextInput(ns("title"))))
-        ,fluidRow(guiColumn(2),               column(7, yuiTextArea(ns("data"), label=NULL, cols="200", rows="10")))
+        ,fluidRow(guiColumn(2),               column(7, guiTextArea(ns("data"), label=NULL, cols="200", rows="10")))
         ,fluidRow(guiColumn(2), guiColumn(6, yuiBtnOK(ns("btnOK"), "Procesar")
                                            , yuiBtnInfo(ns("btnView"), "Visualizar")
                                            , yuiBtnDanger(ns("btnKO"), "Cancelar"))
                             )
         )
-,yuiBox(id=ns("posts0"), "Box with user comment",
+,guiBox(id=ns("posts0"), "Box with user comment",
   tags$div(id=ns("posts"))
 #     ,userPost(
 #     id = 1,
@@ -41,10 +41,10 @@ modLogInput = function(id, title="") {
 # #    src = "https://adminlte.io/themes/AdminLTE/dist/img/user1-128x128.jpg",
 #     author = "Jonathan Burke Jr.",
 #     description = "Shared publicly - 7:30 PM today",
-#     "Lorem ipsum represents a long-held tradition for designers, 
-#               typographers and the like. Some people hate it and argue for 
-#               its demise, but others ignore the hate as they create awesome 
-#               tools to help create filler text for everyone from bacon 
+#     "Lorem ipsum represents a long-held tradition for designers,
+#               typographers and the like. Some people hate it and argue for
+#               its demise, but others ignore the hate as they create awesome
+#               tools to help create filler text for everyone from bacon
 #               lovers to Charlie Sheen fans.",
 #     # userPostToolItemList(
 #     #   userPostToolItem(dashboardLabel("item 1")),
@@ -63,7 +63,7 @@ modLogInput = function(id, title="") {
 #     )
 #   )
 
-)        
+)
     )
     list(left=left, main=main, right=NULL)
 }

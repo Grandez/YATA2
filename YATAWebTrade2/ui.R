@@ -16,7 +16,7 @@ YATAWebCore::YATAPage("YATA", id="mainMenu",titleActive = TRUE, theme =  my_them
    ,YATATab(lbl$OPERATION, id="oper",   YATAModule("oper"))
   # ,YATATabPanel(lbl$HISTORY,   value="hist",   YATAModule("hist")   )
   # ,YATATabPanel(lbl$ANALYSIS,  value="ana",    YATAModule("ana")    )
-  # ,YATATabPanel(lbl$LOG,       value="log",    YATAModule("log")    )
+    ,YATATab(lbl$BLOG,      id="blog",    YATAModule("blog")    )
     ,YATATab(lbl$ADMIN,    id="admin", YATAModule("admin") )
   # ,YATATabPanel(lbl$STATUS,    value="status", YATAModule("status") )
 

@@ -88,7 +88,16 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          lst = names(data)
          names(lst) = data
          lst
-      }
+     }
+     ,blog = function(type=9) {
+         if (is.null(cache$blog)) loadBlog()
+         df = cache$reasons[(cache$reasons$block %% 10) == 0,] # General
+         df = rbind(df, cache$reasons[(cache$reasons$block %% 10) == type,]) # Especifico
+         df = df[,c("id", "name")]
+         data = makeCombo(df)
+         checkAll(FALSE, data)
+     }
+
   )
   ,private = list(
       factory       = NULL
@@ -124,6 +133,18 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          df = df[,c("block", "key","msg")]
          colnames(df) = c("block", "id", "name")
          private$cache$reasons = df
+     }
+     ,loadBlog = function() {
+         data = objParms$getBlock(50, 3)
+         data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)
+         # txts = objMsgs$getBlock(factory$codes$labels$reasons)
+         # dft = as.data.frame(unlist(txts))
+         # dft$id = row.names(dft)
+         # colnames(dft) = c("msg", "label")
+         # df = dplyr::left_join(data,dft,by="label")
+         # df = df[,c("block", "key","msg")]
+         # colnames(df) = c("block", "id", "name")
+         # private$cache$reasons = df
      }
 
      ,makeCombo = function(df, id="id",name="name", invert=FALSE) {
