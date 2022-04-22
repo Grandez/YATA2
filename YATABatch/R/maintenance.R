@@ -13,7 +13,7 @@ updateExchanges = function (logoutput, loglevel) {
     fact  = batch$fact
     batch$fact$setLogger(batch$logger)
 
-    objExch  = fact$getObject(fact$CODES$object$exchanges)
+    objExch  = fact$getObject(fact$codes$object$exchanges)
     objProv  = fact$getDefaultProvider()
 
     df = objExch$getExchanges()
@@ -53,7 +53,7 @@ updateExchangesPairs = function (logoutput, loglevel) {
     fact  = batch$fact
     batch$fact$setLogger(batch$logger)
 
-    objExch  = fact$getObject(fact$CODES$object$exchanges)
+    objExch  = fact$getObject(fact$codes$object$exchanges)
     objProv  = fact$getDefaultProvider()
 
     df = objExch$getExchanges()

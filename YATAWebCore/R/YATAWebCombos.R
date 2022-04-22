@@ -22,9 +22,11 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          private$cache$cameras  = NULL
          private$cache$position = private$tblPosition$table()
      }
-     ,cameras = function( all=FALSE, inactive=FALSE, exclude=NULL,balance=FALSE, available=FALSE) {
+     ,cameras = function( all=FALSE, inactive=FALSE, exclude=NULL,balance=FALSE, available=FALSE, set=NULL) {
          if (is.null(cache$cameras)) loadCameras()
          df = cache$cameras
+
+         if (!is.null(set)) df = df[df$camera %in% set,]
          if (!inactive) df = df[df$active != 0,]
          if (!is.null(exclude)) df = df[!(df$camera %in% exclude),]
          if (balance || available) {

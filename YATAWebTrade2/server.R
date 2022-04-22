@@ -44,9 +44,9 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
           invisible(self)
       }
       ,changeDB = function(id) {
-          oldDB = self$factory$parms$lastOpen()
+          oldDB = self$factory$parms$getLastCamera()
           if (oldDB$id == id) return()
-          self$factory$changeDB(id)
+          self$factory$changeCamera(id)
           WEB$DBID = id
           invisible (self)
       }
@@ -137,9 +137,10 @@ function(input, output, session) {
        #PUT("begin")
    })
    observeEvent(input$app_title,    {
-      showModal(frmChangeDB(pnl$factory))
+      showModal(frmCameraChange(pnl$factory))
    })
    observeEvent(input$dbOK,    {
+       browser()
       pnl$changeDB(input$radDB)
       pp = pnl$factory$getDBName()
       output$appTitle = updLabelText(pnl$factory$getDBName())

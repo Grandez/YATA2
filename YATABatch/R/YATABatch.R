@@ -5,8 +5,6 @@
 # el segundo parael sumario
 # Ejemplo:  1 - Imprmir sumario simple
 #          32 - Imprimir mensajes de detalle de nievl 3 y resumen de nivel 2
-
-
 YATABatch = R6::R6Class("OBJ.BATCH"
     ,cloneable  = FALSE
     ,portable   = FALSE
@@ -20,7 +18,7 @@ YATABatch = R6::R6Class("OBJ.BATCH"
        ,rc = list(OK = 0, RUNNING=2, NODATA = 4, ERRORS=12, FATAL=16, SEVERE=32)
        ,initialize = function (process=NULL) {
            self$codes  = YATACore::YATACODES$new()
-           self$fact   = YATACore::YATAFactory$new()
+           self$fact   = YATACore::YATAFACTORY$new()
            self$logger = YATALogger$new(process)
            self$fact$setLogger(self$logger)
            self$base   = YATABase$new()

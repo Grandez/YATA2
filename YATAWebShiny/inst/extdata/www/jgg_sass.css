@@ -78,4 +78,14 @@ footer {
   margin: 0px;
 }
 
+.jgg_table_form td {
+  padding: 0 1px 1px 0;
+}
+.jgg_table_form .form-group {
+  margin-bottom: 0;
+}
+.jgg_table_form .jgg_table_label {
+  padding-right: 12px;
+}
+
 /*# sourceMappingURL=jgg_sass.css.map */

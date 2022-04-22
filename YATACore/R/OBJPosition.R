@@ -27,6 +27,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            if (available) df = df[df$available > 0,]
            df
        }
+       ,getFullPosition   = function() { tblPosition$table() }
        ,getGlobalPosition = function(full = FALSE, fiat = FALSE) {
           df = tblPosition$getGlobalPosition()
           if (!fiat) df = df[df$id != 0, ]
@@ -39,8 +40,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            df
          }
        ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
-           df = tblPosition$getCameraPosition(camera, balance, available)
-           df[df$balance != 0,]
+           tblPosition$getCameraPosition(camera, balance, available)
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {

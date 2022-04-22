@@ -15,6 +15,7 @@ Imports:
     ,configr
     ,R6
     ,lubridate
+    ,JGGTools
     ,YATAProviders
     ,YATADB
 

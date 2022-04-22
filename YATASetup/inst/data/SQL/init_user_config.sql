@@ -31,7 +31,7 @@ INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   2,   1, 'name'           , 'Cartera Windows'           );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   3,   1, 'title'          , 'WINDOWS'                   );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   4,   1, 'scope'          , '1'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   5,  10, 'target'         , '1'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   5,  10, 'target'         , '3'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   6,  10, 'selective_ctc'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   7,  10, 'selective_tok'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   1,   1,   8,   1, 'comment'        , 'Cartera de pruebas'                );
@@ -43,7 +43,7 @@ INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   2,   1, 'name'           , 'Cartera 1'                 );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   3,   1, 'title'          , 'SHORT'                     );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   4,   1, 'scope'          , '1'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   5,  10, 'target'         , '1'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   5,  10, 'target'         , '3'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   6,  10, 'selective_ctc'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   7,  10, 'selective_tok'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   2,   2,   8,   1, 'comment'        , 'Simulacion'                );
@@ -55,7 +55,7 @@ INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   2,   1, 'name'           , 'Cartera 2'                 );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   3,   1, 'title'          , 'SHORT'                     );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   4,   1, 'scope'          , '1'                         );
-INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   5,  10, 'target'         , '1'                         );
+INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   5,  10, 'target'         , '3'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   6,  10, 'selective_ctc'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   7,  10, 'selective_tok'  , '0'                         );
 INSERT INTO  CONFIG   (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (  5,   3,   3,   8,   1, 'comment'        , 'Simulacion'                );

@@ -1,4 +1,5 @@
-frmChangeDB = function(factory, failed = FALSE) {
+frmCameraChange = function(factory, failed = FALSE) {
+    browser()
     data    = factory$parms$getPortfolios()
     current = factory$parms$getLastCamera()
     values  = data$id
@@ -6,7 +7,7 @@ frmChangeDB = function(factory, failed = FALSE) {
     names(values) = data$name
 
    modalDialog(
-      title =  WEB$MSG$get("TITLE.DBCHANGE")
+      title =  WEB$MSG$get("TITLE.CAMERA_CHANGE")
      ,easyClose = TRUE
      ,size = "m"
      ,guiRadio("radDB", label=NULL, choices=values, selected=current, inline=FALSE)

@@ -1,4 +1,4 @@
-modOperMovServer = function(id, full, pnlParent, session) {
+modOperMovServer = function(id, full, parent, session) {
    ns  = NS(id)
    ns2 = NS(full)
    PNLOperMov = R6::R6Class("PNL.OPER.MOV"
@@ -8,8 +8,8 @@ modOperMovServer = function(id, full, pnlParent, session) {
         ,public = list(
             session      = NULL
            ,fiat = "$FIAT"
-           ,initialize    = function(id, pnlParent, session) {
-               super$initialize(id, pnlParent, session)
+           ,initialize    = function(id, parent, session) {
+               super$initialize(id, parent, session)
                self$session    = self$factory$getObject(self$codes$object$session)
                private$oper    = self$factory$getObject(self$codes$object$operation)
                private$pos     = self$factory$getObject(self$codes$object$position)
@@ -44,7 +44,7 @@ modOperMovServer = function(id, full, pnlParent, session) {
 
 
 moduleServer(id, function(input, output, session) {
-   pnl = WEB$getPanel(PNLOperMov, id, pnlParent, session)
+   pnl = WEB$getPanel(PNLOperMov, id, parent, session)
 
       validate = function(data) {
           if (is.null(input$cboOper)     || nchar(trimws(input$cboOper)) == 0)
@@ -200,7 +200,6 @@ moduleServer(id, function(input, output, session) {
       observeEvent(input$cboCurrency, {
           enable("cboCamera")
           currency = ifelse(pnl$vars$buy, pnl$fiat, input$cboCurrency)
-          val = pnl$getCboCameras(currency)
           updCombo("cboCamera", choices=pnl$getCboCameras(currency))
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
       }, ignoreInit = TRUE)
@@ -274,6 +273,7 @@ moduleServer(id, function(input, output, session) {
         # in - entra
         # out sale
         # A veces se generan dos triggers (debe ser por los renderUI)
+          browser()
          if (pnl$vars$inEvent) return()
          pnl$vars$inEvent = TRUE
 

@@ -40,7 +40,7 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
 
          lst = lapply(private$changes[[change]], function() TRUE)
          names(lst) = private$changes[[change]]
-         private$changes$pending = list.merge( private$changes$pending, lst)
+         private$changes$pending = jgg_list_merge( private$changes$pending, lst)
      }
      ,unnotify = function(evt) {
          private$changes[[evt]] = FALSE
@@ -64,9 +64,9 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
              for (idx in 1:length(items)) data[[names(items)[idx]]] = items[[idx]]
           }
           if (is.null(block)) {
-              private$commarea = list.merge(private$commarea, data)
+              private$commarea = jgg_list_merge(private$commarea, data)
           } else {
-              private$commarea[[block]] = list.merge(private$commarea[[block]], data)
+              private$commarea[[block]] = jgg_list_merge(private$commarea[[block]], data)
           }
           invisible(self)
       }
@@ -80,12 +80,9 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
           items = list(...)
           if (is.list(items[[1]])) items = items[[1]]
           if (is.null(block)) {
-              private$commarea = list.merge(private$commarea, items)
+              private$commarea = jgg_list_merge(private$commarea, items)
           } else {
-              if (is.null(private$commarea[[block]]))
-                  private$commarea[[block]] = items
-              else
-                  private$commarea[[block]] = list.merge(private$commarea[[block]], items)
+              private$commarea[[block]] = jgg_list_merge(private$commarea[[block]], items)
           }
           invisible(self)
       }
@@ -114,8 +111,9 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
      }
   )
   ,private = list(
-      panels  = NULL
-     ,cookies = NULL
+      panels   = NULL
+     ,cookies  = NULL
+     ,commarea = NULL
      ,changes = list(events=list(), pending = list())
   )
 )

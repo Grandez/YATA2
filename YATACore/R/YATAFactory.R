@@ -14,7 +14,7 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
       ,delete_flag = FALSE
       ,created = NULL
       ,fiat    = "$FIAT"  # Codigo moneda FIAT
-      ,camera  = "CASH"   # Codigo camara FIAT
+      ,camera  = NULL   # Codigo camara FIAT
       ,id = 0
       ,user = "YATA"
       ,print = function()     { message("Factoria de objetos YATA") }
@@ -79,11 +79,12 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
          YATADBFactory$setDB(connInfo)
          invisible(self)
        }
-      ,changeDB  = function(id) {
-          connInfo = parms$getDBInfo(id)
+      ,changeCamera  = function(id) {
+          self$camera = parms$getCameraInfo(id)
+          if (camera$target == 0) self$camera$target = 3
           private$objects = base$map()
-          setDB(connInfo)
-          parms$setLastOpen(id)
+          setDB(camera$db)
+          parms$setLastCamera(id)
           invisible(self)
        }
       ,getTable    = function(name, force = FALSE) { YATADBFactory$get(name, force) }
@@ -144,9 +145,10 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           if (bitwAnd(load, 1) != 0) { # Load portfolio
               prefs = parms$getPreferences()
               if (prefs$autoOpen != 0) {
-                  camera = ifelse(prefs$autoOpen == 1, prefs$last, prefs$default)
-                  data = parms$getCameraInfo(camera)
-                  setDB(data$db)
+                  open = ifelse(prefs$autoOpen == 1, prefs$last, prefs$default)
+                  self$camera = parms$getCameraInfo(open)
+                  if (camera$target == 0) self$camera$target = 3 # Por si acaso
+                  setDB(camera$db)
               }
           }
       }

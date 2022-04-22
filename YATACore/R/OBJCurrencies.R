@@ -1,5 +1,7 @@
 # Tabla de MONEDAS
 # Necesita la DB Base
+# Si hay selective entonces cacheamos los datos
+# Si no lo hay accedemos a la base de datos para no usar memoria
 OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
     ,inherit    = OBJBase
     ,cloneable  = FALSE
@@ -12,11 +14,23 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
             private$tblExchanges  = Factory$getTable(self$codes$tables$exchanges)
             private$tblCameras    = Factory$getTable(self$codes$tables$cameras)
+            if (!is.null(Factory$camera)) {
+                if (Factory$camera$selective_ctc > 0 ||
+                    Factory$camera$selective_tok > 0) {
+                    cacheCurrencies(Factory$camera)
+                }
+            }
             #private$icons         = Factory$getClass("Icons")
         }
         ,select = function(...) {
-            tblCurrencies$select(...)
-            self$current = tblCurrencies$current
+            # if (!is.null(target)) {
+            #     selectFromTarget(...)
+            # } else {
+              df = getData(...)
+              if (nrow < 2) self$current = as.list(df)
+               # tblCurrencies$select(...)
+               # self$current = tblCurrencies$current
+#            }
             invisible(self)
         }
         ,getCurrencyName       = function(code, full = TRUE) {
@@ -35,16 +49,32 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             res
         }
         ,getCurrencyNames      = function(subset, full = TRUE) {
-            df = tblCurrencies$getCurrencyNames()
+            if (!is.null(target)) {
+                df = target[,c("symbol", "name", "rank")]
+                colnames(df) = c("id", "name", "rank")
+            } else {
+               df = tblCurrencies$getCurrencyNames()
+            }
             if (!missing(subset)) {
                 df = df[df$id %in% subset,]
             }
             if (full) df$name = paste(df$id, df$name, sep=" - ")
             df
         }
-        ,getDF                 = function(...) { tblCurrencies$table(...)      }
-        ,getActiveCurrencies   = function()    { tblCurrencies$table(active=1) }
-        ,getInactiveCurrencies = function()    { tblCurrencies$table(active=0) }
+        #JGG PASARLO A FUNCION getData (si target .... si no ....)
+        # Todas las funciones deben pasar por ahi
+        ,getDF                 = function(...) {
+            getData(...)
+            #tblCurrencies$table(...)
+         }
+        ,getActiveCurrencies   = function()    {
+            getData(active=1)
+            #tblCurrencies$table(active=1)
+         }
+        ,getInactiveCurrencies = function()    {
+            getData(active=0)
+            #tblCurrencies$table(active=0)
+         }
         ,getCameras   = function(counter) {
             df = tblExchanges$getCameras(counter)
             if (nrow(df) == 0) return (NULL)
@@ -58,6 +88,7 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
             df  = tblExchanges$uniques(c("camera"), symbol=currency)
             tblCameras$table(inValues=list(id=df$camera))
         }
+        ,getCurrenciesAll = function(active=TRUE) { tblCurrencies$table(active = 1) }
         ,getCurrencies = function(currencies, active=TRUE) {
             if (missing(currencies)) {
                 df = tblCurrencies$table(token=0)
@@ -93,12 +124,52 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
        ,tblCameras    = NULL
        ,tblExchanges  = NULL
        ,icons = NULL
+       ,target = NULL
        ,updIcons = function(df) {
            df$icon = mapply( function(sym,ic) { if (is.na(ic)) ic=paste0(sym, ".png")
                                                 icons$getIcon(ic)
                                               }, sym=df$id, ic=df$icon)
            df
-        }
+       }
+      ,cacheCurrencies = function(camera) {
+          df = tblCurrencies$table()
+          if (bitwAnd(camera$target, 1) != 0) { # Monedas
+              dft = df %>% filter(active == 1 & token == 0)
+              if (camera$selective_ctc > 0) {
+                  dft = dft[order(rank),]
+                  dft = dft[1:camera$selective_ctc,]
+              }
+              private$target = dft
+          }
+          if (bitwAnd(camera$target, 2) != 0) { # tokens
+              dft = df %>% filter(active == 1 & token == 1)
+              if (camera$selective_tok > 0) {
+                  dft = dft[order(rank),]
+                  dft = dft[1:camera$selective_tok,]
+              }
+              if (!is.null(target)) {
+                  dft = rbind(target, dft)
+                  private$target = dft[order(rank),]
+              } else {
+                private$target = dft
+              }
+          }
+      }
+     ,selectFromTarget = function (...) {
+
+     }
+     ,getData = function(...) {
+         browser()
+         if (is.null(target)) return (tblCurrencies(...))
+         args = args2list(...)
+         if (length(args) == 0) return (target)
+         df = target
+         fields = names(args)
+         for (fied in names(args)) {
+             df = df %>% filter(field == args[[field]])
+         }
+         df
+     }
     )
 )
 

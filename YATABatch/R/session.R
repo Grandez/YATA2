@@ -2,8 +2,8 @@
 .getSessionData = function(batch, last, max, session) {
     count = 0
     dft   = NULL
-    provider      = batch$fact$getObject(batch$fact$CODES$object$providers)
-    tblCurrencies = batch$fact$getTable(batch$fact$CODES$tables$currencies)
+    provider      = batch$fact$getObject(batch$fact$codes$object$providers)
+    tblCurrencies = batch$fact$getTable(batch$fact$codes$tables$currencies)
 
     tryCatch({
        data = provider$getTickers(500, 1)
@@ -55,7 +55,7 @@ updateSession = function(max = 0) {
    if (file.exists(pidfile)) return (batch$rc$RUNNING)
    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
 
-   session = batch$fact$getObject(batch$fact$CODES$object$session)
+   session = batch$fact$getObject(batch$fact$codes$object$session)
    info    = batch$fact$parms$getSessionData()
    oldData = Sys.time() - (info$history * 60 * 60)
 

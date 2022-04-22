@@ -67,6 +67,7 @@ PNLOper = R6::R6Class("PNL.OPER"
           self$currencies$getCurrencyNames(data)
      }
      ,cboCurrency  = function(camera, available) {
+         browser()
          # if (missing(camera)) {
          #     private$asCombo(WEB$getCurrencyNames())
          # }
@@ -107,6 +108,13 @@ PNLOper = R6::R6Class("PNL.OPER"
          private$opIdx[[stname]] = df$id
          prepareOperation(df)
      }
+     ,makeCombo = function(df, invert=FALSE) {
+         cols = c(1,2)
+         if (invert) cols = c(2,1)
+         lst = df[,cols[1]]
+         names(lst) = df[,cols[2]]
+         lst
+     }
    )
   ,private = list(
        opIdx    = list() # Contiene los id de las operaciones
@@ -144,7 +152,7 @@ moduleServer(id, function(input, output, session) {
        carea = pnl$getCommarea()
 
        if (is.null(carea$pending) || !carea$pending) {
-           eval(parse(text=paste0(module, "(act, input$mnuOper, parent, session)")))
+           eval(parse(text=paste0(module, "(act, input$mnuOper, pnl, session)")))
        } else {
            carea$pending = FALSE
            pnl$setCommarea(carea)

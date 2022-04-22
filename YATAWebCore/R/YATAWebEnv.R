@@ -26,7 +26,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             if        (!missing(factory))     self$factory = factory
             else if   (exists("YATAFactory")) self$factory = YATAFactory
                  else                         self$factory = YATACore::YATAFACTORY$new()
-
             self$MSG       = self$factory$MSG
             self$log       = YATALogger$new("WEB")
             private$hID    = private$base$map()
@@ -35,7 +34,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             self$combo     = YATAWebCombos$new(self$factory)
 #JGGPEND            self$REST      = YATAServer$new()
 #            self$errorLevel = REST$check()
-            private$tblCurrencies = self$factory$getTable(factory$codes$tables$currencies)
+            private$tblCurrencies = self$factory$getTable(self$factory$codes$tables$currencies)
          }, YATAERROR = function (cond) {
              self$errorLevel = 97
              self$txtError = cond
@@ -74,9 +73,19 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      #     self$getPanel(panel$name, loading=TRUE)
      # }
      ,tooltip            = function(id)  { self$MSG$tooltip(id)   }
-     ,getLabelsPanel     = function()    { self$getLabelsMenu( 0) }
+     ,getLabelsPanel     = function(cached=TRUE)    {
+         if (!is.null(private$cache$lblPanels)) return (private$cache$lblPanels)
+         lst = self$getLabelsMenu( 0)
+         if (cached) private$cache$lblPanels = lst
+         lst
+      }
      ,getLabelsMenuMain  = function()    { self$getLabelsMenu( 1) }
-     ,getLabelsMenuOper  = function()    { self$getLabelsMenu( 2) }
+     ,getLabelsMenuOper  = function(cached=TRUE)    {
+         if (!is.null(private$cache$menuOper)) return (private$cache$menuOper)
+         lst = self$getLabelsMenu( 2)
+         if (cached) private$cache$menuOper = lst
+         lst
+      }
      ,getLabelsMenuAdmin = function()    { self$getLabelsMenu( 5) }
      ,getLabelsPanelErr  = function()    { self$getLabelsMenu( 9) }
      ,getLabelsMenu      = function(idx) {
@@ -163,6 +172,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,hSym    = NULL
      ,hCam    = NULL
      ,cookies = NULL
+     ,cache   = list() # Cache mensajes
      ,logsess = as.integer(Sys.time())
      # ,logs    = c(rep(0,10))
      # ,logn    = c(rep("", 10))

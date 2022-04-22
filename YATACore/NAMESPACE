@@ -4,6 +4,7 @@ import(dplyr)
 import(tibble)
 import(stringr)
 
+import(JGGTools)
 import(YATABase)
 import(YATADB)
 import(YATAProviders)

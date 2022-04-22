@@ -6,13 +6,15 @@ OBJParms = R6::R6Class("OBJ.PARMS"
     ,lock_class = FALSE
     ,portable   = FALSE
     ,public = list(valid=TRUE
-        ,err = NULL
-        ,print = function() { message("YATA Parameters")}
+        ,err         = NULL
+        ,preferences = NULL
+        ,print       = function() { message("YATA Parameters")}
         ,initialize = function(dbf, msg) {
             tryCatch({
                 private$tblParms  = dbf$getTable("Parameters") # , dbf$getDBBase())
                 private$tblConfig = dbf$getTable("Config") #,     dbf$getDBUser())
                 private$objMsg   = msg
+                self$preferences = tblConfig$getSubgroup(group=1, subgroup=2, asList=TRUE)
              }, error = function(cond) {
                  YATABase:::error("Error de inicializacion de OBJParms", subclass=NULL, origin="OBJParms", cond)
             })
@@ -53,26 +55,29 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ### User - 1-2 Actions
         ################################################
         ,getPreferences   = function() {
-            tblConfig$getSubgroup(group=1, subgroup=2, asList=TRUE)
+            if (is.null(preferences))
+                self$preferences = tblConfig$getSubgroup(group=1, subgroup=2, asList=TRUE)
+            preferences
         }
         ,setPreferences   = function(lst) {
             prefs = c(default=1,autoOpen=2,last=3,cookies=4)
-            old = getPreferences()
+            getPreferences()
             tblConfig$db$begin()
             for (idx in 1:length(lst)) {
                 lbl = names(lst)[idx]
-                if (old[[lbl]] != lst[[lbl]]) {
+                if (preferences[[lbl]] != lst[[lbl]]) {
                     value = as.character(lst[[lbl]])
                     if(is.logical(lst[[lbl]])) value = ifelse(lst[[lbl]], "1", "0")
                     tblConfig$update(lst(value=value), group=1, subgroup=2, id=prefs[lbl], isolated=F)
                 }
             }
             tblConfig$db$commit()
+            getPreferences()
         }
-        # ,getDefaultCamera = function() { tblConfig$getInteger (group=1, subgroup=2, id=1, default=1) }
-        # ,getAutoOpen      = function() { tblConfig$getInteger (group=1, subgroup=2, id=2, default=0) }
-        # ,getLastCamera    = function() { tblConfig$getInteger (group=1, subgroup=2, id=3, default=1) }
-        # ,getCookies       = function() { tblConfig$getBoolean (group=1, subgroup=2, id=4, default=TRUE) }
+        ,getDefaultCamera = function() { preferences$default  }
+        ,getAutoOpen      = function() { preferences$autoOpen }
+        ,getLastCamera    = function() { preferences$last     }
+        ,getCookies       = function() { preferences$cookies  }
         # ,setDefaultCamera    = function(value, isolated=T) {
         #     value = as.character(value)
         #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=1, isolated=isolated)
@@ -83,11 +88,11 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=2, isolated=isolated)
         #     invisible (self)
         #  }
-        # ,setLastCamera = function(value, isolated=T) {
-        #     value = as.character(value)
-        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
-        #     invisible (self)
-        # }
+        ,setLastCamera = function(value, isolated=T) {
+            value = as.character(value)
+            tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
+            invisible (self)
+        }
         # ,setCookies = function(value, isolated=T) {
         #     value = ifelse (value, 1, 0)
         #     value = as.character(vallue)
@@ -104,8 +109,8 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         }
         ,getCameraInfo = function(camera) {
             data = tblConfig$getSubgroup(group=5, subgroup=camera, asList=TRUE)
-            db = getDBInfo(data$db, TRUE)
-            list(camera=data, db=db)
+            data$db = getDBInfo(data$db, TRUE)
+            data
         }
 
 #        ,getDefaultDB      = function() tblParms$getInteger(DBParms$ids$DBDefault)

@@ -168,4 +168,12 @@ JGG END */
   padding: 0;
 }
 
+td {
+  padding: 0;
+}
+
+.from-group {
+  margin-bottom: 0;
+}
+
 /*# sourceMappingURL=jgg_bootstrap.css.map */

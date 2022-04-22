@@ -4,7 +4,7 @@ updateExchanges = function(console=1, log=1) {
    browser()
    file = "P:/R/YATA2/YATASetup/inst/data/SQL/exchanges.json"
    fact  = YATACore::YATAFactory$new()
-   tbl   = fact$getTable(fact$CODES$tables$exchanges)
+   tbl   = fact$getTable(fact$codes$tables$exchanges)
 
    result = fromJSON(file)
    result = result[[1]]
@@ -18,7 +18,7 @@ updateExchanges = function(console=1, log=1) {
 updateIconsExchanges = function(maximum, force=FALSE, console=1, log=1) {
     browser()
    fact  = YATACore::YATAFactory$new()
-   tbl   = fact$getTable(fact$CODES$tables$exchanges)
+   tbl   = fact$getTable(fact$codes$tables$exchanges)
    df = tbl$table()
 
    # .updateIconsTable(batch)
