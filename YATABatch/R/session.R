@@ -40,7 +40,6 @@
      count
 }
 updateSession = function(max = 0) {
-    browser()
    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 
