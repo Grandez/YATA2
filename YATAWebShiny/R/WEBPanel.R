@@ -20,16 +20,17 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
     ,parms      = NULL
     ,MSG        = NULL
     ,print      = function() { message(paste("Panel object for", self$name)) }
-    ,initialize = function(id, parent, session, ns = NULL) {
+    ,initialize = function(id, parent, session) {
         web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})
 
-        self$name    = id
-        self$parent  = parent
-        self$session = session
-        self$root    = private$getRoot()
+        self$name      = id
+        self$parent    = parent
+        self$session   = session
+        self$root      = private$getRoot()
 
         self$DBID    = web$DBID
         self$factory = web$factory
+        self$cookies = web$getCookies(id)
 
         self$codes   = self$factory$codes
         self$parms   = self$factory$parms

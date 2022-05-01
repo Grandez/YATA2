@@ -1,10 +1,42 @@
-makeMessageHandler = function(name, funcName) {
-   if (missing(funcName)) funcName = name
-   scr = "Shiny.addCustomMessageHandler('yata"
-   scr = paste0(scr, YATABase$str$titleCase(name), "', function(data) {")
-   scr = paste0(scr, YATAWEBDEF$jsapp, ".", funcName, "(data); })")
-   scr
+.JGGDashboard = function(...) {
+   args = list(...)
+   tabs = args[names(args) == ""]
+#   tabs[[1]] = NULL  # Primer argumento es el titulo
+
+   tabset = bslib_navbarPage(args$id, tabs)
+   pathShiny = normalizePath(system.file("extdata/www", package = "YATAWebShiny"))
+   shiny::addResourcePath("jggshiny", pathShiny)
+
+   if (!is.null(args$paths)) {
+       lapply(names(args$paths), function(path) shiny::addResourcePath(path, args$paths[[path]]))
+   }
+
+   divNav = div(class = "container-fluid", tabset$navList)
+
+   classNav = "navbar jgg_navbar"
+   nav = tags$nav(class = classNav, role = "navigation", divNav)
+
+   page = make_container_full(nav, tabset$content, args$title, args$titleActive)
+
+   heads = tags$head( extendShinyjs(script="jggshiny/jggshiny_shiny.js", functions=parseShinyJS())
+                     ,custom_css(args$cssFiles), custom_js(args$jsFiles)
+                     ,document_ready_script(args$jsInit, args$title, args$id)
+   )
+
+   bspage = dashboard_bslib_page(title=args$title,theme=args$theme,lang=args$lang,shinyjs::useShinyjs(),heads,page)
+   addDeps(shiny::tags$body(bspage))
 }
+JGGDashboard = function( title, id = title,  ...
+                        ,theme       = bs_theme()
+                        ,paths       = NULL,  cssFiles = NULL,jsFiles  = NULL,jsInit   = NULL
+                        ,titleActive = FALSE, lang     = NULL) {
+    # Hay un problema con ... no lo ejecuta
+    # Pasamos todo a una funcion privada para hacer list(...)
+    .JGGDashboard(id = id,title=title,theme=theme,paths=paths, cssFiles=cssFiles,jsFiles=jsFiles,jsInit=jsInit
+                        ,titleActive=titleActive,lang=lang,...)
+}
+
+
 # parseShinyJS = function() {
 #     jsfile = system.file("extdata/www/yata/yatashiny.js", package=packageName())
 #     lines = readLines(jsfile)
@@ -40,50 +72,7 @@ JGGDashboardRaw = function( id = NULL
     make_container(nav, tabset$content, titleActive)
 
 }
-JGGDashboard = function( id = NULL
-                        ,title       = NULL,  theme    = bs_theme()
-                        ,paths       = NULL,  cssFiles = NULL,jsFiles  = NULL,jsInit   = NULL
-                        ,titleActive = FALSE, lang     = NULL, ...) {
-    pathShiny = normalizePath(system.file("extdata/www", package = "YATAWebShiny"))
-    shiny::addResourcePath("jggshiny", pathShiny)
-   if (!is.null(paths)) {
-       lapply(names(paths), function(path) shiny::addResourcePath(path, paths[[path]]))
-   }
-# page = JGGDashboardRaw(id=id,title=title,theme=theme,cssFiles=cssFiles,jsFiles=jsFiles,jsInit=jsInit
-#                         ,titleActive=titleActive,lang=lang, ...)
-
-#    page  = bslib_navs_bar_full(webtitle = title, titleActive = titleActive, id = id, ... )
-# bslib_navs_bar_full = function (webtitle, titleActive, id, ...) {
-    # Tiene Panel derecho y panel izquierdo
-    webtitle=NULL
-
-    tabset = bslib_navbarPage(id, ...)
-
-    divNav = div(class = "container-fluid"
-                       # ,div(class = "navbar-header"
-                       #      ,span(class = "navbar-brand", webtitle)
-                       #  )
-                        ,tabset$navList)
-
-    classNav = "navbar jgg_navbar"
-    nav = tags$nav(class = classNav, role = "navigation", divNav)
-
-    # content = div(class = containerClass)
-    # content = tagAppendChild(content, tabset$content)
-
-    page = make_container_full(nav, tabset$content, titleActive)
-#}
-
-   heads = tags$head( extendShinyjs(script="jggshiny/jggshiny_shiny.js", functions=parseShinyJS())
-                     ,custom_css(cssFiles), custom_js(jsFiles)
-                     ,document_ready_script(jsInit, title, id)
-       )
-
-   bspage = dashboard_bslib_page(title=title,theme=theme,lang=lang,shinyjs::useShinyjs(),heads,page)
-   addDeps(shiny::tags$body(bspage))
-}
-
-    JGGLoader = function(title,  id="loader"
+JGGLoader = function(title,  id="loader"
                        ,theme    = theme
                        ,paths    = paths
                        ,cssFiles = customCSS
@@ -146,25 +135,6 @@ sty = tags$style(HTML(paste(".jgg_page_loader {", cssback, "}")))
    addDeps(shiny::tags$body(heads, page))
 }
 
-JGGTabsetPanel = function (..., id = NULL, selected = NULL) {
-#    shiny::tabsetPanel(..., id=id,selected=selected,type="tabs")
-# function (..., id = NULL, selected = NULL, type = c("tabs",
-#     "pills", "hidden"), header = NULL, footer = NULL)
-#{
-
-#    func <- switch(match.arg(type), tabs = bslib::navs_tab, pills = bslib::navs_pill,
-#        func <- switch(match.arg(type), tabs = bslib::navs_tab, pills = bslib::navs_pill,
-#        hidden = bslib::navs_hidden)
-    data = bslib::navs_tab(..., id = id, selected = selected,
-        header = NULL, footer = NULL)
-    data$attribs$class = c(data$attribs$class, "jgg_navbar")
-    # remove_first_class(func(..., id = id, selected = selected,
-    #     header = header, footer = footer))
-data
-}
-JGGTab = function(id, title=id, ...) {
-    bslib::nav(title, ..., value=id, icon=NULL)
-}
 
 
 
@@ -252,4 +222,11 @@ make_loader_header <- function(parent, nav, titleActive = FALSE, titleWidth = NU
     divNav = tags$div(id="jgg_nav_bar", class="navbar jgg_nav_left col-lg-10", nav)
 
     tagAppendChildren(parent, divBrand, divNav)
+}
+makeMessageHandler = function(name, funcName) {
+   if (missing(funcName)) funcName = name
+   scr = "Shiny.addCustomMessageHandler('yata"
+   scr = paste0(scr, YATABase$str$titleCase(name), "', function(data) {")
+   scr = paste0(scr, YATAWEBDEF$jsapp, ".", funcName, "(data); })")
+   scr
 }

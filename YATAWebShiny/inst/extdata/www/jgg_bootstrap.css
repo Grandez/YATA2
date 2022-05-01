@@ -158,10 +158,14 @@ JGG END */
 
 .container {
   padding: 0;
+  margin: 0;
+  max-width: none;
 }
 
 .container-fluid {
   padding: 0;
+  margin: 0;
+  max-width: none;
 }
 
 .tab-content {

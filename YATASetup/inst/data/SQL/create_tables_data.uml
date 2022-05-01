@@ -1,0 +1,85 @@
+@startuml
+hide empty members
+
+skinparam  class {
+    BackgroundColor business
+    HeaderBackgrounColor yellowgreen
+}
+skinparam linetype ortho
+
+entity "CURRENCIES" as CTC {
+  * ID : number
+  * SYMBOL : char
+  --
+  data
+}
+
+entity "HISTORY" as HIST {
+  * ID : number
+  * TMS : date
+}
+
+entity "SESSION" as SESS {
+  * ID : number
+  * LAST : timestamp
+}
+
+entity "CONTROL" as CTRL {
+  * ID
+  --
+  Control info
+}
+
+entity "EXCHANGES" as EXCH {
+  * ID : number
+  --
+  data
+}
+
+entity "FIATS" as FIAT {
+  * ID : number <<PK>>
+  * SYMBOL: char <<IX>>
+}
+
+entity "EXCHANGES_FIAT" as EXCH_FIAT << (R,orchid) >> {
+  * id_exch <<FK>>
+  * id_fiat <<FK>>
+}
+
+entity "EXCHANGES_PAIR" as EXCH_PAIR {
+  * ID_EXCH
+  * ID_BASE
+  * ID_COUNTER
+  --
+  data
+}
+
+entity "EXCHANGES_CTC" as EXCH_CTC << (R,orchid) >> {
+  * ID_EXCH
+  * ID_CTC
+}
+
+entity "FIATS_EXCHANGE" as FIAT_EXCH {
+  * BASE 
+  * COUNTER
+  * CLOSE
+  --
+  EXCHANGE
+}
+
+CTC ||-down-o{ SESS
+CTC ||-down-o{ HIST
+
+FIAT ||-down-|{ EXCH_FIAT
+EXCH ||--|{ EXCH_FIAT
+
+EXCH ||-down-|{ EXCH_PAIR
+
+FIAT |o-down-o{ FIAT_EXCH
+
+EXCH ||-down-|{ EXCH_CTC
+CTC  ||-down-|{ EXCH_CTC
+CTC  ||-down-|{ EXCH_PAIR
+
+@enduml
+

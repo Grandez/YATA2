@@ -6,6 +6,7 @@ import(htmltools)
 import(bslib)
 import(shinyWidgets)
 import(shinydashboard)
+import(ellipsis)
 
 import(JGGTools)
 

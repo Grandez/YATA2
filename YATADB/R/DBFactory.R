@@ -10,8 +10,8 @@ YATADBFactory <- R6::R6Class("YATA.DB.FACTORY"
           data = "base"
           if (!missing(base)) data = base
           private$lstdb$dbBase  = connectFromList(data)
-          private$lstdb$dbData  = connectFromTable(5, 101)
-          private$lstdb$dbUser  = connectFromTable(5, 102)
+          private$lstdb$dbData  = connectFromTable(10, 101)
+          private$lstdb$dbUser  = connectFromTable(10, 102)
        }
       ,finalize   = function()     {
          if (!is.null(lstdb$dbBase)) { lstdb$dbBase$finalize(); private$lstdb$dbBase = NULL }

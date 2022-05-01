@@ -13,7 +13,7 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
       ,cameras      = NULL
       ,providers    = NULL
       ,loaded       = FALSE
-      ,initialize   = function(id, parent, session) {
+      ,initialize   = function(id, parent, session, dashboard) {
           super$initialize()
           self$factory = WEB$factory
           #self$factory =
@@ -117,9 +117,9 @@ function(input, output, session) {
    } else {
        showModal(frmChangeDB(pnl$factory))
    }
-   # observeEvent(input$cookies, {
-   #     WEB$loadCookies(input$cookies)
-   # })
+   observeEvent(input$cookies, {
+       WEB$loadCookies(input$cookies)
+   })
    observeEvent(input$mainMenu,{
       mod = paste0( "mod",str_to_title(input$mainMenu),"Server")
       eval(parse(text=paste0( mod, "(input$mainMenu, '', pnl, session)")))

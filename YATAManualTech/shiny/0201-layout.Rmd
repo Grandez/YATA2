@@ -1,0 +1,110 @@
+## Layout
+
+La idea detrás de este componente es: Dada una página estructurada actualmente por 4 cuatro bloques de información, permitir, de forma dinámica, cambiar la información mostrada y la forma de mostrarla.
+
+Esto implica diferentes componentes:
+
+1. Un sistema para indicar que información se desea mostrar
+2. Un contenedor de la información
+3. Los sistemas necesarios para sincronizar ambas partes
+
+Consideraciones:
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('img/layout.png')
+```
+
+
+### Consideraciones
+
+El diseño no es muy claro pero es util
+
+Independientemente de la estrucutra de información utilizada, unicamente existen cuatro bloques de información.
+
+
+### Estructura
+
+#### WWW
+
+##### javascript
+
+```{r, echo=FALSE}
+files = c("js.cookie.js", "jggshiny_shiny.js", "jggshiny.js")
+desc  = c("Libreria para manejo de cookies. Copiado de js-cookie"
+          ,"Funciones que extienden shinyjs
+          las funciones se detectan analizando el fichero en busca del patron 'shinyjs.'"
+          ,"Implementa la clase JGGShiny")
+desc = gsub("[ \t]+", " ", desc)
+desc = gsub("\\n", "<br>", desc)
+dfjs = data.frame(files=files,description=desc)
+knitr::kable(dfjs, escape=TRUE)
+```
+### JGGDashboard
+
+Es una web que tiene:
+- Una barra de navagacion (menu)
+- Cada Pagina tiene una barra lateral derecha y una izquierda
+
+
+La pagina tiene esta estructura donde cada nombre corresponde a su id
+
+body
+   +- jgg_container
+        +- jgg_page
+        |    +- header
+        |    +- jgg_page_body
+        |    +- footer
+        |
+        +- jgg_main_err
+        
+        
+jgg_container Contiene dos "paginas" la normal y la de error fatal
+    jgg_page
+        jgg_page_header
+        jgg_page_main
+        jgg_page_footer
+   jgg_main_err
+        
+
+### Container 
+ Tiene dos div:
+ - jgg_page     La pagina de datos
+ - jgg_main_err La pagina de error general
+ 
+### Page
+
+Tiene 3 divs:
+
+        jgg_header : El menu
+        jgg_main   : Los datos
+        jgg_footer : El pie
+
+
+Los recursos estan en jggshiny
+y javascript esta en jquery $.jggshiny
+
+### Clases
+
+jgg_container
+jgg_page
+jgg_header
+jgg_body
+jgg_footer
+
+jgg_clearfix
+
+| Clase           |    Descripcion                            |
++-----------------+-------------------------------------------+
+| jgg_brand       | Clase del titulo                          |
+| jgg_side_open   | Gestiona el indicador de panel abierto    |
+| jgg_side_close  | Gestiona el indicador de panel cerrado    |
+| jgg_nav_left    | Estilo del panel izquierdo                |
+| jgg_nav_right   | Estilo del panel derecho                  |
+
+### Javascript
+
+Los gestores en javascript tiran de _data-toggle_
+
+jgg_offcanvas
+control_sidebar
+

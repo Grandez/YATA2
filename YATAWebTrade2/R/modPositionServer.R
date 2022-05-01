@@ -1,4 +1,4 @@
-modPosServer <- function(id, full, pnlParent, parent=NULL) {
+modPosServer <- function(id, full, parent, session) {
 ns = NS(id)
 PNLPos = R6::R6Class("PNL.OPER"
   ,inherit = WEBPanel
@@ -15,25 +15,28 @@ PNLPos = R6::R6Class("PNL.OPER"
      ,server      = NULL
      ,plots = list()
      ,bests = c("Top", "Best", "Fav", "Trend")
-     ,initialize    = function(id, pnlParent, session, ns, DBChanged) {
+     ,initialize    = function(id, parent, session, ...) { #}, ns, DBChanged) {
+         args = list(...)
          cat("initialize beg\n")
-         super$initialize(id, pnlParent, session, ns)
-         private$DBChanged = DBChanged
-         private$defaultValues(ns)
+         super$initialize(id, parent, session)
+         # private$DBChanged = DBChanged
+         private$defaultValues()
          private$createObjects()
          self$data$lstHist = list()
+         self$data$objects = list()
          private$makePlots()
          cat("initialize end\n")
       }
      ,loadData = function() {
-       self$data$dfPos  = self$position$getGlobalPosition(full = TRUE)
-       self$data$dfFav  = self$favorites$get()
+         self$data$dfPos  = self$position$getGlobalPosition(full = TRUE)
+         self$data$dfLast = self$session$getLatest(self$cookies$selective)
+#         self$data$dfFav  = self$favorites$get()
 
-       data = self$data$dfPos %>% filter(balance > 0)
+         data = self$data$dfPos %>% filter(balance > 0)
 
-       self$monitors = WDGMonitor$new(private$ns("monitor"), self, data)
+         self$monitors = WDGMonitor$new(ns("monitor"), self, data)
 
-       js$yata_set_layout(id)
+#       js$yata_set_layout(id)
 
         # private$loadPosition()
         #
@@ -43,24 +46,24 @@ PNLPos = R6::R6Class("PNL.OPER"
         #     self$data$dfSession = self$session$getData(id=ids) # self$session$getSessionPrices(ids)
         #     self$vars$sessionChanged = TRUE
         # }
-if ( private$DBChanged) self$monitors$update()
-if (!private$DBChanged) self$monitors$render()
-#        self$updateBest()
+        if ( private$DBChanged) self$monitors$update()
+        if (!private$DBChanged) self$monitors$render()
+#JGG Si estoy en load no es un update        self$updateBest()
         invisible(self)
      }
      ,updateData = function() {
-        dfTrend = WEB$REST$trending(TRUE)
-        lstID = WEB$combo$getCurrenciesKey(id=FALSE, dfTrend$symbol)
-        dfid = as.data.frame(unlist(lstID))
-        dfid$symbol = names(lstID)
-        colnames(dfid) = c("id", "symbol")
-        self$data$dfTrending  = inner_join(dfTrend, dfid, by="symbol")
+#JGGPEND        dfTrend = WEB$REST$trending(TRUE)
+        # lstID = WEB$combo$getCurrenciesKey(id=FALSE, dfTrend$symbol)
+        # dfid = as.data.frame(unlist(lstID))
+        # dfid$symbol = names(lstID)
+        # colnames(dfid) = c("id", "symbol")
+        # self$data$dfTrending  = inner_join(dfTrend, dfid, by="symbol")
 
-        currencies = unique(self$data$dfPos$currency)
-        symbols    = unique(self$data$dfTrending$symbol)
-        currencies = unique(c(currencies, symbols, self$data$dfFav$symbol))
-
-        self$data$lstID = WEB$combo$getCurrenciesKey(id=FALSE, currencies)
+        # currencies = unique(self$data$dfPos$currency)
+        # symbols    = unique(self$data$dfTrending$symbol)
+        # currencies = unique(c(currencies, symbols, self$data$dfFav$symbol))
+        #
+        # self$data$lstID = WEB$combo$getCurrenciesKey(id=FALSE, currencies)
 
         self$data$dfLast     = self$session$getLatest(self$cookies$selective) # currencies=self$data$lstID)
         self$data$dfSession  = self$session$getData  (id=self$data$lstID)
@@ -140,17 +143,19 @@ if (!private$DBChanged) self$monitors$render()
         pnl$vars$tickers = ifelse(nrow(df) == pnl$vars$limit, FALSE, TRUE)
         invisible(self)
     }
-    # ,updateBest = function() {
-    #       #JGG 0,26,101 son numeros de rango
-    #       #JGG 0 - todos
-    #       #JGG 26 Serian los de mejor rango
-    #       #JGG 101 Pendiente de favoritoss
-    #      df = self$session$getLatest(self$cookies$selective)
-    #      self$data$dfBest = private$sortBest(df,   0)
-    #      self$data$dfTop  = private$sortBest(df,  26)
-    #      self$data$dfFav  = private$sortBest(df, 101)
-    #      invisible(self)
-    #   }
+    ,updateBest = function() {
+          #JGG 0,26,101 son numeros de rango
+          #JGG 0 - todos
+          #JGG 26 Serian los de mejor rango
+          #JGG 101 JGGPEND Pendiente de favoritos
+        browser()
+#         df = self$session$getLatest(self$cookies$selective)
+        df = self$data$dfLast
+         self$data$dfBest = private$sortBest(df,   0)
+         self$data$dfTop  = private$sortBest(df,  26)
+         self$data$dfFav  = private$sortBest(df, 101)
+         invisible(self)
+      }
       ,storeTrending = function (df) {
          if ( !is.null(self$data$dfTrending) &&
              (Sys.time() - self$vars$trendig) < 30) {
@@ -184,11 +189,12 @@ if (!private$DBChanged) self$monitors$render()
          rows = ifelse(nrow(df) > info$top, info$top, nrow(df))
          self$data$select$Best = rbind(empty, df[1:rows, c("id", "symbol")])
 
-         dft = df[df$id %in% self$data$dfTrend$id,]
-         rows = ifelse(nrow(dft) > info$top, info$top, nrow(dft))
-         self$data$select$Trend = rbind(empty, df[1:rows, c("id", "symbol")])
+         # dft = df[df$id %in% self$data$dfTrend$id,]
+         # rows = ifelse(nrow(dft) > info$top, info$top, nrow(dft))
+         # self$data$select$Trend = rbind(empty, df[1:rows, c("id", "symbol")])
 
-         if (nrow(self$data$dfFav) > 0) {
+         tag =  nrow(self$data$dfFav)
+         if (!is.null(tag) && tag > 0) {
              dff  = self$data$dfFav[,"id"]
              df   = dplyr::left_join(dff, df, by="id")
              df   = df[order(colnames(df)[idx], decreasing = TRUE),]
@@ -258,17 +264,17 @@ if (!private$DBChanged) self$monitors$render()
                  ,"Best of Top" = "Top"     , "Best of favorites" = "Fav"
       )
      ,definition = list(id = "", left=-1, right=0, son=NULL, submodule=FALSE)
-     ,defaultValues = function(ns) {
+     ,defaultValues = function() {
           self$cookies$interval = 15
           self$cookies$best = list(top = 10, period = 2)
           self$cookies$history = 15
           self$cookies$selective = 0
           # Default widgets
-          widgets = c("plotPos","blkTop","plotSession","Position")
-          self$cookies$layout = matrix(widgets,ncol=2)
+          # widgets = c("plotPos","blkTop","plotSession","Position")
+          # self$cookies$layout = matrix(widgets,ncol=2)
           self$cookies$position = "Global"
           self$vars$trending = Sys.time() - (60 * 60) # subtract one hour
-          private$ns = ns
+#          private$ns = ns
 
      }
      ,loadPosition = function() {
@@ -339,12 +345,12 @@ if (!private$DBChanged) self$monitors$render()
         dfb
     }
    ,createObjects = function() {
-       self$position   = Factory$getObject(self$codes$object$position)
-       self$cameras    = Factory$getObject(self$codes$object$cameras)
-       self$currencies = Factory$getObject(self$codes$object$currencies)
-       self$session    = Factory$getObject(self$codes$object$session)
-       self$history    = Factory$getObject(self$codes$object$history)
-       self$favorites  = Factory$getObject(self$codes$object$favorites)
+       self$position   = self$factory$getObject(self$codes$object$position)
+       self$cameras    = self$factory$getObject(self$codes$object$cameras)
+       self$currencies = self$factory$getObject(self$codes$object$currencies)
+       self$session    = self$factory$getObject(self$codes$object$session)
+       self$history    = self$factory$getObject(self$codes$object$history)
+       self$favorites  = self$factory$getObject(self$codes$object$favorites)
        self$server     = YATAServer$new("REST")
    }
   )
@@ -354,10 +360,11 @@ tryCatch({
  moduleServer(id, function(input, output, session) {
      cat("moduleServer beg\n")
     showNotification("Entra en POSITION")
-    pnl = WEB$getPanel(id)
-    if (is.null(pnl) || pnl$DBID != WEB$DBID) { # first time or DB Changed
+#    pnl = WEB$getPanel(id)
+pnl = WEB$getPanel(PNLPos, id, NULL, session, dashboard="layout")
+    if (pnl$DBID != WEB$DBID) { # first time or DB Changed
         DBChanged = ifelse(is.null(pnl), FALSE, TRUE)
-        pnl = WEB$addPanel(PNLPos$new(id, pnlParent, session, NS(id), DBChanged))
+        pnl = WEB$addPanel(PNLPos$new(id, parent, session, dashboard="layout"))
     }
     flags = reactiveValues(
 
@@ -379,7 +386,33 @@ tryCatch({
 #####################################################################
 ### FUNCTIONS                                                     ###
 #####################################################################
+layout_tbl = function(target, block) {
+   label = paste("Esta es la cabecera", block)
+#   layout_data_lbl_1
+   eval(parse(text=paste0("output$layout_data_lbl_", block, "=updLabelText(label)")))
+   pnl$selectDataBest()
+   browser()
+   data = pnl$prepareTableBest(target) # lbl)
 
+
+       browser()
+       data = pnl$prepareTableBest("Best") # lbl)
+      if (!is.null(data$df)) eval(parse(text=paste0("output$layout_data_tbl_", block, "=updTableMultiple(data)")))
+
+#    lbl    = period[as.integer(input$cboBestPeriod)]
+#
+#    output$lblBest  = updLabelText(paste(WORDS$BEST, lbl))
+#
+#     browser()
+#     if (target == "Best") {
+#         renderTablesBest()
+#     }
+# browser()
+}
+layout_plot = function(target, block) {
+    browser()
+
+}
 getTickers = function() {
    # future_promise ({
    #    pnl$server$GET("latest", from=pnl$vars$start, limit=pnl$vars$limit)
@@ -490,8 +523,10 @@ getTickers = function() {
 #    insertUI(paste0("#", ns("Position")), where = "beforeEnd", ui=cameras,  immediate=TRUE)
 # }
 renderTablesBest = function() {
+browser()
    WORDS  = pnl$MSG$getWords()
-   period = pnl$getLabelPeriods()
+   period = WEB$combo$periods() # pnl$getLabelPeriods()
+
    lbl    = period[as.integer(input$cboBestPeriod)]
 
    output$lblBest  = updLabelText(paste(WORDS$BEST, lbl))
@@ -500,13 +535,19 @@ renderTablesBest = function() {
    output$lblTrend = updLabelText(paste(paste0(WORDS$TREND,":"), WORDS$BEST, lbl))
 
    info = pnl$cookies$best
+       browser()
    pnl$selectDataBest()
+
    lapply(pnl$bests, function(lbl) {
-       data = pnl$prepareTableBest(lbl)
+       browser()
+       data = pnl$prepareTableBest("Best") # lbl)
       if (!is.null(data$df)) eval(parse(text=paste0("output$tbl", lbl, "=updTableMultiple(data)")))
+#      if (!is.null(data$df)) eval(parse(text=paste0("pnl$data$objects[", lbl, "]=updTableMultiple(data)")))
    })
+   browser()
 }
 renderTablesPos = function() {
+
    df = pnl$getPosition(TRUE)
    types = list( imp = c("balance", "value","profit")
                 ,prc = c("day", "week", "month")
@@ -676,6 +717,7 @@ observeEvent(flags$rest, ignoreInit = TRUE, {
 })
 
 observeEvent(flags$refresh, ignoreInit = TRUE, {
+    browser()
    cat("flags$refresh beg\n")
    renderTablesBest()
    renderTablesPos()
@@ -924,6 +966,27 @@ observeEvent(flags$refresh, ignoreInit = TRUE, {
 ### LEFT PANEL
 ###########################################################
 
+observeEvent(input$layout, {
+    # browser()
+    # renderTablesBest()
+    # return()
+  evt = input$layout
+  if (evt$type == "init") {
+      items = unlist(evt$value)
+      for (idx in 1:length(items)) {
+          toks = strsplit(items[idx], "_")[[1]]
+          eval(parse(text=paste0("layout_", toks[1], "(toks[2], idx)")))
+      }
+  }
+  if (evt$type == "changed") {
+      browser()
+      # toks = strsplit(block, "_")[[1]]
+      # eval(parse(text=paste0("layout_", toks[1], "(toks[2], block)")))
+      #
+      # layoutChanged(evt$block, evt$value)
+  }
+})
+
 # observeEvent(input$radPosition, ignoreInit = TRUE, { flags$position = isolate(!flags$position) })
 observeEvent(input$cboBestPeriod, ignoreInit = TRUE, {
     pnl$cookies$best$period = as.integer(input$cboBestPeriod)
@@ -965,9 +1028,9 @@ observeEvent(input$btnClose, {
 })
 
 if (!pnl$loaded || pnl$getCommarea(item="position")) {
-    pnl$loadData()
-    renderTablesPos()
-    pnl$createPlots(as.integer(input$cboBestPeriod))
+     pnl$loadData()
+     renderTablesPos()
+    # pnl$createPlots(as.integer(input$cboBestPeriod))
     #* @get /slow/<k>
 # function() {
 #   promises::future_promise({
@@ -985,9 +1048,10 @@ if (!pnl$loaded || pnl$getCommarea(item="position")) {
 #####################################################
 
 observe({
-   invalidateLater(pnl$cookies$interval * 60000)
-   pnl$updateData()
-   flags$refresh = isolate(!flags$refresh)
+    interval = ifelse(is.null(pnl$cookies$interval), 15, pnl$cookies$interval)
+    invalidateLater(interval * 60000)
+    pnl$updateData()
+   # flags$refresh = isolate(!flags$refresh)
 })
 cat("moduleserver end\n")
 })   # END MODULE

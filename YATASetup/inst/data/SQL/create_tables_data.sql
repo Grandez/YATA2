@@ -1,85 +1,262 @@
-@startuml
-hide empty members
+use YATAData;
 
-skinparam  class {
-    BackgroundColor business
-    HeaderBackgrounColor yellowgreen
-}
-skinparam linetype ortho
+--- Tabla de crypto monedas con las que trabajamos
+DROP TABLE  IF EXISTS CURRENCIES CASCADE;
+CREATE TABLE CURRENCIES  (
+    ID       INTEGER       DEFAULT 0
+   ,SYMBOL   VARCHAR(64)   NOT NULL        
+   ,MKTCAP   VARCHAR(64)   NOT NULL        
+   ,NAME     VARCHAR(64)   NOT NULL        
+   ,SLUG     VARCHAR(64)    
+   ,RANK     INTEGER       DEFAULT 99999 
+   ,TOKEN    TINYINT       DEFAULT 0
+   ,DECIMALS TINYINT       DEFAULT 6
+   ,ICON     VARCHAR(255)    
+   ,SINCE    DATE                         -- Active from ...
+   ,ACTIVE   TINYINT       DEFAULT 1                       
+   ,TMS      TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP
+                           ON UPDATE CURRENT_TIMESTAMP   
+   ,PRIMARY KEY ( ID )
+   ,INDEX       ( SYMBOL )
+);
 
-entity "CURRENCIES" as CTC {
-  * ID : number
-  * SYMBOL : char
-  --
-  data
-}
+-- Tabla de monedas trabajadas por cada camara
+DROP TABLE  IF EXISTS EXCHANGES CASCADE;
+CREATE TABLE EXCHANGES  (
+    ID      INTEGER      NOT NULL
+   ,SYMBOL  VARCHAR(64)  NOT NULL 
+   ,NAME    VARCHAR(64)  NOT NULL           
+   ,SLUG    VARCHAR(64)       
+   ,ICON    VARCHAR(255)    
+   ,URL     VARCHAR(255)
+   ,RANK    INTEGER               DEFAULT 99999      
+   ,MAKER   DOUBLE       NOT NULL DEFAULT 0.0 
+   ,TAKER   DOUBLE       NOT NULL DEFAULT 0.0
+   ,ACTIVE   TINYINT              DEFAULT 1 
+   ,PRIMARY KEY ( ID )
+);
 
-entity "HISTORY" as HIST {
-  * ID : number
-  * TMS : date
-}
+DROP TABLE  IF EXISTS HISTORY CASCADE;
+CREATE TABLE HISTORY  (
+    ID       INTEGER      
+   ,SYMBOL   VARCHAR(64)  NOT NULL -- Moneda   
+   ,OPEN     DOUBLE   
+   ,CLOSE    DOUBLE
+   ,HIGH     DOUBLE
+   ,LOW      DOUBLE
+   ,VOLUME   DOUBLE
+   ,MKTCAP   DOUBLE
+   ,TMS      DATE         NOT NULL -- Moneda      
+   ,PRIMARY KEY ( ID, TMS DESC )
+);
 
-entity "SESSION" as SESS {
-  * ID : number
-  * LAST : timestamp
-}
+-- SYMBOL puede estar repetido
+-- Se debe machear contra currencies
+DROP TABLE  IF EXISTS SESSION;
+CREATE TABLE SESSION  (
+    ID        INTEGER       NOT NULL
+   ,SYMBOL    VARCHAR(64)   NOT NULL
+   ,PRICE     DOUBLE   
+   ,VOLUME    DOUBLE   
+   ,RANK      INTEGER     DEFAULT 1001 -- Required to filter
+   ,TOKEN     TINYINT     DEAFULT 0
+   ,VAR01     DOUBLE
+   ,VAR24     DOUBLE
+   ,VAR07     DOUBLE
+   ,VAR30     DOUBLE
+   ,VAR60     DOUBLE
+   ,VAR90     DOUBLE
+   ,VOL24     DOUBLE
+   ,VOL07     DOUBLE
+   ,VOL30     DOUBLE
+   ,DOMINANCE DOUBLE
+   ,TURNOVER  DOUBLE
+   ,TMS       TIMESTAMP     NOT NULL
+   ,LAST      TIMESTAMP     NOT NULL   
+   ,PRIMARY KEY (ID, LAST DESC)
+   ,INDEX       (SYMBOL, LAST DESC)
+);
 
-entity "CONTROL" as CTRL {
-  * ID
-  --
-  Control info
-}
 
-entity "EXCHANGES" as EXCH {
-  * ID : number
-  --
-  data
-}
+-- ----------------------------------------------------------
+-- Contiene la ultima vez que se acutalizo session
+-- Nos evita hacer una query 
+-- Evita que haya monedas con diferentes tms
+-- OJO Hay problemas con los time zone en timestamp
+-- ----------------------------------------------------------
+DROP TABLE  IF EXISTS SESSION_CTRL;
+CREATE TABLE SESSION_CTRL  (
+     ID        INTEGER  NOT NULL
+    ,TMS       BIGINT   DEFAULT 0
+   ,PRIMARY KEY (ID)
+);
 
-entity "FIATS" as FIAT {
-  * ID : number <<PK>>
-  * SYMBOL: char <<IX>>
-}
 
-entity "EXCHANGES_FIAT" as EXCH_FIAT << (R,orchid) >> {
-  * id_exch <<FK>>
-  * id_fiat <<FK>>
-}
+DROP TABLE  IF EXISTS EXCHANGES_FIATS CASCADE;
+CREATE TABLE EXCHANGES  (
+    ID_EXCH  INTEGER     NOT NULL
+   ,ID_FIAT  CHAR(3)     NOT NULL
+   ,PRIMARY KEY ( ID_EXCH, ID_FIAT )
+);
 
-entity "EXCHANGES_PAIR" as EXCH_PAIR {
-  * ID_EXCH
-  * ID_BASE
-  * ID_COUNTER
-  --
-  data
-}
+DROP TABLE  IF EXISTS EXCHANGES_CTC CASCADE;
+CREATE TABLE EXCHANGES  (
+    ID_EXCH  INTEGER     NOT NULL
+   ,ID_CTC   INTEGER     NOT NULL
+   ,PRIMARY KEY ( ID_EXCH, ID_CTC )
+);
 
-entity "EXCHANGES_CTC" as EXCH_CTC << (R,orchid) >> {
-  * ID_EXCH
-  * ID_CTC
-}
+-- Tabla de monedas trabajadas por cada camara
+DROP TABLE  IF EXISTS FIATS CASCADE;
+CREATE TABLE FIATS  (
+    ID        CHAR(3)       -- ISO 4217
+   ,SYMBOL    CHAR(3)
+   ,NAME      VARCHAR(64) 
+   ,ICON      VARCHAR(255)    
+   ,EXCHANGE  DOUBLE DEFAULT 1.0 
+   ,PRIMARY KEY ( ID )
+);
 
-entity "FIATS_EXCHANGE" as FIAT_EXCH {
-  * BASE 
-  * COUNTER
-  * CLOSE
-  --
-  EXCHANGE
-}
+DROP TABLE  IF EXISTS MODEL_VAR CASCADE;
+CREATE TABLE MODEL_VAR (
+	 ID         INTEGER NOT NULL
+	,SYMBOL     VARCHAR(64) 
+	,RANK       INTEGER  99999
+	,PRICE00    DOUBLE 
+	,PRICE01    DOUBLE 
+	,PRICE02    DOUBLE 
+	,PRICE03    DOUBLE 
+	,PRICE04    DOUBLE 
+	,PRICE05    DOUBLE 
+	,VOLUME00   DOUBLE 
+	,VOLUME01   DOUBLE 
+	,VOLUME02   DOUBLE 
+	,VOLUME03   DOUBLE 
+	,VOLUME04   DOUBLE 
+	,VOLUME05   DOUBLE 
+	,VAR01      DOUBLE 
+	,VAR02      DOUBLE 
+	,VAR03      DOUBLE 
+	,VAR04      DOUBLE 
+	,VAR05      DOUBLE 
+	,VOL01      DOUBLE 
+	,VOL02      DOUBLE 
+	,VOL03      DOUBLE 
+	,VOL04      DOUBLE 
+	,VOL05      DOUBLE 
+	,IND_PRICE  DOUBLE 
+	,IND_VOL    DOUBLE 
+	,IND_VAR    DOUBLE 
+	,UPDATED    DATE 
+	,TMS        TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+	                      ON UPDATE CURRENT_TIMESTAMP 
+	,PRIMARY KEY (ID)
+);
 
-CTC ||-down-o{ SESS
-CTC ||-down-o{ HIST
+DROP TABLE  IF EXISTS MODEL_VAR_LONG CASCADE;
+CREATE TABLE MODEL_VAR_LONG (
+	 ID         INTEGER NOT NULL
+	,SYMBOL     VARCHAR(64) 
+	,RANK       INTEGER  99999
+	,PRICE00    DOUBLE 
+	,PRICE01    DOUBLE 
+	,PRICE02    DOUBLE 
+	,PRICE03    DOUBLE 
+	,PRICE04    DOUBLE 
+	,PRICE05    DOUBLE 
+	,VOLUME00   DOUBLE 
+	,VOLUME01   DOUBLE 
+	,VOLUME02   DOUBLE 
+	,VOLUME03   DOUBLE 
+	,VOLUME04   DOUBLE 
+	,VOLUME05   DOUBLE 
+	,VAR01      DOUBLE 
+	,VAR02      DOUBLE 
+	,VAR03      DOUBLE 
+	,VAR04      DOUBLE 
+	,VAR05      DOUBLE 
+	,VOL01      DOUBLE 
+	,VOL02      DOUBLE 
+	,VOL03      DOUBLE 
+	,VOL04      DOUBLE 
+	,VOL05      DOUBLE 
+	,IND_PRICE  DOUBLE 
+	,IND_VOL    DOUBLE 
+	,IND_VAR    DOUBLE 
+	,UPDATED    DATE 
+	,TMS        TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+	                      ON UPDATE CURRENT_TIMESTAMP 
+	,PRIMARY KEY (ID)
+);
+DROP TABLE  IF EXISTS MODEL_VAR_MEDIUM CASCADE;
+CREATE TABLE MODEL_VAR_MEDIUM (
+	 ID         INTEGER NOT NULL
+	,SYMBOL     VARCHAR(64) 
+	,RANK       INTEGER  99999
+	,PRICE00    DOUBLE 
+	,PRICE01    DOUBLE 
+	,PRICE02    DOUBLE 
+	,PRICE03    DOUBLE 
+	,PRICE04    DOUBLE 
+	,PRICE05    DOUBLE 
+	,VOLUME00   DOUBLE 
+	,VOLUME01   DOUBLE 
+	,VOLUME02   DOUBLE 
+	,VOLUME03   DOUBLE 
+	,VOLUME04   DOUBLE 
+	,VOLUME05   DOUBLE 
+	,VAR01      DOUBLE 
+	,VAR02      DOUBLE 
+	,VAR03      DOUBLE 
+	,VAR04      DOUBLE 
+	,VAR05      DOUBLE 
+	,VOL01      DOUBLE 
+	,VOL02      DOUBLE 
+	,VOL03      DOUBLE 
+	,VOL04      DOUBLE 
+	,VOL05      DOUBLE 
+	,IND_PRICE  DOUBLE 
+	,IND_VOL    DOUBLE 
+	,IND_VAR    DOUBLE 
+	,UPDATED    DATE 
+	,TMS        TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+	                      ON UPDATE CURRENT_TIMESTAMP 
+	,PRIMARY KEY (ID)
+);
+DROP TABLE  IF EXISTS MODEL_VAR_SHORT CASCADE;
+CREATE TABLE MODEL_VAR_SHORT (
+	 ID         INTEGER NOT NULL
+	,SYMBOL     VARCHAR(64) 
+	,RANK       INTEGER  99999
+	,PRICE00    DOUBLE 
+	,PRICE01    DOUBLE 
+	,PRICE02    DOUBLE 
+	,PRICE03    DOUBLE 
+	,PRICE04    DOUBLE 
+	,PRICE05    DOUBLE 
+	,VOLUME00   DOUBLE 
+	,VOLUME01   DOUBLE 
+	,VOLUME02   DOUBLE 
+	,VOLUME03   DOUBLE 
+	,VOLUME04   DOUBLE 
+	,VOLUME05   DOUBLE 
+	,VAR01      DOUBLE 
+	,VAR02      DOUBLE 
+	,VAR03      DOUBLE 
+	,VAR04      DOUBLE 
+	,VAR05      DOUBLE 
+	,VOL01      DOUBLE 
+	,VOL02      DOUBLE 
+	,VOL03      DOUBLE 
+	,VOL04      DOUBLE 
+	,VOL05      DOUBLE 
+	,IND_PRICE  DOUBLE 
+	,IND_VOL    DOUBLE 
+	,IND_VAR    DOUBLE 
+	,UPDATED    DATE 
+	,TMS        TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+	                      ON UPDATE CURRENT_TIMESTAMP 
+	,PRIMARY KEY (ID)
+);
 
-FIAT ||-down-|{ EXCH_FIAT
-EXCH ||--|{ EXCH_FIAT
-
-EXCH ||-down-|{ EXCH_PAIR
-
-FIAT |o-down-o{ FIAT_EXCH
-
-EXCH ||-down-|{ EXCH_CTC
-CTC  ||-down-|{ EXCH_CTC
-CTC  ||-down-|{ EXCH_PAIR
-
-@enduml
-
+COMMIT;

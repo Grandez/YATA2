@@ -13,9 +13,10 @@ Shiny.addCustomMessageHandler('rightside_close', function(msg) { jggshiny.sideba
 //  Shiny.addCustomMessageHandler('cookie_delete', function(msg) { yatashiny.cookies_delete (msg); })
 };
 
-shinyjs.jgg_set_page    = function(name) { jggshiny.set_page(name); }; // Pagina activa
-shinyjs.jgg_add_page    = function(name) { jggshiny.add_page(name); }; // Pagina cargada
-shinyjs.jgg_set_layout  = function(id)   { jggshiny.layout_set(id); }; // Hace layout
-shinyjs.jgg_req_cookies = function()     { jggshiny.cookies_send(); }; // Envia las cookies
+shinyjs.jgg_set_page      = function(name) { jggshiny.set_page(name); }; // Pagina activa
+shinyjs.jgg_add_page      = function(name) { jggshiny.add_page(name); }; // Pagina cargada
+shinyjs.jgg_add_dash      = function(name) { jggshiny.add_dash(name); }; // Pagina cargada
+shinyjs.jgg_set_layout    = function(id)   { jggshiny.layout_set(id); }; // Hace layout
+shinyjs.jgg_req_cookies   = function()     { jggshiny.cookies_send(); }; // Envia las cookies
 
 $(document).on('shiny:connected', function(evt) { jggshiny.cookies_send(); })

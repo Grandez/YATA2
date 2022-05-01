@@ -1,13 +1,15 @@
-YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE
-         ,theme =  my_theme,lang = NULL, ...) {
-
-   theme = bs_theme(bootswatch = "default",
-                     base_font = font_collection(font_google("Source Sans Pro"),
-    "-apple-system", "BlinkMacSystemFont", "Segoe UI",
-    font_google("Roboto"), "Helvetica Neue", "Arial",
-    "sans-serif", "Apple Color Emoji", "Segoe UI Emoji"),
-    font_scale = NULL
-    )
+YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE, ...) {
+#         ,theme =  my_theme,lang = NULL, css=NULL, js=NULL, ...) {
+# browser()
+#     args = list(...)
+# , theme =  my_theme,lang = NULL
+#    theme = bs_theme(bootswatch = "default",
+#                      base_font = font_collection(font_google("Source Sans Pro"),
+#     "-apple-system", "BlinkMacSystemFont", "Segoe UI",
+#     font_google("Roboto"), "Helvetica Neue", "Arial",
+#     "sans-serif", "Apple Color Emoji", "Segoe UI Emoji"),
+#     font_scale = NULL
+#     )
     jsShiny = list( script="yata/yatashiny.js",functions = parseShinyJS())
     paths = list(
        yata = normalizePath(system.file("extdata/www/yata", package = packageName()))
@@ -17,24 +19,16 @@ YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE
       ,yata   = normalizePath(system.file("extdata/www/yata", package = packageName()))
     )
 
-    customJS  = list(shiny=jsShiny,js=("yata/yataapp.js"))
-    customCSS = list( "yata/yata.css"             # Base
-                     ,"yata/yata_reactable.css")  # Paquete reactable
+    customJS  = list(shiny=jsShiny,js=c("yata/yataapp.js"))
+    customCSS = list( "yata/yata.css","yata/yata_reactable.css")  # Paquete reactable
     jsInit = c( "   globalThis.yata = new YATA();"
                ,"   yata.init();"
-#               ,"   Shiny.addCustomMessageHandler('yataShowBlock', function(data) { yata.show_block(data); });"
               )
 
-    JGGDashboard( title=title,  id=id
-                       ,theme    = theme
-                       ,paths    = paths
-                       ,cssFiles = customCSS
-                       ,jsFiles  = customJS
-                       ,jsInit   = jsInit
-                       ,titleActive = TRUE
-                       ,lang    = NULL
-                       , ...)
-
+    JGGDashboard( title = title, id = id, theme = bs_theme(bootswatch = "default"), ...
+                 ,paths    = paths,    cssFiles = customCSS
+                 ,jsFiles  = customJS, jsInit   = jsInit
+                 ,titleActive = TRUE,  lang     = NULL)
 }
 
 makeMessageHandler = function(name, funcName) {

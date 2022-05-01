@@ -42,6 +42,10 @@ suppressMessages(library(reactable, warn.conflicts = FALSE))
 
 # plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
+if (exists("WEB")) rm("WEB")
+web = YATAWebCore::YATAWebEnv$new(YATACore::YATAFACTORY$new())
+assign("WEB", web, envir=.GlobalEnv)
+
 ######################################
 ### Carga de fuentes
 ### En R busca subdirectorios
@@ -49,11 +53,6 @@ suppressMessages(library(reactable, warn.conflicts = FALSE))
 
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
-
-
-if (exists("WEB")) rm("WEB")
-web = YATAWebCore::YATAWebEnv$new(YATACore::YATAFACTORY$new())
-assign("WEB", web, envir=.GlobalEnv)
 
 # WEB$startDaemons() # Esto bloquea en windows
 

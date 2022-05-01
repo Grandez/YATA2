@@ -334,6 +334,7 @@ bslib_markTabAsSelected <- function(x) {
 bslib_buildTabset = function(..., ulClass, textFilter = NULL, id = NULL,
                         selected = NULL, foundSelected = FALSE) {
   tabs = bslib_dropNulls(rlang::list2(...))
+  tabs = unlist(tabs, recursive=FALSE)
   res  = bslib:::findAndMarkSelectedTab(tabs, selected, foundSelected)
   tabs = res$tabs
   foundSelected = res$foundSelected

@@ -10,22 +10,22 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
   ,lock_class = TRUE
   ,public = list(
       initialize = function(id, pnl, data) {
-          private$base = YATABase$new()
-          private$monitors = YATABase::map()
-          private$idDiv = paste0("#", id)
-          private$pnl = pnl
-          private$labels = pnl$factory$MSG$getBlock(pnl$factory$CODES$labels$monitors)
-          initMonitors(data)
+         private$base = YATABase$new()
+         private$monitors = YATABase::map()
+         private$idDiv = paste0("#", id)
+         private$pnl = pnl
+         private$labels = pnl$factory$MSG$getBlock(pnl$factory$CODES$labels$monitors)
+         initMonitors(data)
      }
      ,render = function(size=2) {
-        mons = tags$div(class="yata_monitors")
-        mons = tagAppendChildren(mons, lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size)))
-        eur = tags$div(class="yata_tbl_monitor_fiat", tablePosition())
-        insertUI( selector = idDiv, immediate=TRUE, where = "beforeEnd",ui=tagList(mons, eur))
-        update(TRUE)
-     }
+         mons = tags$div(class="yata_monitors")
+         mons = tagAppendChildren(mons, lapply(monitors$keys(), function(x) renderMonitor(monitors$get(x), size)))
+         eur = tags$div(class="yata_tbl_monitor_fiat", tablePosition())
+         insertUI( selector = idDiv, immediate=TRUE, where = "beforeEnd",ui=tagList(mons, eur))
+         update(TRUE)
+      }
      ,update = function(first=FALSE) {
-         ctc = monitors$keys()
+         ctc = as.integer(monitors$keys())
          private$last = session$getLatest(0, ctc)
          updateData = function(sym) {
              if (nrow(private$last[private$last$id == sym,]) == 1) {

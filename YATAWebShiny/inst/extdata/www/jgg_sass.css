@@ -62,11 +62,19 @@ footer {
   width: 50%;
 }
 
-.jgg_side_hide {
+.jgg_buttons_side_hide {
+  visibility: hidden;
+}
+
+.jgg_button_side_hide {
   display: none;
 }
 
 .jgg_header_hide {
+  display: none;
+}
+
+.jgg_side_hide {
   display: none;
 }
 
@@ -86,6 +94,61 @@ footer {
 }
 .jgg_table_form .jgg_table_label {
   padding-right: 12px;
+}
+
+.jgg_page_left {
+  float: left;
+  min-height: 92vh;
+}
+
+.jgg_layout {
+  border-style: solid;
+  border-color: red;
+  min-height: 500px;
+}
+
+/* Se usa como selector */
+/* .jgg_layout_block_container */
+.jgg_layout_block_hidden {
+  display: none;
+}
+
+.jgg_layout_block {
+  display: block;
+}
+
+.jgg_layout_full {
+  min-height: 100vh;
+}
+
+.jgg_layout_detail {
+  height: 100vh;
+}
+
+.jgg_layout_row {
+  width: 100%;
+  height: 45vh;
+  min-height: 45vh;
+}
+
+.jgg_layout_col {
+  min-height: 100vh;
+}
+
+.jgg_layout_block {
+  /*
+      border-style: solid;
+      border-color: black;
+      width: 100vw; */
+  min-height: 100%;
+}
+
+.jgg_layout_object {
+  width: 100%;
+}
+
+.jgg_layout_data_container {
+  display: none;
 }
 
 /*# sourceMappingURL=jgg_sass.css.map */

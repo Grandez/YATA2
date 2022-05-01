@@ -10,7 +10,6 @@ dashboard_bslib_page = function(..., title = NULL, theme = bs_theme(), lang = NU
 # -----------------------------------------------------------------------
 
 bslib_navbarPage = function(id, ...) {
-
   #JGG navbarClass <- "navbar navbar-default navbar-static-top"
   navbarClass = "navbar jgg_navbar"
   tabset = bslib_buildTabset( ...
@@ -18,7 +17,7 @@ bslib_navbarPage = function(id, ...) {
                              ,selected = NULL, foundSelected = FALSE)
   # Aqui tenemos las dos partes
 
-  contentDiv = div(id="jgg_tab_content", class = c("container-fluid"))
+  contentDiv = div(id="jgg_tab_content", class = c("jgg_tab_content"))
   contentDiv = tagAppendChild(contentDiv, tabset$content)
 
   tagList( navList=tags$nav(class = navbarClass, role = "navigation", tabset$navList)
@@ -26,12 +25,12 @@ bslib_navbarPage = function(id, ...) {
   )
 
 }
-make_container = function (nav, content, titleActive) {
+make_container = function (nav, content, title, active) {
    contentDiv = shiny::tags$div(id="jgg_page")
    divHeader  = shiny::tags$header()
    divBody    = shiny::tags$div(id="jgg_body",   class="jgg_body"   )
    divFooter  = shiny::tags$footer()
-   divHeader = jgg_make_page_header(divHeader, nav, titleActive)
+   divHeader  = make_page_header(divHeader, nav, title, active)
 
    divMain  = shiny::tags$div(id="jgg_page_main",  class="jgg_page_main"  )
    divLeft  = shiny::tags$div( id="jgg_page_left"
@@ -65,8 +64,8 @@ make_container = function (nav, content, titleActive) {
    page = tags$div(id="jgg_page", class="jgg_page", divHeader, divBody, divFooter)
 }
 
-make_container_full = function (nav, content, titleActive) {
-   page = make_container(nav, content, titleActive)
+make_container_full = function (nav, content, title, active) {
+   page = make_container(nav, content, title, active)
    tags$div(id="jgg_container", class="jgg_container", page, .mainFormError())
 }
 
@@ -77,7 +76,7 @@ jgg_make_container = function (nav, content, titleActive) {
    divBody    = shiny::tags$div(id="jgg_page_body",   class="jgg_body"   )
    divFooter  = shiny::tags$div(id="jgg_page_footer", class="jgg_footer" )
 
-   divHeader = jgg_make_page_header(divHeader, nav, titleActive)
+   divHeader = make_page_header(divHeader, nav, titleActive)
 
    divLeft  = shiny::tags$div(id="jgg_page_left",  class="jgg_page_left"  )
    divMain  = shiny::tags$div(id="jgg_page_main",  class="jgg_page_main"  )
@@ -104,8 +103,7 @@ jgg_make_container = function (nav, content, titleActive) {
 }
 
 
-jgg_make_page_header <- function(parent, nav, titleActive = FALSE, titleWidth = NULL,
-                            disable = FALSE, .list = NULL,
+make_page_header <- function(parent, nav, title, active = FALSE, list = NULL,
                             controlbarIcon = shiny::icon("chevron-left"), fixed = FALSE) {
     # Hacemos 3 columnas
     # Titulo y iconos de abrr cerrar
@@ -140,11 +138,12 @@ jgg_make_page_header <- function(parent, nav, titleActive = FALSE, titleWidth = 
     )
 
     divBrand = tags$div(id="jgg_brand", class="col-lg-1")
-    if (titleActive) {
+    if (active) {
         span = shiny::tags$span( class="navbar-brand jgg_brand jgg_clickable"
-                                ,onclick="Shiny.setInputValue('app_title', 'click', {priority: 'event'});")
+                                ,onclick="Shiny.setInputValue('app_title', 'click', {priority: 'event'});"
+                                ,title)
     } else {
-        span = shiny::tags$span( class="navbar-brand jgg_brand")
+        span = shiny::tags$span( class="navbar-brand jgg_brand", title)
     }
     span     = tagAppendChild(span, textOutput("appTitle", inline=TRUE))
     divBrand = tagAppendChildren(divBrand

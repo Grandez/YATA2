@@ -28,6 +28,11 @@ footer {
   font-weight: bold;
 }
 
+.jgg_sidebar_toggle {
+  background: black;
+  color: whitesmoke;
+}
+
 /* cajas de adminlte */
 .box.box-solid.box-primary {
   border: 1px solid navy;
@@ -37,6 +42,10 @@ footer {
   color: white;
   background: navy;
   background-color: navy;
+}
+
+.jgg_page_left {
+  background-color: gray;
 }
 
 /*# sourceMappingURL=jgg_theme.css.map */

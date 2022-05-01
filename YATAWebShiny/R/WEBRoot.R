@@ -14,18 +14,21 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
          self$session = session
          invisible(self)
       }
-     ,getPanel   = function(object, id, parent, session) {
+     ,getPanel   = function(object, id, parent, session, ...) {
          panel = private$panels$get(id)
          if (is.null(panel)) {
-             panel = object$new(id, parent,session)
+             args = list(...)
+             panel = object$new(id, parent, session, ...)
              private$panels$put(id, panel)
              self$subscribe(id, panel$events$listen)
-             shinyjs::js$jgg_add_page(id)
+             if (is.null(args$dashboard))  shinyjs::js$jgg_add_page(id)
+             if (!is.null(args$dashboard)) shinyjs::js$jgg_add_dash(paste(id, args$dashboard, sep="_"))
          }
          lapply(panel$events$events, function(evt) self$unnotify(evt))
          shinyjs::js$jgg_set_page(id)
          panel
      }
+    ,addPanel = function(panel) { private$panels$put(panel$name, panel) }
      ##########################################################################
      ### Coherencia de datos
      ##########################################################################
@@ -91,7 +94,9 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
      ### Coherencia de sesiones
      ##########################################################################
 
-     ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
+     ,loadCookies = function(data)    {
+         private$cookies = jsonlite::fromJSON(data)
+      }
      ,setCookies  = function(name, values) {
         private$cookies[[name]] = values
         updateCookie(self$session, yata=private$cookies)

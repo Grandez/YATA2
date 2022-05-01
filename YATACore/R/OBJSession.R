@@ -35,6 +35,7 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            invisible(self)
        }
        ,getBest        = function(top=10, from=7, group=0) {
+           browser()
             session = tblSession$getLatest()
             if (nrow(session) == 0) session = updateLatest(TRUE)
             session = session[session$volume > 10,] # Solo los que se mueven
@@ -96,6 +97,10 @@ OBJSession = R6::R6Class("OBJ.SESSION"
       }
       ,.loadCache = function() {
           private$dfLast = private$tblSession$getLatest()
+          if (Factory$camera$target < 3) { # Monedas/Tokens/Todo
+              tok = ifelse (Factory$camera$target == 1, 0, 1)
+              private$dfLast = private$dfLast %>% filter(token == tok)
+          }
           df = tblControl$table(id = 1)
           private$lastTMS  = df[1,"tms"] # tblControl$currrent$tms
           private$lastLast = df[1, "last"] # tblControl$currrent$last

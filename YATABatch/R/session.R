@@ -1,9 +1,8 @@
 # En lugar de esperar a tener todas las monedas vamos cargando bloque por bloque
-.getSessionData = function(batch, last, max, session) {
+.getSessionData = function(batch, last, max, session, currencies) {
     count = 0
     dft   = NULL
     provider      = batch$fact$getObject(batch$fact$codes$object$providers)
-    tblCurrencies = batch$fact$getTable(batch$fact$codes$tables$currencies)
 
     tryCatch({
        data = provider$getTickers(500, 1)
@@ -15,9 +14,7 @@
               df[,c("name", "slug")] = NULL
 
               df1 = df[,c("id", "symbol")]
-              ctc = tblCurrencies$table()
-              df2 = ctc[,c("id", "symbol")]
-              dfs = inner_join(df1, df2, by="id")
+              dfs = inner_join(df1, currencies, by="id")
 
               df2 = dfs[,c(1,3)]
               df  = left_join(df, df2, by="id")
@@ -43,6 +40,7 @@
      count
 }
 updateSession = function(max = 0) {
+    browser()
    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 
@@ -55,9 +53,12 @@ updateSession = function(max = 0) {
    if (file.exists(pidfile)) return (batch$rc$RUNNING)
    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
 
-   session = batch$fact$getObject(batch$fact$codes$object$session)
-   info    = batch$fact$parms$getSessionData()
-   oldData = Sys.time() - (info$history * 60 * 60)
+   session    = batch$fact$getObject(batch$fact$codes$object$session)
+   currencies = batch$fact$getObject(batch$fact$codes$object$currencies)
+   dfCTC      = currencies$getAllCurrencies()
+   dfCTC      = dfTokens[,c("id", "symbol", "token")]
+   info       = batch$fact$parms$getSessionData()
+   oldData    = Sys.time() - (info$history * 60 * 60)
 
    session$removeData(oldData)
 
@@ -66,9 +67,7 @@ updateSession = function(max = 0) {
                batch$logger$batch("Retrieving tickers")
                last = as.POSIXct(Sys.time())
                session$updateLastUpdate(last, 0)
-               total = .getSessionData(batch, last, max, session)
-               cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";")
-#               cat(Sys.time(), "tickers", "Obtiene datos\n", sep=";", file=logfile, append=TRUE)
+               total = .getSessionData(batch, last, max, session, dfCTC)
                session$updateLastUpdate(last, total)
                batch$logger$batch("OK")
                batch$rc$OK
