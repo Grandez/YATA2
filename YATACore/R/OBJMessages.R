@@ -12,7 +12,17 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           private$lang   = lang
           private$region = region
         }
-      ,get      = function(code, ...) { sprintf(getMessage(code), ...) }
+      ,get      = function(code, ...) {
+          txt="ERROR"
+          if (is.null(cache[[code]])) {
+              txt = tblMsg$get(code, lang, region)
+              if (!is.null(txt)) private$cache[[code]] = txt
+          }
+          txt = cache[[code]]
+          if (is.null(txt))  txt = code
+          if (!is.null(txt)) txt = sprintf(txt, ...)
+          txt
+       }
       ,getWords = function()          { getBlockData(1) } # Esto viene de codes
       ,getBlock = function(block, inverted=FALSE) {
           lst = getBlockData(block)
@@ -41,7 +51,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           if (nrow(data) == 0) return ("Not Found")
           data[1,2]
       }
-      ,title    = function(code)  { getMessage(paste0("TITLE.", code)) }
+#      ,title    = function(code)  { getMessage(paste0("TITLE.", code)) }
     )
     ,private = list(
         tblMsg = NULL
@@ -52,16 +62,6 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
        ,cacheBlock = list()
        ,size   = 20      # Long. de la cache
        ,getMessage = function(code) {
-           txt="ERROR"
-          if (code %in% names(cache)) return(cache[[code]])
-           tryCatch({
-              txt = tblMsg$get(code, lang, region)
-              private$cache[[code]] = txt
-              if (length(cache) > size) private$cache[1] = NULL
-           }, error = function(cond){
-               # Nothing
-           })
-          txt
        }
        ,getBlockData = function(block) {
            label = paste0("L", block)

@@ -28,11 +28,11 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            df
        }
        ,getFullPosition   = function() { tblPosition$table() }
-       ,getGlobalPosition = function(full = FALSE, fiat = FALSE) {
-          df = tblPosition$getGlobalPosition()
-          if (!fiat) df = df[df$id != 0, ]
-          if (!full) df = df[df$balance > 0,]
-          df
+       ,getGlobalPosition = function(full = FALSE) {# , fiat = FALSE) {
+           tblPosition$getGlobalPosition(full)
+#          if (!fiat) df = df[df$currency != "$FIAT", ]
+#          if (!full) df = df[df$balance > 0,]
+#          df
         }
        ,getPosition       = function(camera, currency) {
            df = tblPosition$getPosition(camera, currency)
@@ -152,7 +152,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$set(available = tblPosition$getField("available") + amount)
           tblPosition$apply()
       }
-      ,updateBalance = function(camera, currency, amount, available=TRUE) {
+      ,updateBalance   = function(camera, currency, amount, available=TRUE) {
           # Solo actualiza balance y/o disponible
           tblPosition$select(camera=camera, currency=currency)
           tblPosition$set(balance = tblPosition$current$balance + amount)
@@ -161,12 +161,12 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           }
           tblPosition$apply()
       }
-      ,updatePosition    = function(values) {
+      ,updatePosition  = function(values) {
            tblPosition$select(camera=values$camera,currency=values$currency, create=TRUE)
            tblPosition$set(values)
            tblPosition$apply()
        }
-
+      ,empty_data      = function() { tblPosition$emptydf() }
       ##################################################
       ### Caches
       ##################################################

@@ -85,15 +85,16 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
 function(input, output, session) {
    cat("main beg\n")
 
+   if (WEB$errorLevel > 0) {
+       msg = WEB$getMsg(as.character(WEB$errorLevel))
+       yataErrGeneral(99, msg, NULL, input, output, session)
+       return ()
+   }
+
+
    pnl = WEB$getPanel(YATAWebRoot, "root", NULL, session)
    if (is.null(WEB$root)) WEB$root = pnl
 
-   # if (WEB$errorLevel > 0) {
-   #     if (WEB$errorLevel == 99)
-   #         return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  NULL, input, output, session))
-   #     return (yataErrGeneral(0, WEB$txtError, NULL, input, output, session))
-   # }
-   #
 
    flags = reactiveValues(
          db = NULL
@@ -137,6 +138,7 @@ function(input, output, session) {
        #PUT("begin")
    })
    observeEvent(input$app_title,    {
+       browser()
       showModal(frmCameraChange(pnl$factory))
    })
    observeEvent(input$dbOK,    {

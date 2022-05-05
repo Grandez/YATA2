@@ -273,7 +273,7 @@ moduleServer(id, function(input, output, session) {
         # in - entra
         # out sale
         # A veces se generan dos triggers (debe ser por los renderUI)
-          browser()
+
          if (pnl$vars$inEvent) return()
          pnl$vars$inEvent = TRUE
 

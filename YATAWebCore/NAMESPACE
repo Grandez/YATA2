@@ -28,6 +28,7 @@ import(promises)
 import(markdown)
 
 # YATA
+import(JGGTools)
 import(YATABase)
 import(YATAWebShiny)
 

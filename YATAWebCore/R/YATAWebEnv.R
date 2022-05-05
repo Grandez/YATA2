@@ -9,7 +9,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
   ,public = list(
       MSG      = NULL
      ,REST   = NULL
-     ,errorLevel = 0 # Nivel de error (9 - No rest)
+     ,errorLevel = 0 # Nivel de error (99 - unhandled, 98 - init, 97 - No servers, 97)
      ,txtError = NULL
      ,factory  = NULL
      ,session  = NULL
@@ -21,26 +21,30 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,initialize = function(factory) {
          tryCatch({
             super$initialize()
+
             private$base   = YATABase$new()
             private$panels = private$base$map()
+
             if        (!missing(factory))     self$factory = factory
             else if   (exists("YATAFactory")) self$factory = YATAFactory
                  else                         self$factory = YATACore::YATAFACTORY$new()
-            self$MSG       = self$factory$MSG
-            self$log       = YATALogger$new("WEB")
-            private$hID    = private$base$map()
-            private$hSym   = private$base$map()
-            private$hCam   = private$base$map()
-            self$combo     = YATAWebCombos$new(self$factory)
-#JGGPEND            self$REST      = YATAServer$new()
-#            self$errorLevel = REST$check()
+
+            self$MSG        = self$factory$MSG
+            self$log        = YATALogger$new("WEB")
+            private$hID     = private$base$map()
+            private$hSym    = private$base$map()
+            private$hCam    = private$base$map()
+            self$combo      = YATAWebCombos$new(self$factory)
             private$tblCurrencies = self$factory$getTable(self$factory$codes$tables$currencies)
+            self$REST       = YATAServer$new(self$factory)
+            self$errorLevel = self$REST$check()
+            if (self$errorLevel > 0) self$txtError = "REST Services"
          }, YATAERROR = function (cond) {
-             self$errorLevel = 97
-             self$txtError = cond
+             self$errorLevel = 98
+             self$txtError = cond$message
          }, error = function(cond) {
-            self$errorLevel = 98
-            self$txtError = cond
+            self$errorLevel = 99
+            self$txtError = cond$message
          })
      }
      ,finalize = function() {

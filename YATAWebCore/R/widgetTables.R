@@ -1,11 +1,16 @@
+    # pvl es porcentaje impreso: 23,45%
+    # prc es porcentaje real   : 0,2345
+
 WDGTable = R6::R6Class("YATA.WEB.TABLE"
   ,portable   = FALSE
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,inherit    = WDGBase
   ,active = list(
-      event  = function(value) private$accesor(private$.event, value)
-     ,target = function(value) private$accessor(private$.target, value)
+      event   = function(value) private$accesor(private$.event,    value)
+     ,target  = function(value) private$accessor(private$.target,  value)
+     ,rounded = function(value) private$accessor(private$.rounded, value)
+     ,scale   = function(value) private$accessor(private$.scale,   value)
    )
   ,public = list(
      initialize = function(table=NULL, columns=NULL) {
@@ -14,40 +19,20 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
             extractExtraAttributes()
         }
      }
-    ,setTableOptions = function(...) {
-        args = args2list(...)
-        if (!is.null(args$replace) && args$replace) {
-          private$attrTable = args
-        } else {
-          private$attrTable = list.merge(attrTable, args)
-        }
-        extractExtraAttributes()
-     }
-    ,setColumnOptions = function(colName, ...) {
-        args = args2list(...)
-        if (is.null(private$coldDefs[[colName]])) { # Does not exist
-            if (is.null(args$replace) || args$replace == FALSE) {
-                mcolDef = private$attrColDef
-            } else {
-              mcolDef = list()
-            }
-        } else {
-          if (!is.null(args$replace) && args$replace) {
-             mcolDef = list()
-          }
-        }
-        mcolDef    = list.merge(mcolDef, args)
-        mcolDef    = setColumnAlign(mcolDef)
-        mcolDef$id = colName
-
-        private$attrCols[[colName]] = mcolDef
-     }
-    ,setColumnsDef = function(...) {
-      # Establece los datos de columnas como named list
-    }
     ,render = function(data) {
         private$dfWork = data
         colDefs = prepareData(data)
+    #         ,.appendButtons = function(df) {
+    #     dfNames = colnames(df)
+    #     for (i in 1:length(.buttons)) df = cbind(df, NA)
+    #     colnames(df) = c(dfNames, names(.buttons))
+    #     if (is.null(attrTable$columns))
+    #         private$attrTable$columns = .buttons
+    #     else
+    #         private$attrTable$columns = list.merge(attrTable$columns,.buttons)
+    #     df
+    # }
+
         if (length(colDefs) > 0) {
             if (length(attrTable$columns) > 0) {
                 private$attrTable$columns  = list.merge(colDefs, private$attrTable$columns)
@@ -59,10 +44,186 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
         obj = do.call(reactable::reactable, list.merge(list(data=private$dfWork), lstAttr))
         reactable::renderReactable({obj})
     }
+   ,setColumnHeader = function(style=c("asis", "title", "upper", "lower", "label")) {
+       private$columnHeader = match.arg(style)
+    }
+   ,setColumnsLabel = function(labels) { private$lblCols = labels }
+    # ,setTableOptions = function(...) {
+    #     args = args2list(...)
+    #     if (!is.null(args$replace) && args$replace) {
+    #       private$attrTable = args
+    #     } else {
+    #       private$attrTable = list.merge(attrTable, args)
+    #     }
+    #     extractExtraAttributes()
+    #  }
+    # ,setColumnOptions = function(colName, ...) {
+    #     args = args2list(...)
+    #     if (is.null(private$coldDefs[[colName]])) { # Does not exist
+    #         if (is.null(args$replace) || args$replace == FALSE) {
+    #             mcolDef = private$attrColDef
+    #         } else {
+    #           mcolDef = list()
+    #         }
+    #     } else {
+    #       if (!is.null(args$replace) && args$replace) {
+    #          mcolDef = list()
+    #       }
+    #     }
+    #     mcolDef    = list.merge(mcolDef, args)
+    #     mcolDef    = setColumnAlign(mcolDef)
+    #     mcolDef$id = colName
+    #
+    #     private$attrCols[[colName]] = mcolDef
+    #  }
+    # ,setColumnsDef = function(...) {
+    #   # Establece los datos de columnas como named list
+    # }
   )
   ,private = list(
-       # Atributos de tabla
-       attrTable = list(
+      .rounded = TRUE
+     ,.scale = 2
+     ,columnHeader = "label" # Tipo de cabecera de columna
+     ,col_names = NULL
+     ,table_def = NULL
+     ,col_attr = list()
+     ,current = NULL
+     ,super_render = function(df) {
+         private$current = table_def
+         private$current$data = df
+         adjust_values()
+         format_columns()
+         current$columns = current$columns[names(current$columns) %in% colnames(df)]
+         # Remove items used internally
+         current$columns = lapply(current$columns, function(column) {
+             column$type = NULL
+             column
+         })
+         current = set_column_names(current)
+        #  coldDefs = makeColDefs(df)
+        # private$dfWork = data
+        # colDefs = prepareData(data)
+        # if (length(colDefs) > 0) {
+        #     if (length(attrTable$columns) > 0) {
+        #         private$attrTable$columns  = list.merge(colDefs, private$attrTable$columns)
+        #     } else {
+        #         private$attrTable$columns  = colDefs
+        #     }
+        # }
+        # lstAttr = list.clean((attrTable)) # remove NULLS
+
+        cols = names(current$columns)
+        current$columns = lapply(cols, function(name) do.call(reactable::colDef, current$columns[[name]]))
+        names(current$columns) = cols
+        obj = do.call(reactable::reactable, current)
+        reactable::renderReactable({obj})
+    }
+     ,set_column_names = function(info) {
+         cols = colnames(info$data)
+         for (col in cols) {
+             if (!is.null(info$columns[[col]])) {
+                 info$columns[[col]]$name = col_names[[col]][[columnHeader]]
+             }
+         }
+         info
+     }
+     ,prepareData = function (df) {
+         colDefs = makeColDefs(df)
+         colDefs = setAlign(df, colDefs)
+
+         df = adjustValues(df)
+          setColumnHeader(data)
+          private$attrCols = lapply(attrCols, function(col) prepareColumn(col))
+          lapply(attrCols, function(item) do.call(reactable::colDef, item))
+#         private$attrTable$columns = lapply(attrCols, function(col) prepareColumn(col))
+
+      }
+
+      ,makeColDefs = function(df) {
+          cols = lapply(colnames(df), function(name) {
+                        header = switch(columnHeader,
+                                  asis = name, title = str_to_title(name)
+                                 ,upper = toupper(name), lower = tolower(name)
+                                 ,label = ifelse(is.na(lblCols[name]), name, lblCols[name]))
+                        list(name=header) })
+      }
+     ,setAlign = function (df, colDefs) {
+          cols = lapply(1:length(ncol(df)), function(idx) {
+                        algn = "right"
+                        if (class(df[,idx]) %in% "type_label") align = "left"
+                        list(align=algn) })
+         names(cols) = colnames(df)
+         jgg_list_merge(colDefs, cols)
+     }
+     ,adjust_values = function () {
+         df = private$current$data
+         names = colnames(df)
+         for (idx in 1:ncol(df)) {
+             attr = current$columns[[names[idx]]]
+             if (is.null(attr)) next
+             if (!is.null(attr$type)) df = adjust_value(df, idx, attr$type)
+         }
+         private$current$data = df
+     }
+    ,adjust_value = function (df, idx, type) {
+        if (type == "prc100") df[,idx] = round(df[,idx] / 100, .scale)
+        if (type == "prc")    df[,idx] = round(df[,idx],       .scale)
+        if (type == "date")   df[,idx] = as.Date(df[,idx])
+        if (type == "time")   df[,idx] = strptime(df[,idx], "%H:%M:%S")
+        if (type == "tms")    df[,idx] = strptime(df[,idx], "%Y/%m/%d %H:%M")
+        if (type == "price")  df = adjust_price(df, idx)
+        df
+    }
+     ,adjust_price = function(df, col) {
+         value = 0
+         for (row in 1:nrow(df)) {
+              value = df[row,col]
+              if (value >   999) { df[row,col] = round(df[row,col], 0); next }
+              if (value >    99) { df[row,col] = round(df[row,col], 1); next }
+              if (value >     9) { df[row,col] = round(df[row,col], 2); next }
+              if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
+              df[row,col] = round(df[row,col], 3)
+         }
+         df
+      }
+,format_columns = function() {
+    fmt = private$current$columns
+    df  = private$current$data
+
+    for (idx in 1:ncol(df)) {
+         item = fmt[[colnames(df)[idx]]]
+         if (is.null(item)) item = list()
+         type = ifelse(is.null(item$type), "", item$type)
+         item$align = "right"
+         if ( type == "prc100" || type == "prc") {
+              item$format = reactable::colFormat(percent=TRUE, separators = TRUE, digits=2,locales = "es-ES")
+              item$style = function(value) {
+                   if (value > 0) color = "#008000" else if (value < 0) color = "#e00000"  else color <- "#777"
+                   bold = ifelse (abs(value) > 0.02, "bold", "normal")
+                   list(color = color, fontWeight = bold)
+              }
+
+         }
+         if ( type == "price" || type == "value") {
+              item$format = reactable::colFormat(separators = TRUE, locales = "es-ES")
+         }
+         if (type == "lbl" || type == "label") item$align = "left"
+         # colname = colnames(df)[idx]
+         # if (!is.null(fmt[[colname]]) && length(fmt[[colname]]) > 0) {
+         #     if (length(item) > 0) fmt[[colname]] = list.merge(item, fmt[[colname]])
+         # } else {
+         #     if (length(item) > 0) {
+         #         item$name = colname
+         #         fmt[[colname]] = item
+         #     }
+         # }
+         fmt[[colnames(df)[idx]]] = item
+    }
+    private$current$columns= fmt
+#    lapply(fmt, function(item) do.call(reactable::colDef, item))
+}
+
+      ,attrTable = list(
            bordered            = FALSE     # Add borders around the table and every cell?
           ,borderless          = FALSE     # Remove inner borders from table?
           ,class               = NULL      # Additional CSS classes to apply to the table.
@@ -171,68 +332,103 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
           ,footerClass      = NULL     # Additional CSS classes to apply to the footer.
           ,footerStyle      = NULL     # Inline styles to apply to the footer. A named list or character string.
       )
-      ,.event    = NULL   # Event to trigger and send to shiny
-      ,.target   = NULL   # Target of event
+      ,dataclass = c( pvl = "type_percent_100", prc = "type_percent_1"
+                     ,int = "type_integer",     imp = "type_price"
+                     ,tms = "type_tms",         dat = "type_date", tim = "type_time"
+                     ,lbl = "type_label"
+                     ,btn = "type_button")
+
+      # ,.event    = NULL   # Event to trigger and send to shiny
+      # ,.target   = NULL   # Target of event
       ,colNames  = "asis" # Column names: asis, title, upper, lower, ...
-      ,dfWork    = NULL
-      ,attrCols  = list() # Full list of attributes
-      ,colDefs   = NULL   # Column attributes for reactable
-      ,extractExtraAttributes = function () {
-        # Remove private attributes. That is attr which is not part of reactable
-        extractEvent()
-        if (!is.null(attrTable$colNames)) {
-            private$colNames = attrTable$colNames
-            private$attrTable$colNames = NULL
-        }
-        # Other attributes not matching call to reactable
-        private$attrTable$replace = NULL
-      }
-      ,extractEvent = function() {
-          if (!is.null(attrTable$event))  private$.event  = attrTable$event
-          if (!is.null(attrTable$target)) private$.target = attrTable$target
-          if (!is.null(.event) && is.null(.target)) private$.target = .event
 
-          click = paste0(       "function(row, col) { ")
-          click = paste0(click, "  window.alert('Clickado');")
-          click = paste0(click, "  if (window.Shiny) {")
-          click = paste0(click, "      Shiny.setInputValue('", .event, "',")
-          click = paste0(click, "            {row: row.index + 1, colName: col.id, target: '", .target, "'});")
-          click = paste0(click, "  }")
-          click = paste0(click, "}")
+      # ,dfWork    = NULL
+      # ,attrCols  = list() # Full list of attributes
+      # ,colDefs   = NULL   # Column attributes for reactable
+     #  ,defineClasses = function(types) {
+     #      lista = lapply(names(dataclass), function(name) {
+     #                     if (is.null(types[[name]])) return (NULL)
+     #                     lst1 = as.list(rep(dataclass[name], length(types[[name]])))
+     #                     names(lst1) = types[[name]]
+     #                     lst1
+     #               })
+     #      private$colClasses = unlist(lista)
+     #  }
+     #  ,applyClasses = function(df) {
+     #      for (name in colnames(df)) {
+     #          cls = colClasses[name]
+     #          if (!is.na(cls)) class(df[,name]) = c(class(df[,name]), cls)
+     #      }
+     #      df
+     #  }
+     # ,adjustValues = function (df) {
+     #     for (idx in 1:ncol(df)) {
+     #         if ("type_price" %in% class(df[,idx])) df = .adjustPrice(df, idx)
+     #     }
+     #     df
+     #  }
+     # ,adjustPrice = function(df, col) {
+     #     value = 0
+     #     for (row in 1:nrow(df)) {
+     #          value = df[row,col]
+     #          if (value >   999) { df[row,col] = round(df[row,col], 0); next }
+     #          if (value >    99) { df[row,col] = round(df[row,col], 1); next }
+     #          if (value >     9) { df[row,col] = round(df[row,col], 2); next }
+     #          if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
+     #          df[row,col] = round(df[row,col], 3)
+     #     }
+     #     df
+     #  }
 
-          private$attrTable$onClick = reactable::JS(click)
-          private$attrTable$event   = NULL
-          private$attrTable$target  = NULL
-      }
-      ,prepareData = function (data) {
-          setColumnHeader(data)
-          private$attrCols = lapply(attrCols, function(col) prepareColumn(col))
-          lapply(attrCols, function(item) do.call(reactable::colDef, item))
-#         private$attrTable$columns = lapply(attrCols, function(col) prepareColumn(col))
-
-      }
-      ,prepareColumn = function(attr) {
-         if (!is.null(attr$scale)) private$dfWork[,attr$id] = round(private$dfWork[,attr$id], digits=attr$scale)
-         attr$id      = NULL
-         attr$replace = NULL
-         attr$scale   = NULL
-         attr$type    = NULL
-         list.clean(attr)
-      }
-      ,setColumnHeader = function(data) {
-           if (is.null(colNames) || colNames == "asis") return
-         # if (private$colNames == "title") colnames(data) = str_to_title(colnames(data))
-         # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
-         # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
-#         private$dfWork
-
-      }
-      ,setColumnAlign = function (mcolDef) {
-         if (is.null(mcolDef$type)) return (mcolDef)
-         if (mcolDef$type == "date") mcolDef$align = "right"
-         if (mcolDef$type == "time") mcolDef$align = "right"
-         mcolDef
-      }
+#       ,extractExtraAttributes = function () {
+#         # Remove private attributes. That is attr which is not part of reactable
+#         extractEvent()
+#         if (!is.null(attrTable$colNames)) {
+#             private$colNames = attrTable$colNames
+#             private$attrTable$colNames = NULL
+#         }
+#         # Other attributes not matching call to reactable
+#         private$attrTable$replace = NULL
+#       }
+#       ,extractEvent = function() {
+#           if (!is.null(attrTable$event))  private$.event  = attrTable$event
+#           if (!is.null(attrTable$target)) private$.target = attrTable$target
+#           if (!is.null(.event) && is.null(.target)) private$.target = .event
+#
+#           click = paste0(       "function(row, col) { ")
+#           click = paste0(click, "  window.alert('Clickado');")
+#           click = paste0(click, "  if (window.Shiny) {")
+#           click = paste0(click, "      Shiny.setInputValue('", .event, "',")
+#           click = paste0(click, "            {row: row.index + 1, colName: col.id, target: '", .target, "'});")
+#           click = paste0(click, "  }")
+#           click = paste0(click, "}")
+#
+#           private$attrTable$onClick = reactable::JS(click)
+#           private$attrTable$event   = NULL
+#           private$attrTable$target  = NULL
+#       }
+#       ,prepareColumn = function(attr) {
+#          if (!is.null(attr$scale)) private$dfWork[,attr$id] = round(private$dfWork[,attr$id], digits=attr$scale)
+#          attr$id      = NULL
+#          attr$replace = NULL
+#          attr$scale   = NULL
+#          attr$type    = NULL
+#          list.clean(attr)
+#       }
+#       ,setColumnHeader = function(data) {
+#            if (is.null(colNames) || colNames == "asis") return
+#          # if (private$colNames == "title") colnames(data) = str_to_title(colnames(data))
+#          # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
+#          # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
+# #         private$dfWork
+#
+#       }
+#       ,setColumnAlign = function (mcolDef) {
+#          if (is.null(mcolDef$type)) return (mcolDef)
+#          if (mcolDef$type == "date") mcolDef$align = "right"
+#          if (mcolDef$type == "time") mcolDef$align = "right"
+#          mcolDef
+#       }
   )
 )
 WDGTableSimple = R6::R6Class("YATA.WEB.TABLE"

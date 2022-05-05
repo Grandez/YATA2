@@ -5,7 +5,7 @@
 handler_alive = function(.req, .res) {
     cat(paste(Sys.time(),"Recibe Alive\n"))
    .res$set_status_code(200)
-   .res$set_body("OK")
+   .res$set_body(jsonlite::toJSON("OK"))
 }
 FUN = function(.req, .res) {
              .res$set_status_code(200)

@@ -335,6 +335,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
           invisible(self)
       }
       ,setData     = function(df)            { self$dfa = df; self$dfCurrent=df; invisible(self) }
+      ,emptydf = function() {
+          dfempty = data.frame(matrix(ncol=length(fields), nrow=0))
+          colnames(dfempty) = names(fields)
+          emptydf
+      }
    )
    ,private = list(
        tblName = NULL   # Nombre fisico de la tabla

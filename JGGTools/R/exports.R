@@ -10,7 +10,3 @@ args2list = function(...) {
   }
   args
 }
-jgg_list_merge = function(lst1, lst2) {
-    if (is.null(lst1)) return (lst2)
-    rlist::list.merge(lst1, lst2)
-}

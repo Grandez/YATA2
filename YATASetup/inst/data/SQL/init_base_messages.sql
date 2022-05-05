@@ -115,9 +115,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "OPER.MAKE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "OPER.MAKE.ERR"        ,"XX", "XX"     , "Error al realizar la operacion"               );
                                                                                                                                                         
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "PLOT.TIT.HISTORY"     ,"XX", "XX"     , "Historico"                                    );
-                                                                                                                                                       
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "ERR.REST.DOWN"        ,"XX", "XX"     , "El servidor no esta disponible"              );                                                                 
-
+                                                                                                                                                      
 -- 11 Tipos de graficos
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 11, "PLOT.SESSION"         ,"XX", "XX"     , "Sesion"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 11, "PLOT.VALUE"           ,"XX", "XX"     , "Precio"                                       );
@@ -125,39 +123,62 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 11, "PLOT.VOLU
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 11, "PLOT.CAP"             ,"XX", "XX"     , "Capitalizacion"                               );
                                                                                              
 -- 2x - Paneles y Menus                                                                      
--- 20 Etiquetas de paneles                                                                   
+-- 20 Etiquetas de paneles y tablas                                                                  
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.ACCEPT"           ,"XX", "XX"     , "Aceptar"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.AMOUNT"           ,"XX", "XX"     , "Cantidad"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.AVAILABLE"        ,"XX", "XX"     , "Disponible"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BALANCE"          ,"XX", "XX"     , "Saldo"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BASE"             ,"XX", "XX"     , "Base"                                          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BUY"              ,"XX", "XX"     , "Comprado"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BUY_HIGH"         ,"XX", "XX"     , "Compra Mayor"                                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BUY_LAST"         ,"XX", "XX"     , "Ultima compra"                                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BUY_LOW"          ,"XX", "XX"     , "Compra Menor"                                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.BUY_NET"          ,"XX", "XX"     , "Neto Compra"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CAMERA"           ,"XX", "XX"     , "Camara"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CANCEL"           ,"XX", "XX"     , "Cancelar"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CC"               ,"XX", "XX"     , "Cuenta"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.COMMENT"          ,"XX", "XX"     , "Comentarios"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CONTROL"          ,"XX", "XX"     , "Control"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CTC"              ,"XX", "XX"     , "Moneda"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.CURRENCY"         ,"XX", "XX"     , "Moneda"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.DAY"              ,"XX", "XX"     , "Dia"                                           );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.DEADLINE"         ,"XX", "XX"     , "Plazo"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FEE"              ,"XX", "XX"     , "Comision"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FIAT"             ,"XX", "XX"     , "FIAT"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FROM"             ,"XX", "XX"     , "De"                                            );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.HOUR"             ,"XX", "XX"     , "Hora"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.GAS"              ,"XX", "XX"     , "Gas"                                           );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.IMPORT"           ,"XX", "XX"     , "Importe"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.LAST"             ,"XX", "XX"     , "Ultimo"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.LIMIT"            ,"XX", "XX"     , "Limite"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.MONTH"            ,"XX", "XX"     , "Mes"                                           );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.NOTES"            ,"XX", "XX"     , "Notas"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.OPER"             ,"XX", "XX"     , "Operacion"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.PRICE"            ,"XX", "XX"     , "Precio"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.PROCESS"          ,"XX", "XX"     , "Procesar"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.PROFIT"           ,"XX", "XX"     , "Resultado"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.REASON"           ,"XX", "XX"     , "Motivo"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.REVIEW"           ,"XX", "XX"     , "Revisar"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SELL"             ,"XX", "XX"     , "Vendido"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SELL_HIGH"        ,"XX", "XX"     , "Venta Mayor"                                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SELL_LAST"        ,"XX", "XX"     , "Ultima venta"                                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SELL_LOW"         ,"XX", "XX"     , "Venta Menor"                                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SELL_NET"         ,"XX", "XX"     , "Neto Venta"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SINCE"            ,"XX", "XX"     , "Desde"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.STOP"             ,"XX", "XX"     , "Stop"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SUMMARY"          ,"XX", "XX"     , "Resumen"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.SYMBOL"           ,"XX", "XX"     , "Moneda"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TARGET"           ,"XX", "XX"     , "Objetivo"                                      );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TURNOVER"         ,"XX", "XX"     , "Volumen de venta"                              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TMS"              ,"XX", "XX"     , "Fecha"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TOTAL"            ,"XX", "XX"     , "Total"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.TO"               ,"XX", "XX"     , "A"                                             );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.VALUE"            ,"XX", "XX"     , "Valor"                                         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.VOLUME"           ,"XX", "XX"     , "Volumen"                                       );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.WEEK"             ,"XX", "XX"     , "Semana"                                        );
 
 -- 21 - Main Menu
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.DASHBOARD"        ,"XX", "XX"     , "Dashboard"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.POSITION"         ,"XX", "XX"     , "Posicion"                                    );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.OPERATION"        ,"XX", "XX"     , "Operacion"                                   );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 21, "PNL.HISTORY"          ,"XX", "XX"     , "Historia"                                    );
@@ -248,4 +269,9 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 70, "MODEL.MOD
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 70, "MODEL.DATA"         ,"XX", "XX"     , "Datos"                                         );
 
 
+-- Errores de inicio (Van por el codigo de error)
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "99"        ,"XX", "XX"     , "Error no controlado"                     );   
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "98"        ,"XX", "XX"     , "Error creando entorno"                   );   
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "97"        ,"XX", "XX"     , "El servidor no esta disponible"          );   
+                                                              
 COMMIT;

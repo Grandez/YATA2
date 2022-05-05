@@ -128,10 +128,19 @@ OBJParms = R6::R6Class("OBJ.PARMS"
                             ,isolated=TRUE)
             invisible(self)
         }
-
+        ,getLabelsTable = function(table) { getSubgroup(60, 1, as_list=TRUE) }
         ,get         = function(group, subgroup, id) { tblParms$table(group=group, subgroup=subgroup,id=id) }
         ,getGroup    = function(group)               { tblParms$table(group=group) }
-        ,getSubgroup = function(group, subgroup)     { tblParms$table(group=group, subgroup=subgroup) }
+        ,getSubgroup = function(group, subgroup, as_list=FALSE)     {
+            df = tblParms$table(group=group, subgroup=subgroup)
+            if (!as_list) return (df)
+            data = list()
+            for (idx in 1:nrow(df)) {
+                data = list.append(data, applyType(df[idx,"value"], df[idx,"type"]))
+            }
+            names(data) = df$name
+            data
+         }
         ,getBlock    = function(group, subgroup) {
             df = tblParms$table(group=group, subgroup=subgroup)
             dfr = data.frame(block=unique(df$block))
@@ -141,10 +150,11 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             dfr
         }
         ,getList = function(group, subgroup)     {
+            stop("JGG ESTA FUNCION ES getSubgroup(group, subgroup, as_list=TRUE")
             df = tblParms$getSubGroup(group, subgroup)
             data = list()
             for (idx in 1:nrow(df)) {
-                data = list.append(data, tblParms$applyType(df[idx,"value"], df[idx,"type"]))
+                data = list.append(data, applyType(df[idx,"value"], df[idx,"type"]))
             }
             names(data) = df$name
             data
@@ -209,7 +219,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,getByName = function(name) { tblParms$table(name=name) }
         ,DF2List = function(df) {
             # TO DO
-            data = lapply(df, function(x) tblParms$applyType(xvalue,x$type))
+            data = lapply(df, function(x) applyType(xvalue,x$type))
             names(data) = df$name
             data
         }
@@ -264,7 +274,25 @@ OBJParms = R6::R6Class("OBJ.PARMS"
           data    = tbl$getSubgroup(group=10, subgroup=id, asList=TRUE)
           data$id=id
           data
-       }
-    )
+      }
+     ,applyType = function(value, type) {
+         if (type == 10) return (as.integer(value))
+         if (type == 11) return (as.numeric(value))
+         if (type == 30) return (as.POSIXct(value, tz="UTC"))
+         if (type == 31) return (as.Date(value))
+         if (type == 32) return (strptime(value, tz="UTC"))
+         if (type == 99) return (objMsg$get(value))
+
+         if (type == 20) {
+             if (is.logical(value)) return (value)
+             if (is.character(value)) {
+                 if (value == "0" || value == "FALSE" || value == "false") return (FALSE)
+                 return (TRUE)
+             }
+             return (ifelse(as.integer(value) == 0, FALSE, TRUE))
+         }
+         value
+     }
+  )
 )
 

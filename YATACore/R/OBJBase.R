@@ -29,7 +29,8 @@ OBJBase = R6::R6Class("OBJ.BASE"
        ,getDBName      = function()          {
            if(is.null(tblBase)) return("")
            tblBase$getDB()$getName()
-        }
+       }
+       ,empty_data = function() { stop(paste("This method is not implemented for ", name)) }
     )
     , private = list(
          tblBase  = NULL

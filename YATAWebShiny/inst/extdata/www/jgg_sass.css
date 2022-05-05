@@ -57,6 +57,45 @@ footer {
   flex-shrink: 0;
 }
 
+.jgg_clearfix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.jgg_panel_err {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 900;
+  background-color: white;
+  opacity: 0.8;
+}
+
+.jgg_panel_err_container {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.jgg_msg_error {
+  font-weight: bold;
+  color: red;
+}
+
+.jgg_text_err {
+  font-size: 30px;
+  font-weight: bold;
+}
+
 .jgg_div_center {
   margin: auto;
   width: 50%;

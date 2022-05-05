@@ -2,14 +2,27 @@ lbl = WEB$getLabelsMenuMain()
 #JGGDashboard("DashBoard", id="dashboard"
 YATAPage("YATA", id="mainMenu",titleActive = TRUE
     ,JGGTab("test", "Test", NULL, JGGModule("test"))
-    ,JGGTab("pos",  lbl$POSITION,  icon("dashcube"),  JGGModule("pos"))
-    ,JGGTab("oper", lbl$OPERATION, icon("shopping-bag"),  JGGModule("oper"))
+    ,JGGTab("dash",  lbl$DASHBOARD,  NULL,  JGGModule("dash"))
+    ,JGGTab("pos",  lbl$POSITION,  NULL,  JGGModule("pos"))
+    ,JGGTab("oper", lbl$OPERATION, NULL,  JGGModule("oper"))
 #    ,JGGTab("hist", lbl$HISTORY,   NULL,  JGGModule("hist"))
-    ,JGGTab("ana",   lbl$ANALYSIS,  icon("chart-line"),    JGGModule("ana"))
-    ,JGGTab("blog",  lbl$BLOG,     icon("pencil"), JGGModule("blog"))
-    ,JGGTab("admin", lbl$ADMIN,    icon("cog"), JGGModule("admin"))
+    ,JGGTab("ana",   lbl$ANALYSIS,  NULL,    JGGModule("ana"))
+    ,JGGTab("blog",  lbl$BLOG,     NULL, JGGModule("blog"))
+    ,JGGTab("admin", lbl$ADMIN,    NULL, JGGModule("admin"))
 # ,YATATabPanel(lbl$STATUS,    value="status", YATAModule("status") )
 )
+
+# YATAPage("YATA", id="mainMenu",titleActive = TRUE
+#     ,JGGTab("test", "Test", NULL, JGGModule("test"))
+#     ,JGGTab("dash",  lbl$DASHBOARD,  icon("dashcube"),  JGGModule("dash"))
+#     ,JGGTab("pos",  lbl$POSITION,  icon("newspaper"),  JGGModule("pos"))
+#     ,JGGTab("oper", lbl$OPERATION, icon("shopping-bag"),  JGGModule("oper"))
+# #    ,JGGTab("hist", lbl$HISTORY,   NULL,  JGGModule("hist"))
+#     ,JGGTab("ana",   lbl$ANALYSIS,  icon("chart-line"),    JGGModule("ana"))
+#     ,JGGTab("blog",  lbl$BLOG,     icon("pencil-alt"), JGGModule("blog"))
+#     ,JGGTab("admin", lbl$ADMIN,    icon("cog"), JGGModule("admin"))
+# # ,YATATabPanel(lbl$STATUS,    value="status", YATAModule("status") )
+# )
 
 # YATAWebCore::YATAPage("YATA", id="mainMenu",titleActive = TRUE, theme =  my_theme,lang = NULL
 # #   ,YATATab("Test", id="test",   YATAModule("test"))

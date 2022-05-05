@@ -42,6 +42,13 @@ suppressMessages(library(reactable, warn.conflicts = FALSE))
 
 # plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
+if (.Platform$OS.type != "windows") {
+   future::plan(strategy="sequential")
+} else {
+  future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
+                    tweak(multisession, workers = 4)))
+}
+
 if (exists("WEB")) rm("WEB")
 web = YATAWebCore::YATAWebEnv$new(YATACore::YATAFACTORY$new())
 assign("WEB", web, envir=.GlobalEnv)
@@ -56,12 +63,6 @@ sapply(files,source)
 
 # WEB$startDaemons() # Esto bloquea en windows
 
-if (.Platform$OS.type != "windows") {
-   future::plan(strategy="sequential")
-} else {
-  future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
-                    tweak(multisession, workers = 4)))
-}
 
 # WEB$startDaemons()
 onStart = function() {

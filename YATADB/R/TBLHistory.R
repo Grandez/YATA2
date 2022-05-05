@@ -41,7 +41,7 @@ TBLHistory = R6::R6Class("TBL.HISTORY"
             if (!is.null(from)) {
                 sql = paste(sql, "AND TMS BETWEEN ? AND ?")
                 params$from = from
-                params$to = ifelse (is.null(to), Sys.Date(), to)
+                params$to = ifelse (is.null(to), Sys.Date(), as.character(to))
             }
             sql = paste(sql, "ORDER BY TMS DESC")
             if (periods > 0) {

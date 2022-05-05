@@ -33,14 +33,15 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
         ,getPrices = function(ids, periods) {
             # Cuidado con FIAT, es id = 0
             labels = as.character(periods)
-            from = Sys.Date() - max(periods) - 1
+            nrows = max(periods)
+            from = Sys.Date() - nrows - 1
             to   = Sys.Date()
             data = lapply(ids, function(id) {
                 if (id == 0) { # FIAT
                     data = as.list(rep(1, length(periods)))
                     data$id = id
                 } else {
-                    df = getHistory(id, from,to)
+                    df = getHistory(id, from, to, nrows + 1)
                     data = as.list(rep(0, length(periods)))
                     data$id = id
                 }

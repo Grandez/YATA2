@@ -40,6 +40,9 @@
      count
 }
 updateSession = function(max = 0) {
+    tryCatch({
+
+
    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
 
@@ -55,7 +58,7 @@ updateSession = function(max = 0) {
    session    = batch$fact$getObject(batch$fact$codes$object$session)
    currencies = batch$fact$getObject(batch$fact$codes$object$currencies)
    dfCTC      = currencies$getAllCurrencies()
-   dfCTC      = dfTokens[,c("id", "symbol", "token")]
+   dfCTC      = dfCTC[,c("id", "symbol", "token")]
    info       = batch$fact$parms$getSessionData()
    oldData    = Sys.time() - (info$history * 60 * 60)
 
@@ -79,8 +82,12 @@ updateSession = function(max = 0) {
       Sys.sleep(info$interval * 60)
       count = count + 1
    }
-
-  if (file.exists(pidfile)) file.remove(pidfile)
-  batch$logger$executed(rc, begin, "Retrieving tickers")
+   }, error = function (cond) {
+        cat("Ha ocurrido un error\n")
+        cat("Mensaje: ", cond$message, "\n")
+    }, finally = {
+        if (file.exists(pidfile)) file.remove(pidfile)
+        batch$logger$executed(rc, begin, "Retrieving tickers")
+    })
   invisible(rc)
 }

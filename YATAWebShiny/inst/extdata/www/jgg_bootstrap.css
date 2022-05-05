@@ -180,4 +180,12 @@ td {
   margin-bottom: 0;
 }
 
+.box-header {
+  padding: 5px;
+}
+
+.box-body {
+  padding: 3px 6px 3px 6px;
+}
+
 /*# sourceMappingURL=jgg_bootstrap.css.map */

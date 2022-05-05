@@ -4,15 +4,16 @@ YATAServer = R6::R6Class("YATA.SERVER"
   ,lock_class = TRUE
   ,portable   = FALSE
   ,public = list(
-     initialize = function(type) {
+     initialize = function(factory, type) {
          tryCatch({
-            private$fact  = WEB$factory # YATACore::getFactory()
-            servers = fact$parms$getServers()
+            private$factory  = factory
+            servers = factory$parms$getServers()
             if (missing(type)) type = "REST"
             private$parms = servers[[type]]
             private$.url = paste0(parms$url, ":", parms$port, "/")
             private$http = YATAHTTP$new()
          }, error = function(cond) {
+            message("ERROR CREATING YATAServer")
             YATABase:::error( "Error initializing object"
                             ,subclass=NULL, origin=cond, action="YATARest")
          })
@@ -31,7 +32,7 @@ YATAServer = R6::R6Class("YATA.SERVER"
      ,trending   = function(sync=FALSE) {
          if (sync) {
              return (tryCatch({
-                prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
+                prov = factory$getProvider() #JGG OJO por ahora siempre devuelve el mismo
                 prov$getTrend()
              }, error = function(cond) {
                 NULL
@@ -40,7 +41,7 @@ YATAServer = R6::R6Class("YATA.SERVER"
 
          future_promise ({
             browser()
-            prov = fact$getProvider() #JGG OJO por ahora siempre devuelve el mismo
+            prov = factory$getProvider() #JGG OJO por ahora siempre devuelve el mismo
             df = prov$getTrend()
          }) %>% then (
             onFulfilled = function(df) {
@@ -52,17 +53,21 @@ YATAServer = R6::R6Class("YATA.SERVER"
              NULL
         })
      }
+     ,check      = function() {
+        url = paste0(.url, "alive")
+        req = http$get(url)
+        ifelse(is.null(req), 97, 0) # 99 - ERROR NO Server
+     }
   )
   ,private = list(
       parms = NULL
      ,http = NULL
     ,.url  = NULL
-    ,fact  = NULL
+    ,factory  = NULL
     ,.restDfBody = function(endpoint, ...) {
-        browser()
         url = paste0(.url, endpoint)
         req = http$get(url, parms = args2list(...))
-
+        if (is.null(req)) return (NULL)
         if (req$status_code == 200) {
             json = httr::content(req, type="application/json", encoding="UTF-8")
             as.data.frame(jsonlite::fromJSON(json))

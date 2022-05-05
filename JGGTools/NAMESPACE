@@ -1,5 +1,5 @@
 import(rlist)
 
 export(HashMap)
-export(jgg_list_merge)
+exportPattern("jgg.*")
 #export(args2list)

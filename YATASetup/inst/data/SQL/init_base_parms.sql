@@ -9,9 +9,10 @@
 -- tms     = 30
 -- date    = 31
 -- time    = 32
+-- mensaje = 99
 
 
-DELETE FROM PARMS;
+DELETE FROM PARAMETERS;
 
 -- ----------------------------------------------------
 -- Grupo 1 - Configuracion general
@@ -80,7 +81,7 @@ INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (4,   1,   1,  5, 10, 'scope'    , '1'             );
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (4,   1,   1,  6,  1, 'comment'  , 'Prueba'        );
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (4,   1,   1, 10, 20, 'active'   , '1'             );
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (4,   1,   1, 10, 31, 'since'    , '1970-01-01'    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (4,   1,   1, 11, 31, 'since'    , '1970-01-01'    );
 
 -- ----------------------------------------------------
 -- Grupo 2 - Servers
@@ -215,6 +216,22 @@ INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 11, 1,
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 11, 1, 2,   10, ''    , ' 1');
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 11, 1, 3,   10, ''    , ' 7');
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, ID, TYPE, NAME, VALUE) VALUES ( 11, 1, 4,   10, ''    , '30');
+-- ----------------------------------------------------
+-- Grupo 12 - Motivos 
+--  El subgrupo coincide cn el codigo  de la operacion
+--  ID esta codificado
+--     xx0 - Todos
+--     xx1 - Compras
+--     xx2 - Ventas
+--     xx3 - Eventos en operaciones
+-- ----------------------------------------------------
+
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,   0,  1,   1, 'label'    , 'REASON.NONE'       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  10,  1,   1, 'label'    , 'REASON.FAIL'       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  20,  1,   1, 'label'    , 'REASON.OTHER'      );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  11,  1,   1, 'label'    , 'REASON.UP'         );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  21,  1,   1, 'label'    , 'REASON.SUGGEST'    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  31,  1,   1, 'label'    , 'REASON.TOP'        );
 
 -- ----------------------------------------------------
 -- Grupos 50 - Combos y grupos
@@ -296,21 +313,33 @@ INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  5,  2,   1, 'key'      , 'OPER'            );
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  6,  2,   1, 'key'      , 'NOTE'            );
 
--- ----------------------------------------------------
--- Grupo 15 - Motivos 
---  El subgrupo coincide cn el codigo  de la operacion
---  ID esta codificado
---     xx0 - Todos
---     xx1 - Compras
---     xx2 - Ventas
---     xx3 - Eventos en operaciones
--- ----------------------------------------------------
+-- Grupo 60 - Etiquetas para tablas y dataframes
 
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,   0,  1,   1, 'label'    , 'REASON.NONE'       );
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  10,  1,   1, 'label'    , 'REASON.FAIL'       );
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  20,  1,   1, 'label'    , 'REASON.OTHER'      );
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  11,  1,   1, 'label'    , 'REASON.UP'         );
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  21,  1,   1, 'label'    , 'REASON.SUGGEST'    );
-INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 12,  2,  31,  1,   1, 'label'    , 'REASON.TOP'        );
-
+-- Subgrupo 1: Etiquetas de nombres de campos en tablas
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  1,  1,  99, "camera"     , "LBL.CAMERA"     );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  2,  1,  99, "currency"   , "LBL.CURRENCY"   );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  3,  1,  99, "balance"    , "LBL.BALANCE"    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  4,  1,  99, "available"  , "LBL.AVAILABLE"  );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  5,  1,  99, "buy_high"   , "LBL.BUY_HIGH"   );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  6,  1,  99, "buy_low"    , "LBL.BUY_LOW"    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  7,  1,  99, "buy_last"   , "LBL.BUY_LAST"   );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  8,  1,  99, "buy_net"    , "LBL.BUY_NET"    );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1,  9,  1,  99, "sell_high"  , "LBL.SELL_HIGH"  );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 10,  1,  99, "sell_low"   , "LBL.SELL_LOW"   );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 11,  1,  99, "sell_last"  , "LBL.SELL_LAST"  );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 12,  1,  99, "sell_net"   , "LBL.SELL_NET"   );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 13,  1,  99, "buy"        , "LBL.BUY"        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 14,  1,  99, "sell"       , "LBL.SELL"       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 15,  1,  99, "value"      , "LBL.VALUE"      );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 16,  1,  99, "profit"     , "LBL.PROFIT"     );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 17,  1,  99, "since"      , "LBL.SINCE"      );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 18,  1,  99, "tms"        , "LBL.TMS"        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 19,  1,  99, "last"       , "LBL.LAST"       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 20,  1,  99, "cc"         , "LBL.CC"         );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 21,  1,  99, "day"        , "LBL.DAY"        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 22,  1,  99, "week"       , "LBL.WEEK"       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 23,  1,  99, "month"      , "LBL.MONTH"      );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 24,  1,  99, "hour"       , "LBL.HOUR"       );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 25,  1,  99, "symbol"     , "LBL.SYMBOL"     );
+-- INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 60,  1, 26,  1,  99, "day"        , "LBL.DAY"        );
 COMMIT;

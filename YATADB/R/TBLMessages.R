@@ -11,8 +11,8 @@ TBLMessages = R6::R6Class("TBL.MESSAGES"
             df = table(code=code, lang=lang, region=region)
             if (nrow(df) == 0) df = table(code = code, lang = lang, region = "XX")
             if (nrow(df) == 0) df = table(code = code, lang = "XX", region = "XX")
-            if (nrow(df) == 0) return (paste("Missing message ", code))
-            data$value
+            if (nrow(df) == 0) return (code)
+            df$value
         }
         ,getBlock = function(block, lang="XX", region="XX") {
             # No puede fallar. seria corrupcion de datos en el sistema

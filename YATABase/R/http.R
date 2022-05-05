@@ -11,7 +11,11 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          if (!is.null(headers)) heads=headers
          if (!is.null(parms))   prms = parms
          #JGG json la page devuelve 0 pero el json no
-         page = httr::GET(url, add_headers(.headers=headers), query=prms)
+
+         page = tryCatch({ httr::GET(url, add_headers(.headers=headers), query=prms)
+                         }, error = function(cond) { NULL })
+
+         if (is.null(page)) return (NULL)
          private$rc = checkPageResponse("get", page, url, parms, accept)
          page
       }
