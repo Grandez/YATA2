@@ -327,7 +327,8 @@ PNLDash = R6::R6Class("PNL.DASH"
         j = ncol(dfp)
         for (idx in 1:length(periods)) {
             dfp[,idx] = dfp[,j] / dfp[,idx]
-            if (dfp[,idx] != 0) {
+            dfp = df %>% mutate_all(~replace(., is.nan(.), NA))
+            if (!is.na(dfp[,idx]) && dfp[,idx] != 0) {
                 dfp[,idx] = ifelse (dfp[,idx] < 1, (1 - dfp[,idx]) * -1, dfp[,idx] - 1)
             }
         }
