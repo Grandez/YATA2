@@ -136,7 +136,7 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
           if (bitwAnd(camera$target, 1) != 0) { # Monedas
               dft = df %>% filter(active == 1 & token == 0)
               if (camera$selective_ctc > 0) {
-                  dft = dft[order(rank),]
+                  dft = dft[order(dft$rank),]
                   dft = dft[1:camera$selective_ctc,]
               }
               private$target = dft
@@ -144,12 +144,12 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
           if (bitwAnd(camera$target, 2) != 0) { # tokens
               dft = df %>% filter(active == 1 & token == 1)
               if (camera$selective_tok > 0) {
-                  dft = dft[order(rank),]
+                  dft = dft[order(dft$rank),]
                   dft = dft[1:camera$selective_tok,]
               }
               if (!is.null(target)) {
                   dft = rbind(target, dft)
-                  private$target = dft[order(rank),]
+                  private$target = dft[order(dft$rank),]
               } else {
                 private$target = dft
               }

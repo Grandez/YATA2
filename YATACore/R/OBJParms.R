@@ -107,6 +107,9 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             if (!all) df = df[df$active == TRUE,]
             df
         }
+        ,getTargets = function() {
+
+        }
         ,getCameraInfo = function(camera) {
             data = tblConfig$getSubgroup(group=5, subgroup=camera, asList=TRUE)
             data$db = getDBInfo(data$db, TRUE)

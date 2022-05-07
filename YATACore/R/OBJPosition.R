@@ -22,7 +22,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getByCurrency = function(currency, balance=FALSE, available=FALSE) {
            df = tblPosition$table(inValues = list(currency = currency))
-           df = df[df$camera != Factory$camera,]
+#           df = df[df$camera != Factory$camera,]
            if (balance)   df = df[df$balance  > 0,]
            if (available) df = df[df$available > 0,]
            df
@@ -30,7 +30,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        ,getFullPosition   = function() { tblPosition$table() }
        ,getGlobalPosition = function(full = FALSE) {# , fiat = FALSE) {
            tblPosition$getGlobalPosition(full)
-#          if (!fiat) df = df[df$currency != "$FIAT", ]
+#          if (!fiat) df = df[df$currency != "__FIAT__", ]
 #          if (!full) df = df[df$balance > 0,]
 #          df
         }
@@ -44,7 +44,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
-           df = tblPosition$getCurrencyPosition("$FIAT")
+           df = tblPosition$getCurrencyPosition("__FIAT__")
            # oper = Factory$getObject(self$codes$object$operation)
            # cIn  = oper$getOperations(base="EXT")
            # cOut = oper$getOperations(counter="EXT")
@@ -55,7 +55,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
       }
        ,getCurrenciesHistory = function() {
          df = tblPosition$table()
-         df = df[!df$currency == Factory$fiat,]
+         df = df[!df$currency == Factory__FIAT__,]
          if(nrow(df) == 0) return (df)
          df = df %>% group_by(currency) %>%
                      summarise(currency, balance=mean(balance), available=mean(available)
@@ -195,7 +195,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
            tblPosition$select(camera=data$camera, currency=data$base, create=TRUE)
            self$current  = tblPosition$current
 
-           if (data$base == "$FIAT") return (.updateBaseFiat(data)) # compra
+           if (data$base == "__FIAT__") return (.updateBaseFiat(data)) # compra
 
            tblPosition$setField("available", current$available - data$ctcOut)
            if (current$major == 2) .calculateBaseOperation()
@@ -205,7 +205,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$select(camera=data$camera, currency=data$counter, create=TRUE)
           self$current  = tblPosition$current
 
-          if (data$counter == "$FIAT") return (.updateCounterFiat(data))
+          if (data$counter == "__FIAT__") return (.updateCounterFiat(data))
 
           if (current$buyLow == 0)  self$current$buyLow = data$price + 1
 

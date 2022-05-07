@@ -15,7 +15,7 @@ PNLOper = R6::R6Class("PNL.OPER"
      ,valid        = FALSE
      ,data         = NULL
      ,idOper       = NULL
-     ,fiat = "$FIAT"
+     ,fiat = "__FIAT__"
      ,initialize     = function(id, parent, session) {
          super$initialize(id, parent, session)
          private$createObjects()

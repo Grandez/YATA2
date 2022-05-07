@@ -1,5 +1,6 @@
 jgg_list_merge = function(lst1, lst2) {
-    if (is.null(lst1)) return (lst2)
+    if (is.null(lst1) || length(lst1) == 0) return (lst2)
+    if (is.null(lst2) || length(lst2) == 0) return (lst1)
     rlist::list.merge(lst1, lst2)
 }
 jgg_list_combine = function(lst1, lst2) {

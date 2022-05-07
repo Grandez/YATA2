@@ -176,8 +176,13 @@ td {
   padding: 0;
 }
 
-.from-group {
+.form-group {
   margin-bottom: 0;
+}
+
+.form-control {
+  padding: 0;
+  line-height: 1;
 }
 
 .box-header {

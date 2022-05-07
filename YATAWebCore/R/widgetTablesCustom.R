@@ -18,7 +18,9 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
      }
     ,render = function(df,type=c("short", "long")) {
         type = match.arg(type)
-        if(type == "short") df = df[,cols_short]
+
+        if (nrow(df) == 0) df = dfEmpty
+        if (nrow(df) > 0 && type == "short") df = df[,cols_short]
         super_render(df)
         # private$dfWork = data
         # colDefs = prepareData(data)
@@ -44,6 +46,7 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
    )
   ,private = list(
        cols_short = c("currency", "balance", "value", "profit", "day", "week", "month", "since")
+      ,dfEmpty = NULL
       ,table_attr = list(data = NULL, columns = NULL
              ,bordered            = FALSE
           ,compact             = TRUE
@@ -84,8 +87,8 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
       ,createDefaultValues = function (factory) {
           objPos = factory$getObject(factory$codes$object$position)
           create_names(factory)
-          df = objPos$empty_data()
-          private$table_attr$data = df
+          private$dfEmpty = objPos$empty_data()
+          private$table_attr$data = dfEmpty
           private$table_attr$columns = col_defs
       }
       ,create_names = function(factory) {

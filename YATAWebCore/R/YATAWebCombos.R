@@ -48,6 +48,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          df = cache$currencies
          if (!all) df = df[df$id > 0,]
          if (!is.null(set)) df = filterCurrencies (df, set)
+         if (nrow(df) == 0) return (list())
          if (merge) df$name = paste(df$symbol, "-", df$name)
          key = ifelse(id, "id", "symbol")
          data = makeCombo(df, id=key, invert=invert)
@@ -66,7 +67,6 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          }
          data
      }
-
      ##############################################################
      ## Using labels from messages
      ##############################################################
@@ -83,12 +83,9 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          data = makeCombo(df)
          checkAll(FALSE, data)
      }
-     ,periods = function() {
-         data = objMsgs$getBlock(factory$codes$labels$periods)
-         lst = names(data)
-         names(lst) = data
-         lst
-     }
+     ,periods = function() { msg_block(factory$codes$labels$periods) }
+     ,scopes  = function() { msg_block(34) }
+     ,targets = function() { msg_block(35) }
      ,blog = function(type=9) {
          if (is.null(cache$blog)) loadBlog()
          df = cache$reasons[(cache$reasons$block %% 10) == 0,] # General
@@ -170,6 +167,13 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
        if (is.list(set)) values = unlist(set)
        if (is.integer(values[1])) return (df[df$id %in% values,])
        df[df$symbol %in% values,]
-   }
+     }
+     ,msg_block = function(id) {
+         data = objMsgs$getBlock(id)
+         lst = names(data)
+         names(lst) = data
+         lst
+     }
+
   )
 )

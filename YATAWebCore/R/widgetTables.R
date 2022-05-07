@@ -89,6 +89,8 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
      ,col_attr = list()
      ,current = NULL
      ,super_render = function(df) {
+         if (nrow(df) == 0)  return (reactable::renderReactable({df}))
+
          private$current = table_def
          private$current$data = df
          adjust_values()

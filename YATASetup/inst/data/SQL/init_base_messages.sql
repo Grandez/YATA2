@@ -204,6 +204,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 22, "TXT.OPER.
 -- 25  Administracion
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.PREF"         ,"XX", "XX"     , "Preferencias"                                );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.PORTFOLIO"    ,"XX", "XX"     , "Carteras"                                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 25, "MNU.ADM.EXCHANGES"    ,"XX", "XX"     , "Camaras"                                     );
 
 -- 26  Blog target
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 26, "BLOG.GRAL"            ,"XX", "XX"     , "General"                                     );
@@ -257,6 +258,11 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 33, "REASON.RE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "1"                    ,"XX", "XX"     , "Corto / Intradia"                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "2"                    ,"XX", "XX"     , "Medio plazo"                               );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 34, "3"                    ,"XX", "XX"     , "Largo plazo / inversion"                   );
+
+-- Target
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 35, "1"                    ,"XX", "XX"     , "Monedas"                             );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 35, "2"                    ,"XX", "XX"     , "Tokens"                               );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 35, "3"                    ,"XX", "XX"     , "Ambos"                                );
 
 -- 40 Etiquetas de paneles de adminitracion
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.AUTOOPEN"    ,"XX", "XX"     , "Abrir automaticamente"                         );

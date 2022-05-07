@@ -5,6 +5,11 @@ modOperXferInput = function(id, title) {
    main = tagList(
     fluidRow( guiColumn(3), guiRow(align="center", h2(mnu$XFER)))
    ,br()
+   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$CURRENCY))
+                          , guiColumn(2, guiCombo(ns("cboCurrency")))
+                          , guiColumn(1)
+                          , guiColumn(1, yuiLabelBold(ns("lblFrom")))
+    )
    ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$FROM))
                           , guiColumn(2, guiCombo(ns("cboFrom")))
    )
@@ -14,11 +19,6 @@ modOperXferInput = function(id, title) {
                           , guiColumn(1, yuiLabelBold(ns("lblTo")))
    )
 
-   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$CURRENCY))
-                          , guiColumn(2, guiCombo(ns("cboCurrency")))
-                          , guiColumn(1)
-                          , guiColumn(1, yuiLabelBold(ns("lblFrom")))
-    )
 
    ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$AMOUNT))
                           , guiColumn(2, guiNumericInput(ns("impAmount"), NULL, value = 0)))

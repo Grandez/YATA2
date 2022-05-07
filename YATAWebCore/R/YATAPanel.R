@@ -29,7 +29,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,initialize = function(id, parent, session, ns = NULL) {
         self$name         = id
         self$parent       = parent
-        browser()
+
         web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})
         self$DBID = web$DBID
         self$factory = web$factory

@@ -8,8 +8,8 @@ modAdminPrefServer = function(id, full, parent, session) {
         ,public = list(
             portfolios = NULL
            ,preferences = NULL
-           ,initialize    = function(id, pnlParent, session) {
-               super$initialize(id, pnlParent, session)
+           ,initialize    = function(id, parent, session) {
+               super$initialize(id, parent, session)
                private$parms = WEB$factory$parms
                self$update()
            }
@@ -18,20 +18,6 @@ modAdminPrefServer = function(id, full, parent, session) {
                self$portfolios = WEB$combo$portfolios()
                self$preferences = private$parms$getPreferences()
           }
-        #    ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
-        #    ,operation     = function(data)      {
-        #        tryCatch({
-        #            private$oper$add(data$type, data)
-        #        },error = function(cond) {
-        #            yataErrGeneral(10, WEB$txtError, cond, input, output, session, web=WEB)
-        #            0
-        #        })
-        #    }
-        # # Inherit
-        #   ,getCurrenciesBuy  = function()          { self$parent$getCurrenciesBuy() }
-        #   ,getCurrenciesSell = function(currency)  { self$parent$getCurrenciesSell() }
-        #   ,getCboCameras     = function (currency) { self$parent$getCboCameras(currency) }
-        #
         )
        ,private = list(
            parms = NULL

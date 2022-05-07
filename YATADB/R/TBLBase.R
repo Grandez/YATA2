@@ -338,7 +338,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,emptydf = function() {
           dfempty = data.frame(matrix(ncol=length(fields), nrow=0))
           colnames(dfempty) = names(fields)
-          emptydf
+          dfempty
       }
    )
    ,private = list(

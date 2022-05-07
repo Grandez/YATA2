@@ -466,7 +466,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            self$current$dtAlert = Sys.Date() + lubridate::days(days)
            self$current$alert   = self$codes$flag$active
 
-#           amount = ifelse(current$base == "$FIAT", current$amount, current$value)
+#           amount = ifelse(current$base == "__FIAT__", current$amount, current$value)
            #JGG Temporal mientras no procesemos el flujo de request/accept/execute
            self$current$amountIn  = current$amount
            self$current$amountOut = current$amount
@@ -539,7 +539,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 ,status   = self$codes$status$executed
                 ,camera   = camera
                 ,base     = currency
-                ,counter  = "$FIAT"
+                ,counter  = "__FIAT__"
                 ,value    = position$profit
                 ,amount   = position$sell
                 ,price    = price
@@ -571,7 +571,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
             objPos$updatePosition(position)
 
-            addFlow(self$codes$flow$input,  "$FIAT",   value, price)
+            addFlow(self$codes$flow$input,  "__FIAT__",   value, price)
             addFlow(self$codes$flow$output, currency, sell,  price)
 
             current$idOper

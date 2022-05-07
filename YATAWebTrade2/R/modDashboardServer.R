@@ -34,7 +34,8 @@ PNLDash = R6::R6Class("PNL.DASH"
          private$loadPosition()
 #         self$data$dfFav  = self$favorites$get()
 
-         data = self$data$dfPos %>% filter(balance > 0)
+         data = self$data$dfPos
+         if (nrow(data) > 0)  data = data %>% filter(balance > 0)
 
          self$monitors = WDGMonitor$new(ns("monitor"), self, data)
          self$data$dfTrend = WEB$REST$trending(TRUE)
@@ -297,6 +298,7 @@ PNLDash = R6::R6Class("PNL.DASH"
      ,loadPosition = function() {
         cat("loadPosition beg\n")
         df = self$getGlobalPosition()
+        self$data$dfPos = df
         if (nrow(df) == 0) return(df)
 
         # ids = self$currencies$getCurrencyID(df$currency, asList=FALSE)

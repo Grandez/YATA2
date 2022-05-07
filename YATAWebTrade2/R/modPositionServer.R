@@ -1,7 +1,7 @@
 modPosServer <- function(id, full, parent, session) {
 ns = NS(id)
 PNLPos = R6::R6Class("PNL.POS"
-  ,inherit    = WEBPanel
+  ,inherit    = YATAPanel
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,public = list(

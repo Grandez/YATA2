@@ -313,6 +313,14 @@ INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES (
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  5,  2,   1, 'key'      , 'OPER'            );
 INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  3,  6,  2,   1, 'key'      , 'NOTE'            );
 
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  4,  1,  1,   1, 'label'    , 'LBL.CTC'          );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  4,  2,  1,   1, 'label'    , 'LBL.TOKEN'        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  4,  3,  1,   1, 'label'    , 'LBL.CTC_TOKEN'    );
+
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  4,  1,  2,   1, 'key'      , '1'            );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  4,  2,  2,   1, 'key'      , '2'        );
+INSERT INTO PARAMETERS  (GRUPO, SUBGROUP, BLOCK, ID, TYPE, NAME, VALUE) VALUES ( 50,  4,  3,  2,   1, 'key'      , '3'        );
+
 -- Grupo 60 - Etiquetas para tablas y dataframes
 
 -- Subgrupo 1: Etiquetas de nombres de campos en tablas

@@ -29,6 +29,10 @@ guiComboSelect = function( id, label=NULL, choices=NULL, text=NULL, selected = N
                                   ,onInitialize = I('function() { this.setValue(""); }')
                             ))
 }
+updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
+    shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
+}
+
 guiListbox = function( id, label=NULL, choices=NULL, selected = NULL, size=10, multiple=FALSE) {
     lbl = NULL
     choice = c("")
@@ -42,9 +46,6 @@ guiListbox = function( id, label=NULL, choices=NULL, selected = NULL, size=10, m
                          ,selectize=FALSE)
 }
 
-updCombo = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
-    shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
-}
 updListbox = function(id, choices=NULL, selected=NULL, session = getDefaultReactiveDomain()) {
     shiny::updateSelectInput(session=session, inputId=id, choices = choices, selected = selected)
 }
@@ -88,7 +89,21 @@ guiIntegerInput = function(id, label=NULL, value=0, step, min, max) {
 updIntegerInput = function(id, value, session=getDefaultReactiveDomain()) {
   shiny::updateNumericInput(session, id, value = value)
 }
-
+guiText = function(inputId, value) {
+    if (missing(value)) value = ""
+    shiny::textInput(inputId, NULL, value=value)
+}
+updText = function (id, text, session=getDefaultReactiveDomain()) {
+    shiny::updateTextInput(session, id, value = text)
+}
+guiLabel = function(outputId) {
+    shiny::textOutput(outputId,inline = TRUE)
+}
+updLabel = function(text) { renderText({ text }) }
+guiLabelNumeric = function(outputId) {
+    tags$span(id=outputId, class="shiny-text-output jgg_text_right")
+}
+updLabelNumeric = function(value) { updLabel(prettyNum(value)) }
 guiTextArea = function (inputId, label=NULL, value = "", width = NULL, height = NULL,
     cols = NULL, rows = NULL, placeholder = NULL, resize = NULL) {
     value <- restoreInput(id = inputId, default = value)
@@ -147,4 +162,10 @@ updSwitch = function(id, value=NULL) {
   # offLabel = NULL,
   # onStatus = NULL,
   # offStatus = NULL,
+}
+guiButtonIcon = function(id, icon) {
+    shiny::actionButton(id, "", icon = icon(icon))
+}
+updButtonIcon = function(id, icon, session = getDefaultReactiveDomain()) {
+    shiny::updateActionButton(session, id, icon = icon(icon))
 }

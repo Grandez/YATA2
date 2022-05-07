@@ -37,7 +37,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
              }
          }
          lapply(ctc, function(sym) updateData(sym))
-         data = pos$getFiatPosition("$FIAT")
+         data = pos$getFiatPosition("__FIAT__")
          data$invest = round(data$invest)
          updateFiat(data)
      }

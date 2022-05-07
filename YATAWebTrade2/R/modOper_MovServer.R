@@ -7,7 +7,7 @@ modOperMovServer = function(id, full, parent, session) {
         ,lock_class = TRUE
         ,public = list(
             session      = NULL
-           ,fiat = "$FIAT"
+           ,fiat = "__FIAT__"
            ,initialize    = function(id, parent, session) {
                super$initialize(id, parent, session)
                self$session    = self$factory$getObject(self$codes$object$session)

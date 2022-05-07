@@ -30,16 +30,10 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
            colnames(df) = c("id", "name")
            df
        }
-       # ,add     = function(data, isolated=FALSE) {
-       #         select(id=data$camera)
-       #         if (selected) {
-       #             tblCameras$set(data)
-       #             tblCameras$apply(isolated=TRUE)
-       #         }
-       #         else {
-       #             tblCameras$add(data)
-       #         }
-       # }
+       ,add     = function(data, isolated=TRUE) {
+           tblCameras$add(data, isolated)
+           invisible(self)
+       }
        ,getCameras         = function(cameras) { .getCameras(TRUE,  cameras) }
        ,getAllCameras      = function(cameras) { .getCameras(FALSE, cameras) }
        ,getCameraName      = function(codes, full=FALSE) { tblCameras$getCameraNames(codes,full) }

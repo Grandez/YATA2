@@ -21,6 +21,12 @@ OBJExchanges = R6::R6Class("OBJ.EXCHANGES"
             if (active) df = df[df$active == 1,]
             df
         }
+        # ,getPortfolioExchanges = function() {
+        #     browser()
+        #     if (is.null(tblCameras))
+        #         private$tblCameras = Factory$getTable(self$codes$tables$cameras)
+        #     tblCameras$table()
+        # }
         ,getTablePairs = function() {
             if (is.null(tblExchangesPair)) {
                 private$tblExchangesPair = Factory$getTable(nameTblPair)
@@ -36,8 +42,9 @@ OBJExchanges = R6::R6Class("OBJ.EXCHANGES"
         }
     )
     ,private = list(
-        tblExchanges  = NULL
+        tblExchanges     = NULL
        ,tblExchangesPair = NULL
+       ,tblCameras       = NULL
        ,nameTblPair = NULL
     )
 )
