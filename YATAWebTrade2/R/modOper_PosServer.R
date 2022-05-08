@@ -22,7 +22,6 @@ modOperPosServer = function(id, full, parent, session) {
          )
         ,valid = FALSE
         ,initialize = function(id, parent, session) {
-            browser()
             super$initialize(id, parent, session)
             self$operations = self$factory$getObject(self$codes$object$operation)
             self$session    = self$factory$getObject(self$codes$object$session)
@@ -299,10 +298,10 @@ moduleServer(id, function(input, output, session) {
          .show(nrow(pnl$data$dfPending)  == 0 && nrow(pnl$data$dfAccepted) == 0, "divPend")
      }
      renderData = function() {
-        renderOpen()
-        showBoxes()
-        renderPending()
-        renderAccepted()
+        # renderOpen()
+        # showBoxes()
+        # renderPending()
+        # renderAccepted()
      }
      loadHistory = function() {
          df = pnl$getOpenCurrency()

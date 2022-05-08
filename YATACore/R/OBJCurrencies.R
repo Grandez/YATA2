@@ -159,7 +159,6 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
 
      }
      ,getData = function(...) {
-         browser()
          if (is.null(target)) return (tblCurrencies(...))
          args = args2list(...)
          if (length(args) == 0) return (target)

@@ -97,6 +97,7 @@ PNLDash = R6::R6Class("PNL.DASH"
        invisible(self)
     }
      ,getPosition = function (full=FALSE) {
+         browser()
         if (is.null(self$data$dfPos)) return (NULL)
         df = self$data$dfPos
         if (!full) df = df %>% filter(balance > 0)

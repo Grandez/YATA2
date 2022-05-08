@@ -452,6 +452,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
        }
        ,makeOper     = function() {
            if (is.null(current$value)) current$value = current$price * current$amount
+
            objPos$updatePositions   (current)
            #JGG REVISAR
            self$current$active = self$codes$flag$active
