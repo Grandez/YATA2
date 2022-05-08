@@ -58,13 +58,13 @@ modOperRegServer = function(id, full, parent, session) {
         )
    )
 moduleServer(id, function(input, output, session) {
-   pnl = WEB$getPanel(PNLOperReg, id, pnlParent, session)
+   pnl = WEB$getPanel(PNLOperReg, id, parent, session)
    pnl$update()
    updCombo("cboCurrency",    choices=pnl$cboCurrencies())
 
    validate = function() {
           if (input$impAmount <= 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.AMOUNT")))
           FALSE
        }
        reset = function() {
@@ -87,9 +87,9 @@ moduleServer(id, function(input, output, session) {
       if (validate()) return()
       res = pnl$regularize(input$cboFrom, input$cboTo,input$impAmount,input$cboCurrency)
           if (res == 0) {
-              output$msg = updMessageKO(full, WEB$MSG$get("XFER.KO"))
+              output$msg = updMessageKO(full, WEB$msg$get("XFER.KO"))
           } else {
-              yataMsgSuccess(ns2("operMsg"), pnl$MSG$get("XFER.OK"))
+              yataMsgSuccess(ns2("operMsg"), pnl$msg$get("XFER.OK"))
              reset()
           }
       })

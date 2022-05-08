@@ -7,11 +7,11 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Cameras")}
-       ,initialize     = function(Factory) {
-           super$initialize(Factory)
-           private$tblCameras   = Factory$getTable(self$codes$tables$cameras)
-           private$tblExchanges = Factory$getTable(self$codes$tables$exchanges)
-#           private$icons        = Factory$getClass("Icons")
+       ,initialize     = function(factory) {
+           super$initialize(factory)
+           private$tblCameras   = factory$getTable(self$codes$tables$cameras)
+           private$tblExchanges = factory$getTable(self$codes$tables$exchanges)
+#           private$icons        = factory$getClass("Icons")
        }
        ,select         = function(id) {
            # Selecciona un registro concreto de las tablas
@@ -53,7 +53,7 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
        # ,getCameraPosition = function(camera, balance=FALSE, available = FALSE) {
        #    # Devuelve la posicion de la camara, con balance y/o con disponible
        #    if (!missing(camera)) select(camera)
-       #    if (is.null(tblPosition)) private$tblPosition = Factory$getTable(YATACodes$tables$Position)
+       #    if (is.null(tblPosition)) private$tblPosition = factory$getTable(YATACodes$tables$Position)
        #     tblPosition$getCameraPosition(camera, balance, available)
        # }
        # ,updateExchanges = function(clearing, data) {

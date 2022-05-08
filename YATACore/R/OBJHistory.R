@@ -7,10 +7,10 @@ OBJHistory = R6::R6Class("OBJ.HISTORY"
     ,lock_class = TRUE
     ,public = list(valid = TRUE
         ,print = function() { message("Currencies History")}
-        ,initialize = function(Factory) {
-            super$initialize(Factory)
-            private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
-            private$tblHistory    = Factory$getTable(self$codes$tables$history)
+        ,initialize = function(factory) {
+            super$initialize(factory)
+            private$tblCurrencies = factory$getTable(self$codes$tables$currencies)
+            private$tblHistory    = factory$getTable(self$codes$tables$history)
             private$tblBase       = private$tblHistory
         }
         ,getRanges = function(idList) {

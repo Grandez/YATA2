@@ -1,4 +1,4 @@
-WORD  = WEB$MSG$getWords()
+WORD  = WEB$msg$getWords()
 wdgTable = 'guiBox(ns(box),guiLabelText(ns(lbl)), yuiTable(ns(tbl)))'
 layoutDashboard = JGGLayout$new("layout"
       ,items=list( Pos     = list(label = WORD$POS)

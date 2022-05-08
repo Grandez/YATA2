@@ -7,9 +7,9 @@ OBJExchanges = R6::R6Class("OBJ.EXCHANGES"
     ,lock_class = TRUE
     ,public = list(valid = TRUE
         ,print = function() { message("Currencies")}
-        ,initialize = function(Factory) {
-            super$initialize(Factory)
-            private$tblExchanges  = Factory$getTable(self$codes$tables$exchanges)
+        ,initialize = function(factory) {
+            super$initialize(factory)
+            private$tblExchanges  = factory$getTable(self$codes$tables$exchanges)
             private$nameTblPair = self$codes$tables$exchanges_pair
         }
         ,getExchanges = function(exchanges=NULL, active=TRUE) {
@@ -24,18 +24,18 @@ OBJExchanges = R6::R6Class("OBJ.EXCHANGES"
         # ,getPortfolioExchanges = function() {
         #     browser()
         #     if (is.null(tblCameras))
-        #         private$tblCameras = Factory$getTable(self$codes$tables$cameras)
+        #         private$tblCameras = factory$getTable(self$codes$tables$cameras)
         #     tblCameras$table()
         # }
         ,getTablePairs = function() {
             if (is.null(tblExchangesPair)) {
-                private$tblExchangesPair = Factory$getTable(nameTblPair)
+                private$tblExchangesPair = factory$getTable(nameTblPair)
             }
             private$tblExchangesPair
         }
         ,deletePairs = function(idExch) {
             if (is.null(tblExchangesPair)) {
-                private$tblExchangesPair = Factory$getTable(nameTblPair)
+                private$tblExchangesPair = factory$getTable(nameTblPair)
             }
             tblExchangesPair$delete(idExch=idExch)
             invisible(self)

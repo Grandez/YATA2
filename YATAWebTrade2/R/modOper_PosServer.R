@@ -1,4 +1,4 @@
-modOperPosServer = function(id, full, pnlParent, parent) {
+modOperPosServer = function(id, full, parent, session) {
    ns = NS(id)
    ns2 = NS(full)
    PNLPosOper = R6::R6Class("PNL.POS.OPER"
@@ -21,9 +21,10 @@ modOperPosServer = function(id, full, pnlParent, parent) {
            ,type = "Linear"
          )
         ,valid = FALSE
-        ,initialize = function(id, pnlParent, session) {
-            super$initialize(id, pnlParent, session)
-            self$operations = self$factory$getObject("Operation")
+        ,initialize = function(id, parent, session) {
+            browser()
+            super$initialize(id, parent, session)
+            self$operations = self$factory$getObject(self$codes$object$operation)
             self$session    = self$factory$getObject(self$codes$object$session)
             self$cameras    = self$factory$getObject(self$codes$object$cameras)
 #           self$loadData()

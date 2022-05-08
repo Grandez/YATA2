@@ -1,7 +1,7 @@
 modPosServer <- function(id, full, parent, session) {
 ns = NS(id)
 PNLPos = R6::R6Class("PNL.POS"
-  ,inherit    = YATAPanel
+  ,inherit    = WEBPanel
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,public = list(
@@ -12,7 +12,6 @@ PNLPos = R6::R6Class("PNL.POS"
          private$createObjects()
      }
      ,loadData = function() {
-         browser()
          self$data$dfPos  = private$position$getGlobalPosition(full = TRUE)
          self$data$dfLast = private$session$getLatest()
      }
@@ -29,7 +28,6 @@ PNLPos = R6::R6Class("PNL.POS"
   )
 )
 moduleServer(id, function(input, output, session) {
-    browser()
     pnl = WEB$getPanel(PNLPos, id, parent, session)
 
     flags = reactiveValues(
@@ -44,8 +42,7 @@ if (!pnl$loaded || pnl$getCommarea(item="position")) {
      pnl$loadData()
      pnl$loaded = TRUE
      pnl$setCommarea(position=FALSE)
-     browser()
-     output$tblGlobal = pnl$wdgPos$render(pnl$data$dfPos)
+     #JGGoutput$tblGlobal = pnl$wdgPos$render(pnl$data$dfPos)
 }
 
 })

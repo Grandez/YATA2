@@ -7,58 +7,22 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
-       codes  = NULL
-      ,parms  = NULL
-      ,MSG    = NULL  # Like WEB
-      ,logger = NULL
-      ,delete_flag = FALSE
-      ,created = NULL
-      ,fiat    = "__FIAT__"  # Codigo moneda FIAT
-      ,camera  = NULL   # Codigo camara FIAT
-      ,id = 0
+       codes     = NULL
+      ,parms     = NULL
+      ,msg       = NULL
+      ,logger    = NULL
+      ,portfolio = NULL
       ,user = "YATA"
+      ,fiat    = "__FIAT__"  # Codigo moneda FIAT
       ,print = function()     { message("Factoria de objetos YATA") }
-      ,initialize = function(load=3) {
-          # level: Cosas a conectarpara hacer la carga rapida
-          #    0 - Nada
-          #    1 - BBDD de usuario (la de sistema siempre se conecta)
-          #    2 - Providers
+      ,initialize = function(load=3) { # 1 - connect bbdd | 2 - connect to providers
           init(load)
           self$logger = YATALogger$new("yata")
        }
-      ,finalize   = function() { clear() }
-      ,valid = function() {
-          if (.valid) {
-              tryCatch({
-                  MSG$get("TEST")
-              }, error = function(e) {
-                  private$.valid = FALSE
-              })
-          }
-          .valid
-      }
-      ,remove = function() {
-          message("Removing")
-      }
+      ,finalize     = function() { clear() }
       ,hasPortfolio = function() { !is.null(getDB()) }
-      ,delete     = function(){
-          # message("Deleting Factory")
-          # pf = parent.frame()
-          # self$delete_flag = TRUE
-          # insts = sapply(ls(pf), function(i) {class(get(i, envir = pf))[1] == "YATA.FACTORY"})
-          #
-          # this = ls(pf)[insts][sapply(mget(ls(pf)[insts], envir = pf),
-          #               function(x) x$delete_flag)]
-          # rm(list = this, envir = pf)
-          #      message("demo object deleted!")
-       }
       ,clear     = function(){
           message("Clearing factory")
-         # if (!is.null(YATADBFactory))   YATADBFactory$finalize()
-         # if (!is.null(ProvFactory)) ProvFactory$finalize()
-         # self$parms = NULL
-         # self$MSG  = NULL
-         # private$objects = NULL
 #         gc(verbose=FALSE)
       }
       ,setLogger = function(logger) {
@@ -66,28 +30,18 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           invisible(self)
       }
       ,getID     = function() { base$getID() }
-      ,getDBName = function() {
-          db = getDB()
-          if (!is.null(db)) db$name
-          else              NULL
-      }
-      ,getDBID   = function() { YATADBFactory$getID() }
-      ,getDB     = function()                    { YATADBFactory$getDB()       }
-      ,getDBBase = function()                    { YATADBFactory$getDBBase()   }
-      ,setDB     = function(connData)            {
-         connInfo = list.merge(cfg$sgdb, connData)
-         YATADBFactory$setDB(connInfo)
-         invisible(self)
-       }
-      ,changeCamera  = function(id) {
-          self$camera = parms$getCameraInfo(id)
-          if (camera$target == 0) self$camera$target = 3
+      ,changePortfolio  = function(id) {
+          self$portfolio = parms$getPortfolioInfo(id, user)
+          if (portfolio$target == 0) self$portfolio$target = 3
           private$objects = base$map()
-          setDB(camera$db)
-          parms$setLastCamera(id)
+          setDB(portfolio$db)
+          parms$setLastPortfolio(id)
           invisible(self)
-       }
-      ,getTable    = function(name, force = FALSE) { YATADBFactory$get(name, force) }
+      }
+      ######################################################################
+      ### FACTORY GETTERS
+      ######################################################################
+      ,getTable    = function(name, force = FALSE) { DBFactory$get(name, force) }
       ,getProvider = function(code, object, force = FALSE) {
           setProvFactory() # Necesita tener Base creado
           ProvFactory$get(code, object, force)
@@ -107,13 +61,22 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
                                          eval(parse(text=paste0("R6", name, "$new()"))))
          classes$get(name)
       }
-      # ,getEnvironment = function() {
-      #      if (is.null(private$environ)) private$environ = YATAENV$new()
-      #      private$environ
-      # }
+      ######################################################################
+      ### Database associated to an object
+      ######################################################################
+
+      ,getDBID   = function() { DBFactory$getID()     }
+      ,getDB     = function() { DBFactory$getDB()     }
+      ,getDBBase = function() { DBFactory$getDBBase() }
+      ,getDBName = function() {
+          db = getDB()
+          if (!is.null(db)) db$name
+          else              NULL
+      }
+
    )
    ,private = list(
-       YATADBFactory   = NULL
+       DBFactory   = NULL
       ,ProvFactory = NULL
       ,objects     = NULL
       ,classes     = NULL
@@ -135,10 +98,10 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           private$base        = YATABase$new()
           private$objects     = YATABase::map()
           private$classes     = YATABase::map()
-          private$YATADBFactory   = YATADB::YATADBFactory$new("YATA")
+          private$DBFactory   = YATADB::YATADBFactory$new("YATA")
 
-          self$MSG    = OBJMessages$new(self$codes$tables$messages, private$YATADBFactory)
-          self$parms  = OBJParms$new   (private$YATADBFactory, self$MSG)
+          self$msg    = OBJMessages$new(self$codes$tables$messages, private$DBFactory)
+          self$parms  = OBJParms$new   (private$DBFactory, self$msg)
 
           if (bitwAnd(load,2) != 0) private$ProvFactory = YATAProviders::ProviderFactory$new()
 
@@ -146,12 +109,17 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
               prefs = parms$getPreferences()
               if (prefs$autoOpen != 0) {
                   open = ifelse(prefs$autoOpen == 1, prefs$last, prefs$default)
-                  self$camera = parms$getCameraInfo(open)
-                  if (camera$target == 0) self$camera$target = 3 # Por si acaso
-                  setDB(camera$db)
+                  self$portfolio = parms$getPortfolioInfo(open, user)
+                  if (portfolio$target == 0) self$portfolio$target = 3 # Por si acaso
+                  setDB(self$portfolio$db)
               }
           }
       }
+      ,setDB     = function(connData)            {
+         connInfo = jgg_list_merge(cfg$sgdb, connData)
+         DBFactory$setDB(connInfo)
+         invisible(self)
+       }
    )
 )
 

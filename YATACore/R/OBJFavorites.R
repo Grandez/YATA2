@@ -5,10 +5,10 @@ OBJFavorites = R6::R6Class("OBJ.FAVORITES"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Favorites")}
-       ,initialize     = function(Factory) {
-           super$initialize(Factory)
-           private$tblFavorites  = Factory$getTable(self$codes$tables$favorites)
-           private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
+       ,initialize     = function(factory) {
+           super$initialize(factory)
+           private$tblFavorites  = factory$getTable(self$codes$tables$favorites)
+           private$tblCurrencies = factory$getTable(self$codes$tables$currencies)
        }
        ,add     = function(data, isolated=FALSE) {
            stop("Pendiente de implementar")

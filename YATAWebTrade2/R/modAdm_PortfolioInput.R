@@ -21,15 +21,10 @@ modAdminPortfolioInput = function(id, title) {
                          ,tags$td(colspan="2", guiLabel(ns("lbl_target")),
                                   hidden(guiCombo(ns("cbo_target"), choices=WEB$combo$targets())))
                          ,tags$td(guiButtonIcon(ns("btn_target"), "pencil-alt")))
-                ,tags$tr( tags$td("selective CTC")
-                         ,tags$td(colspan="2", guiLabel(ns("lbl_ctc")),
-                                  hidden(guiNumericInput(ns("txt_ctc"), step = 50, min = 0)))
-                         ,tags$td(guiButtonIcon(ns("btn_ctc"), "pencil-alt")))
-                ,tags$tr( tags$td("Selective token")
-                         ,tags$td(colspan="2", guiLabel(ns("lbl_tok")),
-                                  hidden(guiNumericInput(ns("txt_tok"), step = 50, min = 0)))
-                         ,tags$td(guiButtonIcon(ns("btn_tok"), "pencil-alt")))
-
+                ,tags$tr( tags$td("selective")
+                         ,tags$td(colspan="2", guiLabel(ns("lbl_selective")),
+                                  hidden(guiNumericInput(ns("txt_selective"), step = 50, min = 0)))
+                         ,tags$td(guiButtonIcon(ns("btn_selective"), "pencil-alt")))
                 ,tags$tr( tags$td("Comment")
                          ,tags$td(colspan="2", guiLabel(ns("lbl_comment")), hidden(guiText(ns("txt_comment"))))
                          ,tags$td(guiButtonIcon(ns("btn_comment"), "pencil-alt")))

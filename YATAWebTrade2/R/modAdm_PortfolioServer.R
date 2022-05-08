@@ -56,10 +56,8 @@ moduleServer(id, function(input, output, session) {
        output$lbl_since   = updLabel(data$since)
        output$lblDB      = updLabel(data$db$name)
 
-       txt = ifelse (data$selective_ctc == 0, "All", as.character(data$selective_ctc))
-       output$lbl_ctc      = updLabel(txt)
-       txt = ifelse (data$selective_tok == 0, "All", as.character(data$selective_tok))
-       output$lbl_tok      = updLabel(txt)
+       txt = ifelse (data$selective == 0, "All", as.character(data$selective))
+       output$lbl_selective      = updLabel(txt)
 
        # updSwitch("swActive", data$active)
        # updCombo("cboScope",  selected=data$scope)
@@ -91,8 +89,8 @@ moduleServer(id, function(input, output, session) {
    }
    prepareNew = function(cancel = FALSE) {
        # Reset posibles campos activos
-       items = c( "lbl_name"   , "txt_name"  , "lbl_title"  , "txt_title", "lbl_scope", "cbo_scope"
-                 ,"lbl_target" , "cbo_target", "lbl_ctc"    , "txt_ctc"  , "lbl_tok"  , "txt_tok"
+       items = c( "lbl_name"   , "txt_name"  , "lbl_title"     , "txt_title", "lbl_scope", "cbo_scope"
+                 ,"lbl_target" , "cbo_target", "lbl_selective" , "txt_selective"
                  ,"lbl_comment", "txt_comment")
        lapply(items, function(x) toggle(x))
        btns = unlist(stringr::str_match_all(names(input), "btn_[a-zA-Z]+"))

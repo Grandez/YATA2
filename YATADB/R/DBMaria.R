@@ -35,6 +35,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
                                         ,dbname   = dbInfo$dbname
                     )
           },error = function(cond) {
+              browser()
               YATABase:::SQL( "DB Connection error", origin=cond
                              ,action="connect", rc = getSQLCode(cond)
                              ,sql="connect")

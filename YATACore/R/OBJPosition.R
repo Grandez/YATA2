@@ -5,9 +5,9 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
     ,lock_class = TRUE
     ,public = list(
         print           = function() { message("Position")}
-       ,initialize      = function(Factory) {
-           super$initialize(Factory)
-           private$tblPosition = Factory$getTable(self$codes$tables$position)
+       ,initialize      = function(factory) {
+           super$initialize(factory)
+           private$tblPosition = factory$getTable(self$codes$tables$position)
        }
        ,getCameras = function() {
           df = tblPosition$getCameras()
@@ -22,7 +22,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getByCurrency = function(currency, balance=FALSE, available=FALSE) {
            df = tblPosition$table(inValues = list(currency = currency))
-#           df = df[df$camera != Factory$camera,]
+#           df = df[df$camera != factory$camera,]
            if (balance)   df = df[df$balance  > 0,]
            if (available) df = df[df$available > 0,]
            df
@@ -45,7 +45,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
            df = tblPosition$getCurrencyPosition("__FIAT__")
-           # oper = Factory$getObject(self$codes$object$operation)
+           # oper = factory$getObject(self$codes$object$operation)
            # cIn  = oper$getOperations(base="EXT")
            # cOut = oper$getOperations(counter="EXT")
            # inv  = getGlobalPosition()

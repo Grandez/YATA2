@@ -67,6 +67,7 @@ PNLOper = R6::R6Class("PNL.OPER"
           self$currencies$getCurrencyNames(data)
      }
      ,cboCurrency  = function(camera, available) {
+         message("ESTO SE USA")
          browser()
          # if (missing(camera)) {
          #     private$asCombo(WEB$getCurrencyNames())

@@ -8,14 +8,13 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,public = list(
-      MSG      = NULL
-     ,initialize = function(factory) {
+      initialize = function(factory) {
          private$factory       = factory
          private$tblCameras    = factory$getTable(factory$codes$tables$cameras)
          private$tblCurrencies = factory$getTable(factory$codes$tables$currencies)
          private$tblPosition   = factory$getTable(factory$codes$tables$position)
          private$objParms      = factory$parms
-         private$objMsgs       = factory$MSG
+         private$objMsgs       = factory$msg
          refresh()
      }
      ,refresh = function() {

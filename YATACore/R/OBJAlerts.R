@@ -5,12 +5,12 @@ OBJAlerts = R6::R6Class("OBJ.ALERTS"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Cameras")}
-       ,initialize     = function(Factory) {
-           super$initialize(Factory)
-#           private$tblBlog   = Factory$getTable(self$codes$tables$blog)
+       ,initialize     = function(factory) {
+           super$initialize(factory)
+#           private$tblBlog   = factory$getTable(self$codes$tables$blog)
        }
       #  ,add = function(data) {
-      #     data$id = Factory$getID()
+      #     data$id = factory$getID()
       #     data$type = DBDict$blog[[data$type]]
       #     self$current = data
       #     tblBlog$add(data,isolate=TRUE)

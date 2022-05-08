@@ -7,7 +7,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
   ,lock_class = TRUE
   ,inherit    = JGGWEBROOT
   ,public = list(
-      MSG      = NULL
+      msg      = NULL
      ,REST   = NULL
      ,errorLevel = 0 # Nivel de error (99 - unhandled, 98 - init, 97 - No servers, 97)
      ,txtError = NULL
@@ -29,7 +29,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             else if   (exists("YATAFactory")) self$factory = YATAFactory
                  else                         self$factory = YATACore::YATAFACTORY$new()
 
-            self$MSG        = self$factory$MSG
+            self$msg        = self$factory$msg
             self$log        = YATALogger$new("WEB")
             private$hID     = private$base$map()
             private$hSym    = private$base$map()
@@ -76,7 +76,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      #     shinyjs::js$yata_add_page(panel$name)
      #     self$getPanel(panel$name, loading=TRUE)
      # }
-     ,tooltip            = function(id)  { self$MSG$tooltip(id)   }
+     ,tooltip            = function(id)  { self$msg$tooltip(id)   }
      ,getLabelsPanel     = function(cached=TRUE)    {
          if (!is.null(private$cache$lblPanels)) return (private$cache$lblPanels)
          lst = self$getLabelsMenu( 0)
@@ -94,10 +94,10 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,getLabelsPanelErr  = function()    { self$getLabelsMenu( 9) }
      ,getLabelsMenu      = function(idx) {
          key = self$factory$codes$labels$lblPanels + idx
-         self$MSG$getBlock(key)
+         self$msg$getBlock(key)
      }
-     ,getLabelsAdmin     = function() { self$MSG$getBlock(40) }
-     ,getMsg    = function(code, ...) { self$MSG$get(code, ...) }
+     ,getLabelsAdmin     = function() { self$msg$getBlock(40) }
+     ,getMsg    = function(code, ...) { self$msg$get(code, ...) }
      ,loadCookies = function(data)    { private$cookies = jsonlite::fromJSON(data) }
      ,setCookies  = function(name, values) {
         private$cookies[[name]] = values

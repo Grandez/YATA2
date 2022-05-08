@@ -10,7 +10,7 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
        factory      = NULL
       ,position     = NULL
       ,operations   = NULL
-      ,cameras      = NULL
+#      ,cameras      = NULL
       ,providers    = NULL
       ,loaded       = FALSE
       ,initialize   = function(id, parent, session, dashboard) {
@@ -44,9 +44,9 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
           invisible(self)
       }
       ,changeDB = function(id) {
-          oldDB = self$factory$parms$getLastCamera()
+          oldDB = self$factory$parms$getLastPortfolio()
           if (oldDB$id == id) return()
-          self$factory$changeCamera(id)
+          self$factory$changePortfolio(id)
           WEB$DBID = id
           invisible (self)
       }
@@ -139,7 +139,7 @@ function(input, output, session) {
    })
    observeEvent(input$app_title,    {
        browser()
-      showModal(frmCameraChange(pnl$factory))
+      showModal(frmPortfolioChange(pnl$factory))
    })
    observeEvent(input$dbOK,    {
        browser()
@@ -169,7 +169,7 @@ function(input, output, session) {
    if (!pnl$loaded) {
 
        pnl$loaded = TRUE
-       pname = pnl$factory$getDBName()
+       pname = pnl$factory$portfolio$title
        name = ifelse (is.null(pname), "YATA", pname)
        output$appTitle = renderText({ name })
        if (is.null(pname)) showModal(frmChangeDB(pnl$factory))

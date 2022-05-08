@@ -6,9 +6,9 @@ xOBJEuro = R6::R6Class("OBJ.EURO"
     ,lock_class = TRUE
     ,public = list(
         print           = function() { message("Clearings Object")}
-       ,initialize      = function(Factory) {
-           super$initialize(Factory)
-           private$tblEuro = Factory$getTable(YATACodes$tables$Sessions)
+       ,initialize      = function(factory) {
+           super$initialize(factory)
+           private$tblEuro = factory$getTable(YATACodes$tables$Sessions)
        }
        ,lastExchange  = function(base, counter) {
            # Caso especial de USDC y USDT

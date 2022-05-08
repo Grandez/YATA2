@@ -48,26 +48,26 @@ moduleServer(id, function(input, output, session) {
 
       validate = function(data) {
           if (is.null(input$cboOper)     || nchar(trimws(input$cboOper)) == 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.OPER")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.OPER")))
           if (is.null(input$cboCurrency) || nchar(trimws(input$cboCurrency)) == 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.CURRENCY")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.CURRENCY")))
           if (is.null(input$cboCamera)   || nchar(trimws(input$cboCamera)) == 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.CAMERA")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.CAMERA")))
 
           if (data$price  <= 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.PRICE")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.PRICE")))
           if (data$amount <= 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.AMOUNT")))
           if (data$value  <= 0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AMOUNT")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.AMOUNT")))
 
           if (input$impFee    <  0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NEG.FEE")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NEG.FEE")))
           if (input$impGas    <  0)
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NEG.GAS")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NEG.GAS")))
 
           if (pnl$vars$buy && data$value > pnl$vars$available) {
-              return (yataMsgError(ns2("msg"),pnl$MSG$get("ERR.NO.AVAILABLE")))
+              return (yataMsgError(ns2("msg"),pnl$msg$get("ERR.NO.AVAILABLE")))
           }
           data
       }
@@ -310,7 +310,7 @@ moduleServer(id, function(input, output, session) {
              resetValues()
              #JGG Pendiente
              # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
-             # yataMsgSuccess(ns2("operMsg"), sprintf(pnl$MSG$get(msgKey), id)
+             # yataMsgSuccess(ns2("operMsg"), sprintf(pnl$msg$get(msgKey), id)
              pnl$setCommarea(position=TRUE)
          }
          pnl$vars$inEvent = FALSE

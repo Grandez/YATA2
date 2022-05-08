@@ -4,11 +4,11 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        initialize = function(Factory) {
-            super$initialize(Factory)
-            private$prtOper        = Factory$getTable(self$codes$tables$operations)
-            private$tblFlows       = Factory$getTable(self$codes$tables$flows)
-            private$objPos         = Factory$getObject(self$codes$object$position)
+        initialize = function(factory) {
+            super$initialize(factory)
+            private$prtOper        = factory$getTable(self$codes$tables$operations)
+            private$tblFlows       = factory$getTable(self$codes$tables$flows)
+            private$objPos         = factory$getObject(self$codes$object$position)
         }
         ##############################
         # Operaciones
@@ -354,7 +354,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
        ,addFlow        = function(type, currency, amount, price) {
            data = list(
               idOper   = current$idOper
-             ,idFlow   = Factory$getID()
+             ,idFlow   = factory$getID()
              ,type     = type
              ,currency = currency
              ,amount   = amount
@@ -372,9 +372,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            objPos$getPosition(camera=current$from, currency=current$currency)
            value = objPos$current$value
 
-           tblPos  = Factory$getTable(self$codes$tables$transfer)
-           tblXfer = Factory$getTable(self$codes$tables$transfer)
-           idXfer = Factory$getID()
+           tblPos  = factory$getTable(self$codes$tables$transfer)
+           tblXfer = factory$getTable(self$codes$tables$transfer)
+           idXfer = factory$getID()
            xfer = list(
                id        = idXfer
               ,cameraIn  = current$to
@@ -385,8 +385,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            )
            tblXfer$add(xfer)
 
-           idOut = Factory$getID()
-           idIn  = Factory$getID()
+           idOut = factory$getID()
+           idIn  = factory$getID()
            data = list(
                 id      = idOut
                ,camera  = current$from
@@ -413,7 +413,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
            flow = list(
                 idOper   = idOut
-               ,idFlow   = Factory$getID()
+               ,idFlow   = factory$getID()
                ,type     = self$codes$flow$xferOut
                ,currency = current$currency
                ,amount   = current$amount * -1
@@ -436,7 +436,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             self$current$type   = type
             self$current$major  = type %/% 10
             self$current$minor  = type %%  10
-            self$current$id     = Factory$getID()
+            self$current$id     = factory$getID()
             self$current$idOper = self$current$id
             # if (type %in% c(self$codes$oper$sell, self$codes$oper$close)) {
             #     self$current$amount = current$amount * -1
@@ -514,13 +514,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       ,addRegulatization = function(camera, currency) {
             # Genera el registro de regularizacion
 
-            self$current$idOper = Factory$getID()
-            if (is.null(tblReg)) private$tblReg = Factory$getTable(self$codes$tables$regularization)
+            self$current$idOper = factory$getID()
+            if (is.null(tblReg)) private$tblReg = factory$getTable(self$codes$tables$regularization)
 
             objPos$getPosition(camera=camera, currency=currency)
 
             position        = objPos$current
-            position$id     = Factory$getID()
+            position$id     = factory$getID()
             position$date   = as.POSIXct(Sys.time())
             position$period = getRegularizationPeriod(camera, currency, objPos$current$tms)
             position$idOper = current$idOper

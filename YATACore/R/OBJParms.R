@@ -74,21 +74,11 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             tblConfig$db$commit()
             getPreferences()
         }
-        ,getDefaultCamera = function() { preferences$default  }
-        ,getAutoOpen      = function() { preferences$autoOpen }
-        ,getLastCamera    = function() { preferences$last     }
-        ,getCookies       = function() { preferences$cookies  }
-        # ,setDefaultCamera    = function(value, isolated=T) {
-        #     value = as.character(value)
-        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=1, isolated=isolated)
-        #     invisible (self)
-        #  }
-        # ,setAutoOpen    = function(value, isolated=T) {
-        #     value = as.character(as.integer(value))
-        #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=2, isolated=isolated)
-        #     invisible (self)
-        #  }
-        ,setLastCamera = function(value, isolated=T) {
+        ,getDefaultPortfolio = function() { preferences$default  }
+        ,getAutoOpen         = function() { preferences$autoOpen }
+        ,getLastPortfolio    = function() { preferences$last     }
+        ,getCookies          = function() { preferences$cookies  }
+        ,setLastPortfolio    = function(value, isolated=T) {
             value = as.character(value)
             tblConfig$update(lst(value=value), group=1, subgroup=2, id=3, isolated=isolated)
             invisible (self)
@@ -100,7 +90,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         #     invisible (self)
         # }
         ################################################
-        ### User - Group 5 - Camera/portfolios
+        ### User - Group 5 - Carteras/portfolios
         ################################################
         ,getPortfolios = function(all=FALSE) {
             df = tblConfig$getBlocks(group=5)
@@ -110,19 +100,16 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,getTargets = function() {
 
         }
-        ,getCameraInfo = function(camera) {
-            data = tblConfig$getSubgroup(group=5, subgroup=camera, asList=TRUE)
-            data$db = getDBInfo(data$db, TRUE)
-            data
-        }
+        ,getPortfolioInfo = function(portfolio, user) {
+            data   = tblConfig$getSubgroup(group=5, subgroup=portfolio, asList=TRUE)
+            dbInfo = tblConfig$getSubgroup(group=10, subgroup=1, asList=TRUE)
 
-#        ,getDefaultDB      = function() tblParms$getInteger(DBParms$ids$DBDefault)
-        # ,lastOpen          = function() {
-        #     getDBInfo(tblParms$getInteger(DBParms$ids$lastOpen))
-        # }
-        ,defaultDB         = function() {
-            id=getDefaultDb()
-            getList(DBParms$group$databases, id)
+            data$db        = dbInfo
+            data$db$name   = data$title
+            data$db$descr  = data$comment
+            data$db$dbname = paste(user, data$db_sfx, sep="_")
+
+            data
         }
         ,setLastOpen       = function(iddb) {
             keys = splitKeys(DBParms$ids$lastOpen)

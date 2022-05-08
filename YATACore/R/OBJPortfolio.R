@@ -5,9 +5,9 @@ OBJPortfolio = R6::R6Class("OBJ.PORTFOLIO"
   ,lock_class = TRUE
   ,public = list(
       print       = function() { message("Portfolio Object")}
-     ,initialize = function(Factory) {
-         super$initialize(Factory)
-         private$parms = Factory$parms
+     ,initialize = function(factory) {
+         super$initialize(factory)
+         private$parms = factory$parms
      }
      ,getPortfolios = function()   { private$parms$getPortfolios()   }
      ,getportfolio  = function(id) { private$parms$getCameraInfo(id) }

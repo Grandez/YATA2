@@ -111,18 +111,17 @@ make_page_header <- function(parent, nav, title, active = FALSE, list = NULL,
     # Iconos de la barra derecha
 
     button_left = shiny::tags$a( href = "#", id="jgg_left_side"
-        ,class = "jgg_sidebar_toggle"
+        ,class = "jgg_sidebar_toggle jgg_leftside_buttons"
         ,role  = "button"
         ,`data-toggle` = "jgg_left_button" # javascript
         ,shiny::tags$span( id="jgg_left_side_open"
                ,shiny::icon( "chevron-right" ,"fa-lg"
                             ,style="padding-top: 12px")
               )
-              ,shiny::tags$span( id="jgg_left_side_close"
-                                ,class="jgg_button_side_hide"
-                                ,shiny::icon( "chevron-left" ,"fa-lg"
-                                ,style= "padding-top: 12px")
-               )
+        ,shiny::tags$span( id="jgg_left_side_close", class="jgg_button_side_hide"
+                          ,shiny::icon( "chevron-left" ,"fa-lg"
+                          ,style= "padding-top: 12px")
+              )
     )
     button_right = shiny::tags$a( href = "#", id="jgg_right_side"
         ,class = "jgg_sidebar_toggle"
@@ -137,9 +136,9 @@ make_page_header <- function(parent, nav, title, active = FALSE, list = NULL,
                           ,style= "padding-top: 12px"))
     )
 
-    divBrand = tags$div(id="jgg_brand", class="col-lg-1")
+    divBrand = tags$div(id="jgg_brand", class="jgg_brand")
     if (active) {
-        span = shiny::tags$span( class="navbar-brand jgg_brand jgg_clickable"
+        span = shiny::tags$span( class="navbar-brand jgg_clickable" #JGG jgg_brand
                                 ,onclick="Shiny.setInputValue('app_title', 'click', {priority: 'event'});"
                                 ,title)
     } else {

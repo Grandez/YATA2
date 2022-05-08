@@ -9,18 +9,18 @@ OBJCurrencies = R6::R6Class("OBJ.CURRRENCIES"
     ,lock_class = TRUE
     ,public = list(valid = TRUE
         ,print = function() { message("Currencies")}
-        ,initialize = function(Factory) {
-            super$initialize(Factory)
-            private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
-            private$tblExchanges  = Factory$getTable(self$codes$tables$exchanges)
-            private$tblCameras    = Factory$getTable(self$codes$tables$cameras)
-            if (!is.null(Factory$camera)) {
-                if (Factory$camera$selective_ctc > 0 ||
-                    Factory$camera$selective_tok > 0) {
-                    cacheCurrencies(Factory$camera)
+        ,initialize = function(factory) {
+            super$initialize(factory)
+            private$tblCurrencies = factory$getTable(self$codes$tables$currencies)
+            private$tblExchanges  = factory$getTable(self$codes$tables$exchanges)
+            private$tblCameras    = factory$getTable(self$codes$tables$cameras)
+            if (!is.null(factory$camera)) {
+                if (factory$camera$selective_ctc > 0 ||
+                    factory$camera$selective_tok > 0) {
+                    cacheCurrencies(factory$camera)
                 }
             }
-            #private$icons         = Factory$getClass("Icons")
+            #private$icons         = factory$getClass("Icons")
         }
         ,select = function(...) {
             # if (!is.null(target)) {

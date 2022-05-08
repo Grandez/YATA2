@@ -8,9 +8,9 @@ OBJSession = R6::R6Class("OBJ.SESSION"
     ,lock_class = TRUE
     ,public = list(
         print       = function() { message("Session Object")}
-       ,initialize = function(Factory) {# esta
-           super$initialize(Factory)
-           .getTables(Factory)
+       ,initialize = function(factory) {# esta
+           super$initialize(factory)
+           .getTables(factory)
            .loadCache()
            private$tblBase = private$tblSession
        }
@@ -90,15 +90,15 @@ OBJSession = R6::R6Class("OBJ.SESSION"
            dft = df[order(df[col], decreasing = TRUE),]
            dft[1:top,]
        }
-      ,.getTables = function (Factory) {
-           private$tblSession    = Factory$getTable(self$codes$tables$session)
-           private$tblControl    = Factory$getTable(self$codes$tables$control)
-           private$tblCurrencies = Factory$getTable(self$codes$tables$currencies)
+      ,.getTables = function (factory) {
+           private$tblSession    = factory$getTable(self$codes$tables$session)
+           private$tblControl    = factory$getTable(self$codes$tables$control)
+           private$tblCurrencies = factory$getTable(self$codes$tables$currencies)
       }
       ,.loadCache = function() {
           private$dfLast = private$tblSession$getLatest()
-          if (Factory$camera$target < 3) { # Monedas/Tokens/Todo
-              tok = ifelse (Factory$camera$target == 1, 0, 1)
+          if (factory$portfolio$target < 3) { # Monedas/Tokens/Todo
+              tok = ifelse (factory$portfolio$target == 1, 0, 1)
               private$dfLast = private$dfLast %>% filter(token == tok)
           }
           df = tblControl$table(id = 1)

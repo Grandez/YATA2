@@ -14,7 +14,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
          private$monitors = YATABase::map()
          private$idDiv = paste0("#", id)
          private$pnl = pnl
-         private$labels = pnl$factory$MSG$getBlock(pnl$factory$CODES$labels$monitors)
+         private$labels = pnl$factory$msg$getBlock(pnl$factory$codes$labels$monitors)
          initMonitors(data)
      }
      ,render = function(size=2) {

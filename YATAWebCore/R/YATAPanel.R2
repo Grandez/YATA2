@@ -18,7 +18,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
     ,factory    = NULL  # factory Singleton
     ,codes      = NULL  # short code to factory$codes
     ,parms      = NULL  # short code to factory$parms
-    ,MSG        = NULL  # short code to factory$msgs
+    ,msg        = NULL  # short code to factory$msgs
     ,DBID       = 0     # Check DB changed
     ,data       = list()  # Datos
     ,vars       = list()  # Variables temporales con memoria
@@ -37,7 +37,7 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         # Typos
         self$codes   = self$factory$CODES
         self$parms   = self$factory$parms
-        self$MSG     = self$factory$MSG
+        self$msg     = self$factory$msg
         self$cookies = WEB$getCookies(id)
 #        self$vars$first = 1 # Paneles que necesitan saber si es la primera vez
         private$root = self$getRoot()
@@ -70,10 +70,10 @@ YATAPanel = R6::R6Class("YATA.PANEL"
         data
     }
     ,getLabels = function(code) {
-        self$MSG$getBlock(code)
+        self$msg$getBlock(code)
     }
     # ,setMsg = function(code, ...) {
-    #    self$msg = self$MSG$get(code, ...)
+    #    self$msg = self$msg$get(code, ...)
     #    TRUE
     # }
     # ,getMsg = function() {

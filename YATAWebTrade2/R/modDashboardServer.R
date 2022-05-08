@@ -150,7 +150,6 @@ PNLDash = R6::R6Class("PNL.DASH"
           #JGG 0 - todos
           #JGG 26 Serian los de mejor rango
           #JGG 101 JGGPEND Pendiente de favoritos
-        browser()
 #         df = self$session$getLatest(self$cookies$selective)
         df = self$data$dfLast
          self$data$dfBest = private$sortBest(df,   0)
@@ -240,7 +239,7 @@ PNLDash = R6::R6Class("PNL.DASH"
    data
 }
 ,createPlots = function(per) {
-   WORD  = self$MSG$getWords()
+   WORD  = self$msg$getWords()
    period = self$getLabelPeriods()
    lbl    = period[per]
    lbls = c("Pos", self$bests)
@@ -561,7 +560,7 @@ getTickers = function() {
 # }
 renderTablesBest = function() {
 
-   WORDS  = pnl$MSG$getWords()
+   WORDS  = pnl$msg$getWords()
    period = WEB$combo$periods() # pnl$getLabelPeriods()
 
    lbl    = period[as.integer(input$cboBestPeriod)]

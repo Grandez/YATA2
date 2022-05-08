@@ -18,7 +18,7 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
     ,DBID       = 0     # Check DB changed
     ,codes      = NULL
     ,parms      = NULL
-    ,MSG        = NULL
+    ,msg        = NULL
     ,print      = function() { message(paste("Panel object for", self$name)) }
     ,initialize = function(id, parent, session) {
         web = tryCatch({ WEB }, error = function(cond) { YATAWebEnv$new()})
@@ -34,7 +34,7 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
 
         self$codes   = self$factory$codes
         self$parms   = self$factory$parms
-        self$MSG     = self$factory$MSG
+        self$msg     = self$factory$msg
 
     }
     ,getParent = function(name) {

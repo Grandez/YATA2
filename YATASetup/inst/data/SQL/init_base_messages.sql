@@ -90,7 +90,7 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPE
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.CANCEL"    ,"XX", "XX"     , "Cancelar Operación"                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.REJECT"    ,"XX", "XX"     , "Operacion rechazada"                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.OPER.CLOSE"     ,"XX", "XX"     , "Deshacer posición"                           );
-INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.CAMERA_CHANGE"  ,"XX", "XX"     , "Cambiar Portfolio"                           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.PORTFOLIO_CHG"  ,"XX", "XX"     , "Cambiar Portfolio"                           );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "TITLE.ERR.SEVERE"     ,"XX", "XX"     , "Error Fatal"                                 );
 
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 10, "LABEL.PLOT.MAIN"      ,"XX", "XX"     , "Main Plot"                                    );

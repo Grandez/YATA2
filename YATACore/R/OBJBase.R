@@ -10,13 +10,13 @@ OBJBase = R6::R6Class("OBJ.BASE"
        ,parms    = NULL
        ,codes    = NULL
        ,db       = NULL
-       ,Factory  = NULL
+       ,factory  = NULL
        ,print      = function() { message("This is an abstract class")}
-       ,initialize = function(Factory) {
-           self$Factory = Factory
-           self$parms   = Factory$parms
-           self$db      = Factory$getDB()
-           self$codes   = Factory$codes
+       ,initialize = function(factory) {
+           self$factory = factory
+           self$parms   = factory$parms
+           self$db      = factory$getDB()
+           self$codes   = factory$codes
        }
        ,getColumnNames = function(yataNames) {
            if(is.null(tblBase)) return("")

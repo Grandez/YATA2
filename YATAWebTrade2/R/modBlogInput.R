@@ -2,10 +2,10 @@ modBlogInput = function(id, title="") {
     ns = NS(id)
     targets = c("General"="gral", "Moneda"="currency", "Operacion"="oper", "Notas"="note")
     targets2 = c("Todo"="all",targets)
-    lblFilter = WEB$MSG$get("LABEL.BTN.APPLY")
-    lblTitle = WEB$MSG$get("TITLE.TITLE")
-    lblDetail  = WEB$MSG$get("TITLE.DETAIL")
-    lblApply   = WEB$MSG$get("SUBT.APPLY")
+    lblFilter = WEB$msg$get("LABEL.BTN.APPLY")
+    lblTitle = WEB$msg$get("TITLE.TITLE")
+    lblDetail  = WEB$msg$get("TITLE.DETAIL")
+    lblApply   = WEB$msg$get("SUBT.APPLY")
 
     left = tagList(
          guiTitle(5, "Filter")

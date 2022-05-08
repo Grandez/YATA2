@@ -4,7 +4,7 @@ modOperRegInput = function(id, title) {
    lbl = WEB$getLabelsPanel()
 
    main = tagList(
-   guiRow(align="center", h2(WEB$MSG$get("MNU.REGULARIZE")))
+   guiRow(align="center", h2(WEB$msg$get("MNU.REGULARIZE")))
    ,fluidRow(column(3)
       ,column(3
          ,yataFormTable(
