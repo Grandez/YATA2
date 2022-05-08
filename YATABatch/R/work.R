@@ -5,13 +5,12 @@ toolsUpdateToken = function() {
    beg   = 1
 
    codes = YATACore::YATACODES$new()
-   fact  = YATACore::YATAFactory$new()
+   fact  = YATACore::YATAFACTORY$new()
    prov  = fact$getDefaultProvider()
    tbl   = fact$getTable(codes$tables$currencies)
 
    df = prov$getCurrencies(beg, 500)
 
-browser()
    rc = tryCatch({
       process = TRUE
       while (process) {
@@ -36,5 +35,5 @@ browser()
               16
       })
 
-      logger$executed(rc, begin, "Executed")
+#      logger$executed(rc, begin, "Executed")
 }
