@@ -26,7 +26,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          resp$data
       }
      ,html = function(url, parms=NULL, headers=NULL, accept = 400) {
-         page = get(url, parms=NULL, headers=NULL, accept = 400)
+         page = get(url, parms, headers, accept)
          httr::content(page, as="parsed")
      }
      ,html_table = function(url, parms=NULL, headers=NULL, accept = 500) {
