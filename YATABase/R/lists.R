@@ -5,7 +5,7 @@ jgg_list_merge = function(lst1, lst2) {
     rlist::list.merge(lst1, lst2)
 }
 jgg_list_clean = function(data,fun=is.null,recursive=FALSE) {
-   rlist::list.clean(data.fun,recursive)
+   rlist::list.clean(data, fun, recursive)
 }
 jgg_list_append_list = function(...) { rlist::list.append(...) }
 jgg_list_append = function(lst1, lst2) {
