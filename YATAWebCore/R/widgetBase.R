@@ -83,9 +83,6 @@ yuiLabelBold = function(id, class) {
   if (!missing(class)) cls = class
   tags$span(class=cls, textOutput(outputId=id, inline=TRUE))
 }
-updLabel = function(txt) {
-    renderText({txt})
-}
 # updLabelNumber   = function(value, dec=-1, bold=TRUE, color=FALSE) {
 #   text = format(value, big.mark = ".", decimal.mark=",")
 #   if (dec > -1) text = format(value, big.mark = ".", decimal.mark=",", nsmall=dec)

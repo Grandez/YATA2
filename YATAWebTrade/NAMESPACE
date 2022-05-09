@@ -8,7 +8,7 @@ import(dplyr)
 import(YATABase)
 import(YATAWebShiny)
 import(YATAWebCore)
-import(YATABatch)
+#import(YATABatch)
 
 # Shiny
 import(shiny)

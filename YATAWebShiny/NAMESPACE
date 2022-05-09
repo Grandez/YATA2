@@ -8,9 +8,7 @@ import(shinyWidgets)
 import(shinydashboard)
 import(ellipsis)
 
-import(JGGTools)
-
-export(runExample)
+export(yataExample)
 export(WEBPanel)
 exportPattern("JGG.+")
 exportPattern("WDG.+")
