@@ -176,19 +176,20 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
         if (type == "time")   df[,idx] = strftime(df[,idx], "%H:%M:%S")
         if (type == "tms")    df[,idx] = strftime(df[,idx], "%Y/%m/%d %H:%M")
         if (type == "price")  df = adjust_price(df, idx)
+        if (type == "value")  df = adjust_price(df, idx)
         df
-    }
-     ,adjust_price = function(df, col) {
-         value = 0
-         for (row in 1:nrow(df)) {
-              value = df[row,col]
-              if (value >   999) { df[row,col] = round(df[row,col], 0); next }
-              if (value >    99) { df[row,col] = round(df[row,col], 1); next }
-              if (value >     9) { df[row,col] = round(df[row,col], 2); next }
-              if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
-              df[row,col] = round(df[row,col], 3)
-         }
-         df
+     }
+    ,adjust_price = function(df, col) {
+        value = 0
+        for (row in 1:nrow(df)) {
+             value = df[row,col]
+             if (value >   999) { df[row,col] = round(df[row,col], 0); next }
+             if (value >    99) { df[row,col] = round(df[row,col], 1); next }
+             if (value >     9) { df[row,col] = round(df[row,col], 2); next }
+             if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
+             df[row,col] = round(df[row,col], 3)
+        }
+        df
       }
 ,format_columns = function() {
     fmt = private$current$columns

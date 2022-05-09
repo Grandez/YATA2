@@ -21,7 +21,11 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
         headPos   = c("balance", "available", "buy", "sell", "value", "profit")
         headDates = c("since",   "last",      "tms")
 
-        if (nrow(df) == 0) df = dfEmpty
+        if (nrow(df) == 0) {
+            df = dfEmpty
+        } else {
+            df$value = df$balance * df$net
+        }
         if (nrow(df) > 0 && type == "short") df = df[,cols_short]
         if (type == "long") {
             headBuy  = c("buy_high",  "buy_low", "buy_net")
@@ -61,7 +65,7 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
 
    )
   ,private = list(
-       cols_short = c("currency", "balance", "value", "profit", "day", "week", "month", "since")
+       cols_short = c("currency", "balance", "net", "value", "profit", "day", "week", "month", "since")
       ,dfEmpty = NULL
       ,table_attr = list(data = NULL, columns = NULL
              ,bordered            = FALSE
@@ -76,6 +80,7 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
           ,showPageInfo        = FALSE
           ,sortable            = FALSE
           ,striped             = TRUE
+          ,class               = "yata_tbl_position"
        )
       ,col_defs = list(
            currency  = list(name="currency",   type="label")
@@ -92,7 +97,8 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
           ,sell_net  = list(name="net",        type="price")
           ,buy       = list(name="buy",        type="price")
           ,sell      = list(name="sell",       type="price")
-          ,value     = list(name="value",      type="price")
+          ,net       = list(name="price",      type="price")
+          ,value     = list(name="value",      type="value")
           ,profit    = list(name="profit",     type="price")
           ,since     = list(name="since",      type="date" )
           ,tms       = list(name="tms",        type="tms"  )
@@ -185,6 +191,7 @@ WDGTableBest = R6::R6Class("YATA.WEB.TABLE.BEST"
           ,showPageInfo        = FALSE
           ,sortable            = FALSE
           ,striped             = TRUE
+          ,class               = "yata_tbl_position"
        )
       # ,col_defs = list(
       #      symbol    = list(name="symbol",    type="label")

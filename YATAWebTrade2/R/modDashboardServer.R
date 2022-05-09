@@ -102,7 +102,7 @@ PNLDash = R6::R6Class("PNL.DASH"
         df = self$data$dfPos
         if (!full) df = df %>% filter(balance > 0)
         if (nrow(df) == 0) return (NULL)
-
+browser()
         df = private$appendVariations(df)
       }
      # ,loadHistory = function(id, symbol) {
@@ -325,7 +325,7 @@ PNLDash = R6::R6Class("PNL.DASH"
         dfp     = self$history$getPrices(df$id, c(1, 7, 30))
         periods = c(1, 7, 30)
 
-        dfp = cbind(dfp, df$value)
+        dfp = cbind(dfp, df$net)
         j = ncol(dfp)
         for (idx in 1:length(periods)) {
             dfp[,idx] = dfp[,j] / dfp[,idx]

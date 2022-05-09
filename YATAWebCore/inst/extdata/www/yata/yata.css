@@ -39,6 +39,10 @@
     font-size: 1.25em;
     padding-top: 3px;
 }
+.yata_tbl_position {
+    line-height: 1;
+    font-weight: normal;
+}
 .yata_cell_icon {
     padding-left: 16px;
     padding-right: 16px;

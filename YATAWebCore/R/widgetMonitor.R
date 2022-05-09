@@ -65,7 +65,7 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
               mon$session = mon$price
               if (!is.null(dfPos)) {
                   pos         = dfPos[dfPos$id == id,]
-                  mon$cost    = ifelse(nrow(pos) > 0,pos[1,"value"], "N/A")
+                  mon$cost    = ifelse(nrow(pos) > 0,pos[1,"net"], "N/A")
               }
               else {
                   mon$cost = mon$price
@@ -170,8 +170,8 @@ WDGMonitor = R6::R6Class("YATA.WEB.MONITORS"
              ,tags$td(class=clsData, id=paste0(base,"invest"))
            )
            ,tags$tr(
-              tags$td(class=clsLbl, labels$VALUE)
-             ,tags$td(class=clsData, id=paste0(base,"value"))
+              tags$td(class=clsLbl, labels$PRICE)
+             ,tags$td(class=clsData, id=paste0(base,"net"))
            )
            ,tags$tr(
               tags$td(class=clsLbl, labels$ACT)

@@ -40,7 +40,7 @@ CREATE TABLE POSITION  (
    ,SELL_NET    DOUBLE      DEFAULT 0.0  -- Precio medio de compra   
    ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
    ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
-   ,VALUE       DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
+   ,NET         DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
    ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
    ,SINCE       TIMESTAMP                -- Ultima regularizacion
    ,TMS         TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
