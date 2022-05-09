@@ -65,40 +65,6 @@ modDashInput = function(id, title) {
         ,yuiFlex(yuiBtnOK(ns("btnSave"), WORD$SAVE), yuiBtnKO(ns("btnClose"),WORD$CLOSE))
 
     )
-    # pattern = "tags$div( id=ns('__NAME__'),style='width: 100%', guiBox(ns('__VALUE__')"
-    # pattern = paste0(pattern, ", guiLabelText(ns('paste0('")
-    # pattern = paste0(pattern, "'lbl',__VALUE__)), yuiTable(ns("tblBest"))))
-    # pp = "tags$div( id=ns('__NAME__'),style='width: 100%', guiBox(ns('__VALUE__'), guiLabelText(ns('paste0(lblBest")), yuiTable(ns("tblBest"))))
-
-
-    # blocks = tagList(
-    #          yuiPlot(ns("plotPos"))
-    #         ,yuiPlot(ns("plotSession"))
-    #         ,yuiPlot(ns("plotTop"))
-    #         ,yuiPlot(ns("plotBest"))
-    #         ,yuiPlot(ns("plotFav"))
-    #         ,tags$div( id=ns("blkBest"),style="width: 100%", guiBox(ns("Best")
-    #                   ,guiLabelText(ns("lblBest")), yuiTable(ns("tblBest"))))
-    #         ,tags$div( id=ns("blkTop") ,style="width: 100%", guiBox(ns("Top")
-    #                   ,guiLabelText(ns("lblTop")),  yuiTable(ns("tblTop"))))
-    #         ,tags$div( id=ns("blkFav") ,style="width: 100%", guiBox(ns("Fav")
-    #                   ,guiLabelText(ns("lblFav")),  yuiTable(ns("tblFav"))))
-    #         ,tags$div( id=ns("blkTrend") ,style="width: 100%", guiBox(ns("Trend")
-    #                   ,guiLabelText(ns("lblTrend")),  yuiTable(ns("tblTrend"))))
-    #         ,tags$div(id=ns("Position"), style="width: 100%;"
-    #                  ,hidden(tags$div( id=ns("posGlobal")
-    #                                   , guiBox( ns("PosGlobal")
-    #                                            ,"Posicion Global", yuiTable(ns("tblPosGlobal")))))
-    #                  ,hidden(tags$div(id=ns("PosCameras")))
-    #         )
-    #         ,tags$div(id=ns("PositionFull"), style="width: 100%;"
-    #                  ,hidden(tags$div( id=ns("posGlobalFull")
-    #                                   , guiBox( ns("PosGlobalFull")
-    #                                            ,"Posicion Global Completa", yuiTable(ns("tblPosGlobalFull")))))
-    #                  ,hidden(tags$div(id=ns("PosCamerasFull")))
-    #         )
-    #
-    # )
     main = tagList( guiRow(id=ns("monitor"), class="yata_monitors")
             # ,tags$div(id=ns("Position"), style="width: 100%;"
             #          ,hidden(tags$div( id=ns("posGlobal")
