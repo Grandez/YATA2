@@ -1,7 +1,7 @@
-HashMap = function() { JGGHashMap$new() }
-ini = function(iniFile) { YATABaseIni$new(iniFile) }
-map = function()        { YATABaseMap$new()        }
-str = function()        { YATABaseStr$new()        }
+HashMap = function()        { YATABaseMap$new() }
+ini     = function(iniFile) { YATABaseIni$new(iniFile) }
+map     = function()        { YATABaseMap$new()        }
+str     = function()        { YATABaseStr$new()        }
 
 #' Convierte un conjunto de parametros en una lista nombrada
 args2list = function(...) {
