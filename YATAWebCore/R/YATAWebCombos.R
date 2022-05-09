@@ -34,7 +34,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
              if (available) df = df %>% filter( !is.na(available) & available > 0)
          }
          data = makeCombo(df, id="camera", name="desc")
-         checkAll(all, data)
+         checkAll(data, all)
      }
      ,portfolios = function() {
          df = objParms$getPortfolios()
@@ -42,16 +42,16 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          names(lst) = paste(df$title, df$name, sep = " - ")
          lst
      }
-     ,currencies = function(id=TRUE, all=FALSE, set=NULL, byId=FALSE, merge=TRUE, invert=FALSE) {
+     ,currencies = function(id=TRUE, set=NULL, merge=TRUE, invert=FALSE, all=FALSE) {
          if (is.null(cache$currencies)) loadCurrencies()
          df = cache$currencies
-         if (!all) df = df[df$id > 0,]
+#         if (!all) df = df[df$id > 0,]
          if (!is.null(set)) df = filterCurrencies (df, set)
          if (nrow(df) == 0) return (list())
          if (merge) df$name = paste(df$symbol, "-", df$name)
          key = ifelse(id, "id", "symbol")
          data = makeCombo(df, id=key, invert=invert)
-         checkAll(all, data)
+         checkAll(data, all)
      }
      ,getCurrenciesKey = function(id=TRUE, currencies) {
          if (is.null(cache$currencies)) loadCurrencies()
@@ -72,7 +72,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
      ,operations = function(all=FALSE) {
          if (is.null(cache$operations)) loadOperations()
          data = makeCombo(cache$operations)
-         checkAll(all, data)
+         checkAll(data, all)
      }
      ,reasons = function(type=9) {
          if (is.null(cache$reasons)) loadReasons()
@@ -80,7 +80,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          df = rbind(df, cache$reasons[(cache$reasons$block %% 10) == type,]) # Especifico
          df = df[,c("id", "name")]
          data = makeCombo(df)
-         checkAll(FALSE, data)
+         checkAll(data, FALSE)
      }
      ,periods = function() { msg_block(factory$codes$labels$periods) }
      ,scopes  = function() { msg_block(34) }
@@ -91,7 +91,7 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          df = rbind(df, cache$reasons[(cache$reasons$block %% 10) == type,]) # Especifico
          df = df[,c("id", "name")]
          data = makeCombo(df)
-         checkAll(FALSE, data)
+         checkAll(data, FALSE)
      }
 
   )
@@ -153,14 +153,14 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
         }
         data
     }
-     ,checkAll = function(all, data) {
-       if (!all || length(data) == 0) return (data)
+     ,checkAll = function(data, all) {
+         if (!all || length(data) == 0) return (data)
 
-       checkNumber = suppressWarnings(as.integer(data[[1]]))
-       lstAll = list(ifelse(is.na(checkNumber), " ","0"))
-       names(lstAll) = objMsgs$get("WORD.ALL")
-       list.merge(lstAll, data)
-   }
+         checkNumber = suppressWarnings(as.integer(data[[1]]))
+         lstAll = list(ifelse(is.na(checkNumber), " ","0"))
+         names(lstAll) = objMsgs$get("WORD.ALL")
+         list.merge(lstAll, data)
+      }
      ,filterCurrencies = function (df, set) {
        values = set
        if (is.list(set)) values = unlist(set)

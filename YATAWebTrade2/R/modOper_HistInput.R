@@ -8,7 +8,7 @@ modOperHistInput = function(id, title) {
               ,guiColumn(1, guiCombo( ns("cboOper"), choices=WEB$combo$operations(all=TRUE)))
               ,guiColumn(1, h4(lblCurrency))
               ,guiColumn(2 ,guiComboSelect(ns("cboCurrency")
-                           ,choices=WEB$combo$currencies(id=FALSE, all=TRUE),text=lblCurrency))
+                           ,choices=WEB$combo$currencies(id=FALSE),text=lblCurrency))
 
               ,guiColumn(1, h4(WEB$msg$get("LBL.CAMERA")))
               ,guiColumn(1, guiCombo(ns("cboCamera"), choices=WEB$combo$cameras(all=TRUE)))

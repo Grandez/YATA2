@@ -5,7 +5,7 @@ library(tibble)
 library(rlist)
 library(stringr)
 library(data.table)
-library(JGGTools)
+library(YATABase)
 
 suppressMessages(library(plyr,  warn.conflicts = FALSE))
 suppressMessages(library(tidyr, warn.conflicts = FALSE))

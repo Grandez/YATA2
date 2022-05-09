@@ -12,17 +12,20 @@ PNLPos = R6::R6Class("PNL.POS"
          private$createObjects()
      }
      ,loadData = function() {
-         self$data$dfPos  = private$position$getGlobalPosition(full = TRUE)
+         self$data$dfPos  = private$position$getGlobalPosition()
+         df = self$data$dfPos
          self$data$dfLast = private$session$getLatest()
      }
    )
   ,private = list(
-      position = NULL
-     ,session  = NULL
+      position   = NULL
+     ,session    = NULL
+     ,currencies = NULL
      ,createObjects = function() {
-         private$position = self$factory$getObject(self$codes$object$position)
-         private$session  = self$factory$getObject(self$codes$object$session)
-         self$wdgPos      = WDGTablePosition$new(self$factory)
+         private$position   = self$factory$getObject(self$codes$object$position)
+         private$currencies = self$factory$getObject(self$codes$object$currencies)
+         private$session    = self$factory$getObject(self$codes$object$session)
+         self$wdgPos        = WDGTablePosition$new(self$factory)
    }
 
   )
@@ -42,7 +45,15 @@ if (!pnl$loaded || pnl$getCommarea(item="position")) {
      pnl$loadData()
      pnl$loaded = TRUE
      pnl$setCommarea(position=FALSE)
-     #JGGoutput$tblGlobal = pnl$wdgPos$render(pnl$data$dfPos)
+     df = pnl$data$dfPos
+
+     if (nrow(df) > 0) {
+         data = WEB$combo$currencies(id=FALSE, set=df$currency, invert=TRUE)
+         df$currency = data
+     }
+
+     output$lblGlobal = updLabel("Posicion global")
+     output$tblGlobal = pnl$wdgPos$render(df, type="long", global=TRUE)
 }
 
 })

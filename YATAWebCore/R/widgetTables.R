@@ -20,6 +20,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
         }
      }
     ,render = function(data) {
+        # JGG No se usa
         private$dfWork = data
         colDefs = prepareData(data)
     #         ,.appendButtons = function(df) {
@@ -131,6 +132,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
      }
      ,prepareData = function (df) {
          colDefs = makeColDefs(df)
+         browser()
          colDefs = setAlign(df, colDefs)
 
          df = adjustValues(df)
@@ -152,7 +154,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
      ,setAlign = function (df, colDefs) {
           cols = lapply(1:length(ncol(df)), function(idx) {
                         algn = "right"
-                        if (class(df[,idx]) %in% "type_label") align = "left"
+                        if (class(df[,idx]) %in% "type_label") algn = "left"
                         list(align=algn) })
          names(cols) = colnames(df)
          jgg_list_merge(colDefs, cols)
@@ -171,8 +173,8 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
         if (type == "prc100") df[,idx] = round(df[,idx] / 100, .scale)
         if (type == "prc")    df[,idx] = round(df[,idx],       .scale)
         if (type == "date")   df[,idx] = as.Date(df[,idx])
-        if (type == "time")   df[,idx] = strptime(df[,idx], "%H:%M:%S")
-        if (type == "tms")    df[,idx] = strptime(df[,idx], "%Y/%m/%d %H:%M")
+        if (type == "time")   df[,idx] = strftime(df[,idx], "%H:%M:%S")
+        if (type == "tms")    df[,idx] = strftime(df[,idx], "%Y/%m/%d %H:%M")
         if (type == "price")  df = adjust_price(df, idx)
         df
     }
@@ -210,15 +212,6 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
               item$format = reactable::colFormat(separators = TRUE, locales = "es-ES")
          }
          if (type == "lbl" || type == "label") item$align = "left"
-         # colname = colnames(df)[idx]
-         # if (!is.null(fmt[[colname]]) && length(fmt[[colname]]) > 0) {
-         #     if (length(item) > 0) fmt[[colname]] = list.merge(item, fmt[[colname]])
-         # } else {
-         #     if (length(item) > 0) {
-         #         item$name = colname
-         #         fmt[[colname]] = item
-         #     }
-         # }
          fmt[[colnames(df)[idx]]] = item
     }
     private$current$columns= fmt

@@ -1,11 +1,6 @@
 modOperPosInput = function(id, title="") {
     ns = NS(id)
-    noOpen   = WEB$getMsg("OPER.OPEN.NONE")
-    noAccept = WEB$getMsg("OPER.ACCEPT.NONE")
-    noExec   = WEB$getMsg("OPER.EXECUTE.NONE")
-    boxOpen  = WEB$getMsg("BOX.OPER.OPEN")
-    boxPend  = WEB$getMsg("BOX.OPER.PEND")
-    boxExec  = WEB$getMsg("BOX.OPER.EXEC")
+    lbl = WEB$getLabelsMenuOper(cached=TRUE)
     blocks = c("Plot" = "plotOpen", "Data"="data", "None"="none")
     left = tagList(
          fluidRow(column(4, "Up"),   column(8, guiCombo(ns("cboUp"), choices=blocks, selected="plot")))
@@ -15,27 +10,27 @@ modOperPosInput = function(id, title="") {
     main = tagList(
       tags$div(id=ns("plot"), yuiPlot(ns("plotOpen")))
 #      fluidRow(id=ns("block_1")), fluidRow(id=ns("block_2"))
-      #    ,yuiBlocks(ns("blocks")
+      #    ,guiBlocks(ns("blocks")
       #     ,tags$div(id=ns("data"), style="width: 100%;"
-                   ,tags$div(style="width: 100%;", yuiBox(ns("opOpen"), boxOpen,  
+                   ,tags$div(style="width: 100%;", guiBox(ns("opOpen"), lbl$OPER_OPEN,
                      # yuiDataTable(ns("tblOpen"))
                             yuiTable(ns("tblOpen"))
-                           ,hidden(tags$span(id=ns("noOpen"), noOpen))
+                           ,hidden(tags$span(id=ns("noOpen"), lbl$OPEN_NONE))
                    ))
                    ,hidden(fluidRow(id=ns("divPend")
-                             ,column(6, yuiBox(ns("opPending"),  boxPend,
+                             ,column(6, guiBox(ns("opPending"),  lbl$OPER_PEND,
                                                 yuiTable(ns("tblPending"))
-                                               ,hidden(tags$span(id=ns("noPending"), noAccept))
+                                               ,hidden(tags$span(id=ns("noPending"), lbl$ACCEPT_NONE))
                                         )
                                     )
-                             ,column(6, yuiBox( ns("opAccepted"), boxExec
+                             ,column(6, guiBox( ns("opAccepted"), lbl$OPER_EXEC
                                                ,yuiTable(ns("tblAccepted"))
-                                               ,hidden(tags$span(id=ns("noAccepted"), noExec))
+                                               ,hidden(tags$span(id=ns("noAccepted"), lbl$EXEC_NONE))
                                         )
                               )
                          )
                      )
-                   ,hidden(tags$div(id=ns("nodata"), h2("No hay operaciones pendientes")))
+                   ,hidden(tags$div(id=ns("nodata"), h2(lbl$NO_OPER)))
       )
     list(left=left, main=main, right=NULL)
 }

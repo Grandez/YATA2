@@ -1,4 +1,4 @@
-modHistInput = function(id, title) {
+modStatusInput = function(id, title) {
    ns = NS(id)
    titCTC   = WEB$getMsg("TITLE.CURRENCIES")
    titPlots= WEB$getMsg("TITLE.PLOTS")
@@ -23,21 +23,22 @@ modHistInput = function(id, title) {
 
     )
    main = tagList(
-      tabsetPanel( id=ns("tabHist")
-                  ,tabPanel("Summary",   value=ns("summ"),  YATAWebShiny::JGGModule(ns("summ")))
-                      # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
-                      # ,tabPanel("",   value=ns("dummy"),     "")
-      )
+       h3("Pantalla de estado del sistema")
+      # tabsetPanel( id=ns("tabHist")
+      #             ,tabPanel("Summary",   value=ns("status"),  YATAModule(ns("status")))
+      #                 # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
+      #                 # ,tabPanel("",   value=ns("dummy"),     "")
+      # )
     )
 
-    pnl1 = tabsetPanel( id=ns("tabHist")
-                      ,tabPanel("Summary",   value=ns("summ"),  YATAModule(ns("summ")))
-                      # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
-                      # ,tabPanel("",   value=ns("dummy"),     "")
-          )
-    pnl2 = YATATabPanel(ns("tabDetail"))
+    # pnl1 = tabsetPanel( id=ns("tabHist")
+    #                   ,tabPanel("Summary",   value=ns("summ"),  YATAModule(ns("summ")))
+    #                   # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
+    #                   # ,tabPanel("",   value=ns("dummy"),     "")
+    #       )
+    # pnl2 = YATATabPanel(ns("tabDetail"))
 # pnl$children[[1]] = tagAppendChild(pnl$children[[1]], pnl2)
 
-    main = tagList(YATATabsetPanel(pnl1, pnl2))
+    # main = tagList(YATATabsetPanel(pnl1, pnl2))
     list(left=NULL, main=main, right=NULL)
 }

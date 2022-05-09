@@ -1,73 +1,34 @@
-modPosInput = function(id, title) {
+modPosInput = function(id) {
     ns = NS(id)
-    blocks = c( "Plot Position"  = "plotHist", "Plot Session" = "plotSession"
-               ,"Plot Best"      = "plotBest", "Plot Top"     = "plotTop"
-               ,"Plot Favorites" = "plotFav"
-               ,"Position"       = "Position", "Full Position"  = "PositionFull"
-               ,"Best"           = "blkBest"
-               ,"Best of Top"    = "blkTop"  , "Best of favorites" = "blkFav"
-               ,"Trending"       = "blkTrend"
-    )
-    #vals = c("plotHist", "plotSession", "blkBest", "Position")
-    vals = c("blkTrend", "plotSession", "blkBest", "Position")
-    mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", guiCheck(ns("chkMonitors"))))
-
-#   wdgLayout = wdgLayout$new(ns, c(2,2), blocks, values=vals, top = mon)
-       wdgLayout = WDGLayout$new(ns, c(2,2), blocks, values=vals)
    left = tagList(
-         fluidRow(column(4, "Updated:"),column(8, guiLabelDate(ns("dtLast"))))
-        ,wdgLayout$getConfig()
-        ,fluidRow(column(4, "Selective"),column(8, guiNumericInput(ns("numSelective"))))
-        ,fluidRow(column(4, "Interval"), column(8, guiNumericInput(ns("numInterval"))))
-        ,fluidRow(column(4, "History") , column(8, guiNumericInput(ns("numHistory"), value=15,step=1,min=7,max=90)))
-        ,hr()
-
+         br()
         ,yuiTitle(5, "Show")
-        ,fluidRow(column(4, "Operations"),column(8, style="text-align: right;", guiCheck(ns("chkOper"))))
-        ,fluidRow(column(4, "Position"),  column(8, style="text-align: right;", guiRadio(ns("radPosition")
-                                                      , choices=c("All", "Global", "Cameras")
-                                                      , selected="All"))
-          )
-        ,hr()
-        ,yuiTitle(5, "Best")
-        ,fluidRow(column(4, "Top"),    column(8, guiIntegerInput(ns("numBestTop"),value=15,step=1,min=5,max=30)))
-        ,fluidRow(column(4, "Period"), column(8, guiCombo(ns("cboBestFrom"),
-                                                   choices=c("Hora"=1,"Dia"=2,"Semana"=3,"Mes"=4),selected=2)))
-        ,tags$br()
-        ,yuiFlex(yuiBtnOK(ns("btnLayoutOK"),"Guardar"), yuiBtnKO(ns("btnLayoutKO"),"Cerrar"))
-    )
+        ,fluidRow(column(4, "Plot"),column(8, style="text-align: right;", guiCheck(ns("chkPlot"))))
+        ,fluidRow(column(4, "Open"),column(8, style="text-align: right;", guiCheck(ns("chkPos"))))
+        ,fluidRow(column(4, "Full"),column(8, style="text-align: right;", guiCheck(ns("chkFull"))))
+        ,fluidRow(column(4, "Include FIAT"),column(8, style="text-align: right;", guiCheck(ns("chkFiat"))))
+   )
+    main = tagList(
+        h2("Pagina")
+       ,tags$div( id=ns("blkPlot"),style="width: 100%", guiBox(ns("Plot")
+                      ,guiLabelText(ns("lblPlot")), yuiTable(ns("tblPlot"))))
 
-    blocks = tagList(
-             yuiPlot(ns("plotHist"))
-            ,yuiPlot(ns("plotSession"))
-            ,yuiPlot(ns("plotTop"))
-            ,yuiPlot(ns("plotBest"))
-            ,yuiPlot(ns("plotFav"))
-            ,tags$div( id=ns("blkBest"),style="width: 100%", guiBox(ns("Best")
-                      ,guiLabelText(ns("lblBest")), yuiTable(ns("tblBest"))))
-            ,tags$div( id=ns("blkTop") ,style="width: 100%", guiBox(ns("Top")
-                      ,guiLabelText(ns("lblTop")),  yuiTable(ns("tblTop"))))
-            ,tags$div( id=ns("blkFav") ,style="width: 100%", guiBox(ns("Fav")
-                      ,guiLabelText(ns("lblFav")),  yuiTable(ns("tblFav"))))
-            ,tags$div( id=ns("blkTrend") ,style="width: 100%", guiBox(ns("Trend")
-                      ,guiLabelText(ns("lblTrend")),  yuiTable(ns("tblTrend"))))
-            ,tags$div(id=ns("Position"), style="width: 100%;"
-                     ,hidden(tags$div( id=ns("posGlobal")
-                                      , guiBox( ns("PosGlobal")
-                                               ,"Posicion Global", yuiTable(ns("tblPosGlobal")))))
-                     ,hidden(tags$div(id=ns("PosCameras")))
-            )
-            ,tags$div(id=ns("PositionFull"), style="width: 100%;"
-                     ,hidden(tags$div( id=ns("posGlobalFull")
-                                      , guiBox( ns("PosGlobalFull")
-                                               ,"Posicion Global Completa", yuiTable(ns("tblPosGlobalFull")))))
-                     ,hidden(tags$div(id=ns("PosCamerasFull")))
-            )
+            ,tags$div( id=ns("blkGlobal"),style="width: 100%", guiBox(ns("Global")
+                      ,guiLabelText(ns("lblGlobal")), yuiTable(ns("tblGlobal"))))
+
+
+#        shiny::tabsetPanel(id=ns("mnuOper")
+#          ,shiny::tabPanel(lbl$POSITION,   value=ns("pos"),  YATAModule(ns("pos")))
+#          ,shiny::tabPanel(lbl$OPER,       value=ns("mov"),  YATAModule(ns("mov")))
+#          ,shiny::tabPanel(lbl$XFER,       value=ns("xfer"), YATAModule(ns("xfer")))
+#          ,shiny::tabPanel(lbl$REGULARIZE, value=ns("reg"),  YATAModule(ns("reg")))
+#          ,shiny::tabPanel(lbl$HISTORY,    value=ns("hist"), YATAModule(ns("hist")))
+#          #
+#          # ,tabPanel("cerrada",     value=ns("detail"),   tags$div(id=ns("detail"), YATAWebShiny::JGGModule(ns("detail"))))
+#          # ,tabPanel("",   value="detail",    YATAWebShiny::JGGModule(ns("detail")))
+# #         ,YATAPanel("",   value=ns("dummy"),     "")
+#       )
 
     )
-    main = tagList( guiRow(id=ns("monitor"), class="yata_monitors"), wdgLayout$getBody(blocks))
-
-    #header = tagList(btnIcon(id=ns("btnRefresh"), shiny::icon("sync")))
-
-    list(left=left, main=main, right=NULL, header=NULL)
+    list(left=left, main=main, right=NULL)
 }

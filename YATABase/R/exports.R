@@ -1,3 +1,8 @@
+HashMap = function() { JGGHashMap$new() }
+ini = function(iniFile) { YATABaseIni$new(iniFile) }
+map = function()        { YATABaseMap$new()        }
+str = function()        { YATABaseStr$new()        }
+
 #' Convierte un conjunto de parametros en una lista nombrada
 args2list = function(...) {
   args = list(...)
@@ -9,9 +14,6 @@ args2list = function(...) {
   }
   args
 }
-ini = function(iniFile) { YATABaseIni$new(iniFile) }
-map = function()        { YATABaseMap$new()        }
-str = function()        { YATABaseStr$new()        }
 
 loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
     datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp/", table)

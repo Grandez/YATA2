@@ -1,29 +1,13 @@
-# Esto es para las pruebas
-# unloadNamespace("YATAWebCore")
-# unloadNamespace("YATACore")
-# unloadNamespace("YATADT")
-# unloadNamespace("YATAProviders")
-# unloadNamespace("YATADB")
-# unloadNamespace("YATABase")
 
 # Core
-library(utils)
-library(R6)
-library(tibble)
-library(rlist)
-library(stringr)
-suppressMessages(library(plyr,  warn.conflicts = FALSE))
-suppressMessages(library(tidyr, warn.conflicts = FALSE))
-suppressMessages(library(dplyr, warn.conflicts = FALSE))
-
-# YATA
-suppressMessages(library(YATABase,       warn.conflicts = FALSE))
-suppressMessages(library(YATACore,       warn.conflicts = FALSE))
-suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
-suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
-library(YATABatch)
-
-# suppressMessages(library(YATADT))
+suppressMessages(library(utils      , warn.conflicts = FALSE))
+suppressMessages(library(R6         , warn.conflicts = FALSE))
+suppressMessages(library(tibble     , warn.conflicts = FALSE))
+suppressMessages(library(stringr    , warn.conflicts = FALSE))
+suppressMessages(library(data.table , warn.conflicts = FALSE))
+suppressMessages(library(plyr       , warn.conflicts = FALSE))
+suppressMessages(library(tidyr      , warn.conflicts = FALSE))
+suppressMessages(library(dplyr      , warn.conflicts = FALSE))
 
 # Shiny
 library(shiny)
@@ -35,6 +19,17 @@ suppressMessages(library(bslib,              warn.conflicts = FALSE))
 suppressMessages(library(promises, warn.conflicts = FALSE))
 suppressMessages(library(future,   warn.conflicts = FALSE))
 
+# YATA
+suppressMessages(library(YATABase,       warn.conflicts = FALSE))
+suppressMessages(library(YATACore,       warn.conflicts = FALSE))
+suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
+suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
+#library(YATABatch)
+
+# suppressMessages(library(YATADT))
+
+
+
 # options( warn = -1
 # #        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)
 #         ,java.parameters = "-Xmx2048m"
@@ -45,15 +40,19 @@ suppressMessages(library(future,   warn.conflicts = FALSE))
 
 # plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
+
+if (exists("WEB")) rm("WEB")
+web = YATAWebCore::YATAWebEnv$new(YATACore::YATAFACTORY$new())
+assign("WEB", web, envir=.GlobalEnv)
+
 ######################################
 ### Carga de fuentes
 ### En R busca subdirectorios
 #####################################
-library(YATABatch)
+
 files = list.files(path="R", pattern="\\.R$", recursive=TRUE, full.names=T, ignore.case=F)
 sapply(files,source)
 
-WEB = YATAWebCore::YATAWebEnv$new()
 # YATABatch::startDaemons()
 # WEB$startDaemons()
 

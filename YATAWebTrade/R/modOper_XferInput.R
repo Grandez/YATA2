@@ -1,24 +1,29 @@
 modOperXferInput = function(id, title) {
    ns = NS(id)
-   main = tagList(  
-    fluidRow( yuiColumn(3), yataRow(align="center", h2(WEB$MSG$get("TITLE.XFER"))))
-   ,br()   
-   ,fluidRow( yuiColumn(2), yuiColumn(1, h4(WEB$MSG$get("LBL.FROM")))
-                          , yuiColumn(2, guiCombo(ns("cboFrom")))
-                          , yuiColumn(1)
-                          , yuiColumn(1, yuiLabelBold(ns("lblFrom")))
-   ) 
-   ,fluidRow( yuiColumn(2), yuiColumn(1, h4(WEB$MSG$get("LBL.CURRENCY"))), yuiColumn(2, guiCombo(ns("cboCurrency"))))      
-      
-   ,fluidRow( yuiColumn(2), yuiColumn(1, h4(WEB$MSG$get("LBL.TO")))
-                          , yuiColumn(2, guiCombo(ns("cboTo")))
-                          , yuiColumn(1)
-                          , yuiColumn(1, yuiLabelBold(ns("lblTo")))
-   ) 
-   ,fluidRow( yuiColumn(2), yuiColumn(1, h4(WEB$MSG$get("LBL.AMOUNT")))      
-                          , yuiColumn(2, guiNumericInput(ns("impAmount"), NULL, value = 0)))
+   mnu = WEB$getLabelsMenuOper()
+   lbl = WEB$getLabelsPanel()
+   main = tagList(
+    fluidRow( guiColumn(3), guiRow(align="center", h2(mnu$XFER)))
+   ,br()
+   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$CURRENCY))
+                          , guiColumn(2, guiCombo(ns("cboCurrency")))
+                          , guiColumn(1)
+                          , guiColumn(1, yuiLabelBold(ns("lblFrom")))
+    )
+   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$FROM))
+                          , guiColumn(2, guiCombo(ns("cboFrom")))
+   )
+   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$TO))
+                          , guiColumn(2, guiCombo(ns("cboTo")))
+                          , guiColumn(1)
+                          , guiColumn(1, yuiLabelBold(ns("lblTo")))
+   )
 
-   ,yuiYesNo(id=ns("tpl"), "Transferir", "Cancelar", left=3, width=2)
+
+   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$AMOUNT))
+                          , guiColumn(2, guiNumericInput(ns("impAmount"), NULL, value = 0)))
+
+   ,guiYesNo(id=ns("tpl"), "Transferir", "Cancelar", left=3, width=2)
   )
   list(left=NULL, main=main, right=NULL)
 }

@@ -1,21 +1,25 @@
 # Panel Raiz
 # Mantiene la informacion de la session y de la posicion
-PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
-   ,inherit    = YATAPanel
+YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
+   ,inherit    = JGGWEBROOT
    ,portable   = TRUE
    ,cloneable  = FALSE
    ,lock_class = TRUE
 
    ,public = list(
-       position     = NULL
+       factory      = NULL
+      ,position     = NULL
       ,operations   = NULL
-      ,cameras      = NULL
+#      ,cameras      = NULL
       ,providers    = NULL
-      ,initialize   = function(id, parent, session) {
-          super$initialize(id, parent, session)
-          self$position   = self$factory$getObject(self$codes$object$position)
-          self$providers  = self$factory$getObject(self$codes$object$providers)
-          self$updateData(TRUE)
+      ,loaded       = FALSE
+      ,initialize   = function(id, parent, session, dashboard) {
+          super$initialize()
+          self$factory = WEB$factory
+          #self$factory =
+          # self$position   = self$factory$getObject(self$codes$object$position)
+          # self$providers  = self$factory$getObject(self$codes$object$providers)
+          # self$updateData(TRUE)
       }
       ,isRoot      = function() { TRUE }
       ,invalidate  = function(panel) {
@@ -33,17 +37,18 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
       }
       ,updateData  = function (init = FALSE) {
           df = self$position$getGlobalPosition()
-          ids = WEB$getCTCID(df$currency)
-          if (!is.null(ids)) {
+          ids = WEB$combo$getCurrenciesKey(id=FALSE, df$currency)
+          if (length(ids) > 0) {
               self$data$dfPosGlobal = dplyr::inner_join(data.frame(currency=names(ids), id=ids),df,by="currency")
           }
           invisible(self)
       }
       ,changeDB = function(id) {
-          oldDB = factory$parms$lastOpen()
+          oldDB = self$factory$parms$getLastPortfolio()
           if (oldDB$id == id) return()
-          factory$changeDB(id)
-          output$appTitle = updLabelText(factory$getDBName())
+          self$factory$changePortfolio(id)
+          WEB$DBID = id
+          invisible (self)
       }
       #########################################################
       ### Exported
@@ -61,24 +66,7 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
          # df$label = labels[df$currency]
          # df
       }
-      # common commarea across panels
-      ,getCommarea       = function(item=NULL, default=NULL)     {
-          if (is.null(item)) return (private$commarea)
-          val = private$commarea[[item]]
-          if (is.null(val)) val = default
-          val
-       }
-      ,setCommarea       = function(...) {
-          items = list(...)
-          if (is.list(items[[1]])) {
-              private$commarea = items[[1]]
-          } else {
-             for (idx in 1:length(items)) {
-                  private$commarea[[names(items)[idx]]] = items[[idx]]
-             }
-          }
-          invisible(self)
-      }
+
       ,getDFSession      = function() { self$data$dfSession   }
       ,getLatestPrice    = function() { lapply(self$data$lstLast, function(x) x$price) }
       ,getSessionPrice   = function() {
@@ -95,89 +83,97 @@ PNLTradeMain = R6::R6Class("PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
-dataModal <- function(failed = FALSE) {
-      modalDialog(
-        textInput("dataset", "Choose data set",
-          placeholder = 'Try "mtcars" or "abc"'
-        ),
-        span('(Try the name of a valid data object like "mtcars", ',
-             'then a name of a non-existent object like "abc")'),
-        if (failed)
-          div(tags$b("Invalid name of data object", style = "color: red;")),
+   cat("main beg\n")
 
-        footer = tagList(
-          modalButton("Cancel"),
-          actionButton("ok", "OK")
-        )
-      )
-}
-
-   WEB$setSession(session)
    if (WEB$errorLevel > 0) {
-       if (WEB$errorLevel == 99)
-           return (yataErrGeneral(0, WEB$getMsg("ERR.REST.DOWN"),  input, output, session))
-       return (yataErrGeneral(0, WEB$txtError, input, output, session))
+       msg = WEB$getMsg(as.character(WEB$errorLevel))
+       yataErrGeneral(99, msg, NULL, input, output, session)
+       return ()
    }
-   pnl = WEB$getPanel("server")
-   if (is.null(pnl)) pnl = WEB$addPanel(PNLTradeMain$new("server", NULL, session))
 
-   js$yata_req_cookies()
-   observeEvent(input$cookies, {
-       WEB$cookies = jsonlite::fromJSON(input$cookies)
-       WEB$setWindow(input$cookies)
-   })
-   observeEvent(input$resize, {
-       WEB$setWindow(input$resize)
-   })
 
-   closePanel = function() { shinyjs::hide("yata-main-err") }
-   output$app_title = renderText({
-      name = pnl$factory$getDBName()
-      if (is.null(name)) name = "Sin conexion"
-      paste("YATA", name, sep = "-")
-   })
-   observeEvent(input$mainMenu,{
+   pnl = WEB$getPanel(YATAWebRoot, "root", NULL, session)
+   if (is.null(WEB$root)) WEB$root = pnl
+
+
+   flags = reactiveValues(
+         db = NULL
+   )
+
+   observeEvent(flags$df, {
+      pnl$changeDB(input$radDB)
+      pp = pnl$factory$getDBName()
+      output$appTitle = updLabelText(pnl$factory$getDBName())
       eval(parse(text=paste0( "mod"
                              ,str_to_title(input$mainMenu)
                              ,"Server(input$mainMenu
                              ,''
                              ,pnl, parent=session)")))
-    })
-   #observeEvent(input$btnKO, { closePanel() })
-   # observeEvent(input$btnDBChanged, {
-   #    oldDB = factory$getDBID()
-   #    if (input$lstDB != oldDB) {
-   #        factory$changeDB(input$lstDB)
-   #        output$appTitle = updLabelText(factory$getDBName())
-   #    }
-   #    message(factory$getDBName())
-   #    closePanel()
-   #    eval(parse(text=paste0( "mod", YATABase$str$titleCase(input$mainMenu)
-   #                           ,"Server(input$mainMenu, '', pnl, TRUE, parent=session)")))
-   # })
+      removeModal()
+
+   }, ignoreInit = TRUE)
+
+   if (pnl$factory$hasPortfolio()) {
+       message("tiene portfolio")
+   } else {
+       showModal(frmChangeDB(pnl$factory))
+   }
+   observeEvent(input$cookies, {
+       WEB$loadCookies(input$cookies)
+   })
+   observeEvent(input$mainMenu,{
+      mod = paste0( "mod",str_to_title(input$mainMenu),"Server")
+      eval(parse(text=paste0( mod, "(input$mainMenu, '', pnl, session)")))
+   })
    observeEvent(input$connected,    {
-              showNotification("Connected")
-       browser()
-       PUT("begin")
+       showNotification("Connected")
+       #PUT("begin")
     })
    observeEvent(input$disconnected, {
-              showNotification("Disconnected")
-       PUT("end")   })
+      showNotification("Disconnected")
+       #PUT("end")
+    })
    observeEvent(input$initialized,  {
        showNotification("Initialized")
-       browser()
-       PUT("begin") })
+       #PUT("begin")
+   })
    observeEvent(input$app_title,    {
-      showModal(frmChangeDB(pnl$factory))
+       browser()
+      showModal(frmPortfolioChange(pnl$factory))
    })
    observeEvent(input$dbOK,    {
-      removeModal()
+       browser()
       pnl$changeDB(input$radDB)
+      pp = pnl$factory$getDBName()
+      output$appTitle = updLabelText(pnl$factory$getDBName())
+      eval(parse(text=paste0( "mod"
+                             ,str_to_title(input$mainMenu)
+                             ,"Server(input$mainMenu
+                             ,''
+                             ,pnl, parent=session)")))
+      removeModal()
    })
+   # observeEvent(input$btnErrorSevere, {
+   #     browser()
+   # })
+   #
+   # closePanel = function() { shinyjs::hide("yata-main-err") }
+   #
+   # onStop(function() {
+   #     #JGG Se lanza desde el navegador
+   #
+   #    # cat("Shiny Session stopped\n")
+   #    # pnl$factory$finalize()
+   #    })
+   #
+   if (!pnl$loaded) {
 
-
-   onStop(function() {
-      # cat("Shiny Session stopped\n")
-      # pnl$factory$finalize()
-      })
+       pnl$loaded = TRUE
+       pname = pnl$factory$portfolio$title
+       name = ifelse (is.null(pname), "YATA", pname)
+       output$appTitle = renderText({ name })
+       if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
+   }
+###   js$yata_req_cookies()
+   cat("main end\n")
 }

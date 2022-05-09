@@ -1,28 +1,19 @@
 unloadNamespace("YATABatch")
 unloadNamespace("YATACore")
 # Core
-library(utils)
-library(R6)
-library(tibble)
-library(rlist)
-library(stringr)
-library(data.table)
-
-suppressMessages(library(plyr,  warn.conflicts = FALSE))
-suppressMessages(library(tidyr, warn.conflicts = FALSE))
-suppressMessages(library(dplyr, warn.conflicts = FALSE))
-
-# YATA
-suppressMessages(library(YATABase,       warn.conflicts = FALSE))
-suppressMessages(library(YATACore,       warn.conflicts = FALSE))
-suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
-suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
-# library(YATABatch)
+suppressMessages(library(utils      , warn.conflicts = FALSE))
+suppressMessages(library(R6         , warn.conflicts = FALSE))
+suppressMessages(library(tibble     , warn.conflicts = FALSE))
+suppressMessages(library(stringr    , warn.conflicts = FALSE))
+suppressMessages(library(data.table , warn.conflicts = FALSE))
+suppressMessages(library(plyr       , warn.conflicts = FALSE))
+suppressMessages(library(tidyr      , warn.conflicts = FALSE))
+suppressMessages(library(dplyr      , warn.conflicts = FALSE))
 
 # Shiny
-library(shiny)
-suppressMessages(library(shinyjs             ,warn.conflicts = FALSE))
-suppressMessages(library(bslib,              warn.conflicts = FALSE))
+suppressMessages(library(shiny      ,warn.conflicts = FALSE))
+suppressMessages(library(shinyjs    ,warn.conflicts = FALSE))
+suppressMessages(library(bslib      ,warn.conflicts = FALSE))
 
 # Async
 # #suppressMessages(library(jsonlite, warn.conflicts = FALSE))
@@ -31,6 +22,13 @@ suppressMessages(library(future,   warn.conflicts = FALSE))
 
 suppressMessages(library(plotly, warn.conflicts = FALSE))
 suppressMessages(library(reactable, warn.conflicts = FALSE))
+
+# YATA
+suppressMessages(library(YATABase,       warn.conflicts = FALSE))
+suppressMessages(library(YATACore,       warn.conflicts = FALSE))
+suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
+suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
+# library(YATABatch)
 
 # options( warn = -1
 # #        ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, escape=FALSE, scrollX = F)

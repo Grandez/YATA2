@@ -42,3 +42,7 @@ YATABaseStr = R6::R6Class("YATA.BASE.STR"
    )
 )
 
+jgg_to_title = function(text) {
+    text = gsub("_", " ", text)
+    stringr::str_to_title(text)
+}

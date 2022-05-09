@@ -1,15 +1,15 @@
-modOperHistServer = function(id, full, pnlParent, parent) {
+modOperHistServer = function(id, full, parent, session) {
 ns = NS(id)
 ns2 = NS(full)
 PNLOperHist = R6::R6Class("PNL.OPER.HIST"
-   ,inherit    = YATAPanel
+   ,inherit    = WEBPanel
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,public = list(
        available  = 0
       ,balance    = 0
-      ,initialize = function(id, pnlParent, session) {
-          super$initialize(id, pnlParent, session)
+      ,initialize = function(id, parent, session) {
+          super$initialize(id, parent, session)
           private$oper      = self$factory$getObject(self$codes$object$operation)
           self$vars = list(oper = 0, currency = " ",camera   = " ", date=NULL)
       }
@@ -60,8 +60,8 @@ PNLOperHist = R6::R6Class("PNL.OPER.HIST"
     )
 )
 moduleServer(id, function(input, output, session) {
-   pnl = WEB$getPanel(id)
-   if (is.null(pnl)) pnl = WEB$addPanel(PNLOperHist$new(id, pnlParent, session))
+   pnl = WEB$getPanel(PNLOperHist, id, parent, session)
+
    flags = reactiveValues(
       refresh  = FALSE
    )

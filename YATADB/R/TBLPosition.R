@@ -7,18 +7,15 @@ TBLPosition = R6::R6Class("TBLPOSITION"
       initialize = function(name, db=NULL) {
          super$initialize(name, fields=private$fields,key=key, db=db)
       }
-     ,getGlobalPosition = function(full = FALSE) {
+     ,getGlobalPosition = function() {
          self$current = NULL
          stmt = paste( "SELECT  CURRENCY, SUM(BALANCE) AS BALANCE, SUM(AVAILABLE) AS AVAILABLE"
-                      ,",AVG(BUY_NET) AS BUY_NET, AVG(SELL_NET) AS SELL_NET"
-                      ,",SUM(BUY) AS BUY, SUM(SELL) AS SELL, AVG(VALUE) AS VALUE"
+                      ,",AVG(BUY_NET)   AS BUY_NET,   AVG(SELL_NET) AS SELL_NET"
+                      ,",MAX(BUY_HIGH)  AS BUY_HIGH,  MIN(BUY_LOW)  AS BUY_LOW"
+                      ,",MAX(SELL_HIGH) AS SELL_HIGH, MIN(SELL_LOW) AS SELL_LOW"
+                      ,",SUM(BUY)       AS BUY,       SUM(SELL)     AS SELL, AVG(VALUE) AS VALUE"
                       ,",SUM(PROFIT) AS PROFIT"
                       ,",MIN(SINCE) AS SINCE, MIN(TMS) AS TMS, MAX(LAST) AS LAST")
-         if (full) {
-             stmt = paste( stmt
-                          ,",MAX(BUY_HIGH) AS BUY_HIGH, MIN(BUY_LOW) AS BUY_LOW"
-                          ,",MAX(SELL_HIGH) AS SELL_HIGH, MIN(SELL_LOW) AS SELL_LOW")
-         }
          group = c("CURRENCY")
          sql(stmt, group=group)
       }

@@ -113,7 +113,7 @@ PNLDash = R6::R6Class("PNL.DASH"
      #    invisible(self)
      # }
      ,getGlobalPosition = function() {
-        df = self$position$getGlobalPosition()
+        df = self$position$getGlobalPosition(full = TRUE)
         if (nrow(df) > 0) {
             dfID = self$currencies$getID(df$currency)
             df = dplyr::left_join(df, dfID, by=c("currency"="symbol"))

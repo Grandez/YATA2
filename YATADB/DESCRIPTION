@@ -9,9 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: 
-    rlist
-   ,R6
+Imports: R6
    ,RMariaDB
    ,tidyr
    ,YATABase

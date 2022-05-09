@@ -146,12 +146,15 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.DEADL
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FEE"              ,"XX", "XX"     , "Comision"                                      );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FIAT"             ,"XX", "XX"     , "FIAT"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.FROM"             ,"XX", "XX"     , "De"                                            );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.HIGH"             ,"XX", "XX"     , "Mayor"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.HOUR"             ,"XX", "XX"     , "Hora"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.GAS"              ,"XX", "XX"     , "Gas"                                           );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.IMPORT"           ,"XX", "XX"     , "Importe"                                       );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.LAST"             ,"XX", "XX"     , "Ultimo"                                        );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.LIMIT"            ,"XX", "XX"     , "Limite"                                        );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.LOW"              ,"XX", "XX"     , "Menor"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.MONTH"            ,"XX", "XX"     , "Mes"                                           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.NET"              ,"XX", "XX"     , "Neto"                                          );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.NOTES"            ,"XX", "XX"     , "Notas"                                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.OPER"             ,"XX", "XX"     , "Operacion"                                     );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 20, "LBL.PRICE"            ,"XX", "XX"     , "Precio"                                        );
