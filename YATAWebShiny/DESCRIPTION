@@ -9,5 +9,5 @@ Description: Modulo para paginas abstrayendo shiny dashboard y demas
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: shiny, bslib, shinyjs, JGGTools
+Imports: shiny, bslib, shinyjs, YATABase
 Depends: shinyjs, shinyWidgets, shinydashboard

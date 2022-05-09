@@ -8,6 +8,8 @@ import(shinyWidgets)
 import(shinydashboard)
 import(ellipsis)
 
+import(YATABase)
+
 export(yataExample)
 export(WEBPanel)
 exportPattern("JGG.+")
