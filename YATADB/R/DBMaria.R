@@ -130,7 +130,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
          # inserta en un registro en la tabla
          # values: lista de valores con nombres
          # Los datos a NULL se ignoran
-         data = list.clean(values)
+         data = jgg_list_clean(values)
          cols  = paste(names(data), collapse = ",")
          marks = paste(rep("?", length(data)), collapse=",")
          sql = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")

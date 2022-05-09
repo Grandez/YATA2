@@ -74,7 +74,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
 
           sql    = paste("UPDATE ", tblName, "SET")
           sql    = paste(sql, cols, filter$sql)
-          db$execute(sql, list.merge(changes, filter$values), isolated)
+          db$execute(sql, jgg_list_merge(changes, filter$values), isolated)
           private$changed = list()
       }
       ,set      = function(...) {
@@ -112,7 +112,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
          filter = mountWhere(...)
          qry = paste("SELECT * FROM ", tblName, filter$sql)
          if (limit > 0) {
-             filter$values = list.append(filter$values, limit_=limit)
+             filter$values = jgg_list_append_list(filter$values, limit_=limit)
              qry = paste(qry, "LIMIT ?")
          }
          df = db$query(qry, params=filter$values)
@@ -132,7 +132,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,first    = function(...) {
          filter = mountWhere(...)
          qry = paste("SELECT * FROM ", tblName, filter$sql)
-         filter$values = list.append(filter$values, limit_=1)
+         filter$values = jgg_list_append_list(filter$values, limit_=1)
          qry = paste(qry, "LIMIT ?")
          db$query(qry, params=filter$values)
       }
@@ -199,7 +199,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,queryLimit   = function(sql, limit=1, ...) {
          # Query personalizada
          filter = mountWhere(...)
-         filter$values = list.append(filter$values, limit_=limit)
+         filter$values = jgg_list_append_list(filter$values, limit_=limit)
 
          qry = paste("SELECT ", sql, "FROM ", tblName, filter$sql, "LIMIT ?")
          df = db$query(qry, params=filter$values)
@@ -230,7 +230,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
             filter$values["from"] = from
             filter$values["to"]   = to
          } else {
-            filter$values = list.append(filter$values, from=from, to=to)
+            filter$values = jgg_list_append_list(filter$values, from=from, to=to)
          }
 
          sql = paste("SELECT * FROM ", tblName, filter$sql)
@@ -247,7 +247,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
          if (is.null(filter$values)) {
             filter$values[limit_] = limit
          } else {
-            filter$values = list.append(filter$values, limit_=limit)
+            filter$values = jgg_list_append_list(filter$values, limit_=limit)
          }
          sql = paste("SELECT * FROM ", tblName, filter$sql, "LIMIT ?")
          df = db$query(sql, params=filter$values)
@@ -273,8 +273,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
           self$current = data
           private$changed = list()
 
-          fields = rlist::list.clean(private$fields[names(data)])
-          values = rlist::list.clean(data[names(fields)])
+          fields = jgg_list_clean(private$fields[names(data)])
+          values = jgg_list_clean(data[names(fields)])
           names(values) = private$fields[names(values)]
           db$add(tblName, values, isolated)
       }
@@ -306,7 +306,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
           filter = mountWhere(...)
 
           sql = paste(sql, cols, filter$sql)
-          db$execute(sql, params=list.merge(lstValues, filter$values), isolated=isolated)
+          db$execute(sql, params=jgg_list_merge(lstValues, filter$values), isolated=isolated)
       }
       ,updateSelected  = function(values, isolated=FALSE) {
           sql = paste("UPDATE ", tblName, "SET")
@@ -317,7 +317,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
           filter = mountWhere(self$current[private$primaryKey])
 
           sql = paste(sql, cols, filter$sql)
-          executeUpdate(sql, params=list.append(values, filter$values), isolated=isolated)
+          executeUpdate(sql, params=jgg_list_append(values, filter$values), isolated=isolated)
       }
 
       ,refresh = function(method = NULL, ...) {
@@ -350,38 +350,29 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,loaded  = FALSE   # Datos cargados?
       ,filtered = FALSE # Los datos estan filtrados
       ,.selected = FALSE
-      # ,mountInsert = function(...) {
-      #      data = makeList(...)
-      #      values        = list.clean(data)
-      #      names(values) = fields[names(values)]
-      #      cols = asString(names(values), " , ")
-      #      marks = paste(rep("?", length(cols)), collapse=",")
-      #      stmt = paste("(", cols, ") VALUES (", marks, ")")
-      #      list(sql=stmt,values=values)
-      #  }
-       ,mountWhere = function(..., inValues=NULL) {
-           #devuelve una lista de 2: sql la parte WHERE y values los valores
-           cond  = ""
-           data = makeList(...)
-           if (is.null(data) && is.null(inValues)) return (list(sql=NULL, values=NULL))
-           values = list.clean(data)      # Quitar nulos
-           if (is.null(values) && is.null(inValues))     return (list(sql="", values=NULL))
-           if (length(values) == 0 && is.null(inValues)) return (list(sql="", values=NULL))
-           if (!is.null(values) && length(values) > 0) {
-               marks = lapply(values, function(x) " = ?") # Montar la secuencia campo = ? ...
-               cond = asString(paste(fields[names(values)], marks), " AND ")
-           }
+      ,mountWhere = function(..., inValues=NULL) {
+          #devuelve una lista de 2: sql la parte WHERE y values los valores
+          cond  = ""
+          data = makeList(...)
+          if (is.null(data) && is.null(inValues)) return (list(sql=NULL, values=NULL))
+          values = jgg_list_clean(data)
+          if (is.null(values) && is.null(inValues))     return (list(sql="", values=NULL))
+          if (length(values) == 0 && is.null(inValues)) return (list(sql="", values=NULL))
+          if (!is.null(values) && length(values) > 0) {
+              marks = lapply(values, function(x) " = ?") # Montar la secuencia campo = ? ...
+              cond = asString(paste(fields[names(values)], marks), " AND ")
+          }
 
-           if (!is.null(inValues)) {
-               marks = lapply(inValues, function(x) asString(rep("?", length(x)), ","))
-               stmt = paste(fields[names(marks)], "IN (", marks, ")")
-               stmt = asString(stmt, " AND ")
-               #values = list.append(values, unlist(inValues))
-               values = c(values, unlist(inValues))
-               if (nchar(cond) > 0) cond = paste(cond, "AND")
-               cond = paste(cond, stmt)
-           }
-           list(sql=paste("WHERE", cond),values=values)
+          if (!is.null(inValues)) {
+              marks  = lapply(inValues, function(x) asString(rep("?", length(x)), ","))
+              stmt   = paste(fields[names(marks)], "IN (", marks, ")")
+              stmt   = asString(stmt, " AND ")
+              values = c(values, unlist(inValues))
+
+              if (nchar(cond) > 0) cond = paste(cond, "AND")
+              cond = paste(cond, stmt)
+          }
+          list(sql=paste("WHERE", cond),values=values)
        }
       ,makeList = function(...) {
            data = list(...)
@@ -395,7 +386,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
            if (missing(data))      return (NULL)
            if (length(data) == 0)  return (NULL)
            if (length(data) == 1 && is.list(data[[1]])) data = data[[1]]
-           values        = list.clean(data)      # Quitar nulos
+           values        = jgg_list_clean(data)
            names(values)
        }
       ,getBySimpleKey = function(key, value) {

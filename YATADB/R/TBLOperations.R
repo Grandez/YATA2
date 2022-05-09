@@ -11,7 +11,7 @@ TBLOperations   = R6::R6Class("TBL.OPERATIONS"
             stmt = "SELECT COUNTER, MIN(TMS) AS TMS"
             filter = list(active = DBDict$flag$on)
             if (!missing(counter)) {
-                filter = list.merge(filter, counter = counter)
+                filter = jgg_list_merge_list(filter, counter = counter)
             }
             sql(stmt, where=filter, group=c("COUNTER"))
         }

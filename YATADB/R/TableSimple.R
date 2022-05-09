@@ -14,7 +14,7 @@ YATATableSimple <- R6::R6Class("YATA.TABLE.SIMPLE"
          if (all) super$table(...)
          else  {
             args = list(...)
-            args = list.append(args,active=YATACodes$flag$active)
+            args = jgg_list_append_list(args,active=YATACodes$flag$active)
             super$table(args)
          }
       }
