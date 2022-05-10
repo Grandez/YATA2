@@ -33,21 +33,8 @@ PNLOper = R6::R6Class("PNL.OPER"
      ,getCboCameras = function (currency) {
          # Si currency es FIAT es una compra
          df = self$position$getByCurrency(currency, available = TRUE)
+         if (nrow(df) == 0) return (NULL)
          self$makeCombo(self$cameras$getForCombo(cameras=df$camera))
-         # if (currency == self$factory$fiat) {
-         #
-         # } else {
-         #     df = self$position$getByCurrency(currency, available = TRUE)
-         #     return(self$makeCombo(self$cameras$getForCombo(cameras=df$camera)))
-         # }
-         # if (missing(currency)) return(self$makeCombo(self$cameras$getForCombo()))
-         # df = self$position$getCurrencyPosition(currency)
-         # df = df[df$camera != self$factory$camera,]
-         # df = df[df$available > 0,]
-         # df = self$cameras$getCameras(as.vector(df$camera))
-         # df = df[,c("camera", "desc")]
-         # colnames(df) = c("id", "name")
-         # self$makeCombo(df)
      }
 
      ,cboReasons   = function(type) { self$makeCombo(self$operations$getReasons(type)) }
