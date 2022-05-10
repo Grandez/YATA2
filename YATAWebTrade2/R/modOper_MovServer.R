@@ -200,6 +200,7 @@ moduleServer(id, function(input, output, session) {
 
       observeEvent(input$cboCurrency, {
           enable("cboCamera")
+
           currency = ifelse(pnl$vars$buy, pnl$fiat, input$cboCurrency)
           updCombo("cboCamera", choices=pnl$getCboCameras(currency))
           updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
