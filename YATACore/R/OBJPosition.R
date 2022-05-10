@@ -16,8 +16,8 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencies = function(balance = FALSE, available= FALSE) {
            df = tblPosition$table()
-           if (balance)   df = df[df$balance > 0,]
-           if (available) df = df[,available > 0,]
+           if (balance)   df = df[df$balance   > 0,]
+           if (available) df = df[df$available > 0,]
            unique(df$currency)
        }
        ,getByCurrency = function(currency, balance=FALSE, available=FALSE) {
@@ -39,7 +39,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
-           df = tblPosition$getCurrencyPosition("__FIAT__")
+           df = tblPosition$getCurrencyPosition(self$factory$fiat)
            # oper = factory$getObject(self$codes$object$operation)
            # cIn  = oper$getOperations(base="EXT")
            # cOut = oper$getOperations(counter="EXT")
@@ -50,7 +50,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
       }
        ,getCurrenciesHistory = function() {
          df = tblPosition$table()
-         df = df[!df$currency == Factory__FIAT__,]
+         df = df[!df$currency == self$factory$fiat,]
          if(nrow(df) == 0) return (df)
          df = df %>% group_by(currency) %>%
                      summarise(currency, balance=mean(balance), available=mean(available)
@@ -67,11 +67,11 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
 
            res = tblPosition$select(camera=to, currency=currency, create=TRUE)
 
-           nvalue = tblPosition$current$balance * tblPosition$current$value
+           nvalue = tblPosition$current$balance * tblPosition$current$net
            nvalue = nvalue + (amount * value)
            nvalue = nvalue / (tblPosition$current$balance + amount)
 
-           tblPosition$set(value     = nvalue)
+           tblPosition$set(net       = nvalue)
            tblPosition$set(balance   = tblPosition$current$balance   + amount)
            tblPosition$set(available = tblPosition$current$available + amount)
            tblPosition$apply()
@@ -190,17 +190,17 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
            tblPosition$select(camera=data$camera, currency=data$base, create=TRUE)
            self$current  = tblPosition$current
 
-           if (data$base == "__FIAT__") return (.updateBaseFiat(data)) # compra
+           if (data$base == self$factory$fiat) return (.updateBaseFiat(data)) # compra
 
            tblPosition$setField("available", current$available - data$ctcOut)
-           if (current$major == 2) .calculateBaseOperation()
+           if (data$major == 2) .calculateBaseOperation(data)
            tblPosition$apply()
        }
       ,.updateCounter = function(data) {
           tblPosition$select(camera=data$camera, currency=data$counter, create=TRUE)
           self$current  = tblPosition$current
 
-          if (data$counter == "__FIAT__") return (.updateCounterFiat(data))
+          if (data$counter == self$factory$fiat) return (.updateCounterFiat(data))
 
           if (current$buy_low == 0)  self$current$buy_low = data$price + 1
 
@@ -221,8 +221,8 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           wrk = (current$buy * current$buy_net) - (current$sell * current$sell_net)
           den = current$buy - current$sell
           wrk = ifelse(den == 0, 0, wrk / den)
-          self$current$value = wrk
-          tblPosition$setField("value", current$value)
+          self$current$net = wrk
+          tblPosition$setField("net", current$net)
 
           # profit se actualiza si hay compras y ventas
           if (current$buy > 0 && current$sell > 0) {
@@ -243,7 +243,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
                tblPosition$setField("sell_net",  1)
 
                tblPosition$setField("sell",  current$sell + data$ctcOut)
-               tblPosition$setField("value", 1)
+               tblPosition$setField("net", 1)
                tblPosition$setField("balance",   current$balance   - data$ctcOut)
            }
            tblPosition$apply()
@@ -259,13 +259,13 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
                tblPosition$setField("buy_net",  1)
 
                tblPosition$setField("buy",  current$buy + data$ctcIn)
-               tblPosition$setField("value", 1)
+               tblPosition$setField("net", 1)
                tblPosition$setField("balance",   current$balance   + data$ctcIn)
                tblPosition$setField("profit", current$buy + data$ctcIn - current$sell)
            }
            tblPosition$apply()
       }
-     ,.calculateBaseOperation = function() {
+     ,.calculateBaseOperation = function(data) {
            if (current$sell_low == 0)  self$current$sell_low = data$price + 1
 
            tblPosition$setField("sell_last",   data$price)
@@ -286,8 +286,8 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
            wrk = (current$buy * current$buy_net) - (current$sell * current$sell_net)
            den = current$buy - current$sell
            wrk = ifelse(den == 0, 0, wrk / den)
-           self$current$value = wrk
-           tblPosition$setField("value", current$value)
+           self$current$net = wrk
+           tblPosition$setField("net", current$net)
 
           # profit se actualiza si hay compras y ventas
           if (current$buy > 0 && current$sell > 0) {

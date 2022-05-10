@@ -28,8 +28,9 @@ modOperMovServer = function(id, full, parent, session) {
         # Inherit
           ,getCurrenciesBuy  = function()          { self$parent$getCurrenciesBuy() }
           ,getCurrenciesSell = function(currency)  { self$parent$getCurrenciesSell() }
-          ,getCboCameras     = function (currency) { self$parent$getCboCameras(currency) }
-
+          ,getCboCameras     = function (currency) {
+              if (nchar(currency) > 0) self$parent$getCboCameras(currency)
+           }
         )
        ,private = list(
            oper = NULL
@@ -79,7 +80,7 @@ moduleServer(id, function(input, output, session) {
           if (code == 21) return (pnl$codes$oper$sell)
           pnl$codes$oper$oepr
       }
-      updatecboCurrency = function() {
+      updateCboCurrency = function() {
          if (!pnl$vars$reload) return()
          if (pnl$vars$buy) {
              data = WEB$combo$currencies(id = FALSE)
@@ -194,7 +195,7 @@ moduleServer(id, function(input, output, session) {
           if (is.null(pnl$vars$buy) || !pnl$vars$buy) pnl$vars$reload = TRUE
           pnl$vars$buy = ifelse((as.integer(input$cboOper) %% 2) == 0, TRUE, FALSE)
           if (!pnl$vars$buy) pnl$vars$reload = TRUE
-          updatecboCurrency()
+          updateCboCurrency()
       }, ignoreNULL = TRUE)
 
       observeEvent(input$cboCurrency, {
@@ -265,6 +266,7 @@ moduleServer(id, function(input, output, session) {
       })
 
       observeEvent(input$btnOK, {
+
         # Amount es lo que se mueve (compro o vendo)
         # Value es el fiat
           # Ejemplo compro 1 - BTC (amount) por un valor de x
@@ -316,7 +318,7 @@ moduleServer(id, function(input, output, session) {
          pnl$vars$inEvent = FALSE
       }, ignoreInit = TRUE)
    observeEvent(input$btnErrorSevere, {
-       browser()
+       stop("observeEvent(input$btnErrorSevere en modOper_MovServer")
    })
 
       #observeEvent(input$btnKO, { resetValues() })
