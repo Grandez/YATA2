@@ -89,7 +89,7 @@ moduleServer(id, function(input, output, session) {
              if (nrow(df) == 0) {
                  data = c("No hay posiciones"="")
              } else {
-                 data = WEB$combo$currencies(id=FALSE, set=df$symbol)
+                 data = WEB$combo$currencies(id=FALSE, set=df$id)
              }
          }
          # Esto es por si se ha clickado en otro panel para comprar

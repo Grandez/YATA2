@@ -62,7 +62,7 @@ PNLOper = R6::R6Class("PNL.OPER"
           data = self$position$getCurrencies(available = TRUE)
           if (length(data) == 0) return (NULL)
           idx = which(data == self$factory$fiat)
-          if (length(idx)) data = data[-idx]
+          if (length(idx) > 0) data = data[-idx]
           if (length(data) == 0) return (NULL)
           self$currencies$getCurrencyNames(data)
      }
