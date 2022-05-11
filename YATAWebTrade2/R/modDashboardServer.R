@@ -25,8 +25,8 @@ PNLDash = R6::R6Class("PNL.DASH"
          self$data$lstHist = list()
          self$data$objects = list()
 
-         self$tables$pos  = WDGTablePosition$new(self$factory)
-         self$tables$best = WDGTableBest$new(self$factory)
+         self$tables$pos  = WDGTablePosition$new(id=ns("tbl_pos"), self$factory)
+         self$tables$best = WDGTableBest$new    (id=ns("tbl_best"),self$factory)
          private$makePlots()
       }
      ,loadData = function() {
@@ -102,7 +102,7 @@ PNLDash = R6::R6Class("PNL.DASH"
         df = self$data$dfPos
         if (!full) df = df %>% filter(balance > 0)
         if (nrow(df) == 0) return (NULL)
-browser()
+
         df = private$appendVariations(df)
       }
      # ,loadHistory = function(id, symbol) {
@@ -409,6 +409,7 @@ pnl = WEB$getPanel(PNLDash, id, NULL, session, dashboard="layout")
 ### FUNCTIONS                                                     ###
 #####################################################################
 layout_tbl = function(target, block) {
+
     tblObj = NULL
    label = paste("Esta es la cabecera", block)
 #   layout_data_lbl_1
@@ -444,7 +445,7 @@ layout_tbl = function(target, block) {
 #     if (target == "Best") {
 #         renderTablesBest()
 #     }
-# browser()
+
 }
 layout_plot = function(target, block) {
     browser()
@@ -582,7 +583,7 @@ renderTablesBest = function() {
    })
 }
 renderTablesPos = function() {
-browser()
+
    df = pnl$getPosition(TRUE)
    types = list( imp = c("balance", "value","profit")
                 ,prc = c("day", "week", "month")
@@ -1005,6 +1006,7 @@ observeEvent(input$layout, {
     # browser()
     # renderTablesBest()
     # return()
+
   evt = input$layout
   if (evt$type == "init") {
       items = unlist(evt$value)
@@ -1017,6 +1019,12 @@ observeEvent(input$layout, {
       toks = strsplit(block, "_")[[1]]
       eval(parse(text=paste0("layout_", toks[1], "(toks[2], block)")))
   }
+})
+observeEvent(input$tbl_best, {
+    detail = jsonlite::fromJSON(input$tbl_best$detail)
+})
+observeEvent(input$tbl_pos,{
+
 })
 
 # observeEvent(input$radPosition, ignoreInit = TRUE, { flags$position = isolate(!flags$position) })

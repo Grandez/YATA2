@@ -18,25 +18,6 @@ layoutDashboard = JGGLayout$new("layout"
 
 modDashInput = function(id, title) {
    ns = NS(id)
-# tags$div( id=ns("blk_item_"),style="width: 100%",
-
-
-
-
-   # items = list(
-   #      Pos     = list(label = WORD$POS,   plot=TRUE, table=TRUE)
-   #     ,Session = list(label = WORD$SESS,  plot=TRUE, table=TRUE)
-   #     ,Top     = list(label = WORD$TOP,   plot=TRUE, table=TRUE)
-   #     ,Trend   = list(label = WORD$TREND, plot=TRUE, table=TRUE)
-   #     ,Fav     = list(label = WORD$FAV,   plot=TRUE, table=TRUE)
-   #     ,Full = list(label = paste(WORD$POS, WORD$FULL),  plot=TRUE, table=TRUE)
-   # )
-
-   # pairs        = c("Pos", "Session", "Top", "Best", "Trend", "Fav", "Full")
-   # names(pairs) = c( WORD$POS,   WORD$SESS, WORD$TOP, WORD$BEST
-   #                  ,WORD$TREND, WORD$FAV,  paste(WORD$POS, WORD$FULL))
-   # vals = c("plotBest", "plotTrend", "blkBest", "blkPos")
-   # wdgLayout = WDGLayout$new(ns, layout=c(2,2), pairs=pairs, values=vals)
 
    mon = fluidRow(column(4,"Monitors"), column(8, style="text-align: right;", guiCheck(ns("chkMonitors"))))
 
