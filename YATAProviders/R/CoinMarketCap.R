@@ -67,6 +67,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                     list( id=as.integer(x$id)
                          ,name=x$name
                          ,symbol=x$symbol
+                         ,mktcap=x$symbol
                          ,slug=x$slug
                          ,rank=as.integer(x$cmcRank)
                          ,since = since
