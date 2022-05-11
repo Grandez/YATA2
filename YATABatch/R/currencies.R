@@ -5,7 +5,7 @@
 #'
 
 .update_currencies = function(count, type, logger, factory) {
-    count   = 0
+    added   = 0
     block   = 100
     beg     = count - block
     process = TRUE
@@ -27,7 +27,7 @@
                   break
                } else {
                   tbl$add(as.list(df[row,]))
-                  count = count + 1
+                  added = added + 1
                }
          }
          tbl$db$commit()
@@ -35,7 +35,7 @@
          if (beg < 1) process = FALSE
          if (process) df   = prov$getCurrencies(beg, block, type)
     }
-    count
+    added
 }
 updateRank = function(logOutput, logLevel) {
     # JGG TO DO
