@@ -1,6 +1,6 @@
 modPosServer <- function(id, full, parent, session) {
 ns = NS(id)
-PNLPos = R6::R6Class("PNL.POS"
+PNLPos = R6::R6Class("PNL.WEB.POS"
   ,inherit    = WEBPanel
   ,cloneable  = FALSE
   ,lock_class = TRUE
@@ -25,7 +25,7 @@ PNLPos = R6::R6Class("PNL.POS"
          private$position   = self$factory$getObject(self$codes$object$position)
          private$currencies = self$factory$getObject(self$codes$object$currencies)
          private$session    = self$factory$getObject(self$codes$object$session)
-         self$wdgPos        = WDGTablePosition$new(self$factory)
+         self$wdgPos        = WDGTablePosition$new(id="position", self$factory)
    }
 
   )

@@ -409,7 +409,6 @@ pnl = WEB$getPanel(PNLDash, id, NULL, session, dashboard="layout")
 ### FUNCTIONS                                                     ###
 #####################################################################
 layout_tbl = function(target, block) {
-
     tblObj = NULL
    label = paste("Esta es la cabecera", block)
 #   layout_data_lbl_1
@@ -422,16 +421,12 @@ layout_tbl = function(target, block) {
     }
     if (target %in% c("Best", "Top")) {
         df = pnl$selectDataBest(target)
-#        browser()
         obj = pnl$tables$best
 #        data = pnl$prepareTableBest(target, df) # lbl)
         # tblObj = "updTableMultiple(data)"
         tblObj = "obj$render(df)"
     }
 
-
-
-       # browser()
        # data = pnl$prepareTableBest("Best") # lbl)
 #      if (!is.null(data$df))
    if (!is.null(tblObj))
@@ -441,7 +436,6 @@ layout_tbl = function(target, block) {
 #
 #    output$lblBest  = updLabelText(paste(WORDS$BEST, lbl))
 #
-#     browser()
 #     if (target == "Best") {
 #         renderTablesBest()
 #     }
@@ -646,7 +640,6 @@ renderPlotsHistory = function() {
 #         cat("renderplotsession end NULL\n")
 #         return()
 #     }
-#     browser()
 #     plot = pnl$plots[["plotSession"]]
 #     plot$setType("Marker")
 #     plot$setData(pnl$data$dfSession[,c("last", "price")], "session", TRUE)
