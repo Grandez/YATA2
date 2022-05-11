@@ -41,15 +41,16 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
              }
         }
         setwd(oldwd)
-     }
-    ,getCurrencies    = function(from = 1, max = 0) {
+    }
+      # cryptoType = all / coins / tokens
+    ,getCurrencies    = function(from = 1, max = 0, type="all") {
         #JGG Revisar
         url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
         count   =   0
         until   = 501
         dfc     = NULL
         process = TRUE
-        parms = list( start=from, limit=500, cryptoType="all", tagType="all")
+        parms = list( start=from, limit=500, cryptoType=type, tagType="all")
 
         while (process) {
              if (count > 0) Sys.sleep(1) # Para no saturar
@@ -69,7 +70,6 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                          ,slug=x$slug
                          ,rank=as.integer(x$cmcRank)
                          ,since = since
-                         ,icon = paste0(x$id, ".png")
                          ,active = as.integer(x$isActive)
                          ,token = ifelse(is.null(x$platform), 0, 1)
                      )
@@ -86,7 +86,13 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
              if (count >= until || length(data) < 500) process = FALSE
         }
         dfc
-     }
+    }
+    ,getCurrenciesNumber = function(type=c("all", "coins", "tokens")) {
+        url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
+        parms = list( start=1, limit=2, cryptoType=match.arg(type))
+        data  = http$json(url, parms=parms, headers=headers)
+        as.integer(data$totalCount)
+    }
     ,getTickers       = function(max = 0, from = 1) {
         toNum    = function(item) { ifelse(is.null(item), 0, item) }
         makeList = function(x)    {

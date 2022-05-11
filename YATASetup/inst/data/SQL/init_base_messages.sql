@@ -278,6 +278,12 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 70, "MODEL.MOD
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 70, "MODEL.DATA"         ,"XX", "XX"     , "Datos"                                         );
 
 
+-- 9x Log mensajes
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 90, "LOG.CTC_CURRENCIES"        ,"XX", "XX"     , "Retrieving currencies from CoinMarketCap");
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 90, "LOG.CTC_TOKENS"            ,"XX", "XX"     , "Retrieving tokens from CoinMarketCap");
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 90, "LOG.CTC_UPDATING"          ,"XX", "XX"     , "Updating %s from %d"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 90, "LOG.CTC_ADDED"             ,"XX", "XX"     , "New currencies:  %d"                 );
+
 -- Errores de inicio (Van por el codigo de error)
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "99"        ,"XX", "XX"     , "Error no controlado"                     );   
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "98"        ,"XX", "XX"     , "Error creando entorno"                   );   

@@ -51,7 +51,10 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           if (nrow(data) == 0) return ("Not Found")
           data[1,2]
       }
-#      ,title    = function(code)  { getMessage(paste0("TITLE.", code)) }
+      ,log = function(code) {
+          if (is.null(private$log_data)) private$log_data = getBlock(90)
+          ifelse(is.null(private$log_data[[code]]), code, private$log_data[[code]])
+      }
     )
     ,private = list(
         tblMsg = NULL
@@ -60,6 +63,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
        ,region = "XX"
        ,cache  = list()
        ,cacheBlock = list()
+       ,log_data = NULL
        ,size   = 20      # Long. de la cache
        ,getMessage = function(code) {
        }

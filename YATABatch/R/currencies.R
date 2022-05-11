@@ -3,48 +3,66 @@
 #' @param console Se ejecuta en una consola (interactivo)
 #' @param log     Nivel de detalle de los mensajes
 #'
-updateCurrencies = function(console=1, log=1) {
-   browser()
-   begin = as.numeric(Sys.time())
-   logger = YATABase::YATALogger$new("Currencies")
-   logger$process(1, "Retrieving currencies from CoinMarketCap")
 
-   beg   = 1
+.update_currencies = function(count, type, logger, factory) {
+    count   = 0
+    block   = 100
+    beg     = count - block
+    process = TRUE
 
-   codes = YATACore::YATACODES$new()
-   fact  = YATACore::YATAFactory$new()
-   prov  = fact$getDefaultProvider()
-   tbl   = fact$getTable(codes$tables$currencies)
+    msg   = factory$msg
+    prov  = factory$getDefaultProvider()
+    tbl   = factory$getTable(factory$codes$tables$currencies)
 
-   logger$info(2,"Retrieving currencies from %d", beg)
-   df = prov$getCurrencies(beg, 500)
+    df = prov$getCurrencies(beg, block, type)
 
-   rc = tryCatch({
-      process = TRUE
-      while (process) {
-         if (nrow(df) < 500) process = FALSE
-         logger$info(2,"Updating currencies: %d", beg)
-         for (row in 1:nrow(df)) {
-              if (row %% 100 == 1) tbl$db$begin()
+    while (process) {
+         if (nrow(df) < block) process = FALSE
+         logger$info(3, msg$log("CTC_UPDATING"), type, beg)
+         tbl$db$begin()
+         for (row in nrow(df):1) {
               tbl$select(id=df[row,"id"])
               if (!is.null(tbl$current)) {
-                  tbl$set(slug=df[row,"slug"], rank=df[row,"rank"], active=df[row,"active"])
-                  tbl$apply()
+                  process = FALSE
+                  break
                } else {
                   tbl$add(as.list(df[row,]))
+                  count = count + 1
                }
-               if (row %% 100 == 0) tbl$db$commit()
          }
          tbl$db$commit()
-         beg = beg + nrow(df)
+         beg = beg - block
+         if (beg < 1) process = FALSE
+         if (process) df   = prov$getCurrencies(beg, block, type)
+    }
+    count
+}
+updateRank = function(logOutput, logLevel) {
+    # JGG TO DO
+    invisible(0)
+}
+updateCurrencies = function(logOutput, logLevel) {
+   begin = as.numeric(Sys.time())
 
-         if (is.null(df) || nrow(df) == 0) process = FALSE
-         if (process) {
-             logger$info(2,"Retrieving currencies from %d", beg)
-             df   = prov$getCurrencies(beg, 500)
-         }
-      }
-         0
+   rc = tryCatch({
+      fact  = YATACore::YATAFACTORY$new()
+      prov  = fact$getDefaultProvider()
+
+      codes = fact$codes
+      msg   = fact$msg
+
+      total_items = prov$getCurrenciesNumber("all")
+      num_coins  = prov$getCurrenciesNumber("coins")
+      num_tokens = prov$getCurrenciesNumber("tokens")
+
+      logger = YATABase::YATALogger$new("Currencies", logOutput, logLevel)
+      logger$process(1, msg$log("CTC_CURRENCIES"))
+      count = .update_currencies(num_coins, "coins", logger, fact)
+      logger$process(2, msg$log("CTC_ADDED"), count)
+      logger$process(1, msg$log("CTC_TOKENS"))
+      count = .update_currencies(num_tokens, "tokens", logger, fact)
+      logger$process(2, msg$log("CTC_ADDED"), count)
+      0
       }, YATAERROR = function (cond) {
               browser()
               16
@@ -52,8 +70,52 @@ updateCurrencies = function(console=1, log=1) {
               browser()
               16
       })
-
       logger$executed(rc, begin, "Executed")
+      invisible(rc)
+   #
+   # beg   = 1
+   #
+   #
+   # browser()
+   #     browser()
+   # logger$info(2,"Retrieving currencies from %d", beg)
+   # df = prov$getCurrencies(beg, 500)
+   #
+   # rc = tryCatch({
+   #    process = TRUE
+   #    while (process) {
+   #       if (nrow(df) < 500) process = FALSE
+   #       logger$info(2,"Updating currencies: %d", beg)
+   #       for (row in 1:nrow(df)) {
+   #            if (row %% 100 == 1) tbl$db$begin()
+   #            tbl$select(id=df[row,"id"])
+   #            if (!is.null(tbl$current)) {
+   #                tbl$set(slug=df[row,"slug"], rank=df[row,"rank"], active=df[row,"active"])
+   #                tbl$apply()
+   #             } else {
+   #                tbl$add(as.list(df[row,]))
+   #             }
+   #             if (row %% 100 == 0) tbl$db$commit()
+   #       }
+   #       tbl$db$commit()
+   #       beg = beg + nrow(df)
+   #
+   #       if (is.null(df) || nrow(df) == 0) process = FALSE
+   #       if (process) {
+   #           logger$info(2,"Retrieving currencies from %d", beg)
+   #           df   = prov$getCurrencies(beg, 500)
+   #       }
+   #    }
+   #       0
+   #    }, YATAERROR = function (cond) {
+   #            browser()
+   #            16
+   #    }, error = function (cond) {
+   #            browser()
+   #            16
+   #    })
+
+
 }
 #' Obtiene la cotizacion de las monedas en el momento actual
 #'

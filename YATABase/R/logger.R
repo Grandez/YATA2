@@ -12,31 +12,55 @@
 #   - 2 - Consola
 #
 YATALogger = R6::R6Class("YATA.LOGGER"
-    ,cloneable  = FALSE
-    ,lock_class = FALSE
-    ,portable   = FALSE
-    ,active = list(
+   ,cloneable  = FALSE
+   ,lock_class = FALSE
+   ,portable   = FALSE
+   ,active = list(
       logLevel = function(value) {
-          if (!missing(value)) private$.logLevel = value
-          .logLevel
+          if (!missing(value)) private$.level = value
+          .level
       }
-    )
-    ,public = list(
-        valid   = TRUE
-       ,lastErr = NULL
-       ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20, ERROR=99)
-       ,print      = function() { message("Generic Logger class") }
-       ,initialize = function(module="general") {
-           loglevel    = Sys.getenv("YATA_LOG_LEVEL")
-           logoutput   = Sys.getenv("YATA_LOG_OUTPUT")
+   )
+  ,public = list(
+      valid   = TRUE
+     ,lastErr = NULL
+     ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20, ERROR=99)
+     ,print      = function() { message("Generic Logger class") }
+     ,initialize = function(module="general", output, level) {
+         private$modname   = module
+         loglevel    = Sys.getenv("YATA_LOG_LEVEL")
+         logoutput   = Sys.getenv("YATA_LOG_OUTPUT")
 
-           private$modname   = module
-           private$.logLevel = ifelse(nchar(loglevel) == 0, 9, as.integer(loglevel))
-           private$.output   = ifelse(nchar(loglevel) == 0, 9, as.integer(loglevel))
-           .setLogFile()
+         if (missing(output)) {
+             private$.output   = ifelse(nchar(loglevel) == 0, 0, as.integer(loglevel))
+         } else {
+            private$.output = output
+         }
+
+         if (missing(level)) {
+             logLevel = ifelse(nchar(loglevel) == 0, 0, as.integer(loglevel))
+         } else {
+             logLevel = level
+         }
+         if (logLevel < 10) {
+            private$levelCon  = logLevel
+            private$levelFile = logLevel
+         } else {
+            private$levelFile = logLevel %%  10
+            private$levelCon  = logLevel %/% 10
+         }
+         private$.level = min(private$levelFile, private$levelCon)
+         .setLogFile()
        }
        ,setLogLevel = function(level) {
-          private$.logLevel = level
+          if (level < 10) {
+             ll = level * 10
+             ll = ll + level
+             level = ll
+          }
+          private$levelFile = logLevel %%  10
+          private$levelCon  = logLevel %/% 10
+          private$.level = min(private$levelFile, private$levelCon)
           invisible(self)
        }
        ,setLogOutput = function(output) {
@@ -64,22 +88,23 @@ YATALogger = R6::R6Class("YATA.LOGGER"
           .println(self$type$BATCH, 0, .mountMessage(fmt,...))
        }
        ,process   = function(level, fmt, ...) {
-          if (level > .logLevel) return (invisible(self))
+          if (level > .level) return (invisible(self))
           msg = .mountMessage(fmt,...)
           .println(2, level, msg)
           invisible(self)
        }
        ,info      = function(level, fmt, ...) {
-          if (level > .logLevel) return (invisible(self))
+          if (level > .level) return (invisible(self))
           msg = .mountMessage(fmt,...)
           .println(3, level, msg)
           invisible(self)
        }
        ,executed  = function(rc, begin, fmt, ...) {
           diff = as.numeric(Sys.time()) - begin
-          pattern = paste0("%d;%f;", fmt)
+          diff = round(diff, 0)
+          pattern = paste0("%d;%d;", fmt)
           .println(self$type$PROCESS, 0, .mountMessage(pattern, rc, diff, ...))
-           if (.logLevel > 0) {
+           if (.level > 0) {
                .toConsole(self$type$SUMMARY, 1, paste("Elapsed time:", diff))
                .toConsole(self$type$SUMMARY, 1, paste("Return code :", rc))
           }
@@ -90,7 +115,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
          invisible(self)
        }
        ,beg       = function(name, level = 0) {
-           if (level > .logLevel) return (invisible(self))
+           if (level > .level) return (invisible(self))
            idx = length(logTimers)
            if (idx == 0) {
                private$logTimers = as.integer(Sys.time())
@@ -139,8 +164,10 @@ YATALogger = R6::R6Class("YATA.LOGGER"
         FILE = 1
        ,CON  = 2
        ,logFile  = NULL
-       ,.logLevel = 0
+       ,levelFile = 0
+       ,levelCon  = 0
        ,.output   = 0
+       ,.level    = 0
        ,cache     = ""
        ,modname  = "YATA"
        ,logTimers = NULL
@@ -164,6 +191,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            invisible(self)
        }
        ,.toFile = function(type, level, txt, ...) {
+          if (level > levelFile) return()
            str = Sys.time()
            str = sub(" ", "-", str)
            line = paste(str,modname,type,level,txt, sep=";")
@@ -172,6 +200,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            cat(paste0(line, "\n"), file=logFile, append=TRUE)
        }
        ,.toConsole = function(type, level, txt, ansi=.void) {
+          if (level > levelCon) return()
            str  = format(Sys.time(), "%H:%M:%S")
 #           prfx = NULL
 #           if (type == self$type$LOG) prfx = sprintf("LOG%02d -", level)
