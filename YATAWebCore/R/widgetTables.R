@@ -392,7 +392,6 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
           ,style               = NULL      # Inline styles to apply to the table. A named list or character string
           ,theme               = getOption('reactable.theme') # Theme for the table, specified by reactableTheme() or a function
           ,width               = 'auto'    # Width of the table in pixels
-          ,wrap                = TRUE      # Enable text wrapping?
        )
       ,def_theme_attr = list(
             color                  = NULL    # Default text color.

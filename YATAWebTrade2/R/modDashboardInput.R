@@ -23,7 +23,6 @@ modDashInput = function(id, title) {
 
    left = tagList(
          fluidRow(column(4, "Updated:"),column(8, guiLabelDate(ns("dtLast"))))
-        #,wdgLayout$getConfig()
         ,layoutDashboard$config(ns)
         ,fluidRow(column(4, "Selective"),column(8, guiNumericInput(ns("numSelective"))))
         ,fluidRow(column(4, "Interval"), column(8, guiNumericInput(ns("numInterval"))))

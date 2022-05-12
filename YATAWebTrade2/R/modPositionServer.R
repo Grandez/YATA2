@@ -12,8 +12,8 @@ PNLPos = R6::R6Class("PNL.WEB.POS"
          private$createObjects()
      }
      ,loadData = function() {
-         self$data$dfPos  = private$position$getGlobalPosition()
-         df = self$data$dfPos
+         df = private$position$getGlobalPosition()
+         self$data$dfPos  = df[df$balance > 0,]
          self$data$dfLast = private$session$getLatest()
      }
    )

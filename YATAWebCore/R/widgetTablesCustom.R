@@ -32,6 +32,8 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
                           ,colGroup(name = "Fechas",   columns = headDates))
             private$table_attr$columnGroups = groups
         }
+        #JGG No se porque, pero se pierde col_Defs
+        if (is.null(private$table_attr$columns)) private$table_attr$columns = private$col_defs
         setTableAttributes(reactable=table_attr)
         super_render(df)
     }
@@ -62,7 +64,7 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
           ,value     = list(name="value",      type="value")
           ,profit    = list(name="profit",     type="price")
           ,since     = list(name="since",      type="date" )
-          ,tms       = list(name="tms",        type="tms"  )
+          ,tms       = list(name="tms",        type="date"  )
           ,last      = list(name="last",       type="date" )
           ,day       = list(name="day",        type="prc" )
           ,week      = list(name="week",       type="prc" )

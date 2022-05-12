@@ -12,7 +12,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
 #         - LO PARTIMOS EN TROZOS (EVITAR EL LIMITE DE 180)
 #         - EJECUTAMOS DE NUEVO LA DETECCION DEL RANGO EXISTENTE (EVITAR PROBLEMA DE BUFFER)
 #         - SI HAY FALLO EN EL PROCESO PASAMOS AL SIGUIENTE (EVITAR SALTOS)
-
+browser()
     process = "history"
     logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
     pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")
@@ -50,7 +50,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
     if (file.exists(pidfile)) return (invisible(batch$rc$RUNNING))
     cat(paste0(Sys.getpid(),"\n"), file=pidfile)
 
-
+browser()
     byChunks = FALSE
     for (row in from:to) {
        if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
@@ -91,7 +91,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
         })
         if (rc2 > rc) rc = rc2
     }
-
+    browser()
     batch$logger$executed(0, begin, "Retrieving history")
 
     if (file.exists(pidfile)) file.remove(pidfile)

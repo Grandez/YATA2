@@ -1,0 +1,17 @@
+import(dplyr)
+import(stringr)
+import(jsonlite)
+import(httr)
+
+import(YATABase)
+import(YATACore)
+
+# exportPattern("^[[:alpha:]]+")
+exportPattern("update.*")
+exportPattern("init.*")
+exportPattern("start.*")
+#exportPattern("load.*")
+#exportPattern("unload.*")
+#export(recreatePosi#tion)
+#export(checkMissingDays)
+

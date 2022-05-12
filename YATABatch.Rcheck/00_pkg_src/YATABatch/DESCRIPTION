@@ -8,6 +8,7 @@ Description: Procesos Batch
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
 Encoding: UTF-8
-LazyData: true
 Depends: YATABase, YATACore
-imports: dplyr, stringr, jsonlite, YATABase, YATACore
+import: dplyr, stringr, jsonlite, YATABase, YATACore
+NeedsCompilation: no
+Packaged: 2022-05-12 13:19:56 UTC; Javier

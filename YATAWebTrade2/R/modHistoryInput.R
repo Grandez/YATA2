@@ -23,21 +23,21 @@ modHistInput = function(id, title) {
 
     )
    main = tagList(
-      tabsetPanel( id=ns("tabHist")
-                  ,tabPanel("Summary",   value=ns("summ"),  YATAWebShiny::JGGModule(ns("summ")))
-                      # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
-                      # ,tabPanel("",   value=ns("dummy"),     "")
+      shiny::tabsetPanel( id=ns("tabHist")
+                  ,shiny::tabPanel("Summary",   value=ns("summ"),  YATAWebShiny::JGGModule(ns("summ")))
+                  ,shiny::tabPanel("",   value=ns("detail"),       JGGSubModule(ns("detail")))
+                  ,shiny::tabPanel("",   value=ns("dummy"),     "")
       )
     )
 
-    pnl1 = tabsetPanel( id=ns("tabHist")
-                      ,tabPanel("Summary",   value=ns("summ"),  YATAModule(ns("summ")))
-                      # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
-                      # ,tabPanel("",   value=ns("dummy"),     "")
-          )
-    pnl2 = YATATabPanel(ns("tabDetail"))
+    # pnl1 = tabsetPanel( id=ns("tabHist")
+    #                   ,tabPanel("Summary",   value=ns("summ"),  YATAModule(ns("summ")))
+    #                   # ,tabPanel("",   value=ns("detail"),       YATASubModule(ns("detail")))
+    #                   # ,tabPanel("",   value=ns("dummy"),     "")
+    #       )
+    # pnl2 = tabPanel(ns("tabDetail"))
 # pnl$children[[1]] = tagAppendChild(pnl$children[[1]], pnl2)
 
-    main = tagList(YATATabsetPanel(pnl1, pnl2))
+    #main = tagList(YATATabsetPanel(pnl1, pnl2))
     list(left=NULL, main=main, right=NULL)
 }

@@ -9,7 +9,7 @@ modAdminExchInput = function(id, title) {
              ,actionButton(ns("btn_add"), "Pasar")
              )
         ,column(1)
-        ,column(4, reactableOutput(ns("tbl_cameras")))
+        ,column(6, reactableOutput(ns("tbl_cameras")))
     ))
 
   )
