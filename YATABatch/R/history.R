@@ -57,7 +57,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
        rc2 = tryCatch({
            batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
            repeat {
-               to = Sys.Date()
+               to = Sys.time()
                byChunk = FALSE
                if (as.integer(to - df[row,"max"], unit="days") > 121) {
                    to = as.Date(df[row,"max"]) + 121

@@ -65,7 +65,7 @@ OBJProviders = R6::R6Class("OBJ.PROVIDER"
            mktcap$getTickers(max,from)
        }
        ,getHistory  = function(id, from, to) {
-           if (missing(to)) to = Sys.Date()
+           if (missing(to)) to = Sys.time()
            provider$getHistorical(id,from, to)
         }
 

@@ -190,12 +190,18 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         if (is.null(idCurrency)) return(NULL)
         url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/historical"
 
-        parms = list(
-            id         = idCurrency
-           ,timeStart = as.numeric(as.POSIXct(from))
-           ,timeEnd   = as.numeric(as.POSIXct(to))
-           ,convertId  = 2781 #JGG 2781 = USD 2790-EUR
-        )
+        # historical matches only 00:00:00
+        from = as.POSIXlt(from, "GMT")
+        hour(from) = 0
+        minute(from) = 0
+        second(from) = 0
+        from = as.numeric(from)
+        to = as.POSIXlt(to, "GMT")
+        hour(to) = 0
+        minute(to) = 0
+        second(to) = 0
+        to = as.numeric(to)
+        parms = list(id = idCurrency, timeStart = from, ,timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
 
         data  = http$json(url, parms=parms, headers=headers)
         data  = data$quotes
