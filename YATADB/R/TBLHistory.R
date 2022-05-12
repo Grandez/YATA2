@@ -12,7 +12,6 @@ TBLHistory = R6::R6Class("TBL.HISTORY"
             sql = paste("SELECT ", fields$id, ",", fields$symbol)
             sql = paste(sql, ",MIN(", fields$timestamp, ") AS min, MAX(", fields$timestamp, ") AS max ")
             sql = paste(sql, "FROM ", tblName)
-            sql = paste(sql, "GROUP BY", fields$id, ",", fields$symbol)
             if (!missing(idList)) {
                 sql = paste(sql, "WHERE ", fields$id, "IN (")
                 values = rep(",?", length(idList))
@@ -20,7 +19,7 @@ TBLHistory = R6::R6Class("TBL.HISTORY"
                 sql = paste(sql, values, ")")
                 params = idList
             }
-
+            sql = paste(sql, "GROUP BY", fields$id)
             df = queryRaw(sql, params)
             colnames(df) = c("id", "symbol", "min", "max")
             df
