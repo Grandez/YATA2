@@ -246,7 +246,8 @@ WDGTableOper = R6::R6Class("YATA.WEB.TABLE.POS"
           ,striped             = TRUE
        )
       ,col_defs = list(
-           balance   = list(name="balance",   type="price")
+           id        = list(name="id",        show=FALSE)
+          ,balance   = list(name="balance",   type="price")
           ,available = list(name="available", type="price")
           ,profit    = list(name="profit",    type="price")
           ,buy_high  = list(name="buy_high",  type="price")

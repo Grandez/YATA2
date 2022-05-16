@@ -68,24 +68,19 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
                    data$id = df[row, "id"]
                    data$symbol = df[row, "symbol"]
                    .add2database(data, hist)
-                   cat(" - OK\n")
                     if ((row %% info$each) == 0) Sys.sleep(info$sleep) # Para cada 2
-               }
-               else {
-                   cat(" - No data\n")
                }
                if (!byChunk) break
                rng  = hist$getRanges(df[row,"id"])
                if (nrow(rng) == 0 || is.na(rng[1,"max"])) {
-                   df[row,"max"] = "2019-12-31"
+                   df[row,"max"] = to
                } else {
                    df[row,"max"] = rng[1,"max"]
                }
            }
            batch$rc$OK
          }, error = function(cond) {
-             cat(" - KO\n")
-           cat(cond$message, "\n")
+            cat(cond$message, "\n")
            # Nada. Ignoramos errores de conexion, duplicates, etc
            batch$rc$ERRORS
         })

@@ -13,7 +13,6 @@ modOperMovServer = function(id, full, parent, session) {
                self$session    = self$factory$getObject(self$codes$object$session)
                private$oper    = self$factory$getObject(self$codes$object$operation)
                private$pos     = self$factory$getObject(self$codes$object$position)
-               # self$fiat       = pnlParent$factory$fiat
                private$initVars()
            }
            ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
@@ -113,15 +112,20 @@ moduleServer(id, function(input, output, session) {
          updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
          processCommarea(1)
       }
-      resetValues = function() {
+      resetValues = function(data) {
           updNumericInput("impAmount", value=0)
           updNumericInput("impPrice" , value=0)
           updNumericInput("impValue" , value=0)
           updNumericInput("impFee"   , value=0)
           updNumericInput("impGas"   , value=0)
           updTextArea("comment", "")
-          # Si es una venta puede ser que no queden monedas
-          if (!pnl$vars$buy) updateCboCurrency()
+          # When Sell check currency is still available
+          #      Buy  update available
+          if (pnl$vars$buy) {
+              output$lblAvailable = updLabelNumber(pnl$vars$available - data$value)
+          } else {
+              updateCboCurrency()
+          }
 #          yataMsgReset()#
       }
       updateSummary = function() {
@@ -207,16 +211,14 @@ moduleServer(id, function(input, output, session) {
       }, ignoreInit = TRUE)
       observeEvent(input$cboCamera, {
           dfPos = pnl$getPosition(input$cboCamera)
-          pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"balance"]
+          pnl$vars$fiat = dfPos[dfPos$currency == pnl$fiat,"available"]
           pnl$vars$ctc  = dfPos[dfPos$currency == input$cboCurrency,"available"]
 #          updNumericInput("impAmount", pnl$vars$ctc)
           if (!pnl$vars$buy) {
               updNumericInput("impAmount", pnl$vars$ctc)
               updNumericInput("impValue",  round(pnl$vars$ctc * input$impPrice, 0))
           }
-          currency = ifelse(pnl$vars$buy, pnl$factory$fiat, input$cboCurrency)
-          pnl$vars$available = dfPos[dfPos$currency == currency,"available"]
-
+          pnl$vars$available = ifelse(pnl$vars$buy, pnl$vars$fiat, pnl$vars$ctc)
           output$lblAvailable = updLabelNumber(pnl$vars$available)
       },ignoreInit = TRUE)
       observeEvent(input$cboBase, {
@@ -310,7 +312,7 @@ moduleServer(id, function(input, output, session) {
          data = updateInfo(data)
          id = pnl$operation(data)
          if (id > 0) {
-             resetValues()
+             resetValues(data)
              #JGG Pendiente
              # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
              # yataMsgSuccess(ns2("operMsg"), sprintf(pnl$msg$get(msgKey), id)

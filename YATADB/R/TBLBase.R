@@ -163,7 +163,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,from     = function( ..., equal=FALSE) {
           filter= makeWhereGL(gt=TRUE,equal=equal,...)
           qry = paste("SELECT * FROM ", tblName, filter$sql)
-          db$query(qry, params=filter$values)
+          df = db$query(qry, params=filter$values)
+          setColNames(df)
       }
       ###############################################
       # Operaciones sobre la tabla
@@ -456,11 +457,11 @@ YATATable <- R6::R6Class("YATA.TABLE"
           if (equal) match = paste0(match, "=")
           prfx = paste("WHERE", fields[names(key)], match, "?")
           if (nchar(filter$sql) > 0) {
-              filter$sql = sub("WHERE", paste(prfx, "AND"), fixed=TRUE)
+              filter$sql = paste(filter$sql, sub("WHERE", "AND", prfx, fixed=TRUE))
           } else {
               filter$sql = prfx
           }
-          filter$values = append(key, filter$values)
+          filter$values = append(filter$values, key)
           filter
       }
    )

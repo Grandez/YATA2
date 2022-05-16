@@ -44,6 +44,7 @@ td {
 .form-control {
     padding: 0;
     line-height: 1;
+    height: 1.6em;
 }
 // /////////////////////////////////////////////
 // Admin LTE
@@ -54,4 +55,16 @@ td {
 }
 .box-body {
     padding: 3px 6px 3px 6px;
+}
+
+// /////////////////////////////////////////////
+// Bootstrap bswidgets
+// /////////////////////////////////////////////
+
+.bootstrap-switch {
+    padding: 0;
+    line-height: 1em;
+    height: 1.6em;
+    font-weight: normal;
+    box-shadow: none;
 }

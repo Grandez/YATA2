@@ -17,7 +17,7 @@ moduleServer(id, function(input, output, session) {
    pnl = WEB$root$getPanel(PNLAdmin, id, parent, session)
 
    observeEvent(input$mnuAdmin, {
-       act = yataActiveNS(input$mnuAdmin)
+       act = jgg_get_active_ns(input$mnuAdmin)
        module = paste0("modAdmin", str_to_title(act),"Server")
        eval(parse(text=paste0(module, "(act, input$mnuAdmin, pnl, session)")))
    })

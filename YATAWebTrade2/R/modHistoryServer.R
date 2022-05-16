@@ -93,7 +93,7 @@ modHistServer <- function(id, full, parent, session) {
      )
    )
    moduleServer(id, function(input, output, session) {
-      pnl = WEB$getPanel(PNLHist, id, NULL, session)
+      pnl = WEB$getPanel(PNLHist, id, parent, session)
 
         flags = reactiveValues(
            currency = NULL
@@ -142,14 +142,12 @@ modHistServer <- function(id, full, parent, session) {
 #       #####################################################
 #
 #
-#       observeEvent(input$tabHist, {
-#          act = yataActiveNS(input$tabHist)
-#          module = paste0("modHist", str_to_title(act),"Server")
-#
-#          if (act == "dummy") return()
-#          if (act != "detail") pnl$vars$active = NULL
-#          eval(parse(text=paste0(module, "(act, input$tabHist, pnl, parent=session)")))
-#       })
+      observeEvent(input$mnuHist, {
+          act = jgg_get_active_ns(input$mnuHist)
+         # act = yataActiveNS(input$mnuHist)
+         module = paste0("modHist", str_to_title(act),"Server")
+         eval(parse(text=paste0(module, "(act, input$mnuHist, pnl, session)")))
+      })
 #       observeEvent(input$btnClose, {
 #          browser()
 #       })

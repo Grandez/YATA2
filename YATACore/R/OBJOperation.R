@@ -284,6 +284,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 getOperations(type=type, inValues=list(parent=group))
             }
         }
+        ,getHistoryByCamera = function(camera, from) {
+            prtOper$getHistoryByCamera(camera, from)
+        }
         ,getHistory    = function()    {
             dfCounter = prtOper$getInactiveCounters(self$codes$flag$inactive)
             if (nrow(dfCounter) == 0) return (NULL)

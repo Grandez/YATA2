@@ -135,7 +135,7 @@ moduleServer(id, function(input, output, session) {
    })
 
     observeEvent(input$mnuOper, {
-       act = yataActiveNS(input$mnuOper)
+       act = jgg_get_active_ns(input$mnuOper)
        module = paste0("modOper", str_to_title(act),"Server")
        carea = pnl$getCommarea()
 

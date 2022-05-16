@@ -30,4 +30,8 @@ loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
     file.remove(datafile)
     res
 }
+jgg_get_active_ns = function(id) {
+    data = strsplit(id, "-")
+    data[[1]][length(data[[1]])]
+}
 

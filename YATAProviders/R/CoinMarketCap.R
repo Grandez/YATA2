@@ -183,8 +183,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
     ,getHistorical    = function(idCurrency, from, to ) {
         #JGG PARECE QUE AHORA SOLO DEVUELVE 180/1 DIAS EN LUGAR DE TODO EL RANGO
         #JGG ESTO NO ES PROBLEMA EN CONDICIONES NORMALES QUE SOLO PEDIMOS UNOS DIAS
-        #JGG PERO SI PARA PROCESOS MAS MASIVOS
-        #JGG ASI QUE IREMOS POR BUCLES DE 90 DIAS
+        #JGG PERO SI PARA PROCESOS MAS MASIVOS, ASI QUE IREMOS POR BUCLES DE 90 DIAS
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
 
         if (is.null(idCurrency)) return(NULL)
@@ -201,7 +200,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         minute(to) = 0
         second(to) = 0
         to = as.numeric(to)
-        parms = list(id = idCurrency, timeStart = from, ,timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
+        parms = list(id = idCurrency, timeStart = from, timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
 
         data  = http$json(url, parms=parms, headers=headers)
         data  = data$quotes
@@ -212,7 +211,6 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         df = do.call(rbind.data.frame,items)
         if (nrow(df)> 0) df = as_tms(df, c(7,8,9))
         df
-
     }
     ,getExchanges     = function() {
         # Aparte de 1000 campos devuelve el campo 2

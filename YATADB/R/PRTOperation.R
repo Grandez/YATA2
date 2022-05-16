@@ -32,10 +32,7 @@ PRTOperations = R6::R6Class("PART.OPERATION"
         }
         ,get = function(...) {
             df = super$table(...)
-            if (nrow(df) > 0) {
-                dfc = tblOperControl$table(inValues=list(id=as.list(df$id)))
-                df = dplyr::left_join(df,dfc,by="id")
-            }
+            if (nrow(df) > 0) df = merge_control(df)
             df
         }
         ,getInactives = function(camera, counter, from) {
@@ -54,6 +51,16 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             df = uniques(c("camera", "counter"), list(active=active))
             df[df$camera != "XFER",]
         }
+        ,getHistoryByCamera = function(camera, from) {
+            if (!missing(from)) {
+                df = from(tms=from,camera=camera, equal=TRUE)
+            } else {
+                df = table(camera=camera)
+            }
+            if (nrow(df) > 0) df = merge_control(df)
+            df
+        }
+
      )
      ,private = list (
          tblOperControl = NULL
@@ -63,6 +70,10 @@ PRTOperations = R6::R6Class("PART.OPERATION"
             ctrlInfo = data[names(data) %in% names(tblOperControl$getColNames())]
             logInfo  = data[names(data) %in% names(tblOperLog$getColNames())]
             list(oper=operInfo, ctrl=ctrlInfo,log=logInfo)
-        }
+         }
+        ,merge_control = function(df) {
+            dfc = tblOperControl$table(inValues=list(id=as.list(df$id)))
+            dplyr::left_join(df,dfc,by="id")
+         }
      )
 )
