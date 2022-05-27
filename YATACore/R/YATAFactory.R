@@ -19,8 +19,10 @@ YATAFACTORY = R6::R6Class("YATA.FACTORY"
           init(load)
           self$logger = YATALogger$new("yata")
        }
-      ,finalize     = function() { clear() }
-      ,hasPortfolio = function() { !is.null(getDB()) }
+      ,finalize       = function() { clear() }
+      ,hasPortfolio   = function() { !is.null(portfolio) }
+      ,getPortfolio   = function() { self$portfolio      }
+      ,getPortfolioID = function() { ifelse(is.null(self$portfolio), 0, self$portfolio$id)  }
       ,clear     = function(){
           message("Clearing factory")
 #         gc(verbose=FALSE)

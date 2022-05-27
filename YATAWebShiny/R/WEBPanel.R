@@ -3,6 +3,10 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
   ,cloneable  = FALSE
   ,lock_class = TRUE
   ,active = list(
+     portfolio = function(value) {
+         if (!missing(value)) private$idPortfolio = value
+         private$idPortfolio
+     }
   )
   ,public = list(
      name       = NULL
@@ -15,7 +19,6 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
     ,vars       = list()  # Variables temporales con memoria
     ,cookies    = list()  # Variables con estado
     ,events     = list(listen = c(""), events=c(""))
-    ,DBID       = 0     # Check DB changed
     ,codes      = NULL
     ,parms      = NULL
     ,msg        = NULL
@@ -28,7 +31,7 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
         self$session   = session
         self$root      = private$getRoot()
 
-        self$DBID    = web$DBID
+        private$idPortfolio = web$portfolio
         self$factory = web$factory
         self$cookies = web$getCookies(id)
 
@@ -74,7 +77,8 @@ WEBPanel = R6::R6Class("JGG.INFO.UI"
 
   )
   ,private = list(
-      getRoot   = function() {
+      idPortfolio = 0  # Current portfolio
+     ,getRoot   = function() {
          tmp = self$parent
          while (!is.null(tmp)) tmp = tmp$parent
          tmp

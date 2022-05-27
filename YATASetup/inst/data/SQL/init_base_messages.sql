@@ -267,10 +267,45 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 35, "1"       
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 35, "2"                    ,"XX", "XX"     , "Tokens"                               );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 35, "3"                    ,"XX", "XX"     , "Ambos"                                );
 
+
 -- 40 Etiquetas de paneles de adminitracion
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.AUTOOPEN"    ,"XX", "XX"     , "Abrir automaticamente"                         );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.DEFAULT"     ,"XX", "XX"     , "Cartera principal"                             );
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 40, "LBL.ADM.LAYOUT"      ,"XX", "XX"     , "Mantener layouts"                              );
+
+-- Etiquetas de nombres de campos en operacion
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_ID"                ,"XX", "XX"     , "Id."                    );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_TYPE"              ,"XX", "XX"     , "Tipo"                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_CAMERA"            ,"XX", "XX"     , "Camara"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_BASE"              ,"XX", "XX"     , "Base"                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_COUNTER"           ,"XX", "XX"     , "Counter"                );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_AMOUNT"            ,"XX", "XX"     , "Cantidad"               );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_VALUE"             ,"XX", "XX"     , "Valor"                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_PRICE"             ,"XX", "XX"     , "Precio"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_ACTIVE"            ,"XX", "XX"     , "Activo"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_STATUS"            ,"XX", "XX"     , "Estado"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_PARENT"            ,"XX", "XX"     , "Padre"                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_TMS"               ,"XX", "XX"     , "Fecha"                  );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_TMS_LAST"          ,"XX", "XX"     , "Ult. Act."              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_FEE"               ,"XX", "XX"     , "Comision"               );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_GAS"               ,"XX", "XX"     , "Tasa"                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_LIMIT"             ,"XX", "XX"     , "Limite"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_STOP"              ,"XX", "XX"     , "Stop"                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_TARGET"            ,"XX", "XX"     , "Objetivo"               );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_DEADLINE"          ,"XX", "XX"     , "Fecha limite"           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_AMOUNT_IN"         ,"XX", "XX"     , "Cant. Inicial"          );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_PRICE_IN"          ,"XX", "XX"     , "Precio Inicial"         );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_AMOUNT_OUT"        ,"XX", "XX"     , "Cant. real"             );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_PRICE_OUT"         ,"XX", "XX"     , "Precio Real"            );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_EXPENSE"           ,"XX", "XX"     , "Gastos"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_PROFIT"            ,"XX", "XX"     , "Beneficio"              );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_ALIVE"             ,"XX", "XX"     , "Activa"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_RANK"              ,"XX", "XX"     , "Rank"                   );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_ALERT"             ,"XX", "XX"     , "Alerta"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_DT_ALERT"          ,"XX", "XX"     , "Fecha alerta"           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_LOG_TYPE"          ,"XX", "XX"     , "Tipo mensaje"           );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_REASON"            ,"XX", "XX"     , "Motivo"                 );
+INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 50, "LBL.OPER_COMMENT"           ,"XX", "XX"     , "Notas"                  );
 
 -- Menus
 -- 7x YATAWebModels
@@ -290,3 +325,4 @@ INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "98"      
 INSERT INTO MESSAGES  (BLOCK, CODE, LANG, REGION, VALUE) VALUES ( 99, "97"        ,"XX", "XX"     , "El servidor no esta disponible"          );   
                                                               
 COMMIT;
+

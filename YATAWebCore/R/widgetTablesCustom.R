@@ -5,8 +5,7 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
   ,inherit    = WDGTable
   ,public = list(
      initialize = function(id="position", factory) {
-        createDefaultValues(factory)
-        super$initialize(id=id, event="none", table=table_attr)
+        super$initialize(id=id, event="none", factory=factory, table=table_attr)
      }
     ,render = function(df,type=c("short", "long"), global=FALSE) {
         type = match.arg(type)
@@ -70,25 +69,6 @@ WDGTablePosition = R6::R6Class("YATA.WEB.TABLE.POS"
           ,week      = list(name="week",       type="prc" )
           ,month     = list(name="month",      type="prc" )
        )
-      ,createDefaultValues = function (factory) {
-          objPos = factory$getObject(factory$codes$object$position)
-          create_names(factory)
-          private$dfEmpty = objPos$empty_data()
-          private$table_attr$data = dfEmpty
-          private$table_attr$columns = col_defs
-      }
-      ,create_names = function(factory) {
-          labels = factory$parms$getLabelsTable(factory$codes$tables$position)
-          lbls   = lapply(names(col_defs), function(name) {
-                          list( title=jgg_to_title(name)
-                               ,lower = stringr::str_to_lower(name)
-                               ,upper = stringr::str_to_upper(name)
-                               ,label  = labels[[name]]
-                               ,asis  = name
-                              )})
-          names(lbls) = names(col_defs)
-          private$col_names = lbls
-      }
       ,attrTable = list( striped = TRUE, compact=TRUE
                         ,pagination=FALSE, selection = "multiple"
                         ,wrap = FALSE
@@ -104,8 +84,7 @@ WDGTableBest = R6::R6Class("YATA.WEB.TABLE.BEST"
   ,inherit    = WDGTable
   ,public = list(
      initialize = function(id="table", factory) {
-        createDefaultValues(factory)
-        super$initialize(id=id, event="none",table=tbl_attr)
+        super$initialize(id=id, event="none",factory=factory, table=tbl_attr)
      }
     ,render = function(df) {
         df = df[,c("symbol", "price", "hour", "day", "week", "month")]
@@ -146,27 +125,6 @@ WDGTableBest = R6::R6Class("YATA.WEB.TABLE.BEST"
           ,week      = list(name="sell_low"       ,type = "prc100" )
           ,month     = list(name="sell_last"      ,type = "prc100" )
        )
-
-
-      ,createDefaultValues = function (factory) {
-          objPos = factory$getObject(factory$codes$object$position)
-          create_names(factory)
-          df = objPos$empty_data()
-          private$tbl_attr$data = df
-          private$tbl_attr$columns = col_defs
-      }
-      ,create_names = function(factory) {
-          labels = factory$parms$getLabelsTable(factory$codes$tables$position)
-          lbls   = lapply(names(col_defs), function(name) {
-                          list( title=jgg_to_title(name)
-                               ,lower = stringr::str_to_lower(name)
-                               ,upper = stringr::str_to_upper(name)
-                               ,label  = labels[[name]]
-                               ,asis  = name
-                              )})
-          names(lbls) = names(col_defs)
-          private$col_names = lbls
-      }
       ,attrTable = list( striped = TRUE, compact=TRUE
                         ,pagination=FALSE, selection = "multiple"
                         ,wrap = FALSE
@@ -197,36 +155,15 @@ WDGTableOper = R6::R6Class("YATA.WEB.TABLE.POS"
   ,inherit    = WDGTable
   ,public = list(
      initialize = function(id="oper", factory) {
-        createDefaultValues(factory)
-        super$initialize(id=id, table=table_attr)
+        super$initialize(id=id, factory=factory, table=table_attr, columns=col_defs)
      }
     ,render = function(df,type=c("short", "long")) {
         type = match.arg(type)
 
         if (nrow(df) == 0) df = dfEmpty
-        if (nrow(df) > 0 && type == "short") df = df[,cols_short]
+#        if (nrow(df) > 0 && type == "short") df = df[,cols_short]
         super_render(df)
-        # private$dfWork = data
-        # colDefs = prepareData(data)
-        # if (length(colDefs) > 0) {
-        #     if (length(attrTable$columns) > 0) {
-        #         private$attrTable$columns  = list.merge(colDefs, private$attrTable$columns)
-        #     } else {
-        #         private$attrTable$columns  = colDefs
-        #     }
-        # }
-        # lstAttr = list.clean((attrTable)) # remove NULLS
-        # obj = do.call(reactable::reactable, list.merge(list(data=private$dfWork), lstAttr))
-        # reactable::renderReactable({obj})
     }
-    # reactable::reactable(df, striped = TRUE, compact=TRUE
-    #                               , pagination=FALSE
-    #                               , selection = selection
-    #                               , wrap = FALSE
-    #                               , onClick = reactable::JS(click)
-    #                               , columns = cols
-    # )
-
    )
   ,private = list(
        cols_short = c("currency", "balance", "value", "profit", "day", "week", "month", "since")
@@ -247,47 +184,36 @@ WDGTableOper = R6::R6Class("YATA.WEB.TABLE.POS"
        )
       ,col_defs = list(
            id        = list(name="id",        show=FALSE)
-          ,balance   = list(name="balance",   type="price")
-          ,available = list(name="available", type="price")
-          ,profit    = list(name="profit",    type="price")
-          ,buy_high  = list(name="buy_high",  type="price")
-          ,buy_low   = list(name="buy_low",   type="price")
-          ,buy_last  = list(name="buy_last",  type="price")
-          ,buy_net   = list(name="buy_net",   type="price")
-          ,sell_high = list(name="sell_high", type="price")
-          ,sell_low  = list(name="sell_low",  type="price")
-          ,sell_last = list(name="sell_last", type="price")
-          ,sell_net  = list(name="sell_net",  type="price")
-          ,buy       = list(name="buy",       type="price")
-          ,sell      = list(name="sell",      type="price")
-          ,value     = list(name="value",     type="price")
-          ,profit    = list(name="profit",    type="price")
-          ,since     = list(name="since",     type="date" )
-          ,tms       = list(name="tms",       type="tms"  )
-          ,last      = list(name="last",      type="date" )
-          ,day       = list(name="day",       type="prc" )
-          ,week      = list(name="week",      type="prc" )
-          ,month     = list(name="month",     type="prc" )
+          ,parent    = list(name="parent"     ,show=FALSE )
+          ,type      = list(name="type"       ,type="label" )
+          ,camera    = list(name="camera"     ,type="label" )
+          ,base      = list(name="base"       ,type="label" )
+          ,counter   = list(name="counter"    ,type="label" )
+          ,amount    = list(name="amount"     ,type="value" )
+          ,value     = list(name="value"      ,type="value" )
+          ,price     = list(name="price"      ,type="price" )
+          ,active    = list(name="active"     ,type="boolean" )
+          ,status    = list(name="status"     ,type="label" )
+          ,tms       = list(name="tms"        ,type="tms" )
+          ,tmsLast   = list(name="tmsLast"    ,type="tms" )
+          ,fee       = list(name="fee"        ,type="value" )
+          ,gas       = list(name="gas"        ,type="value" )
+          ,target    = list(name="target"     ,type="value" )
+          ,stop      = list(name="stop"       ,type="value" )
+          ,limit     = list(name="limit"      ,type="value" )
+          ,deadline  = list(name="deadline"   ,type="date" )
+          ,amountIn  = list(name="amountIn"   ,type="value" )
+          ,priceIn   = list(name="priceIn"    ,type="price" )
+          ,amountOut = list(name="amountOut"  ,type="value" )
+          ,priceOut  = list(name="priceOut"   ,type="price" )
+          ,expense   = list(name="expense"    ,type="value" )
+          ,profit    = list(name="profit"     ,type="value" )
+          ,alive     = list(name="alive"      ,type="boolean" )
+          ,rank      = list(name="rank"       ,type="number" )
+          ,alert     = list(name="alert"      ,type="boolean" )
+          ,dtAlert   = list(name="dtAlert"    ,type="date" )
+
        )
-      ,createDefaultValues = function (factory) {
-          objPos = factory$getObject(factory$codes$object$position)
-          create_names(factory)
-          private$dfEmpty = objPos$empty_data()
-          private$table_attr$data = dfEmpty
-          private$table_attr$columns = col_defs
-      }
-      ,create_names = function(factory) {
-          labels = factory$parms$getLabelsTable(factory$codes$tables$position)
-          lbls   = lapply(names(col_defs), function(name) {
-                          list( title=jgg_to_title(name)
-                               ,lower = stringr::str_to_lower(name)
-                               ,upper = stringr::str_to_upper(name)
-                               ,label  = labels[[name]]
-                               ,asis  = name
-                              )})
-          names(lbls) = names(col_defs)
-          private$col_names = lbls
-      }
       ,attrTable = list( striped = TRUE, compact=TRUE
                         ,pagination=FALSE, selection = "multiple"
                         ,wrap = FALSE

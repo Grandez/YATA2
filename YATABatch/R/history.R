@@ -34,6 +34,7 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
     prov = fact$getObject(fact$codes$object$providers)
     ctc  = octc$getAllCurrencies()
     ctc = ctc[ctc$id > 0,]
+
     rng  = hist$getRanges()
     df   = dplyr::left_join(ctc, rng, by=c("id", "symbol"))
 
@@ -50,14 +51,13 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
     if (file.exists(pidfile)) return (invisible(batch$rc$RUNNING))
     cat(paste0(Sys.getpid(),"\n"), file=pidfile)
 
-
     byChunks = FALSE
     for (row in from:to) {
        if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
        rc2 = tryCatch({
            batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
            repeat {
-               to = Sys.time()
+               to = Sys.Date()
                byChunk = FALSE
                if (as.integer(to - df[row,"max"], unit="days") > 121) {
                    to = as.Date(df[row,"max"]) + 121
@@ -71,12 +71,13 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
                     if ((row %% info$each) == 0) Sys.sleep(info$sleep) # Para cada 2
                }
                if (!byChunk) break
-               rng  = hist$getRanges(df[row,"id"])
-               if (nrow(rng) == 0 || is.na(rng[1,"max"])) {
-                   df[row,"max"] = to
-               } else {
-                   df[row,"max"] = rng[1,"max"]
-               }
+               df[row, "max"] = as.Date(max(data$timestamp)) + 1
+               # rng  = hist$getRanges(df[row,"id"])
+               # if (nrow(rng) == 0 || is.na(rng[1,"max"])) {
+               #     df[row,"max"] = to
+               # } else {
+               #     df[row,"max"] = rng[1,"max"]
+               # }
            }
            batch$rc$OK
          }, error = function(cond) {
@@ -86,7 +87,6 @@ updateHistory = function(logoutput, loglevel, backward=FALSE) {
         })
         if (rc2 > rc) rc = rc2
     }
-
     batch$logger$executed(0, begin, "Retrieving history")
 
     if (file.exists(pidfile)) file.remove(pidfile)

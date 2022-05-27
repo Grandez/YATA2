@@ -22,6 +22,8 @@ TBLHistory = R6::R6Class("TBL.HISTORY"
             sql = paste(sql, "GROUP BY", fields$id)
             df = queryRaw(sql, params)
             colnames(df) = c("id", "symbol", "min", "max")
+            #JGG En algun momento hemos almacenado el simbolo con \r
+            df$symbol = gsub("\\r", "", df$symbol)
             df
         }
         ,getDates = function(symbol) {

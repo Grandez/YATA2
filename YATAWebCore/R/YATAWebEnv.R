@@ -16,7 +16,6 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      ,log      = NULL
 #     ,window  = list(width = 0, height = 0)
      ,combo    = NULL
-     ,DBID     = 0     # Flag DB Changed
      ,print    = function() { message("Singleton for APP WEB")}
      ,initialize = function(factory) {
          tryCatch({
@@ -25,15 +24,17 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             private$base   = YATABase$new()
             private$panels = private$base$map()
 
-            if        (!missing(factory))     self$factory = factory
-            else if   (exists("YATAFactory")) self$factory = YATAFactory
-                 else                         self$factory = YATACore::YATAFACTORY$new()
+            if (!missing(factory))
+                self$factory = factory
+            else
+                self$factory = YATACore::YATAFACTORY$new()
 
             self$msg        = self$factory$msg
             self$log        = YATALogger$new("WEB")
             private$hID     = private$base$map()
             private$hSym    = private$base$map()
             private$hCam    = private$base$map()
+            private$idPortfolio = self$factory$getPortfolioID()
             self$combo      = YATAWebCombos$new(self$factory)
             private$tblCurrencies = self$factory$getTable(self$factory$codes$tables$currencies)
             self$REST       = YATAServer$new(self$factory)

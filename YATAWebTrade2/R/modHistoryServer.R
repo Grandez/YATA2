@@ -92,19 +92,22 @@ modHistServer <- function(id, full, parent, session) {
        }
      )
    )
-   moduleServer(id, function(input, output, session) {
-      pnl = WEB$getPanel(PNLHist, id, parent, session)
+moduleServer(id, function(input, output, session) {
+   loadPage = function() {
+       pnl$loaded = TRUE
+           # choices        = pnl$data$dfSymbols$currency
+           # names(choices) = pnl$data$dfSymbols$label
+           # updListBox("lstCurrencies", choices = choices)
+   }
+
+   pnl = WEB$getPanel(PNLHist, id, parent, session)
+   if (!pnl$loaded) loadPage()
 
         flags = reactiveValues(
            currency = NULL
           ,update   = FALSE
           ,plots    = 0
         )
-#         initPage = function() {
-#            choices        = pnl$data$dfSymbols$currency
-#            names(choices) = pnl$data$dfSymbols$label
-#            updListBox("lstCurrencies", choices = choices)
-#         }
 #        updateLeftPanel = function() {
 #            browser()
 #        }
@@ -178,10 +181,6 @@ modHistServer <- function(id, full, parent, session) {
 #       observeEvent(input$cboPlot_2_1, ignoreInit = TRUE, { flags$plots = isolate(3) })
 #       observeEvent(input$cboPlot_2_2, ignoreInit = TRUE, { flags$plots = isolate(4) })
 #
-#       if (!pnl$loaded || pnl$isInvalid(pnl$id)) {
-#           initPage()
-#           pnl$loaded = TRUE
-#       }
    })
 }
 

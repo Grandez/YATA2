@@ -118,7 +118,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
                             ,isolated=TRUE)
             invisible(self)
         }
-        ,getLabelsTable = function(table) { getSubgroup(60, 1, as_list=TRUE) }
+        ,getLabelsTable = function(group) { getSubgroup(60, group, as_list=TRUE) }
         ,get         = function(group, subgroup, id) { tblParms$table(group=group, subgroup=subgroup,id=id) }
         ,getGroup    = function(group)               { tblParms$table(group=group) }
         ,getSubgroup = function(group, subgroup, as_list=FALSE)     {

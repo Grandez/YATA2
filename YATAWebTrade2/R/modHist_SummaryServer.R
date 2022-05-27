@@ -8,12 +8,14 @@ PNLHistSummary = R6::R6Class("PNL.HISTORY.SUMMARY"
    ,public = list(
        available  = 0
       ,balance    = 0
+      ,objTable   = NULL
       ,initialize = function(id, parent, session) {
           super$initialize(id, parent, session)
           private$oper     = self$factory$getObject(self$codes$object$operation)
           private$objPos   = self$factory$getObject(self$codes$object$position)
           self$vars = list(oper = 0, currency = "",camera   = "", date=NULL)
           self$data$dfPos = private$objPos$getFullPosition()
+          self$objTable = WDGTableOper$new("oper", self$factory)
       }
       ,reload = function() {
           dfOpers = NULL
@@ -25,6 +27,7 @@ PNLHistSummary = R6::R6Class("PNL.HISTORY.SUMMARY"
               if (nrow(df) > 0) dfOpers = rbind(dfOpers, df)
           }
           self$data$dfOpers = setorderv(dfOpers, "tms", -1)
+          self$loaded = TRUE
           invisible(self)
       }
       ,prepareTable = function(df) {
@@ -48,11 +51,16 @@ PNLHistSummary = R6::R6Class("PNL.HISTORY.SUMMARY"
     )
 )
 moduleServer(id, function(input, output, session) {
-   pnl = WEB$getPanel(PNLHistSummary, full, parent, session)
-
    flags = reactiveValues(
       refresh  = FALSE
    )
+
+   pnl = WEB$getPanel(PNLHistSummary, full, parent, session)
+   if (!pnl$loaded) {
+       pnl$reload()
+       flags$refresh = isolate(!flags$refresh)
+   }
+
    observeEvent(flags$refresh, {
       if (nrow(pnl$data$dfOpers) == 0) return()
       mfilter = ""
@@ -73,9 +81,9 @@ moduleServer(id, function(input, output, session) {
       if (nchar(mfilter) > 0) {
           df = eval(parse(text=paste("filter(", pnl$data$dfOpers, ",", mfilter, ")")))
       }
-       data = pnl$prepareTable (df)
+#       data = pnl$prepareTable (df)
 
-       output$tblHistory = updTable(data)
+       output$tblHistory = pnl$objTable$render(df) # updTable(data)
    })
    observeEvent(input$cboOper, {
       df = pnl$data$dfOpers
@@ -107,11 +115,6 @@ moduleServer(id, function(input, output, session) {
       flags$refresh = isolate(!flags$refresh)
    }, ignoreInit = TRUE, ignoreNULL = TRUE)
 
-   if (!pnl$loaded) {
-       pnl$loaded = TRUE
-       pnl$reload()
-       flags$refresh = isolate(!flags$refresh)
-   }
 })
 }
 #

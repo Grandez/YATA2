@@ -43,11 +43,12 @@ YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
           }
           invisible(self)
       }
-      ,changeDB = function(id) {
-          oldDB = self$factory$parms$getLastPortfolio()
-          if (oldDB$id == id) return()
+      ,changePortfolio = function(id) {
+          id = as.integer(id)
+          oldPortfolio = self$factory$parms$getLastPortfolio()
+          if (oldPortfolio == id) return()
           self$factory$changePortfolio(id)
-          WEB$DBID = id
+          WEB$idPortfolio = id
           invisible (self)
       }
       #########################################################
@@ -100,23 +101,23 @@ function(input, output, session) {
          db = NULL
    )
 
-   observeEvent(flags$df, {
-      pnl$changeDB(input$radDB)
-      pp = pnl$factory$getDBName()
-      output$appTitle = updLabelText(pnl$factory$getDBName())
-      eval(parse(text=paste0( "mod"
-                             ,str_to_title(input$mainMenu)
-                             ,"Server(input$mainMenu
-                             ,''
-                             ,pnl, parent=session)")))
-      removeModal()
-
-   }, ignoreInit = TRUE)
-
+   # observeEvent(flags$df, {
+   #    pnl$changePortfolio(input$radDB)
+   #    pp = pnl$factory$getDBName()
+   #    output$appTitle = updLabelText(pnl$factory$getDBName())
+   #    eval(parse(text=paste0( "mod"
+   #                           ,str_to_title(input$mainMenu)
+   #                           ,"Server(input$mainMenu
+   #                           ,''
+   #                           ,pnl, parent=session)")))
+   #    removeModal()
+   #
+   # }, ignoreInit = TRUE)
+   #
    if (pnl$factory$hasPortfolio()) {
        message("tiene portfolio")
    } else {
-       showModal(frmChangeDB(pnl$factory))
+       showModal(frmPortfolioChange(pnl$factory))
    }
    observeEvent(input$cookies, {
        WEB$loadCookies(input$cookies)
@@ -137,20 +138,18 @@ function(input, output, session) {
        showNotification("Initialized")
        #PUT("begin")
    })
+   #########################################
+   ### Portfolio change
+   #########################################
    observeEvent(input$app_title,    {
-       browser()
       showModal(frmPortfolioChange(pnl$factory))
    })
-   observeEvent(input$dbOK,    {
-       browser()
-      pnl$changeDB(input$radDB)
-      pp = pnl$factory$getDBName()
-      output$appTitle = updLabelText(pnl$factory$getDBName())
-      eval(parse(text=paste0( "mod"
-                             ,str_to_title(input$mainMenu)
-                             ,"Server(input$mainMenu
-                             ,''
-                             ,pnl, parent=session)")))
+   observeEvent(input$btnChangePortfolio,    {
+      pnl$changePortfolio(input$radPortfolio)
+      pname = pnl$factory$portfolio$title
+      output$appTitle = renderText({ pname })
+      mod = paste0( "mod",str_to_title(input$mainMenu),"Server")
+      eval(parse(text=paste0( mod, "(input$mainMenu, '', pnl, session)")))
       removeModal()
    })
    # observeEvent(input$btnErrorSevere, {
@@ -167,12 +166,11 @@ function(input, output, session) {
    #    })
    #
    if (!pnl$loaded) {
-
        pnl$loaded = TRUE
        pname = pnl$factory$portfolio$title
        name = ifelse (is.null(pname), "YATA", pname)
        output$appTitle = renderText({ name })
-       if (is.null(pname)) showModal(frmChangeDB(pnl$factory))
+       if (is.null(pname)) showModal(frmPortfolioChange(pnl$factory))
    }
 ###   js$yata_req_cookies()
    cat("main end\n")

@@ -46,3 +46,5 @@ jgg_to_title = function(text) {
     text = gsub("_", " ", text)
     stringr::str_to_title(text)
 }
+jgg_to_lower = function(text) { stringr::str_to_lower(text) }
+jgg_to_upper = function(text) { stringr::str_to_upper(text) }

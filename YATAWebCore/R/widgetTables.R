@@ -16,7 +16,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
       id         = "reactable"
      ,event      = NULL
      ,name       = NULL
-     ,initialize = function(id=NULL, event=NULL, table=NULL, columns=NULL) {
+     ,initialize = function(id=NULL, event=NULL, factory=NULL, table=NULL, columns=NULL) {
         if (!is.null(id)) {
             self$id=id
             self$name = id
@@ -27,6 +27,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
             if (event != "none") self$event = event
         }
 
+        private$cols_attr  = columns
         private$table_attr = private$def_table_attr
         private$table_attr$onClick = private$on_click()
 
@@ -34,6 +35,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
             private$table_attr = jgg_list_merge(table_attr, table)
 #            extractExtraAttributes()
         }
+        create_default_values(factory)
      }
      ,setTableAttributes = function(..., merge=TRUE) {
          data = args2list(...)
@@ -109,10 +111,10 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
       .rounded = TRUE
      ,.scale = 2
      ,columnHeader = "label" # Tipo de cabecera de columna
-     ,col_names = NULL
+     ,col_names  = NULL
      ,table_attr = NULL
-     ,col_attr = list()
-     ,current = NULL
+     ,cols_attr  = NULL
+     ,current    = NULL
      ,on_click = function() {
   #           JS("function(rowInfo, colInfo) {
   #   window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.row, null, 2))
@@ -135,19 +137,13 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
 
          private$current = table_attr
          private$current$data = df
+         private$current$columns = cols_attr
+
          adjust_values()
          format_columns()
-         current$columns = current$columns[names(current$columns) %in% colnames(df)]
-         # Remove items used internally
-         current$columns = lapply(current$columns, function(column) {
-             column$type = NULL
-             column
-         })
-         current = set_column_names(current)
+         prepare_columns()
 
-         cols = names(current$columns)
-         current$columns = lapply(cols, function(name) do.call(reactable::colDef, current$columns[[name]]))
-         names(current$columns) = cols
+         #pp = reactable::reactable, current
          obj = do.call(reactable::reactable, current)
          reactable::renderReactable({obj})
     }
@@ -171,7 +167,24 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
 #         private$attr_table$columns = lapply(attrCols, function(col) prepareColumn(col))
 
       }
+      ,prepare_columns = function() {
+          df = current$data  # short typo
+          # Select only columns in data frame
+         current$columns = current$columns[names(current$columns) %in% colnames(df)]
 
+         # Remove items used internally and not valid for reactable
+         current$columns = lapply(current$columns, function(column) {
+             column$type = NULL
+             column
+         })
+         # Merge default atributes with current atrributes
+         current$columns = lapply(current$columns, function(column) jgg_list_merge(def_col_attr, column))
+         current = set_column_names(current)
+
+         cols = names(current$columns)
+         private$current$columns = lapply(cols, function(name) do.call(reactable::colDef, current$columns[[name]]))
+         names(private$current$columns) = cols
+      }
       ,makeColDefs = function(df) {
           cols = lapply(colnames(df), function(name) {
                         header = switch(columnHeader,
@@ -219,7 +232,32 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
              df[row,col] = round(df[row,col], 3)
         }
         df
+    }
+   ,create_default_values = function (factory) {
+       id_names = 0
+       if (id == "position") id_names = 1
+       if (id == "table")    id_names = 1
+       if (id == "oper")     id_names = 2
+       if (id_names != 0)    create_names(factory, id_names)
+          # objPos = factory$getObject(factory$codes$object$position)
+          #
+          # private$dfEmpty = objPos$empty_data()
+          # private$table_attr$data = dfEmpty
+          # private$table_attr$columns = col_defs
       }
+      ,create_names = function(factory, id_names) {
+          labels = factory$parms$getLabelsTable(id_names)
+          lbls   = lapply(names(col_defs), function(name) {
+                          list( title=jgg_to_title(name)
+                               ,lower = jgg_to_lower(name)
+                               ,upper = jgg_to_upper(name)
+                               ,label  = labels[[name]]
+                               ,asis  = name
+                              )})
+          names(lbls) = names(col_defs)
+          private$col_names = lbls
+      }
+
 ,format_columns = function() {
     fmt = private$current$columns
     df  = private$current$data
@@ -377,7 +415,7 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
           ,pagination          = FALSE      # Enable pagination?
           ,paginationType      = 'numbers' # numbers/jump/simple
           ,resizable           = FALSE     # Enable column resizing?
-          ,rownames            = NULL      # Show row names?
+          ,rownames            = FALSE     # Show row names?
           ,rowClass            = NULL      # Additional CSS classes to apply to rows, string/JS(row info, table state)/R(row number)
           ,rowStyle            = NULL      # Inline styles to apply to rows.
           ,searchable          = FALSE     # Enable global table searching?

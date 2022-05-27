@@ -2,14 +2,19 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
   ,portable   = TRUE
   ,cloneable  = FALSE
   ,lock_class = TRUE
+  ,active = list(
+     portfolio = function(value) {
+         if (!missing(value)) private$idPortfolio = value
+         private$idPortfolio
+     }
+   )
   ,public = list(
       session = NULL
      ,root    = NULL
      ,print      = function() { message("WEB Singleton") }
      ,initialize = function() {
-#         self$session = session
          private$panels = HashMap()
-     }
+      }
      ,setSession = function(session) {
          self$session = session
          invisible(self)
@@ -23,7 +28,10 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
              self$subscribe(id, panel$events$listen)
              if (is.null(args$dashboard))  shinyjs::js$jgg_add_page(id)
              if (!is.null(args$dashboard)) shinyjs::js$jgg_add_dash(paste(id, args$dashboard, sep="_"))
+         } else {
+             if (panel$portfolio != private$idPortfolio) panel$loaded = FALSE
          }
+         panel$portfolio = private$idPortfolio
          lapply(panel$events$events, function(evt) self$unnotify(evt))
          shinyjs::js$jgg_set_page(id)
          panel
@@ -119,6 +127,7 @@ JGGWEBROOT = R6::R6Class("JGG.INFO.APP"
       panels   = NULL
      ,cookies  = NULL
      ,commarea = NULL
+     ,idPortfolio = 0  # Current portfolio
      ,changes = list(events=list(), pending = list())
   )
 )
