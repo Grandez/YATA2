@@ -26,7 +26,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
      ,lastErr = NULL
      ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20, ERROR=99)
      ,print      = function() { message("Generic Logger class") }
-     ,initialize = function(module="general", output, level) {
+     ,initialize = function(module="general", level, output) {
          private$modname   = module
          loglevel    = Sys.getenv("YATA_LOG_LEVEL")
          logoutput   = Sys.getenv("YATA_LOG_OUTPUT")
@@ -155,8 +155,8 @@ YATALogger = R6::R6Class("YATA.LOGGER"
           for (idx in 1:length(tags)) {
              data=paste0(data,";",tags[idx],": ", cond[[idx]])
           }
-          .toFile(self$type$ERROR, 0, sprintf( "Class: %s;Message: %s;Fields: %d;%s"
-                                              ,class(cond)[2], cond, length(tags),data))
+          # .toFile(self$type$ERROR, 0, sprintf( "Class: %s;Message: %s;Fields: %d;%s"
+          #                                     ,class(cond)[2], cond, length(tags),data))
        }
 
     )

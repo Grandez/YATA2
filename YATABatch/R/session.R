@@ -1,95 +1,109 @@
-# En lugar de esperar a tener todas las monedas vamos cargando bloque por bloque
-.getSessionData = function(batch, last, max, session, currencies) {
-    count = 0
-    dft   = NULL
-    provider      = batch$fact$getObject(batch$fact$codes$object$providers)
-
-    tryCatch({
-       data = provider$getTickers(500, 1)
-       if (max == 0) max = data$total
-
-       repeat {
-          if (nrow(data$df) > 0) {
-              df = data$df
-              df[,c("name", "slug")] = NULL
-
-              df1 = df[,c("id", "symbol")]
-              dfs = inner_join(df1, currencies, by="id")
-
-              df2 = dfs[,c(1,3)]
-              df  = left_join(df, df2, by="id")
-
-              df$symbol = df$symbol.y
-              df        = df[,-ncol(df)]
-
-              df$last = last
-              df = df %>% filter (price > 0 & volume > 0)
-              dft = rbind(dft, df)
-              count = count + nrow(dft)
-              .add2database(dft, session)
-          }
-          start = data$from + data$count
-
-          if (start >= max) break;
-          data = provider$getTickers(500, start)
-        }
-     }, error = function (cond) {
-         cat ("getSessionData", cond$message)
-         # Nada, igonoramos errores de red
-     })
-     count
-}
-updateSession = function(max = 0) {
-    tryCatch({
-
-
-   pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/tickers.pid")
-   logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/tickers.log")
-
-   count   = 0
+# Actualiza los datos de session cada interval minutos
+update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
    begin   = as.numeric(Sys.time())
-   batch   = YATABatch$new("Tickers")
-   rc      = batch$rc$OK
 
-   batch$fact$setLogger(batch$logger)
-   if (file.exists(pidfile)) return (invisible(batch$rc$RUNNING))
-   cat(paste0(Sys.getpid(),"\n"), file=pidfile)
+   batch   = YATABatch$new("tickers")
+   logger  = batch$logger
 
-   session    = batch$fact$getObject(batch$fact$codes$object$session)
-   currencies = batch$fact$getObject(batch$fact$codes$object$currencies)
-   dfCTC      = currencies$getAllCurrencies()
-   dfCTC      = dfCTC[,c("id", "symbol", "token")]
-   info       = batch$fact$parms$getSessionData()
-   oldData    = Sys.time() - (info$history * 60 * 60)
+   if (batch$running) return (invisible(batch$rc$RUNNING))
 
-   session$removeData(oldData)
+   rc = tryCatch({
+      browser()
+      factory = Factory$new()
+      logger  = YATABase::YATALogger$new()
+      prov    = factory$getDefaultProvider()
+      tblCTC  = factory$getTable("Currencies")
+      tblHist = factory$getTable("History")
+      coins   = prov$getCurrenciesNumber("all")
 
-   while (count < info$alive) { # Para que se pare automaticamente
-      rc0 = tryCatch({
-               message("JGG Recuperando tickers")
-               batch$logger$batch("Retrieving tickers")
-               last = as.POSIXct(Sys.time())
-               session$updateLastUpdate(last, 0)
-               total = .getSessionData(batch, last, max, session, dfCTC)
-               session$updateLastUpdate(last, total)
-               batch$logger$batch("OK")
-               batch$rc$OK
-            }, YATAERROR = function (cond) {
-               batch$rc$FATAL
-            }, error = function(cond) {
-               batch$rc$SEVERE
-            })
-            if (rc0 > rc) rc = rc0
-            Sys.sleep(info$interval * 60)
-            count = count + 1
+      process = TRUE
+      while (process) {
+#         .updateTickers(coins, logger, factory)
+         process = batch$stop_process()
+         if (process) {
+            message("Waiting")
+            Sys.sleep(interval * 60)
+         }
       }
+      batch$rc$OK
    }, error = function (cond) {
-       message("JGG ERROR Recuperando tickers")
-      cat("Ha ocurrido un error\n")
-      cat("Mensaje: ", cond$message, "\n")
+      batch$rc$FATAL
    })
-   if (file.exists(pidfile)) file.remove(pidfile)
-   batch$logger$executed(rc, begin, "Retrieving tickers")
-   message("JGG Acaba tickers")
-   invisible(rc)
+   invisible(batch$destroy(rc))
+}
+.updateTickers = function(coins, logger, factory) {
+    results = list(added = 0, updated=0, items=c())
+    block   = 250 # Number of items by request
+    beg     = 1
+    process = TRUE
+#    msg   = factory$msg
+    prov       = factory$getDefaultProvider()
+    tblCTC     = factory$getTable("Currencies")
+    tblSession = factory$getTable("Session")
+    dfCTC      = tblCTC$table()
+
+    tryCatch({
+      df   = prov$getTickers(beg, block)
+      message(paste("Procesando bloque", beg))
+      while (process) {
+         if (nrow(df) < block) process = FALSE
+#         logger$info(3, msg$log("CTC_UPDATING"), type, beg)
+         tblSession$db$begin()
+         for (row in 1:nrow(df)) {
+            data = as.list(df[row,])
+            if (!tblCTC$select(id=df[row,"id"])) next
+
+            data$token = tblCTC$current$token
+            tblSession$add(data)
+            .calculateVariations(data, factory)
+         }
+         tblSession$db$commit()
+         beg = as.integer(df[nrow(df), "rank"]) + 1
+         if (process) df   = prov$getCurrencies(beg, block)
+      }
+    }, error = function (cond) {
+       tblSession$db$rollback()
+       propagateError(cond)
+    })
+}
+.calculateVariations = function (data, factory) {
+   browser()
+   tbl  = factory$getTable("Variations")
+   hist = factory$getTable("History")
+   reg  = list( id = data$id,               symbol      = data$symbol
+               ,price       = data$price,   volume      = data$volume
+               ,price_day01 = data$day,     price_day07 = data$week,    price_day30 = data$month
+               ,price_day60 = data$bimonth, price_day90 = data$quarter
+   )
+   if (hist$select(id=data$id, limit = 90)) {
+      df = hist$dfCurrent
+      df = df[order(df$timestamp, decreasing=TRUE),]
+      if (nrow(df) >  0) reg$volume_day01 = .calcPercentage(reg$volume,df[ 1,"volume"])
+      if (nrow(df) >  2) reg$volume_day03 = .calcPercentage(reg$volume,df[ 3,"volume"])
+      if (nrow(df) > 14) reg$volume_day15 = .calcPercentage(reg$volume,df[15,"volume"])
+      if (nrow(df) > 29) reg$volume_day30 = .calcPercentage(reg$volume,df[30,"volume"])
+      if (nrow(df) > 59) reg$volume_day60 = .calcPercentage(reg$volume,df[60,"volume"])
+      if (nrow(df) > 89) reg$volume_day90 = .calcPercentage(reg$volume,df[90,"volume"])
+
+      if (nrow(df) >  2) reg$price_day03  = .calcPercentage(reg$price, df[ 3,"close"] )
+      if (nrow(df) > 14) reg$price_day15  = .calcPercentage(reg$price, df[15,"close"] )
+   }
+
+   if (tbl$select(id = data$id)) { # update
+       tbl$set(reg)
+       tbl$apply()
+
+   } else { # insert
+      tbl$add(reg)
+   }
+}
+
+.calcPercentage = function (num1,den1) {
+   if (is.null(num1) || is.na(num1)) return (NULL)
+   if (is.null(den1) || is.na(den1)) return (NULL)
+   if (den1 == 0)                    return (NULL)
+   res = num1 / den1
+   if (res >= 1) return (res - 1)
+   (1 - res) * -1
+
 }

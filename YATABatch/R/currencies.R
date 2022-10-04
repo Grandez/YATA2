@@ -1,68 +1,39 @@
 #' Realiza la carga inicial o recarga de la tabla de monedas
+#' Proceso Diario
 #'
 #' @param console Se ejecuta en una consola (interactivo)
 #' @param log     Nivel de detalle de los mensajes
 #'
-
-.update_currencies = function(count, type, logger, factory) {
-    added   = 0
-    block   = 100
-    beg     = count - block
-    process = TRUE
-
-    msg   = factory$msg
-    prov  = factory$getDefaultProvider()
-    tbl   = factory$getTable(factory$codes$tables$currencies)
-
-    df = prov$getCurrencies(beg, block, type)
-
-    while (process) {
-         if (nrow(df) < block) process = FALSE
-         logger$info(3, msg$log("CTC_UPDATING"), type, beg)
-         tbl$db$begin()
-         for (row in nrow(df):1) {
-              tbl$select(id=df[row,"id"])
-              if (!is.null(tbl$current)) {
-                  process = FALSE
-                  break
-               } else {
-                  tbl$add(as.list(df[row,]))
-                  added = added + 1
-               }
-         }
-         tbl$db$commit()
-         beg = beg - block
-         if (beg < 1) process = FALSE
-         if (process) df   = prov$getCurrencies(beg, block, type)
-    }
-    added
-}
-updateRank = function(logOutput, logLevel) {
-    # JGG TO DO
-    invisible(0)
-}
-updateCurrencies = function(logOutput, logLevel) {
-   begin = as.numeric(Sys.time())
+update_currencies = function(logLevel = 0, logOutput = 0) {
+   rc      = 0
+   begin   = as.numeric(Sys.time())
 
    rc = tryCatch({
-      fact  = YATACore::YATAFACTORY$new()
-      prov  = fact$getDefaultProvider()
+      browser()
+      factory = Factory$new()
+      logger  = YATABase::YATALogger$new()
+      prov  = factory$getDefaultProvider()
 
-      codes = fact$codes
-      msg   = fact$msg
-
-      total_items = prov$getCurrenciesNumber("all")
-      num_coins  = prov$getCurrenciesNumber("coins")
-      num_tokens = prov$getCurrenciesNumber("tokens")
-
-      logger = YATABase::YATALogger$new("Currencies", logOutput, logLevel)
-      logger$process(1, msg$log("CTC_CURRENCIES"))
-      count = .update_currencies(num_coins, "coins", logger, fact)
-      logger$process(2, msg$log("CTC_ADDED"), count)
-      logger$process(1, msg$log("CTC_TOKENS"))
-      count = .update_currencies(num_tokens, "tokens", logger, fact)
-      logger$process(2, msg$log("CTC_ADDED"), count)
-      0
+      num_coins   = prov$getCurrenciesNumber("coins")
+      num_tokens  = prov$getCurrenciesNumber("tokens")
+      total_items = num_coins + num_tokens
+   #    logger = YATABase::YATALogger$new("Currencies", logOutput, logLevel)
+   #    logger$process(1, msg$log("CTC_CURRENCIES"))
+   #
+       message("Updating coins")
+       coins  = .updateCurrencies(num_coins, "coins",  logger, factory)
+       message("Updating tokens")
+       tokens = .updateCurrencies(num_coins, "tokens", logger, factory)
+   #
+   #    logger$process(2, msg$log("CTC_ADDED"), coins$added)
+   #    logger$process(1, msg$log("CTC_TOKENS"))
+   #
+   #    tokens = .update_currencies(num_tokens, "tokens", logger, fact)
+   #
+   #    logger$process(2, msg$log("CTC_ADDED"), tokens$added)
+   #    icons = c(coins$items, tokens$items)
+   #    #.update_icons(icons, logger, fact)
+       0
       }, YATAERROR = function (cond) {
               browser()
               16
@@ -70,7 +41,9 @@ updateCurrencies = function(logOutput, logLevel) {
               browser()
               16
       })
-      logger$executed(rc, begin, "Executed")
+   #    logger$executed(rc, begin, "Executed")
+      factory$destroy()
+      message(paste("update_currencies ending with rc =", rc))
       invisible(rc)
    #
    # beg   = 1
@@ -116,6 +89,108 @@ updateCurrencies = function(logOutput, logLevel) {
    #    })
 
 
+}
+
+.updateCurrencies = function(count, type, logger, factory) {
+    results = list(added = 0, updated=0, items=c())
+    block   = 250
+    beg     = 1
+    process = TRUE
+
+#    msg   = factory$msg
+    prov = factory$getDefaultProvider()
+    tbl  = factory$getTable("Currencies")
+
+    df   = prov$getCurrencies(beg, block, type)
+
+    while (process) {
+         rows = nrow(df)
+         if (rows < block) process = FALSE
+#         logger$info(3, msg$log("CTC_UPDATING"), type, beg)
+         tbl$db$begin()
+         for (row in 1:nrow(df)) {
+            id = as.integer(df[row,"id"])
+              tbl$select(id=df[row,"id"])
+              if (!is.null(tbl$current)) {
+                 if (.checkChanges(as.list(df[row,]),tbl)) {
+                    message(paste("Updating", df[row, "symbol"]))
+                     results$updated = results$updated + 1
+                     tbl$apply()
+                 }
+               } else {
+                  message(paste("Adding", df[row, "symbol"]))
+                  tbl$add(as.list(df[row,]))
+                  results$added = results$added + 1
+                  results$items = c(results$items,df[row,"id"])
+               }
+         }
+         tbl$db$commit()
+         beg = as.integer(df[nrow(df), "rank"]) + 1
+         if (process) df   = prov$getCurrencies(beg, block, type)
+    }
+    results
+}
+.checkChanges = function (data, tbl) {
+    changed = FALSE
+    if (data$active != tbl$current$active) {
+        tbl$set(active = data$active)
+        changed = TRUE
+    }
+    if (data$rank != tbl$current$rank) {
+        tbl$set(rank = data$rank)
+        changed = TRUE
+    }
+    if (is.na(tbl$current$mktcap) || data$mktcap != tbl$current$mktcap) {
+        tbl$setField("mktcap" ,data$mktcap)
+        changed = TRUE
+    }
+    if (as.Date(data$since, origin="1970-01-01") < tbl$current$since) {
+        tbl$set(since = as.Date(data$since, "1970-01-01"))
+        changed = TRUE
+    }
+    changed
+}
+.update_icons = function(items, logger, factory) {
+    for (id in items) {
+
+    }
+    results = list(added = 0, items=c())
+    block   = 100
+    beg     = count - block
+    process = TRUE
+
+    msg   = factory$msg
+    prov  = factory$getDefaultProvider()
+    tbl   = factory$getTable(factory$codes$tables$currencies)
+
+    df = prov$getCurrencies(beg, block, type)
+
+    while (process) {
+         if (nrow(df) < block) process = FALSE
+         logger$info(3, msg$log("CTC_UPDATING"), type, beg)
+         tbl$db$begin()
+         for (row in nrow(df):1) {
+              tbl$select(id=df[row,"id"])
+              if (!is.null(tbl$current)) {
+                  process = FALSE
+                  break
+               } else {
+                  tbl$add(as.list(df[row,]))
+                  results$added = results$added + 1
+                  results$items = c(results$items,df[row,"id"])
+               }
+         }
+         tbl$db$commit()
+         beg = beg - block
+         if (beg < 1) process = FALSE
+         if (process) df   = prov$getCurrencies(beg, block, type)
+    }
+    results
+}
+
+updateRank = function(logOutput, logLevel) {
+    # JGG TO DO
+    invisible(0)
 }
 #' Obtiene la cotizacion de las monedas en el momento actual
 #'
@@ -173,7 +248,81 @@ updateTickers = function(max=0, console=FALSE, log=1) {
       logger$executed(rc, elapsed=as.numeric(Sys.time()) - begin, "Executed")
 }
 updateIconsCurrency = function(maximum, force=FALSE, console=1, log=1) {
+   # Obtiene los iconos de las monedas ausentes
     browser()
+    url = "https://s2.coinmarketcap.com/static/img/coins/200x200/"
+    factory  = YATACore::YATAFACTORY$new()
+    exec     = YATABase::YATAExec$new()
+
+    codes = factory$codes
+    msg   = factory$msg
+
+    site = Sys.getenv("YATA_SITE")
+    if (nchar(site) == 0) {
+        message("ERROR: Missing YATA_SITE environment variable")
+        return (invisible(16))
+    }
+    fileDir = normalizePath(paste0(Sys.getenv("YATA_SITE"), "/ext/icons/currencies"))
+    tblCtc  = factory$getTable(codes$tables$currencies)
+    tblCtc$db$begin()
+
+    files = list.files(fileDir)
+    files = suppressWarnings(na.omit(as.integer(gsub(".png", "", files, fixed = TRUE))))
+    files = sort(files)
+    tbl   = tblCtc$table()
+
+    iFile   = 1
+    iRow    = 1
+    updates = 1
+    while (iFile <= length(files) && iRow <= nrow(tbl) ) {
+        if (updates %% 50 == 0) {
+            tblCtc$db$commit()
+            tblCtc$db$begin()
+        }
+        iconTbl = tbl[iRow, "id"]
+        iconFile = files[iFile]
+        if (is.na(iconTbl)) {
+            message("descargar ", iRow)
+            ico = paste0(tbl[iRow, "id"], ".png")
+            tbl[iRow, "icon"] = ico
+            res = exec$unload(paste0(url, ico), fileDir)
+            if (res$status == 0) {
+                tblCtc$update(list(icon=ico), id=tbl[iRow, "id"])
+                updates = updates + 1
+            }
+            next
+        }
+        if (iconTbl == iconFile) {
+            iFile = iFile + 1
+            iRow  = iRow + 1
+            next
+        }
+        if (iconTbl < iconFile) {
+            message("descargar 2: ", iconTbl)
+            ico = paste0(tbl[iRow, "id"], ".png")
+            res = exec$unload(paste0(url, ico), fileDir)
+            if (res$status == 0) {
+                tblCtc$update(list(icon=ico), id=tbl[iRow, "id"])
+                updates = updates + 1
+            }
+            iRow  = iRow + 1
+            next
+        }
+        iFile = iFile + 1
+    }
+    while (iRow <= nrow(tbl) ) {
+        message("descargar ", iRow)
+        iRow = iRow + 1
+    }
+    tblCtc$db$commit()
+    browser()
+      total_items = prov$getCurrenciesNumber("all")
+      num_coins  = prov$getCurrenciesNumber("coins")
+      num_tokens = prov$getCurrenciesNumber("tokens")
+
+      logger = YATABase::YATALogger$new("Currencies", logOutput, logLevel)
+      logger$process(1, msg$log("CTC_CURRENCIES"))
+
    batch  = YATABatch$new("icons", console, log)
    begin  = as.numeric(Sys.time())
    logger = batch$log

@@ -1,94 +1,135 @@
-updateHistory = function(logoutput, loglevel, backward=FALSE) {
-#JGG
-#  PARECE QUE HA HABIDO CAMBIOS Y SOLO DEVUELVE HASTA 180/1 DIAS EN LUGAR DE TODO EL RANGO
-#  y QUE ADEMAS SOLO DA UN AGNO
-#  ESTO NO ES PROBLEMA EN CONDICIONES NORMALES QUE SOLO PEDIMOS UNOS DIAS
-#  PERO SI PARA PROCESOS MAS MASIVOS
-#  ASI QUE IREMOS POR BUCLES DE 90 DIAS
-#  ADEMAS HAY UN PROBLEMCA CON LOS BUFFERS DE LOS FICHEROS
-#  A VECES SE LANZA EL IMPORT ANTES DE QUE SE HAYAN ACABADO DE GRABAR LOS DATOS
-#  ALGORITMO:
-#     - SI EL RANGO HA RECUPERAR ES MAYOR QUE UNO DADO
-#         - LO PARTIMOS EN TROZOS (EVITAR EL LIMITE DE 180)
-#         - EJECUTAMOS DE NUEVO LA DETECCION DEL RANGO EXISTENTE (EVITAR PROBLEMA DE BUFFER)
-#         - SI HAY FALLO EN EL PROCESO PASAMOS AL SIGUIENTE (EVITAR SALTOS)
+#' Recupera los datos historicos de las sesiones
+#' Proceso Diario
+#'
+# NOTAS
+# Parando 3 segundos cada vez casca a los 262
+# Si lo pongo como demonio, puedo ir ejecutando trozos a lo largo del dia
+# Y de esta forma tendriamos un desfase posible de dos dias
+update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOutput = 0) {
+   browser()
+   batch   = YATABatch$new("history")
+   logger  = batch$logger
+   started = Sys.time() # Coger el dia
 
-    process = "history"
-    logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
-    pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")
+   if (batch$running) return (invisible(batch$rc$RUNNING))
 
-    batch = YATABatch$new("History")
-    fact  = batch$fact
+   rc = tryCatch({
+      browser()
+      factory = Factory$new()
 
-    rc    = batch$rc$OK
-    count = 0
-    begin = as.numeric(Sys.time())
+      tblctc = factory$getTable("Currencies")
+      dfctc  = tblctc$table(active = 1)
+      if (nrow(dfctc) == 0) stop(structure( list(message="No data"), class = c("NODATA", "condition")))
 
-    if (!missing(logoutput)) batch$logger$setLogOutput (logoutput)
-    if (!missing(loglevel))  batch$logger$setLogLevel  (loglevel)
+      process = TRUE
+      while (process) {
+         .updateHistory(factory, logger, dfctc, reverse)
+         process = batch$stop_process()
+         if (process) {
+            # Calcular el dia siguiente y poner a la espera
+            message("Waiting")
+            Sys.sleep(interval * 60)
+         }
+      }
+      batch$rc$OK
+   }, NODATA = function (cond) { batch$rc$NODATA }
+    , error  = function (cond) {
+       browser()
+       batch$rc$FATAL  }
+   )
+   browser()
+   batch$destroy()
+   invisible(rc)
+}
 
-    batch$fact$setLogger(batch$logger)
+.updateHistory = function (factory, logger, dfCTC, reverse) {
+   prov    = factory$getDefaultProvider()
+   tblCTC  = factory$getTable("Currencies")
+   tblHist = factory$getTable("History")
+   tables  = list(hist=tblHist, ctc=tblCTC)
+   today   = Sys.Date()
 
-    octc = fact$getObject(fact$codes$object$currencies)
-    hist = fact$getObject(fact$codes$object$history)
-    prov = fact$getObject(fact$codes$object$providers)
-    ctc  = octc$getAllCurrencies()
-    ctc = ctc[ctc$id > 0,]
+   rows = 1:nrow(dfCTC)
+   if (reverse) rows = nrow(dfCTC):1
+   count = 0
+   for (row in rows) {
+        last = dfCTC[row,"last"]
+        if (is.na(last)) last = dfCTC[row,"since"] # Sys.Date() - 20
+        if (as.integer(today - last) < 2) next
+        count = count + 1
+        to = today
+        if (to - last > 25) to = last + 25
+        data = .retrieveData(prov, as.integer(dfCTC[row,"id"]), last + 1, to )
+        txt = ifelse(is.null(data), "SIN", "CON")
+        message(sprintf("%5d - Solicitado %s (%05d) %s datos", count, dfCTC[row,"symbol"], dfCTC[row, "id"], txt))
+        if (!is.null(data)) .updateData(data, as.list(dfCTC[row,]), tables)
+        if ( is.null(data)) .updateLastDate(to, as.list(dfCTC[row,]), tables)
 
-    rng  = hist$getRanges()
-    df   = dplyr::left_join(ctc, rng, by=c("id", "symbol"))
+        .wait(row)
+   }
+}
 
-    #JGG OJO AL 2021-12-31 COMO FECHA FIJA
-    df[is.na(df$min), "min"] = as.Date.character("2021-12-31")
-    df[is.na(df$max), "max"] = as.Date.character("2021-12-31")
+.updateData = function(data, ctc, tables) {
+    message(paste("Procesando", ctc$symbol, "(", ctc$id, ")"))
 
-    info    = batch$fact$parms$getHistoryData()
+    data$id     = ctc$id
+    data$symbol = ctc$symbol
+    tblhist = tables$hist
+    tblctc  = tables$ctc
+    tryCatch({
+       tblhist$db$begin()
+       tblhist$bulkAdd(data)
+       tblctc$select(id = ctc$id)
+       tblctc$set(last= substr(data[nrow(data), "timestamp"], 1,10))
+       tblctc$apply()
+       tblhist$db$commit()
+    }, error = function (cond) {
+       tblhist$db$rollback()
+       YATABase:::propagateError(cond)
+    })
 
-    pid  = Sys.getpid() %% 2
-    from = ifelse(pid == 0, 1, nrow(ctc))
-    to   = ifelse(pid == 0, nrow(ctc), 1)
+}
+.updateLastDate = function(to, ctc, tables) {
+    tblctc  = tables$ctc
+    tryCatch({
+       tblctc$db$begin()
+       tblctc$select(id = ctc$id)
+       tblctc$set(last = to)
+       tblctc$apply()
+       tblctc$db$commit()
+    }, error = function (cond) {
+       tblhist$db$rollback()
+       YATABase:::propagateError(cond)
+    })
+}
+.retrieveData = function (prov, id, from, to) {
+   waits = c(60, 120, 240) # Minutos a esperar
+   count = 0
+   process = TRUE
+   data    = NULL
 
-    if (file.exists(pidfile)) return (invisible(batch$rc$RUNNING))
-    cat(paste0(Sys.getpid(),"\n"), file=pidfile)
-
-    byChunks = FALSE
-    for (row in from:to) {
-       if (difftime(Sys.time(), df[row,"max"], unit="days") <= 1) next
-       rc2 = tryCatch({
-           batch$logger$batch("%5d - Retrieving history for %s",row,df[row,"name"])
-           repeat {
-               to = Sys.Date()
-               byChunk = FALSE
-               if (as.integer(to - df[row,"max"], unit="days") > 121) {
-                   to = as.Date(df[row,"max"]) + 121
-                   byChunk = TRUE
-               }
-               data = prov$getHistory(df[row, "id"], df[row,"max"], to)
-               if (nrow(data) > 0) {
-                   data$id = df[row, "id"]
-                   data$symbol = df[row, "symbol"]
-                   .add2database(data, hist)
-                    if ((row %% info$each) == 0) Sys.sleep(info$sleep) # Para cada 2
-               }
-               if (!byChunk) break
-               df[row, "max"] = as.Date(max(data$timestamp)) + 1
-               # rng  = hist$getRanges(df[row,"id"])
-               # if (nrow(rng) == 0 || is.na(rng[1,"max"])) {
-               #     df[row,"max"] = to
-               # } else {
-               #     df[row,"max"] = rng[1,"max"]
-               # }
-           }
-           batch$rc$OK
-         }, error = function(cond) {
-            cat(cond$message, "\n")
-           # Nada. Ignoramos errores de conexion, duplicates, etc
-           batch$rc$ERRORS
-        })
-        if (rc2 > rc) rc = rc2
-    }
-    batch$logger$executed(0, begin, "Retrieving history")
-
-    if (file.exists(pidfile)) file.remove(pidfile)
-    invisible(rc)
+   while (process) {
+      process = tryCatch({
+          data = prov$getHistorical(id, from, to)
+          FALSE
+       }, HTTP_FLOOD = function(cond) {
+          #JGG OJO, ahora no espera
+          count = ifelse(count == 3, 3, count + 1)
+          message(paste("Waiting by flood", waits[count], "minutes"))
+          YATABase:::propagateError(cond)
+          Sys.sleep(waits[count] * 60)
+          TRUE
+       }, error = function(cond) {
+          YATABase:::propagateError(cond)
+       })
+   }
+   data
+}
+.wait = function (row) {
+   wait = 4
+   if      ((row %% 200) == 0)  wait = 59
+   else if ((row %% 100) == 0)  wait = 29
+   else if ((row %%  10) == 0)  wait = 09
+   message(paste("Waiting", wait, "seconds at item", row))
+   Sys.sleep(wait + 1)
 }

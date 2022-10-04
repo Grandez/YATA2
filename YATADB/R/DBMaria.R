@@ -1,32 +1,36 @@
-MARIADB = R6::R6Class("YATA.DB.MYSQL"
-   ,inherit    = YATA.DB
+MARIADB = R6::R6Class("YATA.DB.MARIADB"
+   ,inherit    = YATADB
    ,portable   = FALSE
    ,cloneable  = FALSE
    ,lock_class = TRUE
    ,public = list(
         initialize = function(data) {
-           private$base     = YATABase$new()
-           private$map      = base$map()
+           super$initialize()
+           # private$base     = YATABase$new()
+           # private$map      = base$map()
            private$dbInfo   = data
-           self$engine      = dbInfo$engine
-           self$name        = dbInfo$name
+           # self$engine      = dbInfo$engine
+           # self$name        = dbInfo$name
            private$connRead = connect()
        }
-      ,finalize = function() {
+      ,finalize = function() { destroy() }
+      ,destroy  = function() {
           if (!is.null(connTran)) commit()
           disconnect(connTran)
           disconnect(connRead)
-       }
+      }
       ,print      = function() {
           db = ifelse(is.null(connRead), "No Connection", paste0(dbInfo$name, " (", dbInfo$dbname, ")"))
           message(db, ": MariaDB Database")
       }
       ,isValid = function(conn) {
           if (missing(conn)) conn = connRead
-          RMariaDB::dbIsValid(conn)
+          rc = RMariaDB::dbIsValid(conn)
+          rc
       }
       ,getName    = function ()     { dbInfo$dbname }
-      ,connect    = function ()     {
+      ,connect    = function (data) {
+          if (!missing(data)) private$dbInfo = data
           tryCatch({RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
                                         ,username = dbInfo$user
                                         ,password = dbInfo$password
@@ -45,46 +49,53 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           if (missing(conn)) conn = private$connRead
           if (!is.null(conn) && isValid(conn))  {
               tryCatch({ RMariaDB::dbDisconnect(conn)
-          },error = function(cond) {
-              YATABase:::SQL( "DB Disconnect", origin=cond$message
+                       },error = function(cond) {
+                              YATABase:::SQL( "DB Disconnect", origin=cond$message
                              ,action="disconnect", rc = getSQLCode(cond)
                              ,sql = "disconnect")
-          })
+                       })
           }
           NULL
       }
-      ,begin      = function() {
+      ,begin      = function(conn) {
+          if (!missing(conn)) { # isolated
+              RMariaDB::dbBegin(conn)
+              return (invisible(self))
+          }
           if (!is.null(connTran)) {
-              YATABase:::SQL( "Transacciones activas", origin=NULL
-                             ,action="begin", rc = getSQLCode(cond)
+              YATABase:::WARN( "Transacciones activas", "SQL", origin=NULL
+                             ,action="begin", rc = 1192 # Transaction active
                              ,sql="begin")
           }
           private$connTran = connect()
           RMariaDB::dbBegin(connTran)
           invisible(self)
       }
-      ,commit     = function() {
-          if (is.null(private$connTran)) {
-              warning("Commit sin transaccion")
-              return (invisible(self))
+      ,commit     = function(conn) {
+          if (!missing(conn)) {
+              RMariaDB::dbCommit(conn)
+              disconnect(conn)
+          } else if (!is.null(private$connTran)) {
+              RMariaDB::dbCommit(connTran)
+              private$connTran = disconnect(connTran)
           }
-          RMariaDB::dbCommit(connTran)
-          private$connTran = disconnect(connTran)
           invisible(self)
       }
-      ,rollback   = function() {
-          if (is.null(private$connTran)) {
-              warning("Rollback sin transaccion")
-              return (invisible(self))
+      ,rollback   = function(conn) {
+          if (!missing(conn)) {
+              RMariaDB::dbRollback(conn)
+              disconnect(conn)
+          } else if (!is.null(private$connTran)) {
+              RMariaDB::dbRollback   (connTran)
+              private$connTran = disconnect(connTran)
           }
-          RMariaDB::dbRollback   (connTran)
-          private$connTran = disconnect(connTran)
           invisible(self)
       }
       ,query      = function(qry, params=NULL) {
           if (!is.null(params)) names(params) = NULL
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, params=params)
               }, error = function (cond) {
+                  browser()
                 YATABase:::SQL( "QUERY Error",  origin=cond$message
                                ,action="query", rc = getSQLCode(cond)
                                ,sql=qry)
@@ -98,14 +109,16 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           tryCatch({
               conn = getConn(isolated)
               res = RMariaDB::dbExecute(conn, qry, params=params)
-              if (isolated) commit()
+              if (isolated) commit(conn)
           },warning = function(cond) {
-               if (isolated) rollback()
+              browser()
+               if (isolated) rollback(conn)
                YATABase:::SQL("EXECUTE", origin=cond$message, sql=qry, action="execute")
           },error = function (cond) {
+              browser()
                sqlcode = getSQLCode(cond)
-               if (sqlcode == SQL_LOCK) isolated = TRUE
-               if (isolated) rollback()
+#               if (sqlcode == 1205) isolated = TRUE # Table lock
+               if (isolated) rollback(conn)
                YATABase:::SQL( "SQL EXECUTE ERROR",origin=cond$message,sql=qry
                               ,action="execute", rc = getSQLCode(cond))
           })
@@ -115,18 +128,18 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
          tryCatch({
              conn = getConn(isolated)
              res = RMariaDB::dbWriteTable(conn, table, data, append=append, overwrite=over)
-             if (isolated) commit()
+             if (isolated) commit(conn)
          }, warning = function(cond) {
 #                       yataWarning("Warning SQL", cond, "SQL", "WriteTable", cause=tab#le)
                      stop(paste("Aviso en DB Write: ", cond$message))
          }, error   = function(cond) {
-            if (isolated) rollback()
+            if (isolated) rollback(conn)
             YATABase:::SQL( "SQL WRITE TABLE ERROR", origin = cond$message, sql = table
                            ,action = "WriteTable", rc = getSQLCode(cond)
                            ,sql="writeTable")
              })
       }
-      ,add        = function(table, values, isolated=FALSE) {
+      ,insert        = function(table, values, isolated=FALSE) {
          # inserta en un registro en la tabla
          # values: lista de valores con nombres
          # Los datos a NULL se ignoran
@@ -144,21 +157,21 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
            }
            df = query(sql)
            as.integer(df[1,1])
-        }
+      }
+     ,checkSQLCode  = function(cond) { cond$rc }
+     ,SQLDuplicated = function(cond) { cond$rc == 1062 }
+     ,SQLLock       = function(cond) { cond$rc == 1205 }
+
     )
    ,private = list(
-       dbInfo    = NULL
-      ,connRead  = NULL   # Conexion para leer datos
-      ,connTran  = NULL   # Conexion para actualizar datos
-      ,map       = NULL
-      ,base      = NULL
-      ,SQL_LOCK  = 1205
-      ,getConn   = function(isolated=FALSE) {
+       getConn   = function(isolated=FALSE) {
          conn = private$connRead
          if (isolated) {
-             begin()
-             conn = private$connTran
+             private$connIsolated = connect()
+             begin(private$connIsolated)
+             return (private$connIsolated)
          }
+         if (!is.null(connTran)) conn = private$connTran
          conn
       }
       ,getSQLCode = function (cond) {
@@ -168,7 +181,7 @@ MARIADB = R6::R6Class("YATA.DB.MYSQL"
           res = regexpr("\\[[0-9]+\\]", cond$message)
           if (length(res) > 0 && res > 0) {
               end = attr(res,"match.length")[1]
-              rc = substr(cond$message,res + 1, res + end - 2)
+              rc = as.integer(substr(cond$message,res + 1, res + end - 2))
           }
           rc
       }

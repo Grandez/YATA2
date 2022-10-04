@@ -17,7 +17,7 @@
 #   table - Obtiene la tabla segun filtros
 #   load  - Carga la tabla con filtros
 #   loadAll - Carga la tabla sin filtros
-YATATable <- R6::R6Class("YATA.TABLE"
+YATATable = R6::R6Class("YATA.TABLE"
    ,portable   = FALSE
    ,cloneable  = FALSE
    ,lock_class = FALSE
@@ -29,10 +29,9 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,err       = NULL
       ,db        = NULL
       ,base      = NULL
-      ,initialize  = function(name, fields, key=c("id"), db=NULL)    {
+      ,initialize  = function(name, tblName, fields, key=c("id"), db=NULL)    {
           self$name       = name
-          self$base       = YATABase$new()
-          private$tblName = getTblName(name)
+          private$tblName = tblName
           private$fields  = fields
           private$key     = key
           self$db         = db
@@ -78,13 +77,12 @@ YATATable <- R6::R6Class("YATA.TABLE"
           private$changed = list()
       }
       ,set      = function(...) {
-          args = base$args2list(...)
+          args = YATABase::args2list(...)
           lapply(names(args), function (field) setField(field, args[[field]]))
           invisible(self)
       }
       ,setField = function(field, value) {
-         if (is.null(current))
-             yataErrorLogical("No register active", action="Set field", origin=tblName)
+         if (is.null(current)) yataErrorLogical("No register active", action="Set field", origin=tblName)
          if (field %in% key) return (invisible(self))
          if (is.na(value))   return (invisible(self)) # NA genera ERROR
          if (field %in% names(current)) {
@@ -105,8 +103,8 @@ YATATable <- R6::R6Class("YATA.TABLE"
       ,addField = function(name, value)  { self$current[[name]] = self$current[[name]] + value }
       ,select   = function(..., create=FALSE, limit=0)  {
           # selecciona un registro o conjunto, segun los parametros (solo equal)
-          # Devuelve si se ha creado o no y activa current
-         created = FALSE
+          # Devuelve si se ha seleccionado/creado y activa current
+         created = TRUE
 
          reset()
          filter = mountWhere(...)
@@ -268,6 +266,20 @@ YATATable <- R6::R6Class("YATA.TABLE"
           setColNames(db$query(sql, filter$values))
       }
       ,add     = function(data, isolated=FALSE) {
+          tryCatch({
+              insert(data, isolated)
+          }, SQL = function (cond) {
+              browser()
+              if (!db$SQLDuplicated(cond)) propagateError(cond)
+              self$select(private$key)
+              self$set(data)
+              self$apply()
+
+          })
+          invisible(self)
+      }
+      ,insert     = function(data, isolated=FALSE) {
+          # solo inserta
           if (missing(data)) data = self$current
           if (is.data.frame(data)) data = as.list.data.frame(data)
 
@@ -277,7 +289,7 @@ YATATable <- R6::R6Class("YATA.TABLE"
           fields = jgg_list_clean(private$fields[names(data)])
           values = jgg_list_clean(data[names(fields)])
           names(values) = private$fields[names(values)]
-          db$add(tblName, values, isolated)
+          db$insert(tblName, values, isolated)
       }
       ,remove  = function(..., inValues=NULL, isolated=FALSE) {
          filter = mountWhere(..., inValues=inValues)
@@ -440,12 +452,6 @@ YATATable <- R6::R6Class("YATA.TABLE"
        ,reset = function() {
           private$changed = list()
           self$current = NULL
-       }
-       ,getTblName = function(name) {
-           if (!is.null(DBDict$tables[[name]])) return (DBDict$tables[[name]])
-           if (!is.null(DBDict$user  [[name]])) return (DBDict$user  [[name]])
-           if (!is.null(DBDict$base  [[name]])) return (DBDict$base  [[name]])
-           DBDict$data  [[name]]
        }
       ,makeWhereGL = function (gt, equal, ...){
           # Primer campo es el que no va por =

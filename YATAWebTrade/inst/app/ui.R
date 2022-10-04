@@ -1,4 +1,6 @@
 lbl = WEB$getLabelsMenuMain()
+browser()
+pp = JGGTab("test", "Test", NULL, JGGModule("test"))
 #JGGDashboard("DashBoard", id="dashboard"
 YATAPage("YATA", id="mainMenu",titleActive = TRUE
     ,JGGTab("test", "Test", NULL, JGGModule("test"))

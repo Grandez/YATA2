@@ -70,6 +70,9 @@ YATAExec = R6::R6Class("YATA.R6.RUN"
                file.copy(from, to, overwrite=TRUE, recursive = TRUE)
            })
        }
+      ,unload = function(what, where) {
+         processx::run("curl", args=c("-O", what), FALSE, where)
+      }
       ,R = function(script, async = TRUE) {
          site = Sys.getenv("YATA_SITE")
          root = paste0(site,"/ext/scripts/")

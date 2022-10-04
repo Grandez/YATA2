@@ -35,13 +35,19 @@ YATABaseCond = R6::R6Class("YATA.BASE.COND"
    )
 )
 .error = function(msg, subclass, ...) {
-   logger = YATALogger$new("ERROR")
+#   logger = YATALogger$new("ERROR")
    data = list(...)
    data$message = msg
    data$subclass = subclass
-   errdata = structure( data, class = c("YATAERROR", "error", "condition"))
-   logger$fail(errdata)
+   errdata = structure( data, class = c("YATAERROR", subclass, "error", "condition"))
+#   logger$fail(errdata)
    stop(errdata)
+}
+.warning = function(msg, subclass=NULL, ...) {
+   warn = structure( list( message = msg, ...)
+                    ,class = c("YATAWARNING", subclass, "warning", "condition")
+    )
+    warning(warn)
 }
 
 # No se exportan para no tener efectos colaterales
@@ -59,9 +65,11 @@ Warning = function(msg, action=NULL, subclass=NULL, ...) {
       msg = paste0(msg, " (", data$sqlcode, ")")
      .error(msg, subclass="SQL", ...)
 }
-HTTP  = function(msg, ...) { .error(msg, subclass="HTTP",  ...) }
-EXEC  = function(msg, ...) { .error(msg, subclass="EXEC",  ...) }
-MODEL = function(msg, ...) { .error(msg, subclass="MODEL", ...) }
+HTTP  = function(msg, ...) { .error  (msg, subclass="HTTP",  ...) }
+FLOOD = function(msg, ...) { .error  (msg, subclass=c("HTTP_FLOOD", "HTTP"),  ...) }
+EXEC  = function(msg, ...) { .error  (msg, subclass="EXEC",  ...) }
+MODEL = function(msg, ...) { .error  (msg, subclass="MODEL", ...) }
+WARN  = function(msg, ...) { .warning(msg, subclass, ...)         }
 
 logical = function(msg, ...) {
      .error(msg, subclass="LOGICAL", ...)

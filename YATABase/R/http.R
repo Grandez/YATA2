@@ -12,10 +12,14 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          if (!is.null(parms))   prms = parms
          #JGG json la page devuelve 0 pero el json no
 
-         page = tryCatch({ httr::GET(url, add_headers(.headers=headers), query=prms)
-                         }, error = function(cond) { NULL })
+         page = tryCatch({
+                   httr::GET(url, add_headers(.headers=headers), query=prms)
+                }, error = function(cond) { checkGetError(url, parms, cond) })
 
-         if (is.null(page)) return (NULL)
+         if (is.null(page)) {
+            YATABase:::HTTP( "HTTP ERROR: No data retrieved", origin=url, action="get"
+                            ,message="No data retrieved")
+         }
          private$rc = checkPageResponse("get", page, url, parms, accept)
          page
       }
@@ -63,6 +67,13 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          if (rc == 0 || rc == 200) return (0)
          # Hacemos el trycatch para grabar siempre el error
          tryCatch({
+            if (length(grep("busy", resp$status$error_message)) > 0) {
+                YATABase:::FLOOD( paste("HTTP ERROR:", resp$status$error_message)
+                                 ,action = method, code    = resp$status_code
+                                 ,origin = url,    message = resp$status$error_message
+                                 ,parameters = parms
+                                )
+            }
             YATABase:::HTTP( paste("HTTP ERROR:", resp$status$error_message)
                             ,action = method, code    = resp$status_code
                             ,origin = url,    message = resp$status$error_message
@@ -73,6 +84,22 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
             YATABase:::propagateError(cond)
          })
       }
-
+      ,checkGetError = function(url, parms, cond) {
+          msg = cond$message
+          urlerr = url
+          code = 900
+          if (grepl("Timeout", cond$message, ignore.case = TRUE)) {
+              code = 408
+              msg = "Timeout reached"
+              expr = regexpr("\\[.*\\]", cond$message)
+              if (expr > 0) urlerr = substr(cond$message, expr + 1, attr(expr, "match.lenght") - 2)
+          }
+          tryCatch({
+             YATABase:::HTTP( paste("HTTP ERROR:", msg), action = "get", code = code
+                             ,origin = url,    message = cond$message, parameters = parms)
+         }, error = function(cond){
+            YATABase:::propagateError(cond)
+         })
+      }
    )
 )

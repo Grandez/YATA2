@@ -1,6 +1,4 @@
-# Ahi que crear un conjunto de cuentas para poder hacer peticiones
-# 300 creditos dia
-# 10000 creditos mes
+# cryptoType = all / coins / tokens
 PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
   ,inherit    = ProviderBase
   ,portable   = FALSE
@@ -42,27 +40,26 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         }
         setwd(oldwd)
     }
-      # cryptoType = all / coins / tokens
-    ,getCurrencies    = function(from = 1, max = 0, type="all") {
-        #JGG Revisar
+    ,getCurrencies    = function(from = 1, items = 0, type="all") {
         url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
         count   =   0
         until   = 501
         dfc     = NULL
         process = TRUE
-        parms = list( start=from, limit=500, cryptoType=type, tagType="all")
+        mlimit  = ifelse(items > 0, items, 500)
+        parms = list( start=from, limit=mlimit, cryptoType=type, tagType=type)
 
         while (process) {
              if (count > 0) Sys.sleep(1) # Para no saturar
              data  = http$json(url, parms=parms, headers=headers)
 
-             until = ifelse (max == 0, data$totalCount, max)
+             until = ifelse (items > 0, items, data$totalCount)
              data  = data[[1]]
              parms$start = parms$start + length(data)
 
              lst = lapply(data, function(x) {
                     since = ifelse(is.null(x$dateAdded), x$lastUpdated, x$dateAdded)
-                    since = paste(substr(since,1,10),substr(since,12,19), sep="-")
+                    since = substr(since,1,10)
                     if (nchar(x$symbol) > 64) x$symbol = substr(x$symbol,1,64)
                     list( id=as.integer(x$id)
                          ,name=x$name
@@ -77,14 +74,8 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                    })
              df = do.call(rbind.data.frame,as.list(lst))
              dfc = rbind(dfc, df)
-             # if (length(lst) > 0) {
-             #     df = data.frame( matrix(unlist(lst), nrow=length(lst), byrow=TRUE)
-             #                     ,stringsAsFactors=FALSE)
-             #     colnames(df) = names(lst[[1]])
-             #     dfc = rbind(dfc, df)
-             # }
              count = count + length(data)
-             if (count >= until || length(data) < 500) process = FALSE
+             if (count >= until || length(data) < mlimit) process = FALSE
         }
         dfc
     }
@@ -94,7 +85,55 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         data  = http$json(url, parms=parms, headers=headers)
         as.integer(data$totalCount)
     }
-    ,getTickers       = function(max = 0, from = 1) {
+    ,getTickers    = function(from = 1, items = 0) {
+        url     = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing"
+        count   =   0
+        until   = 501
+        dfc     = NULL
+        process = TRUE
+        mlimit  = ifelse(items > 0, items, 500)
+        parms = list( start=from, limit=mlimit, cryptoType="all", tagType="all")
+
+        toNum    = function(item) { ifelse(is.null(item), 0, item) }
+        makeList = function(x)    {
+          quote  = x$quotes[[1]]
+          list( id        = x$id
+               ,symbol    = x$symbol
+               ,rank      = x$cmcRank
+               ,price     = toNum(quote$price)
+               ,volume    = toNum(quote$volume24)
+               ,volday    = toNum(quote$volume24)
+               ,volweek   = toNum(quote$volume7d)
+               ,volmonth  = toNum(quote$volume30d)
+               ,hour      = toNum(quote$percentChange1h)
+               ,day       = toNum(quote$percentChange24h)
+               ,week      = toNum(quote$percentChange7d)
+               ,month     = toNum(quote$percentChange30d)
+               ,bimonth   = toNum(quote$percentChange60d)
+               ,quarter   = toNum(quote$percentChange90d)
+               ,dominance = toNum(quote$dominance)
+               ,turnover  = toNum(quote$turnover)
+               ,tms       = quote$lastUpdated
+          )
+        }
+
+        while (process) {
+             if (count > 0) Sys.sleep(1) # Para no saturar
+             data  = http$json(url, parms=parms, headers=headers)
+             until = ifelse (items > 0, items, data$totalCount)
+             data  = data[[1]]
+             parms$start = parms$start + length(data)
+             lst = lapply(data, function(x) makeList(x))
+             df = do.call(rbind.data.frame,as.list(lst))
+             dfc = rbind(dfc, df)
+             count = count + length(data)
+             if (count >= until || length(data) < mlimit) process = FALSE
+        }
+        dfc = as_tms(dfc, c(17))
+        dfc
+    }
+
+    ,getTickers2       = function(from = 1, max = 0) {
         toNum    = function(item) { ifelse(is.null(item), 0, item) }
         makeList = function(x)    {
           quote  = x$quotes[[1]]
@@ -180,37 +219,50 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         colnames(df) = cols
         df
     }
-    ,getHistorical    = function(idCurrency, from, to ) {
+    ,getHistorical    = function(idCurrency, pfrom, pto ) {
         #JGG PARECE QUE AHORA SOLO DEVUELVE 180/1 DIAS EN LUGAR DE TODO EL RANGO
         #JGG ESTO NO ES PROBLEMA EN CONDICIONES NORMALES QUE SOLO PEDIMOS UNOS DIAS
         #JGG PERO SI PARA PROCESOS MAS MASIVOS, ASI QUE IREMOS POR BUCLES DE 90 DIAS
+        #JGG Cogemos en bucles de 25 dias para saltar los limites
+        url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/historical"
+        dfHist = NULL
+
         logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/mktcap.log")
 
         if (is.null(idCurrency)) return(NULL)
-        url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/historical"
+        mfrom = pfrom
+        mto   = pto
+        range = as.integer(mto - mfrom)
+        times = 0
+        #JGGNOTE Hay que ir al reves
+        #JGGNOTE Es decir, cuando no devuelva datos para el proceso
+        repeat {
+           if (range <  1) break;
+           if (range > 25) mto = mfrom + 25
+           if (times > 0) Sys.sleep(2) # evitar floods
 
-        # historical matches only 00:00:00
-        from = as.POSIXlt(from, "GMT")
-        hour(from) = 0
-        minute(from) = 0
-        second(from) = 0
-        from = as.numeric(from)
-        to = as.POSIXlt(to, "GMT")
-        hour(to) = 0
-        minute(to) = 0
-        second(to) = 0
-        to = as.numeric(to)
-        parms = list(id = idCurrency, timeStart = from, timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
+           from = makePosix(mfrom)
+           to   = makePosix(mto)
+           parms = list(id = idCurrency, timeStart = from, timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
 
-        data  = http$json(url, parms=parms, headers=headers)
-        data  = data$quotes
-        items = lapply(data, function(item) {
-            l1 = list(timeHigh=item$timeHigh, timeLow=item$timeLow)
-            list.merge(item$quote, l1)
-        })
-        df = do.call(rbind.data.frame,items)
-        if (nrow(df)> 0) df = as_tms(df, c(7,8,9))
-        df
+           data  = http$json(url, parms=parms, headers=headers)
+           data  = data$quotes
+           if (length(data) > 0) {
+               items = lapply(data, function(item) {
+                              l1 = list(timeHigh=item$timeHigh, timeLow=item$timeLow)
+                              jgg_list_merge(item$quote, l1)
+                             })
+               df     = do.call(rbind.data.frame,items)
+               dfHist = rbind(dfHist, df)
+           }
+           # Coger la fecha del ultimo y chequear si se ha ejecutado para evitar cierres de monedas
+           mfrom = mto + 1
+           mto = pto
+           range = as.integer(mto - mfrom)
+           times = times + 1
+        }
+        if (!is.null(dfHist) && nrow(dfHist)> 0) dfHist = as_tms(dfHist, c(7,8,9))
+        dfHist
     }
     ,getExchanges     = function() {
         # Aparte de 1000 campos devuelve el campo 2
@@ -318,7 +370,15 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         df$base = "EUR"
         private$dfTickers = df
         df
-     }
+    }
+    ,makePosix = function (mdate) {
+        # historical matches only 00:00:00
+        posix = as.POSIXlt(mdate, "GMT", origin="1970-01-01")
+        hour(posix) = 0
+        minute(posix) = 0
+        second(posix) = 0
+        as.numeric(posix)
+    }
     # ,request = function (url, parms, accept404 = TRUE) {
     #     if (missing(parms) || is.null(parms)) {
     #         page = httr::GET(url, add_headers(.headers=headers))
