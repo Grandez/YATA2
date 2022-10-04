@@ -25,8 +25,8 @@ YATALogger = R6::R6Class("YATA.LOGGER"
       valid   = TRUE
      ,lastErr = NULL
      ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20, ERROR=99)
-     ,print      = function() { message("Generic Logger class") }
-     ,initialize = function(module="general", level, output) {
+     ,print        = function() { message("Generic Logger class") }
+     ,initialize   = function(module="general", level, output) {
          private$modname   = module
          loglevel    = Sys.getenv("YATA_LOG_LEVEL")
          logoutput   = Sys.getenv("YATA_LOG_OUTPUT")
@@ -52,7 +52,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
          private$.level = min(private$levelFile, private$levelCon)
          .setLogFile()
        }
-       ,setLogLevel = function(level) {
+     ,setLogLevel  = function(level) {
           if (level < 10) {
              ll = level * 10
              ll = ll + level
@@ -63,20 +63,19 @@ YATALogger = R6::R6Class("YATA.LOGGER"
           private$.level = min(private$levelFile, private$levelCon)
           invisible(self)
        }
-       ,setLogOutput = function(output) {
+     ,setLogOutput = function(output) {
           private$.output = output
           invisible(self)
        }
-       # Friendly function
-       ,log = function(level, fmt,...) {
+     ,log          = function(level, fmt,...) {
           # Mensaje de logging/depuracion de nivel level
           .println(self$type$LOG, level,.mountMessage(fmt, ...))
        }
-       # Proceso en marcha, espera un done. Fichero se guarda
-       ,doing = function(level, fmt, ...) {
+     ,doing        = function(level, fmt, ...) {
+                 # Proceso en marcha, espera un done. Fichero se guarda
           .print(self$type$ACT, level, .mountMessage(fmt, ...))
        }
-       ,done = function(level, res=TRUE) {
+     ,done         = function(level, res=TRUE) {
           if (is.logical(res)) {
              if ( res) .flush(self$type$ACT, level,"\tOK", crayon::bold)
              if (!res) .flush(self$type$ACT, level,"\tKO", crayon::red)

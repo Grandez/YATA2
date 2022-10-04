@@ -7,11 +7,14 @@
 # Y de esta forma tendriamos un desfase posible de dos dias
 update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOutput = 0) {
    browser()
-   batch   = YATABatch$new("history")
+   factory = NULL
+   batch   = YATABatch$new("history", logLevel, logOutput)
    logger  = batch$logger
-   started = Sys.time() # Coger el dia
 
-   if (batch$running) return (invisible(batch$rc$RUNNING))
+   if (batch$running) {
+      logger$running()
+      return (invisible(batch$rc$RUNNING))
+   }
 
    rc = tryCatch({
       browser()
@@ -32,12 +35,14 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
          }
       }
       batch$rc$OK
-   }, NODATA = function (cond) { batch$rc$NODATA }
-    , error  = function (cond) {
+   }, NODATA = function (cond) {
+      if (!is.null(factory)) factory$detroy()
+      batch$rc$NODATA
+   }, error  = function (cond) {
        browser()
-       batch$rc$FATAL  }
-   )
-   browser()
+      if (!is.null(factory)) factory$detroy()
+       batch$rc$FATAL
+   })
    batch$destroy()
    invisible(rc)
 }
@@ -55,13 +60,19 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
    for (row in rows) {
         last = dfCTC[row,"last"]
         if (is.na(last)) last = dfCTC[row,"since"] # Sys.Date() - 20
-        if (as.integer(today - last) < 2) next
+        logger$doing(5, "%5d - Retrieving %-15s", row, dfCTC[row,"symbol"])
+        if (as.integer(today - last) < 2) {
+           logger$done(5, "- skip")
+           next
+        }
         count = count + 1
         to = today
+        if (logger$level < 5)logger$doing(1, "%5d - Retrieving %-15s", row, dfCTC[row,"symbol"])
         if (to - last > 25) to = last + 25
         data = .retrieveData(prov, as.integer(dfCTC[row,"id"]), last + 1, to )
-        txt = ifelse(is.null(data), "SIN", "CON")
-        message(sprintf("%5d - Solicitado %s (%05d) %s datos", count, dfCTC[row,"symbol"], dfCTC[row, "id"], txt))
+        txt = ifelse(is.null(data), "No info", "OK")
+        logger$done(1, "- %s", txt)
+#        message(sprintf("%5d - Solicitado %s (%05d) %s datos", count, dfCTC[row,"symbol"], dfCTC[row, "id"], txt))
         if (!is.null(data)) .updateData(data, as.list(dfCTC[row,]), tables)
         if ( is.null(data)) .updateLastDate(to, as.list(dfCTC[row,]), tables)
 

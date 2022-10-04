@@ -15,18 +15,17 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        ,logger = NULL
        ,base   = NULL
         # Return codes
-       ,rc = list(OK=0, RUNNING=2, NODATA=4, ERRORS=12, FATAL=16, SEVERE=32)
-       ,initialize = function (process="YATA") {
+       ,rc = list(OK=0, KILLED=1, RUNNING=2, NODATA=4, FLOOD=8, ERRORS=12, FATAL=16, SEVERE=32)
+       ,initialize = function (process="YATA", logLevel = 0, logOutput = 0) {
            private$pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")
-           private$logfile  = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
+           private$logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
 
            if (file.exists(pidfile)) {
-              message(paste("Process", process, "already running"))
               self$running = TRUE
            } else {
               cat(paste0(Sys.getpid(),"\n"), file=pidfile)
            }
-           self$logger = YATALogger$new(process)
+           self$logger = YATALogger$new(process, logLevel, logOutput)
            # self$codes  = YATACore::YATACODES$new()
 
            # self$fact   = YATACore::YATAFACTORY$new()
@@ -49,14 +48,14 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
            if (length(grep("stop", data, ignore.case = TRUE)) > 0) return (TRUE)
            FALSE
        }
-       ,setVerbose = function(verbose) {
-           # if (!missing(verbose)) {
-           #     det = verbose %% 10
-           #     private$msgDet = verbose %% 10
-           #     private$msgSum = floor( verbose / 10)
-           # }
-           # invisible(self)
-       }
+       # ,setVerbose = function(verbose) {
+       #     if (!missing(verbose)) {
+       #         det = verbose %% 10
+       #         private$msgDet = verbose %% 10
+       #         private$msgSum = floor( verbose / 10)
+       #     }
+       #     invisible(self)
+       # }
        # ,log = function(level, txt, ...) {
        #     if (level > 0 && level <= msgDet) {
        #         prfx = paste0(rep("   ",level), collapse="")

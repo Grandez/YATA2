@@ -47,11 +47,13 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         dfc     = NULL
         process = TRUE
         mlimit  = ifelse(items > 0, items, 500)
-        parms = list( start=from, limit=mlimit, cryptoType=type, tagType=type)
+        #parms = list( start=from, limit=mlimit, cryptoType=type, tagType=type)
+        parms = list( start=from, limit=mlimit)
 
         while (process) {
              if (count > 0) Sys.sleep(1) # Para no saturar
-             data  = http$json(url, parms=parms, headers=headers)
+             heads = changeUserAgent()
+             data  = http$json(url, parms=parms, headers=heads)
 
              until = ifelse (items > 0, items, data$totalCount)
              data  = data[[1]]
@@ -241,11 +243,13 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
            if (range > 25) mto = mfrom + 25
            if (times > 0) Sys.sleep(2) # evitar floods
 
+           heads = changeUserAgent()
+
            from = makePosix(mfrom)
            to   = makePosix(mto)
            parms = list(id = idCurrency, timeStart = from, timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
 
-           data  = http$json(url, parms=parms, headers=headers)
+           data  = http$json(url, parms=parms, headers=heads)
            data  = data$quotes
            if (length(data) > 0) {
                items = lapply(data, function(item) {
@@ -314,6 +318,7 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
     ,hID     = NULL
     ,base    = NULL
     ,http    = NULL
+    ,peticiones   = 0
     ,headers = c( `User-Agent`      = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
                  ,`Accept-Language` = "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3"
                  ,Accept          = "application/json, text/plain, */*"
@@ -321,6 +326,11 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
                  ,Referer         = "https://coinmarketcap.com/"
                  ,TE              = "Trailers"
     )
+   ,agents = c(
+        firefox="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0"
+       ,edge="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"
+       ,opera="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36 OPR/90.0.4480.84"
+   )
     ,getPage = function(page) {
         stop("MarketCap$getPage llamado")
         # el paquete rvest hace cosas muy raras
@@ -378,6 +388,15 @@ PROVMarketCap = R6::R6Class("PROV.MARKETCAP"
         minute(posix) = 0
         second(posix) = 0
         as.numeric(posix)
+    }
+    ,changeUserAgent = function () {
+        # Cambiar el user-agent por peticion
+        heads = private$headers
+
+        private$peticiones = private$peticiones + 1
+        idx = (private$peticiones %% length(agents)) + 1
+        heads[1] = agents[idx]
+        heads
     }
     # ,request = function (url, parms, accept404 = TRUE) {
     #     if (missing(parms) || is.null(parms)) {

@@ -4,26 +4,29 @@
 #' @param console Se ejecuta en una consola (interactivo)
 #' @param log     Nivel de detalle de los mensajes
 #'
-update_currencies = function(logLevel = 0, logOutput = 0) {
-   rc      = 0
-   begin   = as.numeric(Sys.time())
+update_currencies = function(logLevel = 0, logOutput = 1) {
+   factory = NULL
+   batch   = YATABatch$new("currencies", logLevel, logOutput)
+   logger  = batch$logger
+
+   if (batch$running) {
+      logger$running()
+      return (invisible(batch$rc$RUNNING))
+   }
 
    rc = tryCatch({
       browser()
       factory = Factory$new()
-      logger  = YATABase::YATALogger$new()
-      prov  = factory$getDefaultProvider()
+      prov    = factory$getDefaultProvider()
 
       num_coins   = prov$getCurrenciesNumber("coins")
       num_tokens  = prov$getCurrenciesNumber("tokens")
       total_items = num_coins + num_tokens
-   #    logger = YATABase::YATALogger$new("Currencies", logOutput, logLevel)
-   #    logger$process(1, msg$log("CTC_CURRENCIES"))
-   #
-       message("Updating coins")
-       coins  = .updateCurrencies(num_coins, "coins",  logger, factory)
-       message("Updating tokens")
-       tokens = .updateCurrencies(num_coins, "tokens", logger, factory)
+
+      logger$log(1, "Updating coins")
+      coins  = .updateCurrencies(num_coins, "coins",  logger, factory)
+      # logger$log(1, "Updating tokens")
+      # tokens = .updateCurrencies(num_coins, "tokens", logger, factory)
    #
    #    logger$process(2, msg$log("CTC_ADDED"), coins$added)
    #    logger$process(1, msg$log("CTC_TOKENS"))
@@ -33,16 +36,18 @@ update_currencies = function(logLevel = 0, logOutput = 0) {
    #    logger$process(2, msg$log("CTC_ADDED"), tokens$added)
    #    icons = c(coins$items, tokens$items)
    #    #.update_icons(icons, logger, fact)
-       0
+         batch$rc$OK
       }, YATAERROR = function (cond) {
               browser()
-              16
+         batch$rc$FATAL
       }, error = function (cond) {
               browser()
-              16
+         if (!is.null(factory)) factory$destroy()
+         batch$rc$SEVERE
       })
    #    logger$executed(rc, begin, "Executed")
-      factory$destroy()
+      if (!is.null(factory)) factory$destroy()
+      batch$destroy()
       message(paste("update_currencies ending with rc =", rc))
       invisible(rc)
    #
@@ -101,8 +106,8 @@ update_currencies = function(logLevel = 0, logOutput = 0) {
     prov = factory$getDefaultProvider()
     tbl  = factory$getTable("Currencies")
 
-    df   = prov$getCurrencies(beg, block, type)
-
+    #df   = prov$getCurrencies(beg, block, type)
+    df   = prov$getCurrencies(beg, block)
     while (process) {
          rows = nrow(df)
          if (rows < block) process = FALSE
@@ -113,12 +118,12 @@ update_currencies = function(logLevel = 0, logOutput = 0) {
               tbl$select(id=df[row,"id"])
               if (!is.null(tbl$current)) {
                  if (.checkChanges(as.list(df[row,]),tbl)) {
-                    message(paste("Updating", df[row, "symbol"]))
+                     logger$log(1, paste("Updating", df[row, "symbol"]))
                      results$updated = results$updated + 1
                      tbl$apply()
                  }
                } else {
-                  message(paste("Adding", df[row, "symbol"]))
+                  logger$log(1, paste("Adding", df[row, "symbol"]))
                   tbl$add(as.list(df[row,]))
                   results$added = results$added + 1
                   results$items = c(results$items,df[row,"id"])
@@ -126,7 +131,8 @@ update_currencies = function(logLevel = 0, logOutput = 0) {
          }
          tbl$db$commit()
          beg = as.integer(df[nrow(df), "rank"]) + 1
-         if (process) df   = prov$getCurrencies(beg, block, type)
+         #if (process) df   = prov$getCurrencies(beg, block, type)
+         if (process) df   = prov$getCurrencies(beg, block)
     }
     results
 }
@@ -144,7 +150,7 @@ update_currencies = function(logLevel = 0, logOutput = 0) {
         tbl$setField("mktcap" ,data$mktcap)
         changed = TRUE
     }
-    if (as.Date(data$since, origin="1970-01-01") < tbl$current$since) {
+    if (as.Date(data$since, origin="1970-01-01") != tbl$current$since) {
         tbl$set(since = as.Date(data$since, "1970-01-01"))
         changed = TRUE
     }
