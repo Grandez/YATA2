@@ -7,7 +7,7 @@
 # Y de esta forma tendriamos un desfase posible de dos dias
 update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOutput = 0) {
    factory = NULL
-   batch   = YATABatch$new("history", logLevel, logOutput)
+   batch   <<- YATABatch$new("history", logLevel, logOutput)
    logger  = batch$logger
 
    if (batch$running) {
@@ -131,7 +131,7 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
        }, HTTP_FLOOD = function(cond) {
           #JGG OJO, ahora no espera
           count = ifelse(count == 3, 3, count + 1)
-          cond$rc = batchrc$FLO0D
+          cond$rc = batch$rc$FLOOD
           YATABase:::propagateError(cond)
           TRUE
        }, error = function(cond) {
