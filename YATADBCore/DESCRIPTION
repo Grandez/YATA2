@@ -1,4 +1,4 @@
-Package: YATABackEndDB
+Package: YATADBCore
 Type: Package
 Title: YATA BackEnd DataBase manager
 Version: 0.1.0

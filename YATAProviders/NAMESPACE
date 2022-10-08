@@ -1,5 +1,5 @@
 import(dplyr)
-importFrom(data.table,transpose)
+import(data.table)
 import(lubridate)
 import(stringr)
 

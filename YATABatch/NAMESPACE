@@ -1,5 +1,6 @@
+import(dplyr)
 import(YATABase)
-import(YATABackEndDB)
+import(YATADBCore)
 import(YATAProviders)
 
 # exported names are all snake case to simplify typing

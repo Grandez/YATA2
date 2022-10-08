@@ -56,13 +56,13 @@ Factory = R6::R6Class("YATA.BACKEND.FACTORY"
 #           ProvFactory$get(code, object, force)
 #       }
 #       ,getDefaultProvider = function() { ProvFactory$getDefaultProvider() }
-      ,getObject   = function(name, force = FALSE) {
-         # Pasamos la propia factoria como referencia
-         if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
-         if (is.null(objects$get(name))) private$objects$put(name,
+        ,getObject   = function(name, force = FALSE) {
+            # Pasamos la propia factoria como referencia
+            if (force) return ( eval(parse(text=paste0("OBJ", name, "$new(self)"))))
+            if (is.null(objects$get(name))) private$objects$put(name,
                                          eval(parse(text=paste0("OBJ", name, "$new(self)"))))
-         objects$get(name)
-      }
+            objects$get(name)
+         }
 #       ,getClass   = function(name, force = FALSE) {
 #          # Obtiene una clase general
 #          if (force) return ( eval(parse(text=paste0("R6", name, "$new()"))))

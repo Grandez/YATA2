@@ -14,11 +14,23 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        ,fact   = NULL
        ,logger = NULL
        ,base   = NULL
-        # Return codes
-       ,rc = list(OK=0, KILLED=1, RUNNING=2, NODATA=4, FLOOD=8, ERRORS=12, FATAL=16, SEVERE=32)
+        # Return codes (Correct are even, failed are odd)
+       ,rc = list(OK=0, RUNNING=2, NODATA=4, KILLED=8, FLOOD=17, ERRORS=33, FATAL=41, SEVERE=129)
        ,initialize = function (process="YATA", logLevel = 0, logOutput = 0) {
-           private$pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")
-           private$logfile = paste0(Sys.getenv("YATA_SITE"), "/data/log/", process, ".log")
+           site = Sys.getenv("YATA_SITE")
+           if (nchar(site) == 0) {
+              site = "/tmp"
+              os   = Sys.info()
+              if (os["sysname"] == "windows") site = Sys.getenv("temp")
+              site = normalizePath(file.path(site, "YATA"))
+           }
+           dir.create(site,showWarnings = FALSE)
+           dirWrk = normalizePath(file.path(site, "data/wrk"))
+           dirLog = normalizePath(file.path(site, "data/log"))
+           dir.create(dirWrk, showWarnings = FALSE)
+           dir.create(dirLog, showWarnings = FALSE)
+           private$pidfile = file.path(dirWrk, paste0(process, ".pid"))
+           private$logfile = file.path(dirLog, paste0(process, ".log"))
 
            if (file.exists(pidfile)) {
               self$running = TRUE
@@ -26,15 +38,6 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
               cat(paste0(Sys.getpid(),"\n"), file=pidfile)
            }
            self$logger = YATALogger$new(process, logLevel, logOutput)
-           # self$codes  = YATACore::YATACODES$new()
-
-           # self$fact   = YATACore::YATAFACTORY$new()
-           # self$logger = YATALogger$new(process)
-           # self$fact$setLogger(self$logger)
-           # self$base   = YATABase$new()
-       }
-       ,finalice = function() {
-
        }
        ,destroy = function(rc = 0) {
           if (!is.null(pidfile) && file.exists(pidfile)) unlink(pidfile, force = TRUE)
@@ -48,22 +51,6 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
            if (length(grep("stop", data, ignore.case = TRUE)) > 0) return (TRUE)
            FALSE
        }
-       # ,setVerbose = function(verbose) {
-       #     if (!missing(verbose)) {
-       #         det = verbose %% 10
-       #         private$msgDet = verbose %% 10
-       #         private$msgSum = floor( verbose / 10)
-       #     }
-       #     invisible(self)
-       # }
-       # ,log = function(level, txt, ...) {
-       #     if (level > 0 && level <= msgDet) {
-       #         prfx = paste0(rep("   ",level), collapse="")
-       #         txt = paste0(prfx,txt, collapse="")
-       #         msg(sprintf(txt, ...))
-       #     }
-       #     invisible(self)
-       #  }
        ,warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }
        ,info = function(txt, ...) { msg(.msg("INFO   :", txt, ...), out=stdout()) }
        ,err  = function(txt, ...) { msg(.msg("ERROR  :", txt, ...), out=stderr()) }

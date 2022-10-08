@@ -9,4 +9,4 @@ Description: YATA Batch processes
 License: use_mit_license()
 Encoding: UTF-8
 LazyData: true
-Imports: YATABase, YATABackEndDB, YATAProviders
+Imports: dplyr, YATABase, YATADBCore, YATAProviders

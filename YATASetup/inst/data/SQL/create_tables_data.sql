@@ -13,9 +13,11 @@ CREATE TABLE CURRENCIES  (
    ,DECIMALS TINYINT       DEFAULT 6
    ,ICON     VARCHAR(255)    
    ,SINCE    DATE                         COMMENT 'Date when incorporated'
+   ,UNTIL    DATE                         COMMENT 'Date when removed'   
    ,FIRST    DATE                         COMMENT 'First history record'
    ,LAST     DATE                         COMMENT 'Last history record'
-   ,ACTIVE   TINYINT       DEFAULT 1                       
+   ,ACTIVE   TINYINT       DEFAULT 1      COMMENT ' 1 - Activo, 0 - Inactivo, -1 Eliminado'    
+   ,AUDITED  TINYINT       DEFAULT 0      COMMENT ' Esta auditada'                 
    ,TMS      TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP
                            ON UPDATE CURRENT_TIMESTAMP   
    ,PRIMARY KEY ( ID )
@@ -73,9 +75,10 @@ CREATE TABLE SESSION  (
    ,VOL30     DOUBLE
    ,DOMINANCE DOUBLE
    ,TURNOVER  DOUBLE
-   ,TMS       TIMESTAMP     NOT NULL
+   ,UPDATED   TIMESTAMP    NOT NULL COMMENT 'Timestamp for this thicker'
+   ,TMS       TIMESTAMP    DEFAULT   CURRENT_TIMESTAMP
+                           ON UPDATE CURRENT_TIMESTAMP   
    ,PRIMARY KEY (ID,     TMS DESC)
-   ,INDEX       (SYMBOL, TMS DESC)
 );
 
 
@@ -300,5 +303,22 @@ CREATE TABLE VARIATIONS  (
 --   ,UNIQUE  KEY (SYMBOL)  Pueden haber nombres duplicados
 );
 
+DROP TABLE  IF EXISTS TRENDING;
+CREATE TABLE TRENDING  (
+    PERIOD    TINYINT       NOT NULL COMMENT 'Periodo de la tendencia: 1/7/30'
+   ,PRTY      TINYINT       NOT NULL COMMENT 'Orden de la tendencia'
+   ,ID        INTEGER       NOT NULL COMMENT 'ID de la moneda' 
+   ,SYMBOL    VARCHAR(64)   NOT NULL COMMENT 'Simbolo de la moneda'
+   ,TYPE      INTEGER                COMMENT 'Tipo de dato que no lo se' 
+   ,PRICE     DOUBLE                 COMMENT 'Precio actual'
+   ,MKTCAP    DOUBLE                 COMMENT 'Volumen actual'
+   ,RANK      INTEGER                COMMENT 'Rango' 
+   ,PVAR01    DOUBLE                 COMMENT 'Variacion de precio  en 24H rollover'
+   ,PVAR07    DOUBLE                 COMMENT 'Variacion de precio  en  7D rollover'
+   ,PVAR30    DOUBLE                 COMMENT 'Variacion de precio  en 30D rollover'
+   ,VVAR01    DOUBLE                 COMMENT 'Variacion de volumen en 24H rollover'
+   ,TMS       TIMESTAMP DEFAULT CURRENT_TIMESTAMP   
+   ,PRIMARY KEY (PERIOD, PRTY, ID)
+);
 COMMIT;
 

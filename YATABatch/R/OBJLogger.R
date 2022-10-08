@@ -1,5 +1,8 @@
 # En fichero usamos tms;tipo_mensaje
 # Segun sea el tipo del mensaje, asi es el registro
+# Log Level
+#   1 - Summary
+#
 # tipo:mensaje es:
 #    1 - Process (Batch, Session, etc)
 #    5 - Batch Process
@@ -60,7 +63,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
           .print(self$type$ACT, level, .mountMessage(fmt, ...))
       }
      ,done = function(level, fmt, ...) {
-        .println(self$type$ACT, level, .mountMessage(fmt, ...))
+        .println_direct(self$type$ACT, level, .mountMessage(fmt, ...))
           # if (is.logical(res)) {
           #    if ( res) .flush(self$type$ACT, level,"\tOK", crayon::bold)
           #    if (!res) .flush(self$type$ACT, level,"\tKO", crayon::red)
@@ -165,6 +168,16 @@ YATALogger = R6::R6Class("YATA.LOGGER"
 #          if (bitwAnd(.output, 2) > 0) .toFile   (type, level, msg)
           if (bitwAnd(.output, 1) > 0) .toConsole(type, level, msg, ansi)
        }
+       ,.println_direct = function(type, level, msg, ansi=.void) {
+          .print_direct(type, level, msg,  ansi)
+          .print_direct(type, level, "\n", ansi)
+       }
+       ,.print_direct = function(type, level, msg, ansi=.void) {
+           if (level > levelFile) return()
+#          if (bitwAnd(.output, 2) > 0) .toFile   (type, level, msg)
+           if (bitwAnd(.output, 1) > 0) cat(ansi(msg))
+       }
+
        ,.flush = function(type, level, msg, ansi=.void) {
            if (bitwAnd(.output, FILE)) {
                .toFile   (type, level, paste(private$cache, msg))

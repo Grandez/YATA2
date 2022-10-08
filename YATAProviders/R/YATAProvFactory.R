@@ -1,5 +1,5 @@
 # Devuelve una instancia de un proveedor de datos
-ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
+ProviderFactory = R6::R6Class("YATA.FACTORY.PROVIDER"
    ,portable   = FALSE
    ,cloneable  = FALSE
    ,lock_class = FALSE
@@ -13,7 +13,7 @@ ProviderFactory = R6::R6Class("FACTORY.PROVIDER"
 #            private$EUR = get("EUR", "Euro")
             # Por ahora vamos a tirar de MarketCap
 
-            private$mktcap = PROVMarketCap$new("MKTCAP", factory) # , dbf)
+            private$mktcap = PROVMarketCap$new("MKTCAP") # , dbf)
         }
        ,finalize = function() {
           private$providers = NULL

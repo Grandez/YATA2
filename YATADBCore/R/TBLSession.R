@@ -39,6 +39,7 @@ TBLSession = R6::R6Class("TBL.SESSION"
             ,volmonth  = "VOL30"
             ,dominance = "DOMINANCE"
             ,turnover  = "TURNOVER"
+            ,updated   = "UPDATED"
             ,tms       = "TMS"
           )
      )

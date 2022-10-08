@@ -1,24 +1,24 @@
 # Actualiza los datos de session cada interval minutos
 update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
-   begin   = as.numeric(Sys.time())
-
-   batch   = YATABatch$new("tickers")
+   factory = NULL
+   batch   = YATABatch$new("tickers", logLevel, logOutput)
    logger  = batch$logger
 
-   if (batch$running) return (invisible(batch$rc$RUNNING))
+   if (batch$running) {
+      logger$running()
+      return (invisible(batch$rc$RUNNING))
+   }
 
    rc = tryCatch({
-      browser()
       factory = Factory$new()
-      logger  = YATABase::YATALogger$new()
       prov    = factory$getDefaultProvider()
       tblCTC  = factory$getTable("Currencies")
       tblHist = factory$getTable("History")
-      coins   = prov$getCurrenciesNumber("all")
+#      coins   = prov$getCurrenciesNumber("all")
 
       process = TRUE
       while (process) {
-#         .updateTickers(coins, logger, factory)
+         rc = .updateTickers(NULL, logger, factory)
          process = batch$stop_process()
          if (process) {
             message("Waiting")
@@ -26,44 +26,54 @@ update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
          }
       }
       batch$rc$OK
-   }, error = function (cond) {
+   }, YATAError = function (cond) {
+      browser()
       batch$rc$FATAL
+   }, error = function (cond) {
+      browser()
+      batch$rc$SEVERE
    })
    invisible(batch$destroy(rc))
 }
 .updateTickers = function(coins, logger, factory) {
     results = list(added = 0, updated=0, items=c())
-    block   = 250 # Number of items by request
+    block   = 100 # Number of items by request (same as maximum returned)
     beg     = 1
-    process = TRUE
-#    msg   = factory$msg
+
     prov       = factory$getDefaultProvider()
     tblCTC     = factory$getTable("Currencies")
     tblSession = factory$getTable("Session")
     dfCTC      = tblCTC$table()
 
-    tryCatch({
-      df   = prov$getTickers(beg, block)
-      message(paste("Procesando bloque", beg))
-      while (process) {
-         if (nrow(df) < block) process = FALSE
-#         logger$info(3, msg$log("CTC_UPDATING"), type, beg)
-         tblSession$db$begin()
-         for (row in 1:nrow(df)) {
-            data = as.list(df[row,])
-            if (!tblCTC$select(id=df[row,"id"])) next
+    rc = tryCatch({
+       browser()
+       df   = prov$getTickers(beg, block)
+       if (nrow(df) == 0) return (batch$rc$NODATA)
 
-            data$token = tblCTC$current$token
-            tblSession$add(data)
-            .calculateVariations(data, factory)
-         }
-         tblSession$db$commit()
-         beg = as.integer(df[nrow(df), "rank"]) + 1
-         if (process) df   = prov$getCurrencies(beg, block)
-      }
+       repeat {
+          message(paste("Procesando bloque", beg))
+          if (beg > 9220) {
+             browser()
+          }
+          tblSession$db$begin()
+          for (row in 1:nrow(df)) {
+               data = as.list(df[row,])
+               # Si no existe, siguiente
+               if (!tblCTC$select(id=data$id)) next
+
+               data$token = tblCTC$current$token
+               tblSession$add(data)
+ #           .calculateVariations(data, factory)
+          }
+          tblSession$db$commit()
+          beg = max(df$rank) + 1
+          df   = prov$getTickers(beg, block)
+          if (nrow(df) < block) break
+       }
+       batch$rc$NODATA
     }, error = function (cond) {
        tblSession$db$rollback()
-       propagateError(cond)
+       YATABase::propagateError(cond)
     })
 }
 .calculateVariations = function (data, factory) {

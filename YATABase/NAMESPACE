@@ -6,6 +6,7 @@ import(httr)
 
 exportPattern("YATA.*")
 exportPattern("jgg.*")
+exportPattern("propagate.*")
 export(args2list)
 export(loadTable)
 export(map)
