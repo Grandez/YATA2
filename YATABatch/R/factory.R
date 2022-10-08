@@ -16,7 +16,7 @@ Factory = R6::R6Class("YATA.BACKEND.FACTORY"
       # ,fiat    = "__FIAT__"  # Codigo moneda FIAT
       #
       ,initialize = function() {
-          private$DBFactory   = YATABackEndDB::DBFactory$new()
+          private$DBFactory   = YATADBCore::DBFactory$new()
           private$ProvFactory = YATAProviders::ProviderFactory$new()
       # ,ProvFactory = NULL
       #
