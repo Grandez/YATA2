@@ -5,8 +5,7 @@ YATAREST = R6::R6Class("YATA.BACKEND.REST"
         initialize = function() {
             cat("Initializing YATAREST\n")
             super$initialize()
-            self$logger$set_log_level("info")
-            private$factory = YATACore::YATAFACTORY$new()
+            self$logger$set_log_level("all")
             private$initREST()
             cat("Init hecho")
             # private$setDoc()
@@ -21,7 +20,7 @@ YATAREST = R6::R6Class("YATA.BACKEND.REST"
        ,initREST = function() {
          super$add_get ("/alive"    , handler_alive)
          super$add_get ("/best"     , best_handler)
-         super$add_get ("/histORY"  , hist_handler)
+         super$add_get ("/history"  , get_history)
          super$add_get ("/latest"   , latest_handler)
          super$add_get ("/trending" , latest_handler)
 

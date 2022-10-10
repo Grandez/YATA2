@@ -1,7 +1,4 @@
-.getParm = function(req, parm, default) {
-    p  = req$parameters_query[[parm]]
-    ifelse(is.null(p), dafult, p)
-}
+
 handler_alive = function(.req, .res) {
     cat(paste(Sys.time(),"Recibe Alive\n"))
    .res$set_status_code(200)

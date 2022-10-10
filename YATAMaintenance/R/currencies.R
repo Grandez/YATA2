@@ -2,7 +2,7 @@
 
 correct_history = function() {
    message("BEG: Actualizando las marcas de control de history")
-   dbfactory   = YATABackEndDB::DBFactory$new()
+   dbfactory   = DBFactory$new()
    tblHist  = dbfactory$getTable("History")
    tblCtc   = dbfactory$getTable("Currencies")
    dfHist = tblHist$getRange()

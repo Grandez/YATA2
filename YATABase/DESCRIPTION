@@ -14,8 +14,3 @@ Depends: R  (>= 4.0.4)
         ,hash
         ,stringr
         ,rlist
-Imports:
-    hash
-   ,stringr
-   ,rlist
-   ,rvest

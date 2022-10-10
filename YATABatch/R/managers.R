@@ -1,3 +1,40 @@
+# Metodo comun para lanzar y parar procesos en modo asincrono
+yata_start = function(process, ...) {
+   if (missing(process)) {
+       message("Missing process to start")
+       return (invisible(12))
+   }
+   args = list(...)
+   logLevel  = ifelse(is.null(args$logLevel),  0, args$logLevel)
+   logOutput = ifelse(is.null(args$logOutput), 0, args$logOutput)
+
+   batch   = YATABatch$new(process, logLevel, logOutput)
+   logger = batch$logger
+
+   if (batch$running) {
+      logger$running()
+      return (invisible(batch$rc$RUNNING))
+   }
+
+   # if (process == "history") update_history()
+}
+yata_stop = function(process, clean = FALSE) {
+   if (missing(process)) {
+       message("Missing process to stop")
+       return (invisible(12))
+   }
+   batch   = YATABatch$new(process, 0, 0)
+   if (!batch$running) {
+       message(paste(process, "does not appears running"))
+       rc = batch$rc$NODATA
+       batch$destroy()
+       return(invisible(rc))
+   }
+   stop_batch(process, clean)
+   batch$destroy()
+   invisible (0)
+}
+
 # Chequea el estado de un proceso o demonio en base a su pid file
 # 0 - Ejecutando
 # 1 - No activo

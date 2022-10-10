@@ -14,9 +14,11 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        ,fact   = NULL
        ,logger = NULL
        ,base   = NULL
+       ,process = "YATA"
         # Return codes (Correct are even, failed are odd)
-       ,rc = list(OK=0, RUNNING=2, NODATA=4, KILLED=8, FLOOD=17, ERRORS=33, FATAL=41, SEVERE=129)
+       ,rc = list(OK=0, RUNNING=2, NODATA=4, KILLED=8, INVALID=12, FLOOD=17, ERRORS=33, SEVERE=41, FATAL=129)
        ,initialize = function (process="YATA", logLevel = 0, logOutput = 0) {
+           self$process = process
            site = Sys.getenv("YATA_SITE")
            if (nchar(site) == 0) {
               site = "/tmp"
@@ -24,11 +26,13 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
               if (os["sysname"] == "windows") site = Sys.getenv("temp")
               site = normalizePath(file.path(site, "YATA"))
            }
-           dir.create(site,showWarnings = FALSE)
+           dir.create(site, showWarnings = FALSE)
            dirWrk = normalizePath(file.path(site, "data/wrk"))
-           dirLog = normalizePath(file.path(site, "data/log"))
            dir.create(dirWrk, showWarnings = FALSE)
+
+           dirLog = normalizePath(file.path(site, "data/log"))
            dir.create(dirLog, showWarnings = FALSE)
+
            private$pidfile = file.path(dirWrk, paste0(process, ".pid"))
            private$logfile = file.path(dirLog, paste0(process, ".log"))
 
@@ -43,12 +47,18 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
           if (!is.null(pidfile) && file.exists(pidfile)) unlink(pidfile, force = TRUE)
           invisible(rc)
        }
-       ,stop_process = function() {
+       ,stop_process = function(expception = FALSE) {
            # fichero de control borrado
-           if (!file.exists(pidfile)) return (TRUE)
+           if (!file.exists(pidfile)) {
+               if (!exception) return (TRUE)
+               YATABase:::KILLED(paste(process, "killed by user"))
+           }
            # Existe la palabra stop en el fichero de control
            data = readLines(pidfile)
-           if (length(grep("stop", data, ignore.case = TRUE)) > 0) return (TRUE)
+           if (length(grep("stop", data, ignore.case = TRUE)) > 0) {
+               if (!exception) return (TRUE)
+               YATABase:::KILLED(paste(process, "killed by user"))
+           }
            FALSE
        }
        ,warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }

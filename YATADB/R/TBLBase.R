@@ -77,12 +77,13 @@ YATATable = R6::R6Class("YATA.TABLE"
           private$changed = list()
       }
       ,set      = function(...) {
-          args = YATABase::args2list(...)
+          args = base$args2list(...)
           lapply(names(args), function (field) setField(field, args[[field]]))
           invisible(self)
       }
       ,setField = function(field, value) {
-         if (is.null(current)) yataErrorLogical("No register active", action="Set field", origin=tblName)
+         if (is.null(current))
+             yataErrorLogical("No register active", action="Set field", origin=tblName)
          if (field %in% key) return (invisible(self))
          if (is.na(value))   return (invisible(self)) # NA genera ERROR
          if (field %in% names(current)) {
@@ -126,6 +127,18 @@ YATATable = R6::R6Class("YATA.TABLE"
             self$current      = as.list(self$dfCurrent[1,])
          }
          created
+      }
+      ,recordset = function(..., limit = 0) {
+         # A falta de nombre mejor
+         filter = mountClause(...)
+         if (length(filter$values) > 0) filter$values = unlist(filter$values)
+         qry = paste("SELECT * FROM ", tblName, filter$sql)
+         if (limit > 0) {
+             filter$values = jgg_list_append_list(filter$values, limit_=limit)
+             qry = paste(qry, "LIMIT ?")
+         }
+         df = db$query(qry, params=filter$values)
+         setColNames(df)
       }
       ,first    = function(...) {
          filter = mountWhere(...)
@@ -470,5 +483,49 @@ YATATable = R6::R6Class("YATA.TABLE"
           filter$values = append(filter$values, key)
           filter
       }
+      ,mountClause = function(...) {
+         parseParameter = function (item) {
+            if (is.null(item$op)) item$op = "eq"
+            op = tolower(item$op)
+            col = item$name
+            if (!is.null(item$expr)) col = paste(item$expr, "(", col, ")")
+
+            if (op == "eq") return (list(sql = paste(col, "=  ?"), parms = item$value))
+            if (op == "gt") return (list(sql = paste(col, ">  ?"), parms = item$value))
+            if (op == "ge") return (list(sql = paste(col, ">= ?"), parms = item$value))
+            if (op == "lt") return (list(sql = paste(col, "<  ?"), parms = item$value))
+            if (op == "le") return (list(sql = paste(col, "<= ?"), parms = item$value))
+            if (op == "between") return (list(sql = paste(col, "BETWEEN ? AND ?"), parms = item$value))
+            if (op == "in") {
+                sql = paste(col, "IN (", paste(rep("?", length(item$value)), collapse=","), ")")
+                parms = unlist(item$value)
+                return (list(sql = sql, parms = parms))
+            }
+            stop(paste("Invalid op type in query:", op, "on", item$name))
+          }
+
+          data = list(...)
+          if (length(data) == 0) return (list(sql=NULL, values=NULL))
+          labels = names(data)
+
+          fillName = function (idx) {
+             item = data[[idx]]
+             if (is.null(item$name)) {
+                if (is.na(labels[idx]) || nchar(labels[idx]) == 0) return (NULL)
+                item$name = labels[idx]
+             }
+             item$name = fields[[item$name]]
+             item
+          }
+
+          # Aplica el nombre de la columna
+          ndata = lapply(1:length(data), function(idx) fillName(idx))
+          # Monta las partes de la clausula WHERE
+          parms = lapply(ndata, parseParameter)
+          cond = paste(sapply(parms, function(item) item$sql), collapse = " AND ")
+          values = lapply(parms, function(item) item$parms)
+          list(sql=paste("WHERE", cond),values=values)
+       }
+
    )
 )

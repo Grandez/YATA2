@@ -1,14 +1,11 @@
 #' Recupera los datos historicos de las sesiones
 #' Proceso Diario
 #'
-# NOTAS
-# Parando 3 segundos cada vez casca a los 262
-# Si lo pongo como demonio, puedo ir ejecutando trozos a lo largo del dia
-# Y de esta forma tendriamos un desfase posible de dos dias
 update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOutput = 0) {
    factory = NULL
    batch   <<- YATABatch$new("history", logLevel, logOutput)
-   logger  = batch$logger
+   logger = batch$logger
+   items  = 0
 
    if (batch$running) {
       logger$running()
@@ -22,20 +19,15 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
       dfctc  = tblctc$table(active = 1)
       if (nrow(dfctc) == 0) return (batch$rc$NODATA)
 
-      process = TRUE
-      while (process) {
-         .updateHistory(factory, logger, dfctc, reverse)
-         process = batch$stop_process()
-         if (process) return (batch$rc$KILLED)
-         #    # Calcular el dia siguiente y poner a la espera
-         #    message("Waiting")
-         #    Sys.sleep(interval * 60)
-         # }
-      }
-      batch$rc$OK
-   }, ERROR = function (cond) {
+      items = .updateHistory(factory, logger, dfctc, reverse)
+      ifelse(items > 0, batch$rc$OK, batch$rc$NODATA)
+   }, error = function (cond) {
       if (!is.null(factory)) factory$detroy()
-      cond$rc
+      rc = batch$rc$FATAL
+      if ("YATAERROR"  %in% class(cond)) rc = batch$rc$SEVERE
+      if ("HTTP_FLOOD" %in% class(cond)) rc = batch$rc$FLOOD
+      if ("KILLED"     %in% class(cond)) rc = batch$rc$KILLED
+      rc
    })
    batch$destroy()
    invisible(rc)
@@ -55,30 +47,37 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
    rows = 1:nrow(dfCTC)
    if (reverse) rows = nrow(dfCTC):1
    count = 0
-   for (row in rows) {
-        last = dfCTC[row,"last"]
-        if (is.na(last)) last = dfCTC[row,"since"] # Sys.Date() - 20
-        logger$doing(5, "%5d - Retrieving %-15s", row, dfCTC[row,"symbol"])
-        if (as.integer(today - last) < 2) {
-           logger$done(5, "- skip")
-           next
-        }
-        count = count + 1
-        to    = today
-        if (logger$level < 5)logger$doing(1, "%5d - Retrieving %-15s", row, dfCTC[row,"symbol"])
-        if (to - last > 25) to = last + 25
-        data = .retrieveData(prov, as.integer(dfCTC[row,"id"]), last + 1, to )
-        txt = ifelse(is.null(data), "No info", "OK")
-        logger$done(1, "- %s", txt)
-        if (!is.null(data)) .updateData(data, as.list(dfCTC[row,]), tables)
-        if ( is.null(data)) .updateLastDate(to, as.list(dfCTC[row,]), tables)
 
-        .wait(row)
-   }
+   tryCatch({
+      for (row in rows) {
+           last = dfCTC[row,"last"]
+           if (is.na(last)) last = dfCTC[row,"since"] # Sys.Date() - 20
+           logger$doing(5, "%5d - Retrieving %-15s", row, dfCTC[row,"symbol"])
+           if (as.integer(today - last) < 2) {
+               logger$done(5, "- skip")
+               next
+           }
+           to    = today
+           if (logger$level < 5) {
+               logger$doing(1, "%5d - Retrieving %-12s", row, substr(dfCTC[row,"symbol"],1,12))
+           }
+           if (to - last > 25) to = last + 25
+           data = prov$getHistorical(as.integer(dfCTC[row,"id"]), last + 1, to )
+           txt = ifelse(is.null(data), "No info", "OK")
+           logger$done(1, "- %s", txt)
+           if (!is.null(data)) {
+               count = count + 1
+              .updateData(data, as.list(dfCTC[row,]), tables)
+           }
+           if ( is.null(data)) .updateLastDate(to, as.list(dfCTC[row,]), tables)
+           .wait(row)
+      }
+   }, error = function (cond) {
+      YATABase::propagatError(cond)
+   })
+   count
 }
 .updateData = function(data, ctc, tables) {
-#    message(paste("Procesando", ctc$symbol, "(", ctc$id, ")"))
-
     data$id     = ctc$id
     data$symbol = ctc$symbol
     tblhist = tables$hist
@@ -90,15 +89,10 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
        tblctc$set(last= substr(data[nrow(data), "timestamp"], 1,10))
        tblctc$apply()
        tblhist$db$commit()
-    }, YATAERROR = function (cond) {
+    }, error = function(cond) {
        tblhist$db$rollback()
-       cond$rc = batch$rc$ERRORS
-       YATABase:::propagateError(cond)
-    }, eror = function(cond) {
-       cond$rc = batch$rc$SEVER
-       YATABase:::propagateError(cond)
+       YATABase::propagateError(cond)
     })
-
 }
 .updateLastDate = function(to, ctc, tables) {
     tblctc  = tables$ctc
@@ -108,43 +102,17 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
        tblctc$set(last = as.character(to))
        tblctc$apply()
        tblctc$db$commit()
-    }, YAYAERROR = function (cond) {
-       tblctc$db$rollback()
-       cond$rc = batch$rc$SEVERE
-       YATABase:::propagateError(cond)
     }, error = function (cond) {
        tblctc$db$rollback()
-       cond$rc = batch$rc$SEVERE
-       YATABase:::propagateError(cond)
+       YATABase::propagateError(cond)
     })
-}
-.retrieveData = function (prov, id, from, to) {
-   waits = c(60, 120, 240) # Minutos a esperar
-   count = 0
-   process = TRUE
-   data    = NULL
-
-   while (process) {
-      process = tryCatch({
-          data = prov$getHistorical(id, from, to)
-          FALSE
-       }, HTTP_FLOOD = function(cond) {
-          #JGG OJO, ahora no espera
-          count = ifelse(count == 3, 3, count + 1)
-          cond$rc = batch$rc$FLOOD
-          YATABase:::propagateError(cond)
-          TRUE
-       }, error = function(cond) {
-          cond$rc = batch$rc$SEVERE
-          YATABase:::propagateError(cond)#
-       })
-   }
-   data
 }
 .wait = function (row) {
    wait = 4
-   if      ((row %% 200) == 0)  wait = 59
-   else if ((row %% 100) == 0)  wait = 29
+   batch$stop_process(TRUE) # Check for kill process
+
+   if      ((row %% 200) == 0)  wait = 39
+   else if ((row %% 100) == 0)  wait = 19
    else if ((row %%  10) == 0)  wait = 09
 #   message(paste("Waiting", wait, "seconds at item", row))
    Sys.sleep(wait + 1)

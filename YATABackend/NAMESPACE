@@ -4,7 +4,7 @@ import(RestRserve)
 
 # YATA
 import(YATABase)
-import(YATACore)
+import(YATABatch)
 
-export(YATAREST)
-export(start)
+# export(start)
+exportPattern("^[[:alpha:]]+")

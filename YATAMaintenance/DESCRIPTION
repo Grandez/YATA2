@@ -8,4 +8,4 @@ Description: Tools for maintenance and utilities for YATA
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: YATABase, YATABackEndDB
+Imports: YATABase, YATADBCore

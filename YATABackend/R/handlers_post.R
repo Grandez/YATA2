@@ -1,4 +1,5 @@
-.getParm = function(req, parm, default) {
+.getParm = function(req, parm, def=NULL) {
     p  = req$parameters_query[[parm]]
-    ifelse(is.null(p), dafult, p)
+    if (is.null(p)) return (def)
+    p
 }

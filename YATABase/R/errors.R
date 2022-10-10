@@ -65,11 +65,13 @@ Warning = function(msg, action=NULL, subclass=NULL, ...) {
       msg = paste0(msg, " (", data$sqlcode, ")")
      .error(msg, subclass="SQL", ...)
 }
-HTTP  = function(msg, ...) { .error  (msg, subclass="HTTP",  ...) }
-FLOOD = function(msg, ...) { .error  (msg, subclass=c("HTTP_FLOOD", "HTTP"),  ...) }
-EXEC  = function(msg, ...) { .error  (msg, subclass="EXEC",  ...) }
-MODEL = function(msg, ...) { .error  (msg, subclass="MODEL", ...) }
-WARN  = function(msg, ...) { .warning(msg, subclass, ...)         }
+HTTP   = function(msg, ...) { .error  (msg, subclass="HTTP",  ...)  }
+EXEC   = function(msg, ...) { .error  (msg, subclass="EXEC",  ...)  }
+MODEL  = function(msg, ...) { .error  (msg, subclass="MODEL", ...)  }
+KILLED = function(msg, ...) { .error  (msg, subclass="KILLED", ...) }
+FLOOD  = function(msg, ...) { .error  (msg, subclass=c("HTTP_FLOOD", "HTTP"),  ...) }
+
+WARN   = function(msg, ...) { .warning(msg, subclass, ...)          }
 
 logical = function(msg, ...) {
      .error(msg, subclass="LOGICAL", ...)

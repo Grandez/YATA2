@@ -1,4 +1,4 @@
 import(YATABase)
-import(YATABackEndDB)
+import(YATADBCore)
 
 exportPattern("^[[:alpha:]]+")

@@ -1,5 +1,5 @@
 library(future)
-library(YATACore)
+library(YATABatch)
 
 .onLoad <- function(libname, pkgname){
    message("Loading YATAREST\n")
