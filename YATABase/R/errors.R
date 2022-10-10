@@ -79,7 +79,7 @@ logical = function(msg, ...) {
 propagateError = function(cond) {
    condErr = unlist(cond)
    classes = class(cond)
-   condErr$subclass = NULL
+   condErr = rlist::list.remove(condErr, "subclass")
    errdata = structure( condErr, class = classes)
    stop(errdata)
 }
