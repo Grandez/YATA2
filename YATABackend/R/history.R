@@ -1,11 +1,15 @@
 get_history = function(.req, .res) {
-#      message(paste("best:", Sys.time()))
     browser()
+#      message(paste("best:", Sys.time()))
+    cat("Pide id")
     id   = .getParm(.req, "id")
+    cat("Pide from")
     from  = .getParm(.req, "from")
+    cat("Pide to")
     to  = .getParm(.req, "to")
 
     if (is.null(id) || is.null(from) || is.null(to)) {
+        cat("ERROR EN LOS PARAMETROS")
         data = json_to(NULL, "data")
         status = list(rc=400, message="missing parameters")
         .setResponse(.res, data, status)

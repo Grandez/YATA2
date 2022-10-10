@@ -22,7 +22,7 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
       items = .updateHistory(factory, logger, dfctc, reverse)
       ifelse(items > 0, batch$rc$OK, batch$rc$NODATA)
    }, error = function (cond) {
-      if (!is.null(factory)) factory$detroy()
+      if (!is.null(factory)) factory$destroy()
       rc = batch$rc$FATAL
       if ("YATAERROR"  %in% class(cond)) rc = batch$rc$SEVERE
       if ("HTTP_FLOOD" %in% class(cond)) rc = batch$rc$FLOOD
@@ -41,7 +41,7 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
       tables  = list(hist=tblHist, ctc=tblCTC)
       today   = Sys.Date()
    }, error   = function (cond) {
-      YATABase::propagatError(cond)
+      YATABase::propagateError(cond)
    })
 
    rows = 1:nrow(dfCTC)
@@ -73,7 +73,7 @@ update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOu
            .wait(row)
       }
    }, error = function (cond) {
-      YATABase::propagatError(cond)
+      YATABase::propagateError(cond)
    })
    count
 }

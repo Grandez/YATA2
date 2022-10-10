@@ -7,6 +7,7 @@ YATAREST = R6::R6Class("YATA.BACKEND.REST"
             super$initialize()
             self$logger$set_log_level("all")
             private$initREST()
+            private$setMiddleware()
             cat("Init hecho")
             # private$setDoc()
         }
@@ -25,6 +26,12 @@ YATAREST = R6::R6Class("YATA.BACKEND.REST"
          super$add_get ("/trending" , latest_handler)
 
        }
+      ,setMiddleware = function() {
+         json_middleware = Middleware$new( process_response = function(.req, .res) {
+             .res$content_type = "application/json"}
+        )
+        self$append_middleware(json_middleware)
+      }
        # ,setDoc = function() {
        #     doc_file = system.file("doc/yatarest.yaml", package = packageName())
        #     super$add_openapi(path = "/yatarest.yaml", file_path = doc_file)
