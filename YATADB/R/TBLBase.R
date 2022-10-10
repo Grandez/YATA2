@@ -77,7 +77,7 @@ YATATable = R6::R6Class("YATA.TABLE"
           private$changed = list()
       }
       ,set      = function(...) {
-          args = base$args2list(...)
+          args = args2list(...)
           lapply(names(args), function (field) setField(field, args[[field]]))
           invisible(self)
       }

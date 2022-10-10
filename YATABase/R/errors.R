@@ -76,5 +76,10 @@ WARN   = function(msg, ...) { .warning(msg, subclass, ...)          }
 logical = function(msg, ...) {
      .error(msg, subclass="LOGICAL", ...)
 }
-propagateError = function(cond) { stop(cond) }
-propagate      = function(cond) { stop(cond) }
+propagateError = function(cond) {
+   condErr = unlist(cond)
+   classes = class(cond)
+   condErr$subclass = NULL
+   errdata = structure( condErr, class = classes)
+   stop(errdata)
+}
