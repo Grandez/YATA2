@@ -60,15 +60,17 @@ check_process = function (process = "yata") {
 }
 stop_batch = function (process = "yata", clean = FALSE) {
    rc = 0
-   pidfile = paste0(Sys.getenv("YATA_SITE"), "/data/wrk/", process, ".pid")
+   wd = getDirectory("wrk")
+   pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
    if (file.exists(pidfile)) {
       message(paste("Sending kill message to", process))
       cat("stop", file=pidfile)
+      if (clean) unlink(pidfile, force = TRUE)
    } else {
       message(paste("Process", process, "is not active"))
       rc = 4
    }
-   if (clean) unlink(pidfile, force = TRUE)
+
    invisible(rc)
 }
 stop_process = function(process = "yata", clean = FALSE) {

@@ -1,6 +1,7 @@
 # Actualiza los datos de session cada interval minutos
 update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
    factory = NULL
+   browser()
    batch   = YATABatch$new("tickers", logLevel, logOutput)
    logger  = batch$logger
 
@@ -52,9 +53,9 @@ update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
 
        repeat {
           message(paste("Procesando bloque", beg))
-          if (beg > 9220) {
-             browser()
-          }
+          # if (beg > 9220) {
+          #    browser()
+          # }
           tblSession$db$begin()
           for (row in 1:nrow(df)) {
                data = as.list(df[row,])
@@ -63,7 +64,7 @@ update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
 
                data$token = tblCTC$current$token
                tblSession$add(data)
- #           .calculateVariations(data, factory)
+              .calculateVariations(data, factory)
           }
           tblSession$db$commit()
           beg = max(df$rank) + 1
@@ -73,30 +74,36 @@ update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
        batch$rc$NODATA
     }, error = function (cond) {
        tblSession$db$rollback()
+       browser()
        YATABase::propagateError(cond)
     })
 }
 .calculateVariations = function (data, factory) {
-   browser()
    tbl  = factory$getTable("Variations")
    hist = factory$getTable("History")
+   # Mantenemos los datos recibidos para compensar/proteger que los datos historicos
+   # no esten actualizados
    reg  = list( id = data$id,               symbol      = data$symbol
                ,price       = data$price,   volume      = data$volume
-               ,price_day01 = data$day,     price_day07 = data$week,    price_day30 = data$month
-               ,price_day60 = data$bimonth, price_day90 = data$quarter
+               ,p02 = data$day,     p04 = data$week,    p06 = data$month
+               ,p07 = data$bimonth, p08 = data$quarter
    )
-   if (hist$select(id=data$id, limit = 90)) {
+   if (hist$select(id=data$id, order=list(tms=list(name="tms", asc=FALSE)), limit = 90)) {
       df = hist$dfCurrent
-      df = df[order(df$timestamp, decreasing=TRUE),]
-      if (nrow(df) >  0) reg$volume_day01 = .calcPercentage(reg$volume,df[ 1,"volume"])
-      if (nrow(df) >  2) reg$volume_day03 = .calcPercentage(reg$volume,df[ 3,"volume"])
-      if (nrow(df) > 14) reg$volume_day15 = .calcPercentage(reg$volume,df[15,"volume"])
-      if (nrow(df) > 29) reg$volume_day30 = .calcPercentage(reg$volume,df[30,"volume"])
-      if (nrow(df) > 59) reg$volume_day60 = .calcPercentage(reg$volume,df[60,"volume"])
-      if (nrow(df) > 89) reg$volume_day90 = .calcPercentage(reg$volume,df[90,"volume"])
+      rows = nrow(df)
+      if (rows >  0) reg$p01 = .calcPercentage(reg$price, df[ 1,"close"] )
+      if (rows >  2) reg$p03 = .calcPercentage(reg$price, df[ 3,"close"] )
+      if (rows >  6) reg$p05 = .calcPercentage(reg$price, df[ 7,"close"] )
+      if (rows > 14) reg$p05 = .calcPercentage(reg$price, df[15,"close"] )
 
-      if (nrow(df) >  2) reg$price_day03  = .calcPercentage(reg$price, df[ 3,"close"] )
-      if (nrow(df) > 14) reg$price_day15  = .calcPercentage(reg$price, df[15,"close"] )
+      if (rows >  0) reg$v01 = .calcPercentage(reg$volume,df[ 1,"volume"])
+      if (rows >  0) reg$v02 = .calcPercentage(reg$volume,df[ 1,"volume"])
+      if (rows >  2) reg$v03 = .calcPercentage(reg$volume,df[ 3,"volume"])
+      if (rows >  6) reg$v04 = .calcPercentage(reg$volume,df[ 7,"volume"])
+      if (rows > 14) reg$v05 = .calcPercentage(reg$volume,df[15,"volume"])
+      if (rows > 29) reg$v06 = .calcPercentage(reg$volume,df[30,"volume"])
+      if (rows > 59) reg$v07 = .calcPercentage(reg$volume,df[60,"volume"])
+      if (rows > 89) reg$v08 = .calcPercentage(reg$volume,df[90,"volume"])
    }
 
    if (tbl$select(id = data$id)) { # update

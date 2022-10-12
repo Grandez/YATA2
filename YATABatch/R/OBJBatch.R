@@ -17,31 +17,11 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        ,process = "YATA"
         # Return codes (Correct are even, failed are odd)
        ,rc = list(OK=0, RUNNING=2, NODATA=4, KILLED=8, INVALID=12, FLOOD=17, ERRORS=33, SEVERE=41, FATAL=129)
-       ,initialize = function (process="YATA", logLevel = 0, logOutput = 0) {
+       ,initialize = function (process="YATA", logLevel = 0, logOutput = 0, shared = FALSE) {
+           private$tmsBeg = Sys.time()
            self$process = process
-           site = Sys.getenv("YATA_SITE")
-           if (nchar(site) == 0) {
-              site = "/tmp"
-              os   = Sys.info()
-              if (os["sysname"] == "windows") site = Sys.getenv("temp")
-              site = normalizePath(file.path(site, "YATA"))
-           }
-           dir.create(site, showWarnings = FALSE)
-           dirWrk = normalizePath(file.path(site, "data/wrk"))
-           dir.create(dirWrk, showWarnings = FALSE)
-
-           dirLog = normalizePath(file.path(site, "data/log"))
-           dir.create(dirLog, showWarnings = FALSE)
-
-           private$pidfile = file.path(dirWrk, paste0(process, ".pid"))
-           private$logfile = file.path(dirLog, paste0(process, ".log"))
-
-           if (file.exists(pidfile)) {
-              self$running = TRUE
-           } else {
-              cat(paste0(Sys.getpid(),"\n"), file=pidfile)
-           }
-           self$logger = YATALogger$new(process, logLevel, logOutput)
+           self$logger  = YATALogger$new(process, logLevel, logOutput, shared)
+           createPID()
        }
        ,destroy = function(rc = 0) {
           if (!is.null(pidfile) && file.exists(pidfile)) unlink(pidfile, force = TRUE)
@@ -61,27 +41,36 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
            }
            FALSE
        }
-       ,warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }
-       ,info = function(txt, ...) { msg(.msg("INFO   :", txt, ...), out=stdout()) }
-       ,err  = function(txt, ...) { msg(.msg("ERROR  :", txt, ...), out=stderr()) }
-       ,cont = function(txt, ...) { msg(sprintf(paste0("        ",txt), ...), out=stderr()) }
-       ,summary = function(level, txt, ...) {
-          if (level <= msgSum) msg(.msg("", txt, ...))
-        }
-       ,begin = function()   { private$tmsBeg = Sys.time() }
-       ,end   = function(rc) { rc }
+       # ,warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }
+       # ,info = function(txt, ...) { msg(.msg("INFO   :", txt, ...), out=stdout()) }
+       # ,err  = function(txt, ...) { msg(.msg("ERROR  :", txt, ...), out=stderr()) }
+       # ,cont = function(txt, ...) { msg(sprintf(paste0("        ",txt), ...), out=stderr()) }
+       # ,summary = function(level, txt, ...) {
+       #    if (level <= msgSum) msg(.msg("", txt, ...))
+       #  }
+       # ,begin = function()   { private$tmsBeg = Sys.time() }
+       # ,end   = function(rc) { rc }
     )
     ,private = list(
          tmsBeg = 0
         ,tmsEnd = 0
-        ,msgDet = 0
-        ,msgSum = 0
+        # ,msgDet = 0
+        # ,msgSum = 0
         ,pidfile = NULL
         ,logfile = NULL
         ,.msg = function(head="", txt, ...) {
            lbl = trimws(paste(head, txt))
            sprintf(lbl, ...)
         }
+       ,createPID = function() {
+           wd = getDirectory("wrk")
+           private$pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+           if (file.exists(pidfile)) {
+              self$running = TRUE
+           } else {
+              cat(paste0(Sys.getpid(),"\n"), file=pidfile)
+           }
+       }
     )
 )
 

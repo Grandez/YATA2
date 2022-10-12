@@ -1,7 +1,7 @@
 #' Recupera los datos historicos de las sesiones
 #' Proceso Diario
 #'
-update_history = function(reverse = FALSE, backward = FALSE, logLevel = 0, logOutput = 0) {
+update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
    factory = NULL
    batch   <<- YATABatch$new("history", logLevel, logOutput)
    logger = batch$logger

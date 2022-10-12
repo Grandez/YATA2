@@ -20,11 +20,8 @@ YATALogger = R6::R6Class("YATA.LOGGER"
    ,portable   = FALSE
    ,active = list(
        level  = function(value) {
-          if (!missing(value)) {
-             private$levelCon  = value
-             private$levelFile = value
-          }
-          levelCon
+          if (!missing(value)) private$.level = value
+          .level
        }
       ,output = function(value) {
           if (!missing(value)) private$.output = value
@@ -36,9 +33,9 @@ YATALogger = R6::R6Class("YATA.LOGGER"
      ,lastErr = NULL
      ,type = list(PROCESS =  1,BATCH   =  5,LOG     = 10,SUMMARY = 11, ACT=20, ERROR=99)
      ,print        = function() { message("Generic Logger class") }
-     ,initialize   = function(module="general", level=0, output=1) {
+     ,initialize   = function(module="general", level=0, output=1, shared=FALSE) {
          private$modName   = module
-         .initLogger(level, output)
+         .initLogger(level, output, shared)
      }
      ,finalize     = function()       {
         if (!is.null(logFile) && isOpen(logFile)) close(logFile)
@@ -60,18 +57,13 @@ YATALogger = R6::R6Class("YATA.LOGGER"
      ,warning      = function(fmt, ...) { message(.mountMessage(fmt, ...)) }
      ,doing = function(level, fmt, ...) {
        # Proceso en marcha, espera un done. Fichero se guarda
-          .print(self$type$ACT, level, .mountMessage(fmt, ...))
+         .print(self$type$ACT, level, .mountMessage(fmt, ...))
+         private$.cont = TRUE
       }
      ,done = function(level, fmt, ...) {
-        .println_direct(self$type$ACT, level, .mountMessage(fmt, ...))
-          # if (is.logical(res)) {
-          #    if ( res) .flush(self$type$ACT, level,"\tOK", crayon::bold)
-          #    if (!res) .flush(self$type$ACT, level,"\tKO", crayon::red)
-          # } else {
-          #    .flush(self$type$ACT, level, paste0("\t", res),  crayon::blue)
-          # }
-       }
-       ,batch = function(fmt, ...) {
+        .println(self$type$ACT, level, .mountMessage(fmt, ...))
+      }
+     ,batch = function(fmt, ...) {
           .println(self$type$BATCH, 0, .mountMessage(fmt,...))
        }
        ,process   = function(level, fmt, ...) {
@@ -153,52 +145,38 @@ YATALogger = R6::R6Class("YATA.LOGGER"
     )
     ,private = list(
         logFile  = NULL
-       ,levelFile = 0
-       ,levelCon  = 0
+       ,.level  = 0
        ,.output   = 0
-       ,cache     = ""
+       ,.cont = FALSE
        ,modName  = "YATA"
        ,logTimers = NULL
        ,logNames  = NULL
        ,.println = function(type, level, msg, ansi=.void) {
           .print(type, level, msg,  ansi)
+          private$.cont = TRUE
           .print(type, level, "\n", ansi)
+          private$.cont = FALSE
        }
        ,.print = function(type, level, msg, ansi=.void) {
-#          if (bitwAnd(.output, 2) > 0) .toFile   (type, level, msg)
+          if (bitwAnd(.output, 2) > 0) .toFile   (type, level, msg)
           if (bitwAnd(.output, 1) > 0) .toConsole(type, level, msg, ansi)
        }
-       ,.println_direct = function(type, level, msg, ansi=.void) {
-          .print_direct(type, level, msg,  ansi)
-          .print_direct(type, level, "\n", ansi)
-       }
-       ,.print_direct = function(type, level, msg, ansi=.void) {
-           if (level > levelFile) return()
-#          if (bitwAnd(.output, 2) > 0) .toFile   (type, level, msg)
-           if (bitwAnd(.output, 1) > 0) cat(ansi(msg))
-       }
-
-       ,.flush = function(type, level, msg, ansi=.void) {
-           if (bitwAnd(.output, FILE)) {
-               .toFile   (type, level, paste(private$cache, msg))
-               private$cache = ""
-           }
-           if (bitwAnd(.output, CON )) cat(ansi(paste(msg, "\n")))
-           invisible(self)
-       }
        ,.toFile = function(type, level, txt, ...) {
-          if (level > levelFile) return()
-           str = Sys.time()
-           str = sub(" ", "-", str)
+           if (level > .level) return()
+           str = ""
+           if (!.cont) {
+               str = Sys.time()
+               str = sub(" ", "-", str)
+           }
            line = paste(str,modName,type,level,txt, sep=";")
            rest = paste(list(...), collapse=";")
            if (nchar(rest) > 0) line = paste0(line, ";",rest)
            cat(paste0(line, "\n"), file=logFile, append=TRUE)
        }
        ,.toConsole = function(type, level, txt, ansi=.void) {
-          if (level > levelCon) return()
+          if (level > .level) return()
           msg = txt
-          if (txt != "\n") {
+          if (!.cont) {
               str  = format(Sys.time(), "%H:%M:%S")
               msg  = gsub("\\n","          \n", txt)
 #           prfx = NULL
@@ -209,18 +187,12 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        }
        ,.void = function(txt) { txt }
 
-       ,.initLogger = function (level, output) {
+       ,.initLogger = function (level, output, shared) {
            value = Sys.getenv("YATA_LOG_LEVEL")
            value = suppressWarnings(as.integer(value))
-           if (!is.na(value)) {
-               private$levelCon  = value
-               private$levelFile = value
-           }
-           if (!missing(level)) {
-               private$levelCon  = value
-               private$levelFile = value
+           if (!is.na(value)) private$.level  = value
 
-           }
+           if (!missing(level)) private$.level  = value
 
            value = Sys.getenv("YATA_LOG_OUTPUT")
            value = suppressWarnings(as.integer(value))
@@ -228,15 +200,16 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            if (!missing(output)) private$.output = value
 
            if (bitwAnd(.output, 2) > 0) {
-              fname = paste0(Sys.getenv("YATA_SITE"), "/data/log/", modName, ".log")
-              private$logFile = file(fname, open="at", blocking = FALSE)
+               wd      = getDirectory("log")
+               logfile = ifelse(shared, "YATA", modName)
+               logfile = file.path(wd, paste0(logfile, ".log"))
+               private$logFile = file(logfile, open="at", blocking = FALSE)
            }
        }
        ,.mountMessage = function(fmt, ...) {
           #JGG Mantener como funcion por si usamos mensajes preescritos
            sprintf(fmt, ...)
        }
-
     )
 )
 
@@ -246,8 +219,8 @@ YATALogger = R6::R6Class("YATA.LOGGER"
      #         ll = ll + level
      #         level = ll
      #      }
-     #      private$levelFile = logLevel %%  10
-     #      private$levelCon  = logLevel %/% 10
-     #      private$.level = min(private$levelFile, private$levelCon)
+     #      private$.level = logLevel %%  10
+     #      private$.level  = logLevel %/% 10
+     #      private$.level = min(private$.level, private$.level)
      #      invisible(self)
      #   }

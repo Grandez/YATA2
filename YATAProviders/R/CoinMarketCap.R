@@ -109,6 +109,7 @@ PROVMarketCap = R6::R6Class("YATA.PROV.MARKETCAP"
         dfc     = NULL
         parms = list( start=start)
 
+        # JGG OJO Los porcentajes son reales, 0,12 es 0,12% no 12%
         makeList = function(x)    {
           quote  = x$quotes[[1]]
           list( id        = x$id
@@ -119,12 +120,12 @@ PROVMarketCap = R6::R6Class("YATA.PROV.MARKETCAP"
                ,volday    = toNum(quote$volume24)
                ,volweek   = toNum(quote$volume7d)
                ,volmonth  = toNum(quote$volume30d)
-               ,hour      = toNum(quote$percentChange1h)
-               ,day       = toNum(quote$percentChange24h)
-               ,week      = toNum(quote$percentChange7d)
-               ,month     = toNum(quote$percentChange30d)
-               ,bimonth   = toNum(quote$percentChange60d)
-               ,quarter   = toNum(quote$percentChange90d)
+               ,hour      = toNum(quote$percentChange1h)  / 100
+               ,day       = toNum(quote$percentChange24h) / 100
+               ,week      = toNum(quote$percentChange7d)  / 100
+               ,month     = toNum(quote$percentChange30d) / 100
+               ,bimonth   = toNum(quote$percentChange60d) / 100
+               ,quarter   = toNum(quote$percentChange90d) / 100
                ,dominance = toNum(quote$dominance)
                ,turnover  = toNum(quote$turnover)
                ,updated   = quote$lastUpdated

@@ -102,7 +102,7 @@ YATATable = R6::R6Class("YATA.TABLE"
       }
       ,getField = function(name)         { self$current[[name]] }
       ,addField = function(name, value)  { self$current[[name]] = self$current[[name]] + value }
-      ,select   = function(..., create=FALSE, limit=0)  {
+      ,select   = function(..., create=FALSE, order = NULL, limit=0)  {
           # selecciona un registro o conjunto, segun los parametros (solo equal)
           # Devuelve si se ha seleccionado/creado y activa current
          created = TRUE
@@ -110,6 +110,7 @@ YATATable = R6::R6Class("YATA.TABLE"
          reset()
          filter = mountWhere(...)
          qry = paste("SELECT * FROM ", tblName, filter$sql)
+         qry = add_order(qry, order)
          if (limit > 0) {
              filter$values = jgg_list_append_list(filter$values, limit_=limit)
              qry = paste(qry, "LIMIT ?")
@@ -525,7 +526,26 @@ YATATable = R6::R6Class("YATA.TABLE"
           cond = paste(sapply(parms, function(item) item$sql), collapse = " AND ")
           values = lapply(parms, function(item) item$parms)
           list(sql=paste("WHERE", cond),values=values)
-       }
+      }
+      ,add_order = function (qry, order) {
+          flds = NULL
+          if (is.null(order)) return (qry)
+          for (idx in 1:length(order)) {
+              item = order[[idx]]
+              if (!is.list(item)) {
+                  fld = fields[item]
+                  if (!is.null(fld)) flds = c(flds, fld)
+              } else {
+                  fld = fields[item$name]
+                  if (!is.null(fld)) {
+                      clause = fld
+                      if (!is.null(item$asc) && item$asc == FALSE) clause = paste(clause, "DESC")
+                      flds = c(flds, clause)
+                  }
+              }
+          }
+          paste(qry, "ORDER BY", paste(flds, collapse = ","))
+      }
 
    )
 )

@@ -1,3 +1,15 @@
+# Los campos no tienen nombre prefijado para poder usar cualquier variacion
+#   pxx hace referencia a precios
+#   vxx hace referencia a voumenes
+# 1. Caso normal
+#   p01 - var. session
+#   p02 - var.  1 dia
+#   p03 - var.  3 dias
+#   p04 - var.  7 dias
+#   p05 - var. 15 dias
+#   p06 - var. 30 dias
+#   p07 - var. 60 dias
+#   p08 - var. 90 dias
 TBLVariations = R6::R6Class("TBL.VARIATIONS"
     ,inherit    = YATATable
     ,portable   = FALSE
