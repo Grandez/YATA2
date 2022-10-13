@@ -141,6 +141,32 @@ YATATable = R6::R6Class("YATA.TABLE"
          df = db$query(qry, params=filter$values)
          setColNames(df)
       }
+      ,ordered = function(..., limit = 0) {
+         filter = list(name=NULL, values = NULL)
+         sorts = ""
+         args = list(...)
+         for (idx in 1:length(args)) {
+             arg = args[[idx]]
+             argl = tolower(arg)
+             if (argl == "asc" || argl == "desc") {
+                 sorts = paste(sorts, toupper(argl))
+                 next
+             }
+             fld = fields[arg]
+             if (is.null(fld)) next
+             if (nchar(sorts) > 0) sorts = paste(sorts, ",")
+             sorts = paste(sorts, fld)
+         }
+         qry = paste("SELECT * FROM ", tblName)
+         if (length(sorts)) qry = paste(qry, "ORDER BY", sorts)
+         if (limit > 0) {
+             filter$values = limit
+             qry = paste(qry, "LIMIT ?")
+         }
+         df = db$query(qry, params=filter$values)
+         setColNames(df)
+      }
+
       ,first    = function(...) {
          filter = mountWhere(...)
          qry = paste("SELECT * FROM ", tblName, filter$sql)

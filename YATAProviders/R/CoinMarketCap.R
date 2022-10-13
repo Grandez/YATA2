@@ -383,8 +383,9 @@ PROVMarketCap = R6::R6Class("YATA.PROV.MARKETCAP"
 
            heads = changeUserAgent()
 
-           from = makePosix(mfrom)
-           to   = makePosix(mto)
+           # sometimes psix number is returned in scientific format
+           from = format(makePosix(mfrom), scientific = FALSE)
+           to   = format(makePosix(mto),   scientific = FALSE)
            parms = list(id = idCurrency, timeStart = from, timeEnd = to,convertId  = 2781) #JGG 2781 = USD 2790-EUR
 
            data  = http$json(url, parms=parms, headers=heads)

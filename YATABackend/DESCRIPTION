@@ -9,5 +9,4 @@ Description: Backend for YATA
 License: use_mit_license()
 Encoding: UTF-8
 LazyData: true
-Imports: YATABase, YATACore
-Depends: YATABase
+Imports: RestRserve, YATABase

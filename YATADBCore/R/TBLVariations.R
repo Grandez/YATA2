@@ -3,7 +3,7 @@
 #   vxx hace referencia a voumenes
 # 1. Caso normal
 #   p01 - var. session
-#   p02 - var.  1 dia
+#   p02 - var.  1 dia (rolling)
 #   p03 - var.  3 dias
 #   p04 - var.  7 dias
 #   p05 - var. 15 dias

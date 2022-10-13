@@ -11,6 +11,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R  (>= 4.0.4)
         ,R6 (>= 2.5.0)
+        ,tools
         ,hash
         ,stringr
         ,rlist

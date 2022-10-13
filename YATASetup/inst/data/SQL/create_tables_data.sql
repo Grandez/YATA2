@@ -299,7 +299,7 @@ CREATE TABLE VARIATIONS  (
    ,V10       DOUBLE  COMMENT 'Variacion volumen 10'   
    ,V11       DOUBLE  COMMENT 'Variacion volumen 11'
    ,V12       DOUBLE  COMMENT 'Variacion volumen 12'   
-   ,PRIMARY KEY (ID, TMS)
+   ,PRIMARY KEY (ID, TMS DESC)
 --   ,UNIQUE  KEY (SYMBOL)  Pueden haber nombres duplicados
 );
 
