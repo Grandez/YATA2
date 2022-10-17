@@ -1,27 +1,51 @@
-start = function(port) {
-    rc = tryCatch({
-        fout = paste0(Sys.getenv("YATA_SITE"),"/data/log/rest.log")
-        fpid = paste0(Sys.getenv("YATA_SITE"),"/data/wrk/rest.pid")
-        if(!file.exists(fout)) file.create(fout, showWarnings = FALSE)
-        cat(Sys.getpid(), "\n", file=fpid)
-        sink(fout)
-        fact = YATACore::YATAFACTORY$new()
+start = function(port=4000, logLevel = 9, logOutput = 2) {
+   batch  = YATABatch$new("backend", logLevel, logOutput)
+   logger = batch$logger
 
-        YATARest = YATAREST$new()
-        if (missing(port)) port = YATARest$getPort()
+   if (batch$running) {
+      logger$running()
+      return (invisible(batch$rc$RUNNING))
+   }
+
+
+    rc = tryCatch({
+        app = YATARest$new(port, logLevel, logOuput)
         backend = BackendRserve$new()
-        backend$start(YATARest, http_port = port, background = FALSE)
-        0
+        resp = backend$start(YATARest, http_port = port, background = TRUE)
+        #resp = RestRserve:::ApplicationProcess$new(12345)
+        if ("ApplicationProcess" %in% class(resp))  {
+            browser()
+            batch$addDataToControlFile(resp$pid)
+        } else {
+            browser()
+            batch$addDataToControlFile(resp)
+        }
+        batch$rc$OK
     }, error = function(cond){
-        sink()
-        cat("ERROR GORDO\n")
-        cat(cond$message)
-        cat("\n")
-        16
+        browser()
+        batch$rc$FATAL
     })
-    cat("Acaba REST")
-    if (file.exists(fpid)) file.remove(fpid)
-    sink()
-    if (rc > 0) stop("HA ACABADO CON ERROR")
-    rc
+}
+
+stop = function (logLevel = 1, logOutput = 1) {
+   batch = YATABatch$new("backend", logLevel, logOutput)
+
+   if (!batch$running) {
+       batch$logger$warning("YATA Backend is NOT running")
+       return (invisible(batch$rc$NOT_RUNNIG))
+   }
+   # Debe haber dos lineas pid padre y el server
+   data = batch$getControlFile()
+   if (length(data) > 1) {
+       pid = suppressWarnings(as.integer(data[2]))
+       if (!is.na(pid)) tools::pskill(pid)
+   }
+
+   if (length(data) > 0) {
+       pid = suppressWarnings(as.integer(data[1]))
+       if (!is.na(pid)) tools::pskill(pid)
+   }
+
+   YATABatch::stop_process("backend", TRUE)
+   invisible(batch$destroy(batch$rc$OK))
 }

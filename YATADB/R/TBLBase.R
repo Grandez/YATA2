@@ -517,7 +517,15 @@ YATATable = R6::R6Class("YATA.TABLE"
             col = item$name
             if (!is.null(item$expr)) col = paste(item$expr, "(", col, ")")
 
+            if (!is.null(item$func)) {
+               col = paste(item$func, "(", col, ")")
+            }
+            if (tolower(item$value) == "null") {
+                if (op == "eq") return (list(sql = paste(col, "IS NULL"),     parms = NULL))
+                if (op == "ne") return (list(sql = paste(col, "IS NOT NULL"), parms = NULL))
+            }
             if (op == "eq") return (list(sql = paste(col, "=  ?"), parms = item$value))
+            if (op == "ne") return (list(sql = paste(col, "<> ?"), parms = item$value))
             if (op == "gt") return (list(sql = paste(col, ">  ?"), parms = item$value))
             if (op == "ge") return (list(sql = paste(col, ">= ?"), parms = item$value))
             if (op == "lt") return (list(sql = paste(col, "<  ?"), parms = item$value))
@@ -552,7 +560,7 @@ YATATable = R6::R6Class("YATA.TABLE"
           cond = paste(sapply(parms, function(item) item$sql), collapse = " AND ")
           values = lapply(parms, function(item) item$parms)
           list(sql=paste("WHERE", cond),values=values)
-      }
+       }
       ,add_order = function (qry, order) {
           flds = NULL
           if (is.null(order)) return (qry)

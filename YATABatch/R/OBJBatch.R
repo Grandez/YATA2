@@ -15,19 +15,45 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        ,logger = NULL
        ,base   = NULL
        ,process = "YATA"
-        # Return codes (Correct are even, failed are odd)
-       ,rc = list(OK=0, RUNNING=2, NODATA=4, KILLED=8, INVALID=12, FLOOD=17, ERRORS=33, SEVERE=41, FATAL=129)
+        # Return codes
+        # 0-8 Procesos correctos
+        # 9-16 Avisos
+        # A partir de 32 Errores (bit 6 activo)
+        # 64 Error no controlado
+       ,rc = list(OK=0, RUNNING=2, NODATA=4, KILLED=7, NOT_RUNNIG = 9, INVALID=12, FLOOD=17, ERRORS=33, SEVERE=32, FATAL=64)
        ,initialize = function (process="YATA", logLevel = 0, logOutput = 0, shared = FALSE) {
            private$tmsBeg = Sys.time()
-           self$process = process
-           self$logger  = YATALogger$new(process, logLevel, logOutput, shared)
-           createPID()
+           # process a NULL se utiliza para acceder al objeto sin crear ficheros
+           if (!is.null(process)) {
+               self$process = process
+               self$logger  = YATALogger$new(process, logLevel, logOutput, shared)
+               createPID(process)
+           }
        }
        ,destroy = function(rc = 0) {
           if (!is.null(pidfile) && file.exists(pidfile)) unlink(pidfile, force = TRUE)
           invisible(rc)
        }
-       ,stop_process = function(expception = FALSE) {
+       ,addDataToControlFile = function(...) {
+           args = list(...)
+           if (length(args) == 0) return (FALSE)
+           args = as.character(unlist(args))
+
+           wd = getDirectory("wrk")
+           pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+           if (!file.exists(pidfile)) return (TRUE) # Error
+           fpid = file(description = pidfile, open = "at", blocking = FALSE)
+           writeLines(args,con=fpid)
+           flush(fpid)
+           close(fpid)
+           FALSE
+       }
+       ,check_process = function (process = NULL) {
+          if (is.null(process)) process = self$process
+          createPID(process, FALSE)
+          self$running
+       }
+       ,stop_process = function(exception = FALSE) {
            # fichero de control borrado
            if (!file.exists(pidfile)) {
                if (!exception) return (TRUE)
@@ -40,6 +66,13 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
                YATABase:::KILLED(paste(process, "killed by user"))
            }
            FALSE
+       }
+       ,getControlFile = function (process = NULL) {
+           if (is.null(process)) process = self$process
+           wd = getDirectory("wrk")
+           pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+           if (!file.exists(pidfile)) return (NULL)
+           readLines(pidfile)
        }
        # ,warn = function(txt, ...) { msg(.msg("wARNING:", txt, ...), out=stderr()) }
        # ,info = function(txt, ...) { msg(.msg("INFO   :", txt, ...), out=stdout()) }
@@ -62,13 +95,13 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
            lbl = trimws(paste(head, txt))
            sprintf(lbl, ...)
         }
-       ,createPID = function() {
+       ,createPID = function(process, create = TRUE) {
            wd = getDirectory("wrk")
            private$pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
            if (file.exists(pidfile)) {
               self$running = TRUE
            } else {
-              cat(paste0(Sys.getpid(),"\n"), file=pidfile)
+              if (create) cat(paste0(Sys.getpid(),"\n"), file=pidfile)
            }
        }
     )

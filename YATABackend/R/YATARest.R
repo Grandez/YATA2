@@ -1,8 +1,8 @@
-YATAREST = R6::R6Class("YATA.BACKEND.REST"
+YATARest = R6::R6Class("YATA.BACKEND.REST"
     ,inherit    = RestRserve::Application
     ,lock_class = TRUE
     ,public = list(
-        initialize = function() {
+        initialize = function(port, logLevel, logOuput) {
             cat("Initializing YATAREST\n")
             super$initialize()
             self$logger$set_log_level("all")

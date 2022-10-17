@@ -61,7 +61,8 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
            if (logger$level < 5) {
                logger$doing(1, "%5d - Retrieving %-12s", row, substr(dfCTC[row,"symbol"],1,12))
            }
-           if (to - last > 25) to = last + 25
+           # Recuperar solo de mes en mes
+           if (to - last > 30) to = last + 30
            data = prov$getHistorical(as.integer(dfCTC[row,"id"]), last + 1, to )
            txt = ifelse(is.null(data), "No info", "OK")
            logger$done(1, "- %s", txt)
