@@ -515,12 +515,11 @@ YATATable = R6::R6Class("YATA.TABLE"
             if (is.null(item$op)) item$op = "eq"
             op = tolower(item$op)
             col = item$name
-            if (!is.null(item$expr)) col = paste(item$expr, "(", col, ")")
 
             if (!is.null(item$func)) {
                col = paste(item$func, "(", col, ")")
             }
-            if (tolower(item$value) == "null") {
+            if (length(item$value) == 1 && tolower(item$value) == "null") {
                 if (op == "eq") return (list(sql = paste(col, "IS NULL"),     parms = NULL))
                 if (op == "ne") return (list(sql = paste(col, "IS NOT NULL"), parms = NULL))
             }

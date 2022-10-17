@@ -1,29 +1,27 @@
 get_history = function(.req, .res) {
-    browser()
-#      message(paste("best:", Sys.time()))
-    cat("Pide id")
     id   = .getParm(.req, "id")
-    cat("Pide from")
-    from  = .getParm(.req, "from")
-    cat("Pide to")
-    to  = .getParm(.req, "to")
+    from = .getParm(.req, "from")
+    to   = .getParm(.req, "to")
 
-    if (is.null(id) || is.null(from) || is.null(to)) {
-        cat("ERROR EN LOS PARAMETROS")
-        data = json_to(NULL, "data")
-        status = list(rc=400, message="missing parameters")
-        .setResponse(.res, data, status)
-        return()
-    }
+    if (is.null(id) || is.null(from)) return (.missingParms(.res))
+    if (is.null(to)) to = as.character(Sys.Date())
+
+    chk = tryCatch({
+        dt = as.Date(from)
+        dt = as.Date(to)
+        FALSE
+    }, error = function (cond) { TRUE })
+    if (chk) return (.invalidParms(.res, descr="Invalid or malformed dates"))
+
     tryCatch({
         factory   = YATADBCore::DBFactory$new()
         tbl = factory$getTable("History")
         df = tbl$recordset(id=list(value=id), tms=list(op="between", value=c(from, to)))
         .setResponse(.res, df)
     }, error = function(cond) {
+        browser()
         .setError(.res, cond)
     }, finally = function() {
         factory$destroy()
     })
 }
-#  jj=paste('{"data":', j1,',"status":', j2,'}')

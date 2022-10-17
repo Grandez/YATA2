@@ -2,23 +2,35 @@
     p  = req$parameters_query[[parm]]
     ifelse(is.null(p), dafult, p)
 }
-.setResponse = function (res, data, status) {
-    if (missing(status)) {
-        status = list(rc=422,count=0)
-        if (!is.null(data) && nrow(data) > 0) {
-            status$rc = 200
-            status$count = nrow(data)
-        }
-    }
-    resp  = json_to(data, "data")
-    stat  = json_to(status, "status")
-    json = json_append(resp,stat)
-    # res$set_status_code(status$rc)
-    # res$set_content_type("application/json")
-    # res$set_body(json)
-    res$set_response(status$rc, body = json, content_type = "text/plain")
+.setResponse = function (.res, data, status) {
+    rc = 200
+    if (is.null(data) || nrow(data) == 0) rc = 204 # NO DATA
+    # if (missing(status)) {
+    #     status = list(rc=422,count=0)
+    #     if (!is.null(data) && nrow(data) > 0) {
+    #         status$rc = 200
+    #         status$count = nrow(data)
+    #     }
+    # }
+    .res$set_status_code(rc)
+    .res$set_content_type("application/json")
+    .res$set_body(jsonlite::toJSON(data, data.frame = "rows"))
 }
-.setError = function(res, cond) {
-    .setResponse(res, NULL, list(rc=500))
+.missingParms = function (.res, ...) {
+    resp = list(message="Missing parameters", rc=400)
+    resp = jgg_list_merge(resp, list(...))
+    .sendError(.res, 400, resp)
 }
-
+.invalidParms = function(.res, ...) {
+    resp = list(message="Invalid parameters", rc=400)
+    resp = jgg_list_merge(resp, list(...))
+    .sendError(.res, 400, resp)
+}
+.setError = function(.res, cond) {
+    .sendError(.res, 500, as.list(cond))
+}
+.sendError = function(.res, rc, data) {
+    .res$set_status_code(rc)
+    .res$set_content_type("application/json")
+    .res$set_body(jsonlite::toJSON(data))
+}
