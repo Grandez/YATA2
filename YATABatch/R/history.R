@@ -24,9 +24,9 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
    }, error = function (cond) {
       if (!is.null(factory)) factory$destroy()
       rc = batch$rc$FATAL
-      if ("YATAERROR"  %in% class(cond)) rc = batch$rc$SEVERE
-      if ("HTTP_FLOOD" %in% class(cond)) rc = batch$rc$FLOOD
-      if ("KILLED"     %in% class(cond)) rc = batch$rc$KILLED
+      if ("YATAERROR" %in% class(cond)) rc = batch$rc$SEVERE
+      if ("FLOOD"     %in% class(cond)) rc = batch$rc$FLOOD
+      if ("KILLED"    %in% class(cond)) rc = batch$rc$KILLED
       rc
    })
    batch$destroy()
