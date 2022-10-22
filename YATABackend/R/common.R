@@ -26,6 +26,11 @@
     resp = jgg_list_merge(resp, list(...))
     .sendError(.res, 400, resp)
 }
+.notFound = function(.res, txt) {
+    .res$set_status_code(204)
+    .res$set_content_type("text/plain")
+    .res$set_body(txt)
+}
 .setError = function(.res, cond) {
     .sendError(.res, 500, as.list(cond))
 }

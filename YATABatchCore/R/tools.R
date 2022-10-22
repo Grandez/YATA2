@@ -1,4 +1,4 @@
-getDirectory = function (name="log") {
+yataGetDirectory = function (name="log") {
    site = Sys.getenv("YATA_SITE")
    if (nchar(site) == 0) {
        site = "/tmp"

@@ -19,11 +19,10 @@ YATARest = R6::R6Class("YATA.BACKEND.REST"
    ,private = list(
         factory = NULL
        ,initREST = function() {
-         super$add_get ("/alive"    , handler_alive)
-         super$add_get ("/best"     , get_best)
+         super$add_get ("/alive"    , alive)
          super$add_get ("/history"  , get_history)
-         super$add_get ("/latest"   , latest_handler)
-         super$add_get ("/trending" , latest_handler)
+         super$add_get ("/latest"   , get_latest)
+         super$add_get ("/trending" , get_trending)
 
        }
       ,setMiddleware = function() {

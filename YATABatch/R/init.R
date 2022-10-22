@@ -1,9 +1,9 @@
 init = function() {
    unloadNamespace("YATABatch")
-   unloadNamespace("YATADBCore")
+   unloadNamespace("YATABatchCore")
    unloadNamespace("YATADB")
-   unloadNamespace(("YATAProviders"))
-   unloadNamespace(("YATABase"))
+   unloadNamespace("YATAProviders")
+   unloadNamespace("YATABase")
    library(YATABatch)
    message("Ready")
 }

@@ -1,7 +1,6 @@
 # Actualiza los datos de session cada interval minutos
 update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
    factory = NULL
-   browser()
    batch   = YATABatch$new("tickers", logLevel, logOutput)
    logger  = batch$logger
 
@@ -33,6 +32,29 @@ update_tickers = function(interval = 15, logLevel = 0, logOutput = 0) {
    }, error = function (cond) {
       browser()
       batch$rc$SEVERE
+   })
+   invisible(batch$destroy(rc))
+}
+clean_tickers = function(logLevel = 5, logOutput = 1) {
+   factory = NULL
+   batch   = YATABatch$new("clean_tickers", logLevel, logOutput)
+   logger  = batch$logger
+
+   if (batch$running) {
+      logger$running()
+      return (invisible(batch$rc$RUNNING))
+   }
+
+   rc = tryCatch({
+      factory = Factory$new()
+      tblCTC  = factory$getTable("Currencies")
+      tblSession$db$begin()
+      #delete
+      tblSession$db$commit()
+      batch$rc$OK
+   }, error = function (cond) {
+      tblSession$db$rollback()
+      ifelse ("YATAError" %in% class(cond), batch$rc$FATAL, batch$rc$SEVERE)
    })
    invisible(batch$destroy(rc))
 }

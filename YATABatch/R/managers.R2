@@ -60,7 +60,7 @@ check_process = function (process = "yata") {
 }
 stop_batch = function (process = "yata", clean = FALSE) {
    rc = 0
-   wd = yataGetDirectory("wrk")
+   wd = getDirectory("wrk")
    pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
    if (file.exists(pidfile)) {
       message(paste("Sending kill message to", process))

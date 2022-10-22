@@ -77,6 +77,13 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               Sys.sleep(1)
               count = count + 1
            }
+           YATABase:::EXEC( "EXEC", action="run"
+                                ,command = "git reset --hard HEAD"
+                                ,rc      = res$status
+                                ,type    = "Exec"
+                                ,su      = NULL
+                                ,stdout  = res$stdout
+                                ,stderr  = res$stderr)
 
            YATABase:::EXEC( "EXEC", action="run"
                                 ,command = "git pull"

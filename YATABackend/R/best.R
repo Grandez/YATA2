@@ -35,4 +35,3 @@ get_best = function(req, .res) {
 
     factory$destroy()
 }
-#  jj=paste('{"data":', j1,',"status":', j2,'}')
