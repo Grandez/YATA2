@@ -5,7 +5,7 @@
 #' @param console Se ejecuta en una consola (interactivo)
 #' @param log     Nivel de detalle de los mensajes
 #'
-update_currencies = function(logLevel = 5, logOutput = 1) {
+update_currencies = function(logLevel = 2, logOutput = 2) {
    factory = NULL
    batch   = YATABatch$new("currencies", logLevel, logOutput)
    logger  = batch$logger

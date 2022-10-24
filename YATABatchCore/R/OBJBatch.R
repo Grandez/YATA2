@@ -21,7 +21,7 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
         # 9-16 Avisos
         # A partir de 32 Errores (bit 6 activo)
         # 64 Error no controlado
-       ,rc = list(OK=0,  1=HELP, RUNNING=2, NODATA=4, KILLED=7, NOT_RUNNIG = 9, INVALID=12, FLOOD=17, ERRORS=33, SEVERE=32, FATAL=64)
+       ,rc = list(OK=0,  HELP=1, RUNNING=2, NODATA=4, KILLED=7, NOT_RUNNIG = 9, INVALID=12, FLOOD=17, ERRORS=33, SEVERE=32, FATAL=64)
        ,initialize = function (process="YATA", logLevel = 0, logOutput = 0, shared = FALSE) {
            private$tmsBeg = Sys.time()
            if (logLevel > 9) {

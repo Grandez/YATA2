@@ -5,6 +5,8 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
    browser()
    factory = NULL
    batch   <<- YATABatch$new("history", logLevel, logOutput)
+   batch$setCounters(c( input     ="Monedas leidas"
+                       ,processed = "Monedas procesadas"))
    logger = batch$logger
    items  = 0
 
@@ -21,7 +23,7 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
       if (nrow(dfctc) == 0) return (batch$rc$NODATA)
 
       .updateHistory(factory, logger, dfctc, reverse)
-      ifelse(batch$data$processed > 0, batch$rc$OK, batch$rc$NODATA)
+      ifelse(batch$counters$processed > 0, batch$rc$OK, batch$rc$NODATA)
    }, error = function (cond) {
       if (!is.null(factory)) factory$destroy()
       rc = batch$rc$FATAL
@@ -68,7 +70,7 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
         txt = ifelse(is.null(data), "No info", "OK")
         logger$done(1, "- %s", txt)
         if (!is.null(data)) {
-            batch$data$processed = batch$data$processed + 1
+            batch$counters$processed = batch$counters$processed + 1
            .updateData(data, as.list(dfCTC[row,]), tables)
         }
         if ( is.null(data)) .updateLastDate(to, as.list(dfCTC[row,]), tables)

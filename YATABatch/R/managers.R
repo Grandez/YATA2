@@ -59,9 +59,10 @@ check_process = function (process = "yata") {
    return (invisible(rc))
 }
 stop_batch = function (process = "yata", clean = FALSE) {
+   browser()
    rc = 0
    wd = yataGetDirectory("wrk")
-   pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+   pidfile = normalizePath(file.path(wd, paste0(process, ".pid")), mustWork = FALSE)
    if (file.exists(pidfile)) {
       message(paste("Sending kill message to", process))
       cat("stop", file=pidfile)

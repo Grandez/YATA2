@@ -7,6 +7,7 @@ import(jsonlite)
 import(ps)
 
 exportPattern("YATA.*")
+exportPattern("yata.*")
 exportPattern("jgg.*")
 exportPattern("propagate.*")
 exportPattern("json_.*")
