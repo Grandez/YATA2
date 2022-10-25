@@ -49,7 +49,7 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
            args = as.character(unlist(args))
 
            wd = yataGetDirectory("wrk")
-           pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+           pidfile = normalizePath(file.path(wd, paste0(process, ".pid")), mustWork = FALSE)
            if (!file.exists(pidfile)) return (TRUE) # Error
            fpid = file(description = pidfile, open = "at", blocking = FALSE)
            writeLines(args,con=fpid)
@@ -79,7 +79,7 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        ,getControlFile = function (process = NULL) {
            if (is.null(process)) process = self$process
            wd = yataGetDirectory("wrk")
-           pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+           pidfile = normalizePath(file.path(wd, paste0(process, ".pid")), mustWork = FALSE)
            if (!file.exists(pidfile)) return (NULL)
            readLines(pidfile)
        }
@@ -120,7 +120,7 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
         }
        ,createPID = function(process, create = TRUE) {
            wd = yataGetDirectory("wrk")
-           private$pidfile = normalizePath(file.path(wd, paste0(process, ".pid")))
+           private$pidfile = normalizePath(file.path(wd, paste0(process, ".pid")), mustWork = FALSE)
            if (file.exists(pidfile)) {
               self$running = TRUE
            } else {
