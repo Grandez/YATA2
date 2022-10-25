@@ -11,18 +11,15 @@ start = function(port=4000, logLevel = 9, logOutput = 2) {
     rc = tryCatch({
         app = YATARest$new(port, logLevel, logOuput)
         backend = BackendRserve$new()
-        resp = backend$start(YATARest, http_port = port, background = TRUE)
+        resp = backend$start(app, http_port = port, background = TRUE)
         #resp = RestRserve:::ApplicationProcess$new(12345)
         if ("ApplicationProcess" %in% class(resp))  {
-            browser()
             batch$addDataToControlFile(resp$pid)
         } else {
-            browser()
             batch$addDataToControlFile(resp)
         }
         batch$rc$OK
     }, error = function(cond){
-        browser()
         batch$rc$FATAL
     })
 }
