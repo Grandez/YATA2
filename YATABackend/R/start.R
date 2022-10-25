@@ -20,6 +20,7 @@ start = function(port=4000, logLevel = 9, logOutput = 2) {
         }
         batch$rc$OK
     }, error = function(cond){
+        batch$destroy()
         batch$rc$FATAL
     })
 }
