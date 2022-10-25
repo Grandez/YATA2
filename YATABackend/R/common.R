@@ -5,15 +5,8 @@
 .setResponse = function (.res, data, status) {
     rc = 200
     if (is.null(data) || nrow(data) == 0) rc = 204 # NO DATA
-    # if (missing(status)) {
-    #     status = list(rc=422,count=0)
-    #     if (!is.null(data) && nrow(data) > 0) {
-    #         status$rc = 200
-    #         status$count = nrow(data)
-    #     }
-    # }
     .res$set_status_code(rc)
-    .res$set_content_type("application/json")
+    .res$set_content_type("text/plain")
     .res$set_body(jsonlite::toJSON(data, data.frame = "rows"))
 }
 .missingParms = function (.res, ...) {
@@ -37,5 +30,5 @@
 .sendError = function(.res, rc, data) {
     .res$set_status_code(rc)
     .res$set_content_type("application/json")
-    .res$set_body(jsonlite::toJSON(data))
+    .res$set_body(data)
 }

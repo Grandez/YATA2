@@ -12,7 +12,7 @@ DBFactory <- R6::R6Class("YATA.BACKEND.DB.FACTORY"
           #reg.finalizer(self, function(this) destroy(this), onexit = TRUE)
           #private$objects = YATABase::map()
           super$initialize()
-          sf   = system.file("config", "config.ini", package=packageName())
+          sf   = system.file("config", "config.ini", package=utils::packageName())
           cfg  = YATABase::ini(sf)
           info = cfg$getSection("DB")
           self$connect(info)
