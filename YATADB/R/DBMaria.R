@@ -39,7 +39,7 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
               browser()
               YATATools::SQL( "DB Connection error", origin=cond$message
                              ,action="connect", rc = getSQLCode(cond)
-                             ,YATATools::SQL="connect")
+                             ,sql="connect")
           })
       }
       ,disconnect = function(conn) {
@@ -49,7 +49,7 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
                        },error = function(cond) {
                               YATATools::SQL( "DB Disconnect", origin=cond$message
                              ,action="disconnect", rc = getSQLCode(cond)
-                             ,YATATools::SQL = "disconnect")
+                             ,sql = "disconnect")
                        })
           }
           NULL
@@ -62,7 +62,7 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
           if (!is.null(connTran)) {
               WARN( "Transacciones activas", "YATATools::SQL", origin=NULL
                              ,action="begin", rc = 1192 # Transaction active
-                             ,YATATools::SQL="begin")
+                             ,sql="begin")
           }
           private$connTran = connect()
           RMariaDB::dbBegin(connTran)
@@ -95,7 +95,7 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
                   browser()
                 YATATools::SQL( "QUERY Error",  origin=cond$message
                                ,action="query", rc = getSQLCode(cond)
-                               ,YATATools::SQL=qry)
+                               ,sql=qry)
           })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
@@ -110,13 +110,13 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
           },warning = function(cond) {
               browser()
                if (isolated) rollback(conn)
-               YATATools::SQL("EXECUTE", origin=cond$message, YATATools::SQL=qry, action="execute")
+               YATATools::SQL("EXECUTE", origin=cond$message, sql=qry, action="execute")
           },error = function (cond) {
               browser()
                sqlcode = getSQLCode(cond)
 #               if (sqlcode == 1205) isolated = TRUE # Table lock
                if (isolated) rollback(conn)
-               YATATools::SQL( "YATATools::SQL EXECUTE ERROR",origin=cond$message,YATATools::SQL=qry
+               YATATools::SQL( "YATATools::SQL EXECUTE ERROR",origin=cond$message,sql=qry
                               ,action="execute", rc = getSQLCode(cond))
           })
       }
@@ -131,9 +131,9 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
                      stop(paste("Aviso en DB Write: ", cond$message))
          }, error   = function(cond) {
             if (isolated) rollback(conn)
-            YATATools::SQL( "YATATools::SQL WRITE TABLE ERROR", origin = cond$message, YATATools::SQL = table
+            YATATools::SQL( "YATATools::SQL WRITE TABLE ERROR", origin = cond$message, sql = table
                            ,action = "WriteTable", rc = getSQLCode(cond)
-                           ,YATATools::SQL="writeTable")
+                           ,sql="writeTable")
              })
       }
       ,insert        = function(table, values, isolated=FALSE) {
@@ -143,14 +143,14 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
          data = jgg_list_clean(values)
          cols  = paste(names(data), collapse = ",")
          marks = paste(rep("?", length(data)), collapse=",")
-         YATATools::SQL = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
+         sql = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
          execute(YATATools::SQL, data, isolated)
       }
       ,count = function(table, filter) {
-           YATATools::SQL = paste("SELECT COUNT(*) FROM ", table)
+           sql = paste("SELECT COUNT(*) FROM ", table)
            if (!missing(filter) && !(is.null(filter))) {
                clause = paste(names(filter), "= ? AND", collapse=" " )
-               YATATools::SQL = paste(YATATools::SQL, sub("AND$", "", clause))
+               sql = paste(YATATools::SQL, sub("AND$", "", clause))
            }
            df = query(YATATools::SQL)
            as.integer(df[1,1])
