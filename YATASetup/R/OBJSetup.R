@@ -38,7 +38,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           0
       }
       ,updateYATA = function() {
-          base$msg$lbl("Generating/Updating packages")
+          logger$lbl("Generating/Updating packages")
           rpkgs = .ini$getSection("packages")
           .makePackages(rpkgs)
           rpkgs = .ini$getSection("web")
@@ -46,7 +46,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
           0
       }
       ,updateServices = function(full = FALSE) {
-          base$msg$lbl("Generating/Updating services")
+          logger$lbl("Generating/Updating services")
           if (full) updateYATA()
           path = file.path(Sys.getenv("YATA_ROOT"), "YATACLI/services")
           .makeServices(list.files(path))

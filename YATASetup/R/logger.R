@@ -238,7 +238,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
        ,.mountMessage = function(fmt, ...) {
           #JGG Mantener como funcion por si usamos mensajes preescritos
            txt = sprintf(fmt, ...)
-           gsub("\t", "    ", txt, fixed=TRUE)
+           gsub("/t", "    ", txt, fixed=TRUE)
        }
     )
 )
