@@ -4,11 +4,11 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
    ,portable   = FALSE
    ,public = list(
        print = function() { message("Setup object")}
-      ,initialize    = function() {
-          private$base = YATABase::YATABase$new()
-          private$.ini = base$ini(system.file("config/yata.cfg", package = "YATASetup"))
-          private$.run = YATASetup:::YATARUN$new()
-          private$.git = YATASetup:::YATAGIT$new()
+      ,initialize    = function(logLevel=0, logOutput=1) {
+          private$.ini = YATAIni$new(system.file("config/yata.cfg", package = "YATASetup"))
+          private$.run = YATARUN$new()
+          private$.git = YATAGIT$new()
+          private$logger = YATALogger$new("setup", logLevel, logOutput)
           if (file.exists(file.path(Sys.getenv("HOME"), "yata.cfg"))) {
               .ini$add(file.path(Sys.getenv("HOME"), "yata.cfg"))
           }
@@ -28,6 +28,14 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
               base$msg$ko()
              cond$rc
           })
+      }
+      ,makeYATA = function () {
+          logger$lbl("Generating/Updating packages")
+          rpkgs = .ini$getSection("packages")
+          .makePackages(rpkgs)
+          # rpkgs = .ini$getSection("web")
+          # for (pkg in rpkgs) .run$copy2web(pkg)
+          0
       }
       ,updateYATA = function() {
           base$msg$lbl("Generating/Updating packages")
@@ -52,7 +60,7 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
         .git = NULL
        ,.ini = NULL
        ,.run = NULL
-       ,base = NULL
+       ,logger = NULL
        ,.fail           = function(rc, fmt, ..., ext) {
            base$msg$err(fmt, ...)
            txt = sprintf(fmt, ...)
@@ -197,20 +205,20 @@ YATASetup = R6::R6Class("YATA.R6.SETUP"
        ,.makePackages   = function(packages) {
            changed = c()
            if (length(packages) == 0) {
-               base$msg$out("    Nothing to do\n")
+               logger$outln("\tNothing to do")
                return(changed)
            }
            rpkgs = .ini$getSection("packages")
            pkgs = rpkgs[which(rpkgs %in% packages)]
            if (length(pkgs) == 0) {
-               base$msg$out("    Nothing to do\n")
+               logger$outln("\tNothing to do\n")
                return(changed)
            }
-           base$msg$out("\n")
+           logger$outln()
            for (pkg in pkgs) {
-               base$msg$out("    Making %s", pkg)
-               .run$install(pkg)
-               base$msg$ok()
+               logger$out("/tMaking %s", pkg)
+               rc = .run$install(pkg)
+               logger$ok()
                changed = c(changed, pkg)
            }
            changed

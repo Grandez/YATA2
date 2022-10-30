@@ -5,10 +5,8 @@ YATADB <- R6::R6Class("YATA.BASE.DB"
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
-     #  engine     = NULL
-     # ,name       = NULL
-     # ,invalid    = FALSE
-      lastErr    = NULL
+      name       = NULL
+     ,lastErr    = NULL
      ,initialize = function ()     { }
      ,finalize   = function ()     { }
      ,print      = function ()     { stop(notImpl) }

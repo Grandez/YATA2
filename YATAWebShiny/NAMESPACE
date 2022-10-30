@@ -9,7 +9,7 @@
 #import(ellipsis)
 
 import(JGGShiny)
-import(YATABase)
+import(YATATools)
 
 export(yataExample)
 export(WEBPanel)

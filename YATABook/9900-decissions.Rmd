@@ -1,8 +1,0 @@
-# Technical Decissions
-
-```{r, echo=FALSE}
-files = list.files("decissions", "*.Rmd", full.names=TRUE)
-```
-
-```{r,child=files}
-```

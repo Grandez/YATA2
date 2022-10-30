@@ -9,5 +9,5 @@ License: use_mit_license()
 Encoding: UTF-8
 LazyData: true
 Depends: R6
-Imports: YATABase, RMariaDB
+Imports: RMariaDB, YATATools
 

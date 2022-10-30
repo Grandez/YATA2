@@ -6,6 +6,6 @@ import(stringr)
 import(httr)
 import(jsonlite)
 
-import(YATABase)
+import(YATATools)
 
 export(ProviderFactory)

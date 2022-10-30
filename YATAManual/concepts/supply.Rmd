@@ -1,9 +1,0 @@
-## Supply
-
-Podemos traducirlo como cantidad, número de monedas. A partir de ahi tenemos los conceptos:
-
-- **Max Supply**: Cantidad maxima de unidades que exisitirán
-- **Total Supply**: Numero de unidades existentes actualmente (excluyendo las que ya no existen)
-- **Circulating Supply**: Número de monedas en el mercado
-
-Es importante indicar aqui que no todas las monedas existentes están en el mercado por lo que desde el punto de vista del sistema es como si no existieran y por lo tanto no afectan al precio de mercado, aunque pueden existir en algún momento dado.

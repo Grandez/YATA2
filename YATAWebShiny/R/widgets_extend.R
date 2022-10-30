@@ -1,18 +1,18 @@
 # Widgets from shinyWidgets
-guiCheck = function(id, value=TRUE) {
-  shinyWidgets::awesomeCheckbox(id, NULL, value = value)
-}
-guiRadio = function(id, label=NULL, choices, selected=NULL, inline=TRUE, tooltip=NULL) {
-   wdg = shinyWidgets::awesomeRadio(id,label,choices,selected,inline = inline,checkbox = TRUE)
-   if (!is.null(tooltip)) {
-       tagList(wdg, tooltip(id, tooltip))
-   } else {
-       wdg
-   }
-}
-updRadio = function(id, selected=NULL) {
-   shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)
-}
+# guiCheck = function(id, value=TRUE) {
+#   shinyWidgets::awesomeCheckbox(id, NULL, value = value)
+# }
+# guiRadio = function(id, label=NULL, choices, selected=NULL, inline=TRUE, tooltip=NULL) {
+#    wdg = shinyWidgets::awesomeRadio(id,label,choices,selected,inline = inline,checkbox = TRUE)
+#    if (!is.null(tooltip)) {
+#        tagList(wdg, tooltip(id, tooltip))
+#    } else {
+#        wdg
+#    }
+# }
+# updRadio = function(id, selected=NULL) {
+#    shinyWidgets::updateAwesomeRadio(getDefaultReactiveDomain(), id, selected=selected)
+# }
 guiYesNo = function(id=ns("tag"), lblOK, lblKO, left = 0, width = 12) {
     # el tag es para crear el nombre completo
     toks = strsplit(id, "-")[[1]]

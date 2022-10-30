@@ -42,7 +42,7 @@ ProviderFactory = R6::R6Class("YATA.FACTORY.PROVIDER"
 
    )
    ,private = list(
-       providers = YATABase$map
+       providers = YATATools::map()
       ,dbf    = NULL
       ,EUR    = NULL
       ,mktcap = NULL

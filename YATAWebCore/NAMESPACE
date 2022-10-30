@@ -1,7 +1,7 @@
 # Common
-import(tidyr)
+#import(tidyr)
 import(rlist)
-import(zoo)
+import(zoo)#
 
 # Shiny
 import(shiny,   except=c(runExample))
@@ -28,8 +28,9 @@ import(promises)
 import(markdown)
 
 # YATA
-import(YATABase)
-import(YATAWebShiny)
+import(JGGShiny)
+import(YATATools)
+#import(YATAWebShiny)
 
 exportPattern("YATA.*")
 exportPattern("WDG.*")

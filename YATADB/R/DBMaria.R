@@ -6,11 +6,8 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
    ,public = list(
         initialize = function(data) {
            super$initialize()
-           # private$base     = YATABase$new()
-           # private$map      = base$map()
+           self$name        = data$name
            private$dbInfo   = data
-           # self$engine      = dbInfo$engine
-           # self$name        = dbInfo$name
            private$connRead = connect()
        }
       ,finalize = function() { destroy() }

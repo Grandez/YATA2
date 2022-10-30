@@ -1,6 +1,6 @@
 YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE, ...) {
 #         ,theme =  my_theme,lang = NULL, css=NULL, js=NULL, ...) {
-# browser()
+ browser()
 #     args = list(...)
 # , theme =  my_theme,lang = NULL
 #    theme = bs_theme(bootswatch = "default",

@@ -1,6 +1,0 @@
-import(YATABase)
-import(YATADB)
-
-exportPattern("^YATA.*")
-exportPattern("^yata.*")
-

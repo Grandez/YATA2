@@ -12,11 +12,11 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         ,initialize = function(dbf, msg) {
             tryCatch({
                 private$tblParms  = dbf$getTable("Parameters") # , dbf$getDBBase())
-                private$tblConfig = dbf$getTable("Config") #,     dbf$getDBUser())
+#                private$tblConfig = dbf$getTable("Config") #,     dbf$getDBUser())
                 private$objMsg   = msg
-                self$preferences = tblConfig$getSubgroup(group=1, subgroup=2, asList=TRUE)
+#                self$preferences = tblConfig$getSubgroup(group=1, subgroup=2, asList=TRUE)
              }, error = function(cond) {
-                 YATABase:::error("Error de inicializacion de OBJParms", subclass=NULL, origin="OBJParms", cond)
+                 ERROR("Error de inicializacion de OBJParms", cond, origin="OBJParms")
             })
         }
         ################################################

@@ -1,6 +1,0 @@
-
-## Marketcap (Market Capitalization)
-
-Es una forma de valorar la importancia/volumen relativa de una moneda, su valor es
-
-$MarketCap = Price * Circulating_Supply$

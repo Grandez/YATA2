@@ -97,7 +97,7 @@ clean_tickers = function(logLevel = 5, logOutput = 1) {
     }, error = function (cond) {
        tblSession$db$rollback()
        browser()
-       YATABase::propagateError(cond)
+       YATATools::propagateError(cond)
     })
 }
 .calculateVariations = function (data, factory) {

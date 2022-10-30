@@ -4,10 +4,17 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
     ,lock_class = TRUE
     ,public = list(
         print          = function() { message("Locale Messages")}
-       ,initialize     = function(tblMessages, dbf) {
-           private$tblMsg = dbf$getTable(tblMessages)
-           private$db     = dbf$getDBBase()
-        }
+       ,initialize     = function(dbf) {
+           if (missing(dbf)) {
+               dbf = YATADBBase::DBFactory$new()
+               private$disconnect = TRUE
+           }
+           private$tblMsg = dbf$getTable("Messages")
+#           private$db     = dbf$getDB()
+       }
+       ,finalize = function () {
+           if (disconnect) db$disconnect()
+       }
        ,setLang = function(lang, region) {
           private$lang   = lang
           private$region = region
@@ -59,6 +66,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
     ,private = list(
         tblMsg = NULL
        ,db     = NULL
+       ,disconnect = FALSE
        ,lang   = "XX"
        ,region = "XX"
        ,cache  = list()

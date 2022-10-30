@@ -44,7 +44,7 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
       tables  = list(hist=tblHist, ctc=tblCTC)
       today   = Sys.Date()
    }, error   = function (cond) {
-      YATABase::propagateError(cond)
+      YATATools::propagateError(cond)
    })
 
    rows = 1:nrow(dfCTC)
@@ -91,7 +91,7 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
        tblhist$db$commit()
     }, error = function(cond) {
        tblhist$db$rollback()
-       YATABase::propagateError(cond)
+       YATATools::propagateError(cond)
     })
 }
 .updateLastDate = function(to, ctc, tables) {
@@ -104,7 +104,7 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
        tblctc$db$commit()
     }, error = function (cond) {
        tblctc$db$rollback()
-       YATABase::propagateError(cond)
+       YATATools::propagateError(cond)
     })
 }
 .wait = function (row) {

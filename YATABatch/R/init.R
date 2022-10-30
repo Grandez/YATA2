@@ -3,7 +3,7 @@ init = function() {
    unloadNamespace("YATABatchCore")
    unloadNamespace("YATADB")
    unloadNamespace("YATAProviders")
-   unloadNamespace("YATABase")
+   unloadNamespace("YATATools")
    library(YATABatch)
    message("Ready")
 }

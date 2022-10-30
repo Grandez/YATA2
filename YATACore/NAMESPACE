@@ -4,9 +4,8 @@ import(dplyr)
 import(tibble)
 import(stringr)
 
-import(YATABase)
-import(YATADB)
-import(YATAProviders)
+import(YATATools)
+import(YATADBBase)
 
 # export(getFactory)
 

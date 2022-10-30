@@ -1,31 +1,33 @@
-unloadNamespace("YATABatch")
 unloadNamespace("YATACore")
+unloadNamespace("YATAWebCore")
+unloadNamespace("YATAWebShiny")
+
 # Core
-suppressMessages(library(utils      , warn.conflicts = FALSE))
-suppressMessages(library(R6         , warn.conflicts = FALSE))
-suppressMessages(library(tibble     , warn.conflicts = FALSE))
-suppressMessages(library(stringr    , warn.conflicts = FALSE))
-suppressMessages(library(data.table , warn.conflicts = FALSE))
-suppressMessages(library(plyr       , warn.conflicts = FALSE))
-suppressMessages(library(tidyr      , warn.conflicts = FALSE))
-suppressMessages(library(dplyr      , warn.conflicts = FALSE))
+# suppressMessages(library(utils      , warn.conflicts = FALSE))
+# suppressMessages(library(R6         , warn.conflicts = FALSE))
+# suppressMessages(library(tibble     , warn.conflicts = FALSE))
+# suppressMessages(library(stringr    , warn.conflicts = FALSE))
+# suppressMessages(library(data.table , warn.conflicts = FALSE))
+# suppressMessages(library(plyr       , warn.conflicts = FALSE))
+# suppressMessages(library(tidyr      , warn.conflicts = FALSE))
+# suppressMessages(library(dplyr      , warn.conflicts = FALSE))
 
 # Shiny
-suppressMessages(library(shiny      ,warn.conflicts = FALSE))
-suppressMessages(library(shinyjs    ,warn.conflicts = FALSE))
-suppressMessages(library(bslib      ,warn.conflicts = FALSE))
+# suppressMessages(library(shiny      ,warn.conflicts = FALSE))
+# suppressMessages(library(shinyjs    ,warn.conflicts = FALSE))
+# suppressMessages(library(bslib      ,warn.conflicts = FALSE))
 
 # Async
 # #suppressMessages(library(jsonlite, warn.conflicts = FALSE))
-suppressMessages(library(promises, warn.conflicts = FALSE))
-suppressMessages(library(future,   warn.conflicts = FALSE))
+# suppressMessages(library(promises, warn.conflicts = FALSE))
+# suppressMessages(library(future,   warn.conflicts = FALSE))
 
-suppressMessages(library(plotly, warn.conflicts = FALSE))
-suppressMessages(library(reactable, warn.conflicts = FALSE))
+# suppressMessages(library(plotly, warn.conflicts = FALSE))
+# suppressMessages(library(reactable, warn.conflicts = FALSE))
 
 # YATA
-suppressMessages(library(YATABase,       warn.conflicts = FALSE))
-suppressMessages(library(YATACore,       warn.conflicts = FALSE))
+# suppressMessages(library(YATABase,       warn.conflicts = FALSE))
+# suppressMessages(library(YATACore,       warn.conflicts = FALSE))
 suppressMessages(library(YATAWebShiny,   warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 # library(YATABatch)
@@ -40,7 +42,8 @@ suppressMessages(library(YATAWebCore,    warn.conflicts = FALSE))
 
 # plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
-if (.Platform$OS.type != "windows") {
+
+if (.Platform$OS.type == "windows") {
    future::plan(strategy="sequential")
 } else {
   future::plan(list(tweak(multisession, workers = availableCores() %/% 4),
@@ -48,8 +51,10 @@ if (.Platform$OS.type != "windows") {
 }
 
 if (exists("WEB")) rm("WEB")
-web = YATAWebCore::YATAWebEnv$new(YATACore::YATAFACTORY$new())
+web = YATAWebCore::YATAWebEnv$new()
 assign("WEB", web, envir=.GlobalEnv)
+
+message("Creado WEB")
 
 ######################################
 ### Carga de fuentes
@@ -63,9 +68,11 @@ sapply(files,source)
 
 
 # WEB$startDaemons()
-onStart = function() {
-      cat("Doing application setup\n")
-}
-onStop(function() {
-  cat("Doing application cleanup\n")
-})
+# onStart = function() {
+#       cat("Doing application setup\n")
+# }
+# onStop(function() {
+#   cat("Doing application cleanup\n")
+# })
+
+cat("Ejecutado Global")

@@ -22,3 +22,7 @@ yata_ports = function(port=NULL, url=NULL) {
         stop("Error actualizando parametros")
     })
 }
+yata_make = function(log=9) {
+    setup = YATASetup$new(log, 1)
+    invisible(setup$makeYATA())
+}

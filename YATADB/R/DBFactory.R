@@ -1,36 +1,32 @@
-AbstractDBFactory = R6::R6Class("YATA.ABSTRACT.DB.FACTORY"
+YATADBFactory = R6::R6Class("YATA.DB.FACTORY"
    ,portable  = TRUE
    ,cloneable = FALSE
    ,lock_class = TRUE
    ,public = list(
        print      = function()     { message("Databases Factory") }
       ,db         = NULL
-      ,initialize = function() {
-          private$objects = YATABase::map()
-          # data = "base"
-          # if (!missing(base)) data = base
-          # private$lstdb$dbBase  = connectFromList(data)
-          # private$lstdb$dbData  = connectFromTable(10, 101)
-          # private$lstdb$dbUser  = connectFromTable(10, 102)
+      ,initialize = function(bbdd) {
+          private$objects = YATATools::map()
+          private$hDB     = YATATools::map()
+          if (missing(bbdd)) return()
+          self$connect(bbdd)
        }
       ,finalize   = function()     {
-          message("AbstractDBFactory finalize")
           self$destroy()
-         # if (!is.null(lstdb$dbBase)) { lstdb$dbBase$finalize(); private$lstdb$dbBase = NULL }
-         # if (!is.null(lstdb$dbData)) { lstdb$dbData$finalize(); private$lstdb$dbData = NULL }
-         # if (!is.null(lstdb$dbUser)) { lstdb$dbUser$finalize(); private$lstdb$dbUser = NULL }
-         # if (!is.null(lstdb$dbAct))  { lstdb$dbAct$finalize();  private$lstdb$dbAct  = NULL }
       }
       ,destroy  = function() {
           if (!is.null(self$db)) self$db$destroy()
       }
       ,connect          = function(info) {
-          private$checkConnectInfo(info)
+          info = private$checkConnectInfo(info)
+          if (!is.null(self$db)) {
+              if (self$db$getName() == info$dbName) return ()
+              db$disconnect()
+          }
           if (info$engine == "MariaDB") self$db = MARIADB$new(info)
           invisible(self)
       }
       ,getTable   = function(name, force = FALSE) {
-          browser()
          # force obliga a crear el objeto sin cachearlo
          full = paste0("TBL", name)
          if (force) return (private$createObject(full, name))
@@ -41,42 +37,22 @@ AbstractDBFactory = R6::R6Class("YATA.ABSTRACT.DB.FACTORY"
          }
          private$objects$get(full)
       }
-
-      #
-      # ,getDBBase  = function()     { lstdb$dbBase }
-      # ,getDBData  = function()     { lstdb$dbData }
-      # ,getDBUser  = function()     { lstdb$dbUser }
-      # ,getDB      = function()     { lstdb$dbAct  }
-      # ,setDB      = function(info) {
-      #     if (missing(info)) stop("Se ha llamado a setDB sin datos")
-      #     if (!is.null(lstdb$dbAct)) lstdb$dbAct$disconnect()
-      #     private$lstdb$dbAct = connect(info)
-      #     private$objects     = YATABase::map()
-      #     private$dbID        = info$id
-      #     invisible(self)
-      # }
-      # ,getID      = function()     { private$dbID   }
-      # ,getTable   = function(name, force = FALSE) {get(name, force) }
-      # ,get        = function(name, force = FALSE) {
-      #    # force obliga a crear el objeto sin cachearlo
-      #    prfx = ifelse (is.null(DBDict$parts[[name]]), "TBL", "PRT")
-      #    full = paste0(prfx, name)
-      #    if (force) return (createObject(prfx, name))
-      #
-      #    if (is.null(private$objects$get(full))) {
-      #       obj = createObject(prfx, name)
-      #       private$objects$put(full, obj)
-      #    }
-      #    private$objects$get(full)
-      # }
    )
    ,private = list(
        objects = NULL
+      ,hDB     = NULL
       ,dbID    = NULL
       ,checkConnectInfo = function (info) {
           if (missing(info))            stop("ERROR: Invalid call to connect. Missing connection info")
+          if (length(info) == 1) { # Is a key
+              sf   = system.file("config", "config.ini", package=utils::packageName())
+              cfg  = YATATools::ini(sf)
+              info = cfg$getSection(tolower(info))
+          }
+          if (is.null(info))            stop("ERROR: Invalid key info for Database")
           if (is.null(info$engine))     stop("ERROR: Invalid call to connect. Missing SGDB engine")
           if (info$engine != "MariaDB") stop(paste("ERROR: SGDB engine not supported:", info$engine))
+          info
       }
       ,createObject     = function(tblName, name) {
           if (is.null(self$db)) stop("ERROR DBFactory: Called getTable without DB")
@@ -87,15 +63,31 @@ AbstractDBFactory = R6::R6Class("YATA.ABSTRACT.DB.FACTORY"
           })
           obj
       }
-
+      # ,initialize = function() {
+      #     super$initialize()
+      #     sf   = system.file("config", "config.ini", package=utils::packageName())
+      #     cfg  = YATABase::ini(sf)
+      #     info = cfg$getSection("DB")
+      #     self$connect(info)
+      #  }
       # ,connect          = function(info) {
-      #     if (info$engine == "MariaDB") {
-      #         MARIADB$new(info)
+      #     nfo = info
+      #     if (!is.list(info)) {
+      #         sf  = system.file("config", "config.ini", package=utils::packageName())
+      #         cfg = YATABase::ini(sf)
+      #         nfo = cfg$getSection(tolower(info))
+      #
+      #     }
+      #
+      #     if (nfo$engine == "MariaDB") {
+      #         hndl = MARIADB$new(nfo)
+      #         private$hDB$put(tolower(nfo$name), hndl)
       #     }
       #     else {
       #        message("Datos de conexion invalidos")
-      #        stop("Datos de conexion invalidos")
+      #        stop("NO hay soporte para el motor de base de datos")
       #     }
+      #     hndl
       # }
       # ,createObject     = function(type, name) {
       #     db = NULL
@@ -114,7 +106,7 @@ AbstractDBFactory = R6::R6Class("YATA.ABSTRACT.DB.FACTORY"
       # ,connectFromList  = function(base) {
       #     if (!is.list(base)) {
       #          sf   = system.file("extdata", "yatadb.ini", package=packageName())
-      #          cfg  = YATABase::ini(sf)
+      #          cfg  = YATATools::ini(sf)
       #          base = cfg$getSection("base")
       #     }
       #     connect(base)
