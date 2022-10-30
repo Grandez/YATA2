@@ -1,6 +1,6 @@
 init = function() {
    unloadNamespace("YATABatch")
-   unloadNamespace("YATABatchCore")
+   unloadNamespace("YATADBCore")
    unloadNamespace("YATADB")
    unloadNamespace("YATAProviders")
    unloadNamespace("YATATools")

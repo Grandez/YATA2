@@ -8,7 +8,7 @@ Factory = R6::R6Class("YATA.BACKEND.FACTORY"
    ,public = list(
        print = function()     { message("Object's factory for BackEnd") }
       ,initialize = function() {
-          private$DBFactory   = YATABatchCore::YATADBFactory$new()
+          private$DBFactory   = YATADBCore::DBFactory$new()
           private$ProvFactory = YATAProviders::ProviderFactory$new()
        }
       ,finalize    = function() { destroy() }

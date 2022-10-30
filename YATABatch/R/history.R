@@ -2,7 +2,6 @@
 #' Proceso Diario
 #'
 update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
-   browser()
    factory = NULL
    batch   <<- YATABatch$new("history", logLevel, logOutput)
    batch$setCounters(c( input     ="Monedas leidas"

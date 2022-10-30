@@ -4,14 +4,14 @@ DBFactory = R6::R6Class("YATA.BACKEND.DB.FACTORY"
    ,portable   = TRUE
    ,cloneable  = FALSE
    ,lock_class = TRUE
-   ,inherit    = AbstractDBFactory
+   ,inherit    = YATADBFactory
    ,public = list(
        # dict       = DBDict
        print      = function()     { message("BackEnd Database Factory") }
       ,initialize = function() {
           super$initialize()
           sf   = system.file("config", "config.ini", package=utils::packageName())
-          cfg  = YATABase::ini(sf)
+          cfg  = YATATools::ini(sf)
           info = cfg$getSection("DB")
           self$connect(info)
        }

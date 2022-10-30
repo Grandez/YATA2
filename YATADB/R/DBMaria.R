@@ -37,9 +37,9 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
                     )
           },error = function(cond) {
               browser()
-              YATABase:::SQL( "DB Connection error", origin=cond$message
+              YATATools::SQL( "DB Connection error", origin=cond$message
                              ,action="connect", rc = getSQLCode(cond)
-                             ,sql="connect")
+                             ,YATATools::SQL="connect")
           })
       }
       ,disconnect = function(conn) {
@@ -47,9 +47,9 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
           if (!is.null(conn) && isValid(conn))  {
               tryCatch({ RMariaDB::dbDisconnect(conn)
                        },error = function(cond) {
-                              YATABase:::SQL( "DB Disconnect", origin=cond$message
+                              YATATools::SQL( "DB Disconnect", origin=cond$message
                              ,action="disconnect", rc = getSQLCode(cond)
-                             ,sql = "disconnect")
+                             ,YATATools::SQL = "disconnect")
                        })
           }
           NULL
@@ -60,9 +60,9 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
               return (invisible(self))
           }
           if (!is.null(connTran)) {
-              YATABase:::WARN( "Transacciones activas", "SQL", origin=NULL
+              WARN( "Transacciones activas", "YATATools::SQL", origin=NULL
                              ,action="begin", rc = 1192 # Transaction active
-                             ,sql="begin")
+                             ,YATATools::SQL="begin")
           }
           private$connTran = connect()
           RMariaDB::dbBegin(connTran)
@@ -93,9 +93,9 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
           tryCatch({ RMariaDB::dbGetQuery(getConn(), qry, params=params)
               }, error = function (cond) {
                   browser()
-                YATABase:::SQL( "QUERY Error",  origin=cond$message
+                YATATools::SQL( "QUERY Error",  origin=cond$message
                                ,action="query", rc = getSQLCode(cond)
-                               ,sql=qry)
+                               ,YATATools::SQL=qry)
           })
       }
       ,execute    = function(qry, params=NULL, isolated=FALSE) {
@@ -110,13 +110,13 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
           },warning = function(cond) {
               browser()
                if (isolated) rollback(conn)
-               YATABase:::SQL("EXECUTE", origin=cond$message, sql=qry, action="execute")
+               YATATools::SQL("EXECUTE", origin=cond$message, YATATools::SQL=qry, action="execute")
           },error = function (cond) {
               browser()
                sqlcode = getSQLCode(cond)
 #               if (sqlcode == 1205) isolated = TRUE # Table lock
                if (isolated) rollback(conn)
-               YATABase:::SQL( "SQL EXECUTE ERROR",origin=cond$message,sql=qry
+               YATATools::SQL( "YATATools::SQL EXECUTE ERROR",origin=cond$message,YATATools::SQL=qry
                               ,action="execute", rc = getSQLCode(cond))
           })
       }
@@ -127,13 +127,13 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
              res = RMariaDB::dbWriteTable(conn, table, data, append=append, overwrite=over)
              if (isolated) commit(conn)
          }, warning = function(cond) {
-#                       yataWarning("Warning SQL", cond, "SQL", "WriteTable", cause=tab#le)
+#                       yataWarning("Warning YATATools::SQL", cond, "YATATools::SQL", "WriteTable", cause=tab#le)
                      stop(paste("Aviso en DB Write: ", cond$message))
          }, error   = function(cond) {
             if (isolated) rollback(conn)
-            YATABase:::SQL( "SQL WRITE TABLE ERROR", origin = cond$message, sql = table
+            YATATools::SQL( "YATATools::SQL WRITE TABLE ERROR", origin = cond$message, YATATools::SQL = table
                            ,action = "WriteTable", rc = getSQLCode(cond)
-                           ,sql="writeTable")
+                           ,YATATools::SQL="writeTable")
              })
       }
       ,insert        = function(table, values, isolated=FALSE) {
@@ -143,16 +143,16 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
          data = jgg_list_clean(values)
          cols  = paste(names(data), collapse = ",")
          marks = paste(rep("?", length(data)), collapse=",")
-         sql = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
-         execute(sql, data, isolated)
+         YATATools::SQL = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
+         execute(YATATools::SQL, data, isolated)
       }
       ,count = function(table, filter) {
-           sql = paste("SELECT COUNT(*) FROM ", table)
+           YATATools::SQL = paste("SELECT COUNT(*) FROM ", table)
            if (!missing(filter) && !(is.null(filter))) {
                clause = paste(names(filter), "= ? AND", collapse=" " )
-               sql = paste(sql, sub("AND$", "", clause))
+               YATATools::SQL = paste(YATATools::SQL, sub("AND$", "", clause))
            }
-           df = query(sql)
+           df = query(YATATools::SQL)
            as.integer(df[1,1])
       }
      ,checkSQLCode  = function(cond) { cond$rc }

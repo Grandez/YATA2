@@ -1,6 +1,4 @@
 import(RMariaDB)
 
-#import (YATATools)
-
 export(YATADBFactory)
 export(YATATable)

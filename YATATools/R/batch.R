@@ -129,7 +129,7 @@ YATABatch = R6::R6Class("YATA.OBJ.BATCH"
        }
        ,printSummary = function () {
           if (is.null(labels)) return()
-          maxLen = max(nchars(labels))
+          maxLen = max(nchar(labels))
           if (length(labels) == 0) return ()
           for (idx in 1:length(labels)) {
              txt = labels[idx]

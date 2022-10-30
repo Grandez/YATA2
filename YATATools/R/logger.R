@@ -231,7 +231,7 @@ YATALogger = R6::R6Class("YATA.LOGGER"
            if (bitwAnd(.output, 2) > 0) {
                wd      = yataGetDirectory("log")
                logfile = ifelse(shared, "YATA", modName)
-               logfile = file.path(wd, paste0(logfile, ".log"))
+               logfile = normalizePath(file.path(wd, paste0(logfile, ".log")), mustWork = FALSE)
                private$logFile = file(logfile, open="at", blocking = FALSE)
            }
        }
