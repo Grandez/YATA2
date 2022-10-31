@@ -30,14 +30,18 @@ YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE, ...) {
                  ,jsFiles  = customJS, jsInit   = jsInit
                  ,titleActive = TRUE,  lang     = NULL)
 }
-
-makeMessageHandler = function(name, funcName) {
-   if (missing(funcName)) funcName = name
-   scr = "Shiny.addCustomMessageHandler('yata"
-   scr = paste0(scr, YATABase$str$titleCase(name), "', function(data) {")
-   scr = paste0(scr, YATAWEBDEF$jsapp, ".", funcName, "(data); })")
-   scr
+YATATab    = function (title, id, ...) {
+    shiny::tabPanel(title=title, ..., value=id)
+    #JGGTab(title=title, id=id, ...)
 }
+
+# makeMessageHandler = function(name, funcName) {
+#    if (missing(funcName)) funcName = name
+#    scr = "Shiny.addCustomMessageHandler('yata"
+#    scr = paste0(scr, YATABase$str$titleCase(name), "', function(data) {")
+#    scr = paste0(scr, YATAWEBDEF$jsapp, ".", funcName, "(data); })")
+#    scr
+# }
 parseShinyJS = function() {
     jsfile = system.file("extdata/www/yata/yatashiny.js", package=packageName())
     lines = readLines(jsfile)
@@ -49,15 +53,11 @@ parseShinyJS = function() {
     })
     unlist(res)
 }
-
-# Wrappers
-YATAModule = function (id)                  { JGGModule(id=id) }
-YATATab    = function (title, id, ...) {
-    shiny::tabPanel(title=title, ..., value=id)
-    #JGGTab(title=title, id=id, ...)
-}
-YATATabsetPanel = function (id, selected = NULL, ...) {
-    shiny::tabsetPanel(...,id=id,selected=selected,type="tabs")
-#    JGGTabsetPanel(..., id=id,selected=selected)
-}
-
+#
+# # Wrappers
+# YATAModule = function (id)                  { JGGModule(id=id) }
+# YATATabsetPanel = function (id, selected = NULL, ...) {
+#     shiny::tabsetPanel(...,id=id,selected=selected,type="tabs")
+# #    JGGTabsetPanel(..., id=id,selected=selected)
+# }
+#

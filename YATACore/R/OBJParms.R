@@ -160,7 +160,7 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             tblParms$groupAsList(DBParms$group$servers)
         }
          ##############################################
-         ### Providers
+         ### providers
          ##############################################
         ,getOnlineProvider = function()          tblParms$getString (DBParms$ids$online)
         ,getOnlineInterval = function()          tblParms$getInteger(DBParms$ids$interval)
@@ -249,7 +249,6 @@ OBJParms = R6::R6Class("OBJ.PARMS"
        ,tblConfig     = NULL
 
        ,tblCurrencies = NULL
-       ,tblProviders  = NULL
        ,objMsg        = NULL
        ,splitKeys = function(id) { as.integer(strsplit(id, " ", fixed=TRUE)[[1]]) }
        ,checkParameterType = function (value, type) {

@@ -1,0 +1,10 @@
+Package: YATAImages
+Type: Package
+Title: Container for images, icons, etc
+Version: 0.1.0
+Author: Grandez
+Maintainer: randez <jggrandez@gmail.com>
+Description: Just a container to store static images
+License: use_mit_license()
+Encoding: UTF-8
+LazyData: true

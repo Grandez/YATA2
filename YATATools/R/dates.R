@@ -1,4 +1,4 @@
-YATABaseDat = R6::R6Class("YATA.BASE.DATES"
+YATADates = R6::R6Class("YATA.BASE.DATES"
    ,portable  = FALSE
    ,cloneable = FALSE
    ,lock_class = TRUE

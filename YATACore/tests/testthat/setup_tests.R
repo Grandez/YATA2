@@ -1,7 +1,6 @@
 localTest <<- TRUE
 
 unloadNamespace("YATACore")
-unloadNamespace("YATAProviders")
 unloadNamespace("YATADB")
 unloadNamespace("YATATools")
 

@@ -2,7 +2,6 @@ localTest <<- TRUE
 
 unloadNamespace("YATACore")
 unloadNamespace("YATADB")
-unloadNamespace("YATAProviders")
 unloadNamespace("YATATools")
 
 library(YATACore)

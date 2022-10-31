@@ -1,5 +1,6 @@
 browser()
 message("JGG Entra en UI")
+
 shiny::fluidPage(h1("Pagina"))
 #
 

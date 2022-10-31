@@ -15,23 +15,27 @@ args2list = function(...) {
   args
 }
 
-loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
-    datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp/", table)
-    datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
+# loadTable = function (df, table, dbname, suffix=NULL, replace=TRUE ) {
+#     datafile = file.path(Sys.getenv("YATA_SITE"), "data/tmp/", table)
+#     datafile = gsub("\\\\", "/", datafile) # Lo de win/unix
+#
+#     if (is.null(suffix)) suffix = ".dat"
+#     datafile = paste0(datafile, suffix)
+#
+#     write.table(df, file=file(datafile,"wb"), dec=".", sep=";", quote=FALSE, eol="\n"
+#                             , row.names = FALSE, col.names=FALSE, na="NULL")
+#     suppressWarnings(closeAllConnections())
+#     exec = YATAExec$new()
+#     res = exec$import(basename(datafile), dbname, colnames(df))
+#     file.remove(datafile)
+#     res
+# }
+# jgg_get_active_ns = function(id) {
+#     data = strsplit(id, "-")
+#     data[[1]][length(data[[1]])]
+# }
 
-    if (is.null(suffix)) suffix = ".dat"
-    datafile = paste0(datafile, suffix)
-
-    write.table(df, file=file(datafile,"wb"), dec=".", sep=";", quote=FALSE, eol="\n"
-                            , row.names = FALSE, col.names=FALSE, na="NULL")
-    suppressWarnings(closeAllConnections())
-    exec = YATAExec$new()
-    res = exec$import(basename(datafile), dbname, colnames(df))
-    file.remove(datafile)
-    res
-}
-jgg_get_active_ns = function(id) {
+activeNS = function(id) {
     data = strsplit(id, "-")
     data[[1]][length(data[[1]])]
 }
-

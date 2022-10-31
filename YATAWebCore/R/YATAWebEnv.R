@@ -24,8 +24,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 
          tryCatch({
          self$factory = YATACore::YATAFactory$new()
-
-#         self$msg        = self$factory$msg
+         self$msg        = self$factory$msg
             # self$log        = YATALogger$new("WEB")
             # private$hID     = private$base$map()
             # private$hSym    = private$base$map()
@@ -98,7 +97,8 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
     #  ,getLabelsMenuAdmin = function()    { self$getLabelsMenu( 5) }
     #  ,getLabelsPanelErr  = function()    { self$getLabelsMenu( 9) }
      ,getLabelsMenu      = function(idx) {
-         key = self$factory$codes$labels$lblbPanels + idx
+#         key = self$factory$codes$labels$lblbPanels + idx
+         key = YATACODE$labels$lblPanels + idx
          self$msg$getBlock(key)
      }
     #  ,getLabelsAdmin     = function() { self$msg$getBlock(40) }

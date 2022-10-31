@@ -9,7 +9,6 @@ import(YATADBBase)
 
 # export(getFactory)
 
-export(YATACODES)
 exportPattern("YATA.*")
 exportPattern("OBJ.*")
 
