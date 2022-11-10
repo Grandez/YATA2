@@ -1,3 +1,13 @@
+prepareEnvironment = function () {
+    print  (1, "Creando Base de datos")
+    rc = initDataBase()
+    result(rc)
+    if (rc > 0) return (rc)
+    factory = YATACore::YATAFactory$new()
+    factory$changeDB("ci")
+    checkChangeDB(factory)
+    factory
+}
 initDataBase = function() {
     file = normalizePath(system.file("yataci.sql", package="YATACI"))
     cmd = paste("source", file)
@@ -9,4 +19,11 @@ initDataBase = function() {
 
     prc$wait()
     prc$get_exit_status()
+}
+checkChangeDB = function(factory) {
+    pos = factory$getObject("Position")
+    df = pos$getFullPosition()
+    if (nrow(df) != 1) fail("Fallo en cambio de base de datos (filas)")
+    if (df[1,"camera"]  != "CASH") fail("Fallo en cambio de base de datos (camara)")
+    if (df[1,"balance"] != 10000)  fail("Fallo en cambio de base de datos (balance)")
 }

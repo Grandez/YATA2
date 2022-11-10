@@ -39,6 +39,10 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
 
        }
       ,finalize       = function() { clear() }
+      ,destroy        = function() {
+          private$DBBase$destroy()
+          private$DBUser$destroy()
+      }
       # ,hasPortfolio   = function() { !is.null(portfolio) }
       # ,getPortfolio   = function() { self$portfolio      }
       # ,getPortfolioID = function() { ifelse(is.null(self$portfolio), 0, self$portfolio$id)  }
@@ -97,8 +101,7 @@ YATAFactory = R6::R6Class("YATA.FACTORY"
       #
    )
    ,private = list(
-       DBFactory   = NULL
-      ,DBBase      = NULL
+       DBBase      = NULL
       ,DBUser      = NULL
       ,objects     = NULL
       ,classes     = NULL

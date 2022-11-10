@@ -1,10 +1,14 @@
-transfers = function (factory) {
-   camera = "CI1"
+testTransfers = function () {
    println(0, crayon::bold("Verificando transferencias"))
+   camera  = "CI1"
+   factory = prepareEnvironment()
+
    xfer_init          (factory, camera)
    xfer_no_available  (factory, camera)
    xfer_reset         (factory, camera)
    xfer_comissions    (factory, camera)
+
+   factory$destroy()
 }
 xfer_init          = function (factory, camera) {
     print  (1, "Transferencia basica total")
