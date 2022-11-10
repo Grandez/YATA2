@@ -1,4 +1,3 @@
-import(YATATools)
 import(YATADB)
-
 export(DBFactory)
+export(DBParms)

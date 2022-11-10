@@ -1,6 +1,6 @@
-YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE, ...) {
+YATAPage = function (title="YATA", id = "mainMenu", titleActive = TRUE, ...) {
 #         ,theme =  my_theme,lang = NULL, css=NULL, js=NULL, ...) {
- browser()
+
 #     args = list(...)
 # , theme =  my_theme,lang = NULL
 #    theme = bs_theme(bootswatch = "default",
@@ -30,11 +30,8 @@ YATAPage = function( title="YATA", id = "mainMenu", titleActive = TRUE, ...) {
                  ,jsFiles  = customJS, jsInit   = jsInit
                  ,titleActive = TRUE,  lang     = NULL)
 }
-YATATab    = function (title, id, ...) {
-    shiny::tabPanel(title=title, ..., value=id)
-    #JGGTab(title=title, id=id, ...)
-}
-
+YATATab  = function (id, title=id, icon=NULL, module=NULL) { JGGTab(id,title,icon,module) }
+YATAUI    = function (id, title="", mod=NULL, ...)         { JGGUI(id, title, mod, ...)   }
 # makeMessageHandler = function(name, funcName) {
 #    if (missing(funcName)) funcName = name
 #    scr = "Shiny.addCustomMessageHandler('yata"
@@ -55,7 +52,7 @@ parseShinyJS = function() {
 }
 #
 # # Wrappers
-# YATAModule = function (id)                  { JGGModule(id=id) }
+
 # YATATabsetPanel = function (id, selected = NULL, ...) {
 #     shiny::tabsetPanel(...,id=id,selected=selected,type="tabs")
 # #    JGGTabsetPanel(..., id=id,selected=selected)

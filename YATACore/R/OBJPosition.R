@@ -4,10 +4,10 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
     ,cloneable  = FALSE
     ,lock_class = TRUE
     ,public = list(
-        print           = function() { message("Position")}
+        print           = function() { message("Position Object")}
        ,initialize      = function(factory) {
            super$initialize(factory)
-           private$tblPosition = factory$getTable(self$codes$tables$position)
+           private$tblPosition = factory$getTable("Position")
        }
        ,getCameras = function() {
           df = tblPosition$getCameras()
@@ -21,7 +21,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
            unique(df$currency)
        }
        ,getByCurrency = function(currency, balance=FALSE, available=FALSE) {
-           df = tblPosition$table(inValues = list(currency = currency))
+           df = tblPosition$table(currency = currency)
 #           df = df[df$camera != factory$camera,]
            if (balance)   df = df[df$balance  > 0,]
            if (available) df = df[df$available > 0,]
@@ -39,7 +39,7 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        }
        ,getCurrencyPosition = function(currency) { tblPosition$getCurrencyPosition(currency) }
        ,getFiatPosition = function(fiat) {
-           df = tblPosition$getCurrencyPosition(self$factory$fiat)
+           df = tblPosition$getCurrencyPosition(0)
            # oper = factory$getObject(self$codes$object$operation)
            # cIn  = oper$getOperations(base="EXT")
            # cOut = oper$getOperations(counter="EXT")
@@ -50,7 +50,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
       }
        ,getCurrenciesHistory = function() {
          df = tblPosition$table()
-         df = df[!df$currency == self$factory$fiat,]
+         df = df[!df$currency == 0,]
          if(nrow(df) == 0) return (df)
          df = df %>% group_by(currency) %>%
                      summarise(currency, balance=mean(balance), available=mean(available)
@@ -59,31 +59,31 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
          df
       }
        ,getRegularizations = function() { tblPosition$getRegularizations() }
-       ,transfer = function(from, to, currency, amount, value) {
-           res = tblPosition$select(camera=from, currency=currency)
-           tblPosition$set(balance   = tblPosition$current$balance   - amount)
-           tblPosition$set(available = tblPosition$current$available - amount)
+       ,transfer = function(...) {
+           args = YATATools::args2list(...)
+
+           impOut = args$amount
+           if (!is.null(args$feeOut) && args$feeOut > 0) impOut = impOut + args$feeOut
+
+           res = tblPosition$select(camera=args$from, currency=args$currency)
+           tblPosition$set(balance   = tblPosition$current$balance   - impOut)
+           tblPosition$set(available = tblPosition$current$available - impOut)
            tblPosition$apply()
 
-           res = tblPosition$select(camera=to, currency=currency, create=TRUE)
+           res = tblPosition$select(camera=args$to, currency=args$currency, create=TRUE)
 
            nvalue = tblPosition$current$balance * tblPosition$current$net
-           nvalue = nvalue + (amount * value)
-           nvalue = nvalue / (tblPosition$current$balance + amount)
-
+           nvalue = nvalue + (args$amount * args$value)
+           nvalue = nvalue / (tblPosition$current$balance + args$amount)
            tblPosition$set(net       = nvalue)
-           tblPosition$set(balance   = tblPosition$current$balance   + amount)
-           tblPosition$set(available = tblPosition$current$available + amount)
+
+           impOut = args$amount
+           if (!is.null(args$feeIn) && args$feeIn > 0) impOut = impOut - args$feeIn
+
+           tblPosition$set(balance   = tblPosition$current$balance   + impOut)
+           tblPosition$set(available = tblPosition$current$available + impOut)
            tblPosition$apply()
            invisible(self)
-
-         # if (from != "EXT") {
-         #     res = tblPosition$select(camera=from, currency=currency, create=TRUE)
-         # }
-         # if (to != "EXT") {
-         #
-         #     tblPosition$apply()
-         # }
       }
        ,updatePositions = function(data) {
           # Requires: camera, base, counter, amount, value, price, prcTaxes
@@ -190,7 +190,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
            tblPosition$select(camera=data$camera, currency=data$base, create=TRUE)
            self$current  = tblPosition$current
 
-           if (data$base == self$factory$fiat) return (.updateBaseFiat(data)) # compra
+           if (data$base == 0) return (.updateBaseFiat(data)) # compra
 
            tblPosition$setField("available", current$available - data$ctcOut)
            if (data$major == 2) .calculateBaseOperation(data)
@@ -200,7 +200,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$select(camera=data$camera, currency=data$counter, create=TRUE)
           self$current  = tblPosition$current
 
-          if (data$counter == self$factory$fiat) return (.updateCounterFiat(data))
+          if (data$counter == 0) return (.updateCounterFiat(data))
 
           if (current$buy_low == 0)  self$current$buy_low = data$price + 1
 

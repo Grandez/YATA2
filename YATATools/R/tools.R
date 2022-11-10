@@ -11,3 +11,7 @@ yataGetDirectory = function (name="log") {
    dir.create(dirWrk, showWarnings = FALSE)
    dirWrk
 }
+yataActiveNS = function(id) {
+    data = strsplit(id, "-")
+    data[[1]][length(data[[1]])]
+}

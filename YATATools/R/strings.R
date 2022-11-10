@@ -48,3 +48,4 @@ jgg_to_title = function(text) {
 }
 jgg_to_lower = function(text) { stringr::str_to_lower(text) }
 jgg_to_upper = function(text) { stringr::str_to_upper(text) }
+jgg_as_title = function(text) { stringr::str_to_title(text) }

@@ -4,7 +4,6 @@ YATADBFactory = R6::R6Class("YATA.DB.FACTORY"
    ,lock_class = TRUE
    ,public = list(
        print      = function()     { message("Databases Factory") }
-      ,db         = NULL
       ,initialize = function(bbdd) {
           private$objects = YATATools::map()
           private$hDB     = YATATools::map()
@@ -14,16 +13,16 @@ YATADBFactory = R6::R6Class("YATA.DB.FACTORY"
       ,finalize   = function()     {
           self$destroy()
       }
-      ,destroy  = function() {
-          if (!is.null(self$db)) self$db$destroy()
+      ,destroy    = function()     {
+          if (!is.null(private$db)) private$db$destroy()
       }
-      ,connect          = function(info) {
+      ,connect    = function(info) {
           info = private$checkConnectInfo(info)
-          if (!is.null(self$db)) {
-              if (self$db$getName() == info$dbName) return ()
+          if (!is.null(private$db)) {
+              if (private$db$getName() == info$dbName) return ()
               db$disconnect()
           }
-          if (info$engine == "MariaDB") self$db = MARIADB$new(info)
+          if (info$engine == "MariaDB") private$db = MARIADB$new(info)
           invisible(self)
       }
       ,getTable   = function(name, force = FALSE) {
@@ -37,11 +36,13 @@ YATADBFactory = R6::R6Class("YATA.DB.FACTORY"
          }
          private$objects$get(full)
       }
+      ,getDB      = function()     { private$db }
    )
    ,private = list(
        objects = NULL
       ,hDB     = NULL
       ,dbID    = NULL
+      ,db      = NULL
       ,checkConnectInfo = function (info) {
           if (missing(info))            stop("ERROR: Invalid call to connect. Missing connection info")
           if (length(info) == 1) { # Is a key
@@ -55,7 +56,7 @@ YATADBFactory = R6::R6Class("YATA.DB.FACTORY"
           info
       }
       ,createObject     = function(tblName, name) {
-          if (is.null(self$db)) stop("ERROR DBFactory: Called getTable without DB")
+          if (is.null(private$db)) stop("ERROR DBFactory: Called getTable without DB")
           obj = tryCatch({
               eval(parse(text=paste0(tblName, "$new(name, db)")))
           }, error = function (cond) {

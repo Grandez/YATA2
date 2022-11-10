@@ -1,5 +1,5 @@
 # Objeto Base de todos los objetos funcionales
-OBJBase = R6::R6Class("OBJ.BASE"
+OBJBase = R6::R6Class("YATA.OBJ.BASE"
     ,portable   = FALSE
     ,cloneable  = FALSE
     ,lock_class = TRUE
@@ -16,7 +16,7 @@ OBJBase = R6::R6Class("OBJ.BASE"
            self$factory = factory
            self$parms   = factory$parms
            self$db      = factory$getDB()
-           self$codes   = factory$codes
+#           self$codes   = factory$codes
        }
        ,getColumnNames = function(yataNames) {
            if(is.null(tblBase)) return("")

@@ -68,3 +68,27 @@ yataIconDown = function() {
 yataFormHeader = function(title=NULL, type="primary") {
   tags$div(class=paste0("yata-form-header yata-", type), h3(title))
 }
+
+
+
+yuiYesNo = function(base, lblOK, lblKO, left = 0, width = 12) {
+    browser()
+    # base es cualquier cosa, queremos mod1-mod2-....-xxx
+    base = paste(strsplit(base, "-"))
+    base[length(base)] = NULL
+    base = paste(base, collapse="-")
+    if (missing(lblOK)) {
+        lblOK = "OK"
+        lblKO = "KO"
+    }
+    divs = tags$div( tags$div(class="row",guiLabelText(id=paste0(base, "-msg")))
+                    ,tags$div( class="row yata_buttons"
+                              ,yuiBtnOK(paste0(toks, "-btnOK"), lblOK)
+                              ,yuiBtnKO(paste0(toks, "-btnKO"), lblKO))
+    )
+    if (left > 0) {
+      tagList( fluidRow(yuiColumn(left), guiColumn(width, divs)))
+    } else {
+      tagList(tags$div(class="container-fluid", divs))
+    }
+}

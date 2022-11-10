@@ -1,11 +1,12 @@
     # pvl es porcentaje impreso: 23,45%
     # prc es porcentaje real   : 0,2345
-
+yuiTable = function(id) {
+    guiTable(id)
+}
 WDGTable = R6::R6Class("YATA.WEB.TABLE"
-  ,portable   = FALSE
+  ,portable   = TRUE
   ,cloneable  = FALSE
   ,lock_class = TRUE
-  ,inherit    = WDGBase
   # ,active = list(
   #     event   = function(value) private$accesor(private$.event,    value)
   #    ,target  = function(value) private$accessor(private$.target,  value)
@@ -16,26 +17,30 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
       id         = "reactable"
      ,event      = NULL
      ,name       = NULL
-     ,initialize = function(id=NULL, event=NULL, factory=NULL, table=NULL, columns=NULL) {
-        if (!is.null(id)) {
-            self$id=id
-            self$name = id
-        }
-        if ( is.null(event)) {
-            self$event = id
-        } else {
-            if (event != "none") self$event = event
-        }
+#     ,initialize = function(id=NULL, event=NULL, factory=NULL, table=NULL, columns=NULL) {
+     ,initialize = function(id, tblAttrs, colAttrs, colGroups=NULL) {
+         self$id=id
+         private$tblAttrs  = tblAttrs
+         private$colAttrs  = colAttrs
+         private$makeColGroups(colGroups)
 
-        private$cols_attr  = columns
-        private$table_attr = private$def_table_attr
-        private$table_attr$onClick = private$on_click()
-
-        if (!is.null((table))) {
-            private$table_attr = jgg_list_merge(table_attr, table)
-#            extractExtraAttributes()
-        }
-        create_default_values(factory)
+        #     self$name = id
+        # }
+#         if ( is.null(event)) {
+#             self$event = id
+#         } else {
+#             if (event != "none") self$event = event
+#         }
+#
+#         private$cols_attr  = columns
+#         private$table_attr = private$def_table_attr
+#         private$table_attr$onClick = private$on_click()
+#
+#         if (!is.null((table))) {
+#             private$table_attr = jgg_list_merge(table_attr, table)
+# #            extractExtraAttributes()
+#         }
+#        create_default_values(factory)
      }
      ,setTableAttributes = function(..., merge=TRUE) {
          data = args2list(...)
@@ -45,10 +50,11 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
              private$table_attr = data
          }
      }
-    ,render = function(data) {
-        # JGG No se usa
-        private$dfWork = data
-        colDefs = prepareData(data)
+    ,getTable = function () {
+        private$dfWork = private$data
+        coldefs = private$prepareData()
+        coldefs = lapply(coldefs, function(x) { x$type = NULL; x })
+        coldefs = lapply(coldefs, function(x) do.call(reactable::colDef, x))
     #         ,.appendButtons = function(df) {
     #     dfNames = colnames(df)
     #     for (i in 1:length(.buttons)) df = cbind(df, NA)
@@ -60,18 +66,23 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
     #     df
     # }
 
-        if (length(colDefs) > 0) {
-            if (length(attr_table$columns) > 0) {
-                private$attr_table$columns  = list.merge(colDefs, private$attr_table$columns)
-            } else {
-                private$attr_table$columns  = colDefs
-            }
-        }
-        lstAttr = list.clean((attr_table)) # remove NULLS
-        obj = do.call(reactable::reactable, list.merge(list(data=private$dfWork), lstAttr))
+        # if (length(colDefs) > 0) {
+        #     if (length(attr_table$columns) > 0) {
+        #         private$attr_table$columns  = list.merge(colDefs, private$attr_table$columns)
+        #     } else {
+        #         private$attr_table$columns  = colDefs
+        #     }
+        # }
+        # lstAttr = list.clean((attr_table)) # remove NULLS
+        #do.call(reactable::reactable, jgg_list_merge(list(data=private$dfWork), lstAttr))
+        do.call(reactable::reactable, list(data=private$dfWork, columns=coldefs, columnGroups=private$colGroups))
+
+    }
+    ,render = function() {
+        obj = self$getTable()
         reactable::renderReactable({obj})
     }
-   ,setColumnHeader = function(style=c("asis", "title", "upper", "lower", "label")) {
+   ,setHeaderStyle = function(style=c("asis", "title", "upper", "lower", "label")) {
        private$columnHeader = match.arg(style)
     }
    ,setColumnsLabel = function(labels) { private$lblCols = labels }
@@ -109,11 +120,14 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
   )
   ,private = list(
       .rounded = TRUE
-     ,.scale = 2
+     ,scale = 2
+     ,data   = NULL   # Source data
+     ,dfWork = NULL   # target data
      ,columnHeader = "label" # Tipo de cabecera de columna
      ,col_names  = NULL
-     ,table_attr = NULL
-     ,cols_attr  = NULL
+     ,tblAttrs  = NULL
+     ,colAttrs  = NULL
+     ,colGroups = NULL
      ,current    = NULL
      ,on_click = function() {
   #           JS("function(rowInfo, colInfo) {
@@ -156,17 +170,78 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
          }
          info
      }
-     ,prepareData = function (df) {
-         colDefs = makeColDefs(df)
-         colDefs = setAlign(df, colDefs)
+    ,makeColGroups   = function (colGroups) {
+        if (is.null(colGroups)) return ()
 
-         df = adjustValues(df)
-          setColumnHeader(data)
-          private$attrCols = lapply(attrCols, function(col) prepareColumn(col))
-          lapply(attrCols, function(item) do.call(reactable::colDef, item))
+        data = lapply(1:length(colGroups), function(idx) {
+                     colGroup(name=names(colGroups)[idx], columns=colGroups[[idx]])
+               })
+        private$colGroups = data
+     }
+    ,prepareData     = function () {
+         coldefs = private$colAttrs
+         coldefs = private$setColumnHeader(coldefs)
+
+         private$dfWork = private$adjust_values(coldefs)
+         # colDefs = makeColDefs()
+         # colDefs = setAlign(colDefs)
+         #
+         # df = adjustValues(df)
+         #
+         #  private$attrCols = lapply(attrCols, function(col) prepareColumn(col))
+         #  lapply(attrCols, function(item) do.call(reactable::colDef, item))
 #         private$attr_table$columns = lapply(attrCols, function(col) prepareColumn(col))
-
+        coldefs
+     }
+    ,setColumnHeader = function (colDefs) {
+          coldefs = colDefs
+          defs = names(coldefs)
+          for (col in colnames(private$dfWork)) {
+              idx = match(col, defs)
+              if (is.na(idx)) {
+                  coldefs[col] = list(name=col)
+                  idx = match(col, defs)
+              }
+              name = ifelse(is.null(coldefs[[idx]]$name), col, coldefs[[idx]]$name)
+              coldefs[[idx]]$name = switch( private$columnHeader
+                                           ,asis = name,           title = jgg_to_title(name)
+                                           ,upper = toupper(name), lower = tolower(name)
+                                           ,label = jgg_as_title(name))
+          }
+          coldefs
       }
+    ,adjust_values   = function (colDefs) {
+         df = private$dfWork
+         names = colnames(df)
+         for (col in names(colDefs)) {
+             if (is.null(colDefs[[col]]$type)) next
+             df = private$adjust_value(df, col, colDefs[[col]]$type)
+         }
+         private$dfWork = df
+     }
+    ,adjust_value = function (df, col, type) {
+             if (type == "prc100") df[,col] = round(df[,col] / 100, private$scale)
+        else if (type == "prc")    df[,col] = round(df[,col],       private$scale)
+        else if (type == "date")   df[,col] = as.Date(df[,col])
+        else if (type == "time")   df[,col] = strftime(df[,col], "%H:%M:%S")
+        else if (type == "tms")    df[,col] = strftime(df[,col], "%Y/%m/%d %H:%M")
+        else if (type == "price")  df = private$adjust_price(df, col)
+        else if (type == "value")  df = private$adjust_price(df, col)
+        df
+     }
+    ,adjust_price = function(df, col) {
+        value = 0
+        for (row in 1:nrow(df)) {
+             value = df[row,col]
+             if (value >   999) { df[row,col] = round(df[row,col], 0); next }
+             if (value >    99) { df[row,col] = round(df[row,col], 1); next }
+             if (value >     9) { df[row,col] = round(df[row,col], 2); next }
+             if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
+             df[row,col] = round(df[row,col], 3)
+        }
+        df
+    }
+
       ,prepare_columns = function() {
           df = current$data  # short typo
           # Select only columns in data frame
@@ -185,15 +260,16 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
          private$current$columns = lapply(cols, function(name) do.call(reactable::colDef, current$columns[[name]]))
          names(private$current$columns) = cols
       }
-      ,makeColDefs = function(df) {
-          cols = lapply(colnames(df), function(name) {
+      ,makeColDefs = function() {
+          cols = lapply(colnames(private$dfWork), function(name) {
                         header = switch(columnHeader,
                                   asis = name, title = str_to_title(name)
                                  ,upper = toupper(name), lower = tolower(name)
                                  ,label = ifelse(is.na(lblCols[name]), name, lblCols[name]))
                         list(name=header) })
       }
-     ,setAlign = function (df, colDefs) {
+     ,setAlign = function (colDefs) {
+         df = private$dfWork
           cols = lapply(1:length(ncol(df)), function(idx) {
                         algn = "right"
                         if (class(df[,idx]) %in% "type_label") algn = "left"
@@ -201,62 +277,30 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
          names(cols) = colnames(df)
          jgg_list_merge(colDefs, cols)
      }
-     ,adjust_values = function () {
-         df = private$current$data
-         names = colnames(df)
-         for (idx in 1:ncol(df)) {
-             attr = current$columns[[names[idx]]]
-             if (is.null(attr)) next
-             if (!is.null(attr$type)) df = adjust_value(df, idx, attr$type)
-         }
-         private$current$data = df
-     }
-    ,adjust_value = function (df, idx, type) {
-        if (type == "prc100") df[,idx] = round(df[,idx] / 100, .scale)
-        if (type == "prc")    df[,idx] = round(df[,idx],       .scale)
-        if (type == "date")   df[,idx] = as.Date(df[,idx])
-        if (type == "time")   df[,idx] = strftime(df[,idx], "%H:%M:%S")
-        if (type == "tms")    df[,idx] = strftime(df[,idx], "%Y/%m/%d %H:%M")
-        if (type == "price")  df = adjust_price(df, idx)
-        if (type == "value")  df = adjust_price(df, idx)
-        df
-     }
-    ,adjust_price = function(df, col) {
-        value = 0
-        for (row in 1:nrow(df)) {
-             value = df[row,col]
-             if (value >   999) { df[row,col] = round(df[row,col], 0); next }
-             if (value >    99) { df[row,col] = round(df[row,col], 1); next }
-             if (value >     9) { df[row,col] = round(df[row,col], 2); next }
-             if (value < 0.001) { df[row,col] = round(df[row,col], 6); next }
-             df[row,col] = round(df[row,col], 3)
-        }
-        df
-    }
-   ,create_default_values = function (factory) {
-       id_names = 0
-       if (id == "position") id_names = 1
-       if (id == "table")    id_names = 1
-       if (id == "oper")     id_names = 2
-       if (id_names != 0)    create_names(factory, id_names)
-          # objPos = factory$getObject(factory$codes$object$position)
-          #
-          # private$dfEmpty = objPos$empty_data()
-          # private$table_attr$data = dfEmpty
-          # private$table_attr$columns = col_defs
-      }
-      ,create_names = function(factory, id_names) {
-          labels = factory$parms$getLabelsTable(id_names)
-          lbls   = lapply(names(col_defs), function(name) {
-                          list( title=jgg_to_title(name)
-                               ,lower = jgg_to_lower(name)
-                               ,upper = jgg_to_upper(name)
-                               ,label  = labels[[name]]
-                               ,asis  = name
-                              )})
-          names(lbls) = names(col_defs)
-          private$col_names = lbls
-      }
+   # ,create_default_values = function (factory) {
+   #     id_names = 0
+   #     if (id == "position") id_names = 1
+   #     if (id == "table")    id_names = 1
+   #     if (id == "oper")     id_names = 2
+   #     if (id_names != 0)    create_names(factory, id_names)
+   #        # objPos = factory$getObject(factory$codes$object$position)
+   #        #
+   #        # private$dfEmpty = objPos$empty_data()
+   #        # private$table_attr$data = dfEmpty
+   #        # private$table_attr$columns = col_defs
+   #    }
+   #    ,create_names = function(factory, id_names) {
+   #        labels = factory$parms$getLabelsTable(id_names)
+   #        lbls   = lapply(names(col_defs), function(name) {
+   #                        list( title=jgg_to_title(name)
+   #                             ,lower = jgg_to_lower(name)
+   #                             ,upper = jgg_to_upper(name)
+   #                             ,label  = labels[[name]]
+   #                             ,asis  = name
+   #                            )})
+   #        names(lbls) = names(col_defs)
+   #        private$col_names = lbls
+   #    }
 
 ,format_columns = function() {
     fmt = private$current$columns
@@ -368,14 +412,6 @@ WDGTable = R6::R6Class("YATA.WEB.TABLE"
 #          attr$scale   = NULL
 #          attr$type    = NULL
 #          list.clean(attr)
-#       }
-#       ,setColumnHeader = function(data) {
-#            if (is.null(colNames) || colNames == "asis") return
-#          # if (private$colNames == "title") colnames(data) = str_to_title(colnames(data))
-#          # if (private$colNames == "upper") colnames(data) = toUpper(colnames(data))
-#          # if (private$colNames == "lower") colnames(data) = toLower(colnames(data))
-# #         private$dfWork
-#
 #       }
 #       ,setColumnAlign = function (mcolDef) {
 #          if (is.null(mcolDef$type)) return (mcolDef)
@@ -610,7 +646,6 @@ WDGTableButtoned = R6::R6Class("YATA.WEB.TABLE"
 # //     }
 # }
 
-yuiTable          = function(id)   { reactable::reactableOutput(id) }
 updTable          = function(data) { reactable::renderReactable({ .updTable(data, NULL)       })}
 updTableSingle    = function(data) { reactable::renderReactable({ .updTable(data, "single")   })}
 updTableMultiple  = function(data) {

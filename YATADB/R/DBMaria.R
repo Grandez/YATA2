@@ -28,13 +28,14 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
       ,getName    = function ()     { dbInfo$dbname }
       ,connect    = function (data) {
           if (!missing(data)) private$dbInfo = data
-          tryCatch({RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
+          tryCatch({
+              suppressWarnings(RMariaDB::dbConnect( drv = RMariaDB::MariaDB()
                                         ,username = dbInfo$user
                                         ,password = dbInfo$password
                                         ,host     = dbInfo$host
                                         ,port     = dbInfo$port
                                         ,dbname   = dbInfo$dbname
-                    )
+                    ))
           },error = function(cond) {
               browser()
               YATATools::SQL( "DB Connection error", origin=cond$message
@@ -140,19 +141,19 @@ MARIADB = R6::R6Class("YATA.DB.MARIADB"
          # inserta en un registro en la tabla
          # values: lista de valores con nombres
          # Los datos a NULL se ignoran
-         data = jgg_list_clean(values)
+         data = YATATools::list_clean(values)
          cols  = paste(names(data), collapse = ",")
          marks = paste(rep("?", length(data)), collapse=",")
-         sql = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
-         execute(YATATools::SQL, data, isolated)
+         stmt = paste("INSERT INTO ", table, "(", cols, ") VALUES (", marks, ")")
+         execute(stmt, data, isolated)
       }
       ,count = function(table, filter) {
-           sql = paste("SELECT COUNT(*) FROM ", table)
+           stmt = paste("SELECT COUNT(*) FROM ", table)
            if (!missing(filter) && !(is.null(filter))) {
                clause = paste(names(filter), "= ? AND", collapse=" " )
-               sql = paste(YATATools::SQL, sub("AND$", "", clause))
+               stmt = paste(stmt, sub("AND$", "", clause))
            }
-           df = query(YATATools::SQL)
+           df = query(stmt)
            as.integer(df[1,1])
       }
      ,checkSQLCode  = function(cond) { cond$rc }

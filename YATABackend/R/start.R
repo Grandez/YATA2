@@ -1,18 +1,22 @@
+start2 = function(port=4000, logLevel = 9, logOutput = 2) {
+    cat ("Ejecuto")
+}
 start = function(port=4000, logLevel = 9, logOutput = 2) {
    batch  = YATABatch$new("backend", logLevel, logOutput)
    logger = batch$logger
 
-   if (batch$running) {
-      logger$running()
-      return (invisible(batch$rc$RUNNING))
-   }
+   # if (batch$running) {
+   #    logger$running()
+   #    return (invisible(batch$rc$RUNNING))
+   # }
 
 
     rc = tryCatch({
+        message("Statig Backend")
         app = YATARest$new(port, logLevel, logOuput)
+        app$append_middleware(logging_middleware)
         backend = BackendRserve$new()
-        resp = backend$start(app, http_port = port, background = TRUE)
-        #resp = RestRserve:::ApplicationProcess$new(12345)
+        resp = backend$start(app, http_port = port, background = FALSE)
         if ("ApplicationProcess" %in% class(resp))  {
             batch$addDataToControlFile(resp$pid)
         } else {
@@ -20,9 +24,12 @@ start = function(port=4000, logLevel = 9, logOutput = 2) {
         }
         batch$rc$OK
     }, error = function(cond){
+        message("ERROR de inicio")
+        message(cond)
         batch$destroy()
         batch$rc$FATAL
     })
+    invisible(rc)
 }
 
 stop = function (logLevel = 1, logOutput = 1) {

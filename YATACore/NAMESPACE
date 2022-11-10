@@ -4,6 +4,11 @@ import(dplyr)
 import(tibble)
 import(stringr)
 
+import(promises)
+import(future)
+
+import(RcppSimdJson)
+
 import(YATATools)
 import(YATADBBase)
 

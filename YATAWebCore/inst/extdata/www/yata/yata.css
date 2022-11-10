@@ -92,3 +92,18 @@
 .yata_modal_severe_labels {
    font-weight: bold;
 }
+
+/***************************************************/
+/***************************************************/
+/*          VERIFICADO                             */
+/***************************************************/
+/***************************************************/
+.yata_table_form td {
+  padding: 0 1px 1px 0;
+}
+.yata_table_form .form-group {
+  margin-bottom: 0;
+}
+.yata_table_form .jgg_table_label {
+  padding-right: 12px;
+}

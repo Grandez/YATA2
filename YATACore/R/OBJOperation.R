@@ -1,525 +1,534 @@
 OBJOperation = R6::R6Class("OBJ.OPERATION"
-    ,inherit    = OBJBase
-    ,portable   = FALSE
-    ,cloneable  = FALSE
-    ,lock_class = TRUE
-    ,public = list(
-        initialize = function(factory) {
-            super$initialize(factory)
-            private$prtOper        = factory$getTable(self$codes$tables$operations)
-            private$tblFlows       = factory$getTable(self$codes$tables$flows)
-            private$objPos         = factory$getObject(self$codes$object$position)
-        }
-        ##############################
-        # Operaciones
-        ##############################
-        ,xfer  = function(...) { add(self$codes$oper$xfer, ...) }
-        ,open  = function(...) { add(self$codes$oper$oper, ...) }
-        ,buy   = function(...) { add(self$codes$oper$buy,  ...) }
-        ,sell  = function(...) { add(self$codes$oper$sell, ...) }
-        ,bid   = function(...) { add(self$codes$oper$bid,  ...) }
-        ,ask   = function(...) { add(self$codes$oper$ask,  ...) }
-        ,split = function()   { error("Split no implementado todavia")}
-        ,net   = function()   { error("Net no implementado todavia")}
-        ,add   = function(type, ...) {
-            tryCatch({
-                db$begin()
-                idOper = addOper(type, ...)
-                db$commit()
-                idOper
-            },error = function(cond) {
-                db$rollback()
-                message(cond$message)
-                YATABase:::propagateError(cond)
-                0
-          })
-        }
-        ,regularize = function(camera, currency) {
-            tryCatch({
-                db$begin()
-                idOper = addRegulatization(camera, currency)
-                db$commit()
-                idOper
-            },error = function(cond) {
-                db$rollback()
-                message(cond)
-                YATABase:::propagateError(cond)
-                0
-          })
-        }
+   ,inherit    = OBJBase
+   ,portable   = FALSE
+   ,cloneable  = FALSE
+   ,lock_class = TRUE
+   ,public = list(
+       initialize = function(factory) {
+          super$initialize(factory)
+          private$tblOper        = factory$getTable("Operations")
+          private$tblFlows       = factory$getTable("Flows")
+          private$objPos         = factory$getObject("Position")
+      }
+      ##############################
+      # Operaciones
+      ##############################
+     ,xfer  = function(...) { operXfer(...) }
+        # ,open  = function(...) { add(YATACODE$oper$oper, ...) }
+        # ,buy   = function(...) { add(YATACODE$oper$buy,  ...) }
+        # ,sell  = function(...) { add(YATACODE$oper$sell, ...) }
+        # ,bid   = function(...) { add(YATACODE$oper$bid,  ...) }
+        # ,ask   = function(...) { add(YATACODE$oper$ask,  ...) }
+        # ,split = function()   { error("Split no implementado todavia")}
+        # ,net   = function()   { error("Net no implementado todavia")}
+     ,add   = function(type, ...) {
+        tryCatch({
+           db$begin()
+           idOper = addOper(type, ...)
+           db$commit()
+           idOper
+        },error = function(cond) {
+            browser()
+            db$rollback()
+            message(cond$message)
+            YATATools::propagateError(cond)
+            0
+        })
+      }
+        # ,regularize = function(camera, currency) {
+        #     tryCatch({
+        #         db$begin()
+        #         idOper = addRegulatization(camera, currency)
+        #         db$commit()
+        #         idOper
+        #     },error = function(cond) {
+        #         db$rollback()
+        #         message(cond)
+        #         YATABase:::propagateError(cond)
+        #         0
+        #   })
+        # }
         ##############################
         # Acciones sobre operacion
         ##############################
         #JGG Temporal
-        ,accept  = function(price=0, amount=0, fee = 0, id=NULL) {
-            if (!is.null(id)) select(id)
-            tryCatch({
-               db$begin()
-               if (!is.null(current$idParent) && !is.na(current$idParent)) {
-                   prtOper$setField("active", self$codes$flag$inactive)
-                   prtOper$apply()
-               }
-           # Acepta una compra, puede haber cambiado el precio y la cantidad
-           # Se aplican las tasas
-           data = list( status=self$codes$status$accepted
-                       ,amount=amount
-                       ,price=price
-                       ,fee=fee
-                       ,reason=self$codes$reason$accept
-                       ,logType=self$codes$log$accept
-           )
-
-           prtOper$update(data)
-           if (amount < 0) { # Es enta
-               ctc = current$counter
-               imp = amount
-           } else {
-               ctc = current$base
-               imp  = amount * price * -1
-               price = 1
-           }
-
-           addFlow(self$codes$flow$output, ctc, imp, price)
-           if (fee != 0) addFlow(self$codes$flow$fee, imp * fee / 100, 1)
-           objPos$updateOper(current$camera, ctc, imp, price, fee)
-               #
-               # if (current$type == self$codes$oper$sell) acceptSell(price, amount, fee)
-               # if (current$type != self$codes$oper$sell) acceptBuy (price, amount, fee)
-               db$commit()
-               FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                YATABase:::propagateError(cond)
-                TRUE
-            })
-        }
-        ,execute = function(gas = 0, id=NULL) {
-            # La operacion se ha realizado, esta en el wallet
-            if (!is.null(id)) select(id)
-            ctc = current$counter
-            cant = current$amount
-
-            data = list( status=self$codes$status$executed
-                        ,gas=gas
-                        ,reason=self$codes$reason$executed
-                        ,logType=self$codes$log$executed
-            )
-            # Es la venta de una posicion abierta
-            if (current$type == self$codes$oper$sell) {
-                ctc = current$base
-                cant = current$amount * current$price * -1
-                if (current$parent > 0) {
-                    data$active = self$codes$flag$inactive
-                    data$amountOut = current$amount * -1
-                    data$priceOut  = current$price
-                }
-            }
-
-            tryCatch({
-               db$begin()
-               prtOper$update(data)
-               addFlow(self$codes$flow$input, ctc, cant, current$price)
-               if (gas != 0) addFlow(self$codes$flow$gas, current$counter, gas * amount * -1 / 100, 1) #current$price)
-               objPos$updateOper(current$camera, ctc, cant, current$price, gas)
-               db$commit()
-               FALSE
-            },error = function(cond) {
-               message(cond)
-               db$rollback()
-               YATABase:::propagateError(cond)
-               TRUE
-            })
-        }
-        ,cancel  = function(comment=NULL, delete=FALSE, id=NULL) {
-            res = FALSE
-            if (!is.null(id)) select(id)
-            self$current$comment = comment
-            if (current$active != self$codes$flag$active ||
-                current$status != self$codes$status$pending) {
-                error("La operacion no se puede cancelar")
-            }
-            # marca la operacion como cancelada
-            res = tryCatch({
-                db$begin()
-                currency = current$base
-                imp      = current$amount * current$price
-                if (current$type == self$codes$oper$sell) {
-                    currency = current$counter
-                    imp      = current$amount * -1
-                }
-                objPos$updateAvailable(current$camera, currency, imp)
-                prtOper$set(status = self$codes$status$cancelled, active = self$codes$flag$inactive)
-                prtOper$apply()
-                db$commit()
-                FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                YATABase:::propagateError(cond)
-                TRUE
-            })
-            if (delete) {
-                res = tryCatch({
-                   db$begin()
-                   tblFlows$remove        (idOper = current$id)
-#                   tblOperLog$remove      (idOper = current$id)
-#                   tblOperControl$remove  (idOper = current$id)
-                   prtOper$remove         (id = current$id)
-                   db$commit()
-                   FALSE
-                }, error = function(cond) {
-                   message(cond)
-                   db$rollback()
-                   YATABase:::propagateError(cond)
-                   TRUE
-                })
-            }
-            res
-        }
-        ,reject  = function(comment=NULL, id=NULL) {
-            if (!is.null(id)) select(id)
-            self$currrent$comment = comment
-            tryCatch({
-                db$begin()
-                if (current$type %in% c(self$codes$oper$oper, self$codes$oper$buy)) {
-                    updatePosition(self$current$base, current$amount * current$price, FALSE, TRUE)
-                }
-                prtOper$set(status = self$codes$status$rejected, active = self$codes$flag$inactive)
-                prtOper$apply()
-                db$commit()
-                FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                YATABase:::propagateError(cond)
-                TRUE
-            })
-        }
-        ,close   = function(...) {
-            split = FALSE
-            data = args2list(...)
-            select(data$id)
-            tryCatch({
-                db$begin()
-
-                # Es un split
-                if(data$amount != current$amount) split = TRUE
-
-                stat = ifelse(split, self$codes$oper$split, self$codes$oper$close)
-                prtOper$update( list(active  = self$codes$flag$parent
-                               ,status  = stat
-                               ,reason  = data$reason
-                               ,comment = data$comment
-                               ,priceOut  = current$price
-                               ,amountOut = current$amount
-                               ,rank    = data$rank))
-
-                if (split) {
-                    diff = current$amount - data$amount
-                    select(current$id, create=TRUE)
-                    current$idParent = data$id
-                    self$current = list.merge(self$current, data)
-                    current$amount = diff
-                    current$status = self$codes$oper$oper
-                    current$active = self$codes$flag$active
-                    prtOper$update(current)
-                }
-
-                #Creamos la venta
-                #self$current$type   = self$codes$oper$sell
-                self$current$amount = data$amount
-                self$current$price  = data$price
-                self$current$parent = data$id
-                self$current$reason = data$reason
-                addOper(type=self$codes$oper$sell, current)
-                FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                YATABase:::propagateError(cond)
-                TRUE
-            })
-       }
-        ,comment = function(comment=NULL, id=NULL) {
-            if (is.null(comment)) return (FALSE)
-            if (!is.null(id)) select(id)
-            tryCatch({
-                db$begin()
-                generateLog()
-                db$commit()
-                FALSE
-            },error = function(cond) {
-                message(cond)
-                db$rollback()
-                YATABase:::propagateError(cond)
-                TRUE
-            })
-        }
-        ,getComments = function(id = NULL) {
-            if (!is.null(id)) select(id)
-#            tblOperLog$table(idOper = current$id)
-        }
+#         ,accept  = function(price=0, amount=0, fee = 0, id=NULL) {
+#             if (!is.null(id)) select(id)
+#             tryCatch({
+#                db$begin()
+#                if (!is.null(current$idParent) && !is.na(current$idParent)) {
+#                    tblOper$setField("active", YATACODE$flag$inactive)
+#                    tblOper$apply()
+#                }
+#            # Acepta una compra, puede haber cambiado el precio y la cantidad
+#            # Se aplican las tasas
+#            data = list( status=YATACODE$status$accepted
+#                        ,amount=amount
+#                        ,price=price
+#                        ,fee=fee
+#                        ,reason=YATACODE$reason$accept
+#                        ,logType=YATACODE$log$accept
+#            )
+#
+#            tblOper$update(data)
+#            if (amount < 0) { # Es enta
+#                ctc = current$counter
+#                imp = amount
+#            } else {
+#                ctc = current$base
+#                imp  = amount * price * -1
+#                price = 1
+#            }
+#
+#            addFlow(YATACODE$flow$output, ctc, imp, price)
+#            if (fee != 0) addFlow(YATACODE$flow$fee, imp * fee / 100, 1)
+#            objPos$updateOper(current$camera, ctc, imp, price, fee)
+#                #
+#                # if (current$type == YATACODE$oper$sell) acceptSell(price, amount, fee)
+#                # if (current$type != YATACODE$oper$sell) acceptBuy (price, amount, fee)
+#                db$commit()
+#                FALSE
+#             },error = function(cond) {
+#                 message(cond)
+#                 db$rollback()
+#                 YATABase:::propagateError(cond)
+#                 TRUE
+#             })
+#         }
+#         ,execute = function(gas = 0, id=NULL) {
+#             # La operacion se ha realizado, esta en el wallet
+#             if (!is.null(id)) select(id)
+#             ctc = current$counter
+#             cant = current$amount
+#
+#             data = list( status=YATACODE$status$executed
+#                         ,gas=gas
+#                         ,reason=YATACODE$reason$executed
+#                         ,logType=YATACODE$log$executed
+#             )
+#             # Es la venta de una posicion abierta
+#             if (current$type == YATACODE$oper$sell) {
+#                 ctc = current$base
+#                 cant = current$amount * current$price * -1
+#                 if (current$parent > 0) {
+#                     data$active = YATACODE$flag$inactive
+#                     data$amountOut = current$amount * -1
+#                     data$priceOut  = current$price
+#                 }
+#             }
+#
+#             tryCatch({
+#                db$begin()
+#                tblOper$update(data)
+#                addFlow(YATACODE$flow$input, ctc, cant, current$price)
+#                if (gas != 0) addFlow(YATACODE$flow$gas, current$counter, gas * amount * -1 / 100, 1) #current$price)
+#                objPos$updateOper(current$camera, ctc, cant, current$price, gas)
+#                db$commit()
+#                FALSE
+#             },error = function(cond) {
+#                message(cond)
+#                db$rollback()
+#                YATABase:::propagateError(cond)
+#                TRUE
+#             })
+#         }
+#         ,cancel  = function(comment=NULL, delete=FALSE, id=NULL) {
+#             res = FALSE
+#             if (!is.null(id)) select(id)
+#             self$current$comment = comment
+#             if (current$active != YATACODE$flag$active ||
+#                 current$status != YATACODE$status$pending) {
+#                 error("La operacion no se puede cancelar")
+#             }
+#             # marca la operacion como cancelada
+#             res = tryCatch({
+#                 db$begin()
+#                 currency = current$base
+#                 imp      = current$amount * current$price
+#                 if (current$type == YATACODE$oper$sell) {
+#                     currency = current$counter
+#                     imp      = current$amount * -1
+#                 }
+#                 objPos$updateAvailable(current$camera, currency, imp)
+#                 tblOper$set(status = YATACODE$status$cancelled, active = YATACODE$flag$inactive)
+#                 tblOper$apply()
+#                 db$commit()
+#                 FALSE
+#             },error = function(cond) {
+#                 message(cond)
+#                 db$rollback()
+#                 YATABase:::propagateError(cond)
+#                 TRUE
+#             })
+#             if (delete) {
+#                 res = tryCatch({
+#                    db$begin()
+#                    tblFlows$remove        (idOper = current$id)
+# #                   tblOperLog$remove      (idOper = current$id)
+# #                   tblOperControl$remove  (idOper = current$id)
+#                    tblOper$remove         (id = current$id)
+#                    db$commit()
+#                    FALSE
+#                 }, error = function(cond) {
+#                    message(cond)
+#                    db$rollback()
+#                    YATABase:::propagateError(cond)
+#                    TRUE
+#                 })
+#             }
+#             res
+#         }
+#         ,reject  = function(comment=NULL, id=NULL) {
+#             if (!is.null(id)) select(id)
+#             self$currrent$comment = comment
+#             tryCatch({
+#                 db$begin()
+#                 if (current$type %in% c(YATACODE$oper$oper, YATACODE$oper$buy)) {
+#                     updatePosition(self$current$base, current$amount * current$price, FALSE, TRUE)
+#                 }
+#                 tblOper$set(status = YATACODE$status$rejected, active = YATACODE$flag$inactive)
+#                 tblOper$apply()
+#                 db$commit()
+#                 FALSE
+#             },error = function(cond) {
+#                 message(cond)
+#                 db$rollback()
+#                 YATABase:::propagateError(cond)
+#                 TRUE
+#             })
+#         }
+#         ,close   = function(...) {
+#             split = FALSE
+#             data = args2list(...)
+#             select(data$id)
+#             tryCatch({
+#                 db$begin()
+#
+#                 # Es un split
+#                 if(data$amount != current$amount) split = TRUE
+#
+#                 stat = ifelse(split, YATACODE$oper$split, YATACODE$oper$close)
+#                 tblOper$update( list(active  = YATACODE$flag$parent
+#                                ,status  = stat
+#                                ,reason  = data$reason
+#                                ,comment = data$comment
+#                                ,priceOut  = current$price
+#                                ,amountOut = current$amount
+#                                ,rank    = data$rank))
+#
+#                 if (split) {
+#                     diff = current$amount - data$amount
+#                     select(current$id, create=TRUE)
+#                     current$idParent = data$id
+#                     self$current = list.merge(self$current, data)
+#                     current$amount = diff
+#                     current$status = YATACODE$oper$oper
+#                     current$active = YATACODE$flag$active
+#                     tblOper$update(current)
+#                 }
+#
+#                 #Creamos la venta
+#                 #self$current$type   = YATACODE$oper$sell
+#                 self$current$amount = data$amount
+#                 self$current$price  = data$price
+#                 self$current$parent = data$id
+#                 self$current$reason = data$reason
+#                 addOper(type=YATACODE$oper$sell, current)
+#                 FALSE
+#             },error = function(cond) {
+#                 message(cond)
+#                 db$rollback()
+#                 YATABase:::propagateError(cond)
+#                 TRUE
+#             })
+#        }
+#         ,comment = function(comment=NULL, id=NULL) {
+#             if (is.null(comment)) return (FALSE)
+#             if (!is.null(id)) select(id)
+#             tryCatch({
+#                 db$begin()
+#                 generateLog()
+#                 db$commit()
+#                 FALSE
+#             },error = function(cond) {
+#                 message(cond)
+#                 db$rollback()
+#                 YATABase:::propagateError(cond)
+#                 TRUE
+#             })
+#         }
+#         ,getComments = function(id = NULL) {
+#             if (!is.null(id)) select(id)
+# #            tblOperLog$table(idOper = current$id)
+#         }
         ##############################
         # General
         ##############################
-        ,select            = function(idOper, create=FALSE) {
-            prtOper$select(id = idOper, create=create)
-            self$current = prtOper$current
-            self$current$idOper = prtOper$current$id
-            invisible(self)
-        }
-        ,getPending    = function()    { getOperations(status=self$codes$status$pending)   }
-        ,getAccepted   = function()    { getOperations(status=self$codes$status$accepted)  }
-        ,getActive     = function()    { getOperations(status=self$codes$status$executed)  }
-        ,getCancelled  = function()    { getOperations(status=self$codes$status$cancelled) }
-        ,getRejected   = function()    { getOperations(status=self$codes$status$rejected)  }
-        ,getOpen       = function()    { getOperations(status=self$codes$status$executed
-                                                      ,active=self$codes$flag$active) }
-        ,getSons       = function(group, type) {
-            if (missing(type)) {
-               getOperations(inValues=list(parent=group))
-            }
-            else {
-                getOperations(type=type, inValues=list(parent=group))
-            }
-        }
-        ,getHistoryByCamera = function(camera, from) {
-            prtOper$getHistoryByCamera(camera, from)
-        }
-        ,getHistory    = function()    {
-            dfCounter = prtOper$getInactiveCounters(self$codes$flag$inactive)
-            if (nrow(dfCounter) == 0) return (NULL)
-            if (is.null(dfReg)) private$dfReg = objPos$getRegularizations()
-            dfj = left_join(dfCounter, dfReg, by=c("camera", "counter"))
-            if (nrow(dfj) == 0) return (NULL)
-            df = NULL
-            for (row in 1:nrow(dfj)) {
-                dft = prtOper$getInactives(dfj[row,"camera"], dfj[row,"counter"], dfj[row,"last"])
-                if (is.null(df)) df = dft
-                else             df = rbind(df, dft)
-            }
-            df
-        }
-        ,getClosed    = function()    {
-            dfCounter = prtOper$getInactiveCounters(self$codes$flag$parent)
-            if (nrow(dfCounter) == 0) return (NULL)
-            if (is.null(dfReg)) private$dfReg = objPos$getRegularizations()
-            dfj = left_join(dfCounter, dfReg, by=c("camera", "counter"))
-            if (nrow(dfj) == 0) return (NULL)
-            df = NULL
-            for (row in 1:nrow(dfj)) {
-                dft = prtOper$getClosed(dfj[row,"camera"], dfj[row,"counter"], dfj[row,"last"])
-                if (is.null(df)) df = dft
-                else             df = rbind(df, dft)
-            }
-            df
-        }
-        ,getMovements  = function(camera, currency, since=NULL) {
-           df1   = prtOper$tableInterval(from=since, to= NULL, camera=camera, base=currency)
-           df2   = prtOper$tableInterval(from=since, to= NULL, camera=camera, counter=currency)
-           df    = rbind(df1, df2)
-           # Los id son tms luego ordenamos descendente
-           df[order(df$id, decreasing=TRUE),]
-        }
-        ,getOperations = function(...) { prtOper$get(...)   }
-        ,getOperation  = function (id) {
-            res = prtOper$table(id=id)
-            if (nrow(res) != 1) return (NULL)
-            as.list(res)
-        }
-        ,getFlows          = function(idOper)    {
-            if (!missing(idOper)) select(idOper)
-            tblFlows$dfCurrent
-        }
-        ,setAlert = function(fecha=NULL) {
-            if (is.null(fecha)) {
-                prtOper$setField("alert", DBDict$flag$inactive)
-            }
-            else {
-                prtOper$setField("alert", DBDict$flag$active)
-                prtOper$setField("dtAlert", fecha)
-            }
-            prtOper$apply()
-            invisible(self)
-        }
-        ,getFlowsByCurrency = function (currency) {
-            tblFlows$table(currency = currency)
-        }
-    )
-    ,private = list(
-        # Tablas asociadas
-        prtOper        = NULL
-       ,objPos         = NULL
-       ,dfReg          = NULL
-       ,tblFlows       = NULL
-       ,tblReg         = NULL
-       ,addFlow        = function(type, currency, amount, price) {
-           data = list(
-              idOper   = current$idOper
-             ,idFlow   = factory$getID()
-             ,type     = type
-             ,currency = currency
-             ,amount   = amount
-             ,price    = price
-           )
-           tblFlows$add(data)
-       }
-       ,operXfer     = function() {
-           # TRansfiere entre dos camaras
-           # Genera:
-           # 1. Registro de transferencia
-           # 2. Operaciones de transferencia en las dos camaras
-           # 3. Flujos asociados a la transferencia
+     ,select            = function(idOper, create=FALSE) {
+         tblOper$select(id = idOper, create=create)
+         self$current = tblOper$current
+         self$current$idOper = tblOper$current$id
+        invisible(self)
+     }
+        # ,getPending    = function()    { getOperations(status=YATACODE$status$pending)   }
+        # ,getAccepted   = function()    { getOperations(status=YATACODE$status$accepted)  }
+        # ,getActive     = function()    { getOperations(status=YATACODE$status$executed)  }
+        # ,getCancelled  = function()    { getOperations(status=YATACODE$status$cancelled) }
+        # ,getRejected   = function()    { getOperations(status=YATACODE$status$rejected)  }
+        # ,getOpen       = function()    { getOperations(status=YATACODE$status$executed
+        #                                               ,active=YATACODE$flag$active) }
+        # ,getSons       = function(group, type) {
+        #     if (missing(type)) {
+        #        getOperations(inValues=list(parent=group))
+        #     }
+        #     else {
+        #         getOperations(type=type, inValues=list(parent=group))
+        #     }
+        # }
+        # ,getHistoryByCamera = function(camera, from) {
+        #     tblOper$getHistoryByCamera(camera, from)
+        # }
+        # ,getHistory    = function()    {
+        #     dfCounter = tblOper$getInactiveCounters(YATACODE$flag$inactive)
+        #     if (nrow(dfCounter) == 0) return (NULL)
+        #     if (is.null(dfReg)) private$dfReg = objPos$getRegularizations()
+        #     dfj = left_join(dfCounter, dfReg, by=c("camera", "counter"))
+        #     if (nrow(dfj) == 0) return (NULL)
+        #     df = NULL
+        #     for (row in 1:nrow(dfj)) {
+        #         dft = tblOper$getInactives(dfj[row,"camera"], dfj[row,"counter"], dfj[row,"last"])
+        #         if (is.null(df)) df = dft
+        #         else             df = rbind(df, dft)
+        #     }
+        #     df
+        # }
+        # ,getClosed    = function()    {
+        #     dfCounter = tblOper$getInactiveCounters(YATACODE$flag$parent)
+        #     if (nrow(dfCounter) == 0) return (NULL)
+        #     if (is.null(dfReg)) private$dfReg = objPos$getRegularizations()
+        #     dfj = left_join(dfCounter, dfReg, by=c("camera", "counter"))
+        #     if (nrow(dfj) == 0) return (NULL)
+        #     df = NULL
+        #     for (row in 1:nrow(dfj)) {
+        #         dft = tblOper$getClosed(dfj[row,"camera"], dfj[row,"counter"], dfj[row,"last"])
+        #         if (is.null(df)) df = dft
+        #         else             df = rbind(df, dft)
+        #     }
+        #     df
+        # }
+        # ,getMovements  = function(camera, currency, since=NULL) {
+        #    df1   = tblOper$tableInterval(from=since, to= NULL, camera=camera, base=currency)
+        #    df2   = tblOper$tableInterval(from=since, to= NULL, camera=camera, counter=currency)
+        #    df    = rbind(df1, df2)
+        #    # Los id son tms luego ordenamos descendente
+        #    df[order(df$id, decreasing=TRUE),]
+        # }
+        # ,getOperations = function(...) { tblOper$get(...)   }
+        # ,getOperation  = function (id) {
+        #     res = tblOper$table(id=id)
+        #     if (nrow(res) != 1) return (NULL)
+        #     as.list(res)
+        # }
+        # ,getFlows          = function(idOper)    {
+        #     if (!missing(idOper)) select(idOper)
+        #     tblFlows$dfCurrent
+        # }
+        # ,setAlert = function(fecha=NULL) {
+        #     if (is.null(fecha)) {
+        #         tblOper$setField("alert", DBDict$flag$inactive)
+        #     }
+        #     else {
+        #         tblOper$setField("alert", DBDict$flag$active)
+        #         tblOper$setField("dtAlert", fecha)
+        #     }
+        #     tblOper$apply()
+        #     invisible(self)
+        # }
+        # ,getFlowsByCurrency = function (currency) {
+        #     tblFlows$table(currency = currency)
+        # }
+   )
+  ,private = list(
+      tblOper        = NULL
+     ,tblFlows       = NULL
+     ,tblReg         = NULL
+     ,objPos         = NULL
+     ,dfReg          = NULL
+     ,addFlow        = function(type, currency, amount, price) {
+         data = list(
+            idOper   = current$idOper
+           ,idFlow   = factory$getID()
+           ,type     = type
+           ,currency = currency
+           ,amount   = amount
+           ,price    = price
+         )
+         tblFlows$add(data)
+      }
+     ,operXfer     = function(...) {
+      # Transfiere entre dos camaras
+      # Genera:
+      # 1. Registro de transferencia
+      # 2. Operaciones de transferencia en las dos camaras
+      # 3. Flujos asociados a la transferencia
 
-           objPos$getPosition(camera=current$from, currency=current$currency)
-           value = objPos$current$value
+        self$current        = args2list(...)
 
-           tblPos  = factory$getTable(self$codes$tables$transfer)
-           tblXfer = factory$getTable(self$codes$tables$transfer)
-           idXfer = factory$getID()
-           xfer = list(
-               id        = idXfer
-              ,cameraIn  = current$to
-              ,cameraOut = current$from
-              ,currency  = current$currency
-              ,amount    = current$amount
-              ,value     = value
-           )
-           tblXfer$add(xfer)
+      # Obtener valor neto
+        objPos$getPosition(camera=current$from, currency=current$currency)
+        self$current$value = objPos$current$net
 
-           idOut = factory$getID()
-           idIn  = factory$getID()
-           data = list(
-                id      = idOut
-               ,camera  = current$from
-               ,base    = current$currency
-               ,counter = current$currency
-               ,value   = current$amount
-               ,amount  = current$amount
-               ,price   = value
-               ,parent  = idXfer
-               ,active  = self$codes$flag$inactive
-               ,status  = self$codes$status$executed
-               ,type    = self$codes$oper$xfer
-           )
-           prtOper$add(data)
+      # Validaciones
+        if (current$amount <= 0)                       YATATools::LOGICAL("Invalid Amount")
+        if (objPos$current$available < current$amount) YATATools::LOGICAL("Invalid Amount")
+        if (!is.null(current$feeOut) && current$feeOut < 0) YATATools::LOGICAL("Invalid Comission")
+        if (!is.null(current$feeIn)  && current$feeIn  < 0) YATATools::LOGICAL("Invalid Comission")
+        if (!is.null(current$feeIn)  && current$feeIn  > current$amount) YATATools::LOGICAL("Invalid Comission")
+        if (is.null(current$feeIn))  self$current$feeIn  = 0
+        if (is.null(current$feeOut)) self$current$feeOut = 0
 
-           data$id     = idIn
-           data$camera = current$to
-           prtOper$add(data)
+        self$current$type      = YATACODE$oper$xfer
+        self$current$id        = factory$getID()
+        self$current$cameraIn  = current$to
+        self$current$cameraOut = current$from
 
-           # Posiciones
-           objPos$transfer(current$from, current$to, current$currency, current$amount, value)
+        tryCatch({
+           db$begin()
+           # Grabar Transferencia
+           tblXfer = factory$getTable("Transfers")
 
-           # Flujos
+           tblXfer$add(self$current)
 
+           # Actualizar posicion
+           objPos$transfer(self$current)
+
+           # Grabar flujos para que el saldo pueda calcularse desde los flujos
            flow = list(
-                idOper   = idOut
+                idOper   = current$id
                ,idFlow   = factory$getID()
-               ,type     = self$codes$flow$xferOut
+               ,type     = YATACODE$flow$xferOut
                ,currency = current$currency
                ,amount   = current$amount * -1
-               ,price    = value
+               ,price    = current$value
            )
            tblFlows$add(flow)
 
-           flow$idOper = idIn
-           flow$type   = self$codes$flow$xferIn
-           flow$amount  = current$amount
+           flow$idFlow = factory$getID()
+           flow$type   = YATACODE$flow$xferIn
+           flow$amount = current$amount
            tblFlows$add(flow)
 
-           self$current$idOper = idXfer
-       }
-       ,addOper   = function(type, ...) {
-            # Se llama desde add y desde close
-            # Genera una operacion, devuelve el id
-            # Si hay error devuelve TRUE
-            self$current        = args2list(...)
-            self$current$type   = type
-            self$current$major  = type %/% 10
-            self$current$minor  = type %%  10
-            self$current$id     = factory$getID()
-            self$current$idOper = self$current$id
-            # if (type %in% c(self$codes$oper$sell, self$codes$oper$close)) {
-            #     self$current$amount = current$amount * -1
-            # }
-            if (self$current$major < 3 ) makeOper()
-            if (type == self$codes$oper$xfer)  operXfer()
-            # if (type == self$codes$oper$buy)   operOper2()
-            # if (type == self$codes$oper$sell)  operOper2()
-#            if (type == self$codes$oper$close) operClose()
-#            if (type == self$codes$oper$split) {}
-            if (type == self$codes$oper$net)  {}
-            self$current$idOper
-       }
-       ,makeOper     = function() {
-           if (is.null(current$value)) current$value = current$price * current$amount
-
-           objPos$updatePositions   (current)
-           #JGG REVISAR
-           self$current$active = self$codes$flag$active
-           # self$current$active = ifelse (current$type == self$codes$oper$oper
-           #                                             , self$codes$flag$active
-           #                                             , self$codes$flag$inactive)
-           self$current$status = ifelse(current$major == 1, self$codes$status$pending
-                                                          , self$codes$status$executed)
-
-           days = ifelse(is.null(self$current$alert), lubridate::days(parms$getAlertDays(1))
-                                                    , self$current$alert)
-           self$current$dtAlert = Sys.Date() + lubridate::days(days)
-           self$current$alert   = self$codes$flag$active
-
-#           amount = ifelse(current$base == "__FIAT__", current$amount, current$value)
-           #JGG Temporal mientras no procesemos el flujo de request/accept/execute
-           self$current$amountIn  = current$amount
-           self$current$amountOut = current$amount
-           self$current$priceIn   = self$current$price
-           self$current$priceOut  = self$current$price
-
-           self$current$prcTaxes   = 0
-           if (current$type == self$codes$oper$sell) {
-               res = calculateExpense(current$camera, current$base, current$amount)
-               self$current$expense = res$expense
-               self$current$alive   = res$alive
-               self$current$profit = self$current$value - self$current$expense
+           if (current$feeOut > 0) {
+               flow$idFlow = factory$getID()
+               flow$type   = YATACODE$flow$fee
+               flow$amount = current$feeOut * -1
+               tblFlows$add(flow)
            }
-           prtOper$add(current)
-
-           if (current$status == self$codes$status$executed) {
-               addFlow(self$codes$flow$output,  current$base,    current$ctcOut * -1, current$price)
-               addFlow(self$codes$flow$input,   current$counter, current$ctcIn,       current$price)
+           if (current$feeIn > 0) {
+               flow$idFlow = factory$getID()
+               flow$type   = YATACODE$flow$fee
+               flow$amount = current$feeIn * -1
+               tblFlows$add(flow)
            }
 
-           # if (!is.null(current$idParent) && !is.na(current$idParent)) {
-           #     select(idParent)
-           #     current$flag = self$codes$flags$parent
-           #     current$amountOut = current$amount
-           #     current$priceOut  = current$price
-           #     prtOper$apply()
-           # }
-       }
-       ,acceptBuy    = function(price, amount, fee) {
+           db$commit()
+           current$id
+        },error = function(cond) {
+           browser()
+           db$rollback()
+           YATATools::propagateError(cond)
+           0
+        })
+      }
+     ,addOper   = function(type, ...) {
+        self$current        = args2list(...)
+        self$current$type   = type
+        # Major es compra/venta/etc - Minor es el tipo de operacion
+        self$current$major  = type %/% 10
+        self$current$minor  = type %%  10
+        self$current$id     = factory$getID()
+        self$current$idOper = self$current$id
+
+        if (self$current$major < 3 ) makeOper()
+        if (type == YATACODE$oper$net)  {}
+        self$current$idOper
+      }
+     ,makeOper     = function() {
+         if (is.null(current$value)) current$value = current$price * current$amount
+
+         objPos$updatePositions   (current)
+
+         self$current$active = YATACODE$flag$active
+           # self$current$active = ifelse (current$type == YATACODE$oper$oper
+           #                                             , YATACODE$flag$active
+           #                                             , YATACODE$flag$inactive)
+          self$current$status = ifelse(current$major == 1, YATACODE$status$pending
+                                                          , YATACODE$status$executed)
+
+          tblOper$add(current)
+
+           # Informacion de logging
+
+           # Informacion de control
+
+#            if (!is.null(self$current$alert)) {
+#                self$current$dtAlert = Sys.Date() + lubridate::days(self$current$alert)
+#            }
+#            # days = ifelse(is.null(self$current$alert), lubridate::days(parms$getAlertDays(1))
+#            #                                          , self$current$alert)
+#            #
+#            # self$current$alert   = YATACODE$flag$active
+#
+# #           amount = ifelse(current$base == "__FIAT__", current$amount, current$value)
+#            #JGG Temporal mientras no procesemos el flujo de request/accept/execute
+#            self$current$amountIn  = current$amount
+#            self$current$amountOut = current$amount
+#            self$current$priceIn   = self$current$price
+#            self$current$priceOut  = self$current$price
+#
+#            self$current$prcTaxes   = 0
+#            if (current$type == YATACODE$oper$sell) {
+#                res = calculateExpense(current$camera, current$base, current$amount)
+#                self$current$expense = res$expense
+#                self$current$alive   = res$alive
+#                self$current$profit = self$current$value - self$current$expense
+#            }
+#            tblOper$add(current)
+#
+#            if (current$status == YATACODE$status$executed) {
+#                addFlow(YATACODE$flow$output,  current$base,    current$ctcOut * -1, current$price)
+#                addFlow(YATACODE$flow$input,   current$counter, current$ctcIn,       current$price)
+#            }
+#
+#            # if (!is.null(current$idParent) && !is.na(current$idParent)) {
+#            #     select(idParent)
+#            #     current$flag = YATACODE$flags$parent
+#            #     current$amountOut = current$amount
+#            #     current$priceOut  = current$price
+#            #     tblOper$apply()
+#            # }
+      }
+     ,acceptBuy    = function(price, amount, fee) {
            # Acepta una compra, puede haber cambiado el precio y la cantidad
            # Se aplican las tasas
-           data = list( status=self$codes$status$accepted
+           data = list( status=YATACODE$status$accepted
                        ,amount=amount
                        ,price=price
                        ,fee=fee
-                       ,reason=self$codes$reason$accept
-                       ,logType=self$codes$log$accept
+                       ,reason=YATACODE$reason$accept
+                       ,logType=YATACODE$log$accept
            )
            imp  = amount * price * -1
-           prtOper$update(data)
-           addFlow(self$codes$flow$output, current$base, imp, 1)
-           if (fee != 0) addFlow(self$codes$flow$fee, imp * fee / 100, 1)
+           tblOper$update(data)
+           addFlow(YATACODE$flow$output, current$base, imp, 1)
+           if (fee != 0) addFlow(YATACODE$flow$fee, imp * fee / 100, 1)
            objPos$updateOper(current$camera, current$base, imp, 1, fee)
        }
       ,addRegulatization = function(camera, currency) {
             # Genera el registro de regularizacion
 
             self$current$idOper = factory$getID()
-            if (is.null(tblReg)) private$tblReg = factory$getTable(self$codes$tables$regularization)
+            if (is.null(tblReg)) private$tblReg = factory$getTable(YATACODE$tables$regularization)
 
             objPos$getPosition(camera=camera, currency=currency)
 
@@ -538,9 +547,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             operation = list(
                  id       = current$idOper
                 ,idOper   = current$idOper
-                ,type     = self$codes$oper$reg
-                ,active   = self$codes$flag$inactive
-                ,status   = self$codes$status$executed
+                ,type     = YATACODE$oper$reg
+                ,active   = YATACODE$flag$inactive
+                ,status   = YATACODE$status$executed
                 ,camera   = camera
                 ,base     = currency
                 ,counter  = "__FIAT__"
@@ -551,7 +560,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                 ,priceOut = price
                 ,parent   = position$id
             )
-            prtOper$add(operation)
+            tblOper$add(operation)
 
             cost = calculateExpense(camera, currency, position$sell)
             wrk = (position$buyNet * position$buy) - (cost$expense * position$sell)
@@ -575,8 +584,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
             objPos$updatePosition(position)
 
-            addFlow(self$codes$flow$input,  "__FIAT__",   value, price)
-            addFlow(self$codes$flow$output, currency, sell,  price)
+            addFlow(YATACODE$flow$input,  "__FIAT__",   value, price)
+            addFlow(YATACODE$flow$output, currency, sell,  price)
 
             current$idOper
       }
@@ -602,12 +611,12 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
                nrow = nrow + 1
                # Esto no puede ocurrir
                if (nrow > nrow(df)) { nrow = nrow -1; break }
-               if (df[nrow, "type"] == self$codes$oper$xfer) break # Regularizacion.
-               if (df[nrow, "type"] != self$codes$oper$sell && df[nrow,"type"] != self$codes$oper$buy) {
+               if (df[nrow, "type"] == YATACODE$oper$xfer) break # Regularizacion.
+               if (df[nrow, "type"] != YATACODE$oper$sell && df[nrow,"type"] != YATACODE$oper$buy) {
                    next
                }
 
-               if (df[nrow,"type"] == self$codes$oper$sell) {
+               if (df[nrow,"type"] == YATACODE$oper$sell) {
                    sell = sell + df[nrow,"amount"]
                    next
                }

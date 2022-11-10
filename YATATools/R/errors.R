@@ -12,7 +12,8 @@ SQL    = function(msg, ...) {
 
 WARN   = function(msg, ...) { .warning(msg, subclass, ...)          }
 
-logical = function(msg, ...) {
+LOGICAL = function(msg, ...) {
+   # Errores logicos y de validaciones
      .error(msg, subclass="LOGICAL", ...)
 }
 propagateError = function(cond) {

@@ -1,6 +1,7 @@
 unloadNamespace("YATACore")
 unloadNamespace("YATAWebCore")
 
+
 # Core
 # suppressMessages(library(utils      , warn.conflicts = FALSE))
 # suppressMessages(library(R6         , warn.conflicts = FALSE))
@@ -18,15 +19,15 @@ unloadNamespace("YATAWebCore")
 
 # Async
 # #suppressMessages(library(jsonlite, warn.conflicts = FALSE))
-# suppressMessages(library(promises, warn.conflicts = FALSE))
-# suppressMessages(library(future,   warn.conflicts = FALSE))
+suppressMessages(library(promises, warn.conflicts = FALSE))
+suppressMessages(library(future,   warn.conflicts = FALSE))
 
 # suppressMessages(library(plotly, warn.conflicts = FALSE))
 # suppressMessages(library(reactable, warn.conflicts = FALSE))
 
 # YATA
 suppressMessages(library(JGGShiny,     warn.conflicts = FALSE))
-#suppressMessages(library(YATATools,     warn.conflicts = FALSE))
+suppressMessages(library(YATATools,     warn.conflicts = FALSE))
 suppressMessages(library(YATACore,     warn.conflicts = FALSE))
 suppressMessages(library(YATAWebCore,  warn.conflicts = FALSE))
 

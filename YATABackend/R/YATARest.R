@@ -1,14 +1,16 @@
+
 YATARest = R6::R6Class("YATA.BACKEND.REST"
     ,inherit    = RestRserve::Application
     ,lock_class = TRUE
     ,public = list(
         initialize = function(port, logLevel, logOuput) {
-            cat("Initializing YATAREST\n")
             super$initialize()
-            self$logger$set_log_level("all")
+            self$logger$set_printer(FUN = function(timestamp, level, logger_name, pid, message, ...) {
+    message(sprintf("%s - %s - %5d - %s", level, logger_name, pid, message))
+})
+            self$logger$set_log_level("error")
             private$initREST()
             private$setMiddleware()
-            cat("Init hecho")
             # private$setDoc()
         }
         ,getPort = function() {
@@ -19,13 +21,14 @@ YATARest = R6::R6Class("YATA.BACKEND.REST"
    ,private = list(
         factory = NULL
        ,initREST = function() {
-         super$add_get ("/alive"    , handler_alive)
-         super$add_get ("/best"     , get_best)
-         super$add_get ("/history"  , get_history)
-         super$add_get ("/latest"   , latest_handler)
-         super$add_get ("/trending" , latest_handler)
-         super$add_get ("/trending" , latest_handler)
-
+         super$add_get ("/alive"      , alive)
+         super$add_get ("/best"       , get_best)
+         super$add_get ("/history"    , get_history)
+         super$add_get ("/latest"     , get_latest)
+         super$add_get ("/session"    , get_session)
+         super$add_get ("/trending"   , get_trending)
+         super$add_get ("/currencies" , get_currencies)
+         super$add_post("/names"      , post_names)
        }
       ,setMiddleware = function() {
          json_middleware = Middleware$new( process_response = function(.req, .res) {

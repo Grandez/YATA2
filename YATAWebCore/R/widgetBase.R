@@ -1,20 +1,20 @@
-WDGBase = R6::R6Class("YATA.WEB.WIDGETS"
-  ,portable   = FALSE
-  ,cloneable  = FALSE
-  ,lock_class = TRUE
-  ,private = list(
-     accessor = function(var, value) {
-       # Setter/getter
-         if (missing(value)) {
-             var
-         } else {
-           eval.parent(substitute(var<-value))
-           invisible(self)
-         }
-       }
-
-  )
-)
+# WDGBase = R6::R6Class("YATA.WEB.WIDGETS"
+#   ,portable   = TRUE
+#   ,cloneable  = FALSE
+#   ,lock_class = TRUE
+#   ,private = list(
+#      accessor = function(var, value) {
+#        # Setter/getter
+#          if (missing(value)) {
+#              var
+#          } else {
+#            eval.parent(substitute(var<-value))
+#            invisible(self)
+#          }
+#        }
+#
+#   )
+# )
 
 # yuiLayout = function(id, choices, selected=NULL) {
 #   yataSelectInput(id, label=NULL, choices=choices, selected = selected, width="auto", class="yata_layout")

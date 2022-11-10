@@ -8,10 +8,16 @@ CREATE TABLE CURRENCIES  (
    ,NAME     VARCHAR(64)   NOT NULL        
    ,SLUG     VARCHAR(64)    
    ,RANK     INTEGER       DEFAULT 99999   
+   ,TYPE     TINYINT       DEFAULT 0  COMMENT '-1 - FIAT / 0 - CTC / 1 -TOKEN'   
    ,DECIMALS TINYINT       DEFAULT 6
    ,ICON     VARCHAR(255)    
    ,SINCE    DATE                         -- Active from ...
    ,ACTIVE   TINYINT       DEFAULT 1                       
+   ,MKTCAP   VARCHAR(64)   
+   ,FIRST    DATE
+   ,LAST     DATE
+   ,UNTIL    DATE
+   ,AUDITED  TINYINT       DEFAULT 0                          
    ,TMS      TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP
                            ON UPDATE CURRENT_TIMESTAMP   
    ,PRIMARY KEY ( ID )

@@ -1,6 +1,6 @@
 # Panel Raiz
 # Mantiene la informacion de la session y de la posicion
-YATAWebRoot = R6::R6Class("PNL.TRADE.MAIN"
+YATAWebRoot = R6::R6Class("YATA.PNL.TRADE.MAIN"
    ,inherit    = JGGWEBROOT
    ,portable   = TRUE
    ,cloneable  = FALSE
@@ -123,8 +123,8 @@ function(input, output, session) {
    #     WEB$loadCookies(input$cookies)
    # })
    observeEvent(input$mainMenu,{
-      mod = paste0( "mod_",jgg_to_title(input$mainMenu),"server")
-      eval(parse(text=paste0( mod, "(input$mainMenu, session)")))
+      mod = paste0( "mod",jgg_to_title(input$mainMenu),"Server")
+      eval(parse(text=paste0( mod, "(input$mainMenu, NULL, session)")))
    })
 
    # observeEvent(input$mainMenu,{

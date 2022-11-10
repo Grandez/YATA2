@@ -16,7 +16,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      # ,session  = NULL
      # ,log      = NULL
 #     ,window  = list(width = 0, height = 0)
-     # ,combo    = NULL
+     ,combo    = NULL
      ,print    = function() { message("Singleton for APP WEB")}
      ,initialize = function() {
 
@@ -30,7 +30,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
             # private$hSym    = private$base$map()
             # private$hCam    = private$base$map()
             # private$idPortfolio = self$factory$getPortfolioID()
-            # self$combo      = YATAWebCombos$new(self$factory)
+         self$combo      = YATAWebCombos$new(self$factory)
             # private$tblCurrencies = self$factory$getTable(self$factory$codes$tables$currencies)
             # self$REST       = YATAServer$new(self$factory)
             # self$errorLevel = self$REST$check()
@@ -79,25 +79,23 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
 
 
     #  ,tooltip            = function(id)  { self$msg$tooltip(id)   }
-    #  ,getLabelsPanel     = function(cached=TRUE)    {
-    #      if (!is.null(private$cache$lblPanels)) return (private$cache$lblPanels)
-    #      lst = self$getLabelsMenu( 0)
-    #      if (cached) private$cache$lblPanels = lst
-    #      lst
-    #   }
+     ,getLabelsPanel     = function(cached=TRUE)    {
+         if (!is.null(private$cache$lblPanels)) return (private$cache$lblPanels)
+         lst = self$getLabelsMenu( 0)
+         if (cached) private$cache$lblPanels = lst
+         lst
+      }
      ,getLabelsMenuMain  = function()    {
-         browser()
          self$getLabelsMenu( 1) }
-    #  ,getLabelsMenuOper  = function(cached=TRUE)    {
-    #      if (!is.null(private$cache$menuOper)) return (private$cache$menuOper)
-    #      lst = self$getLabelsMenu( 2)
-    #      if (cached) private$cache$menuOper = lst
-    #      lst
-    #   }
+     ,getLabelsMenuOper  = function(cached=TRUE)    {
+         if (!is.null(private$cache$menuOper)) return (private$cache$menuOper)
+         lst = self$getLabelsMenu( 2)
+         if (cached) private$cache$menuOper = lst
+         lst
+      }
     #  ,getLabelsMenuAdmin = function()    { self$getLabelsMenu( 5) }
     #  ,getLabelsPanelErr  = function()    { self$getLabelsMenu( 9) }
      ,getLabelsMenu      = function(idx) {
-#         key = self$factory$codes$labels$lblbPanels + idx
          key = YATACODE$labels$lblPanels + idx
          self$msg$getBlock(key)
      }
@@ -183,7 +181,7 @@ YATAWebEnv = R6::R6Class("YATA.WEB.ENV"
      # ,hSym    = NULL
      # ,hCam    = NULL
      # ,cookies = NULL
-     # ,cache   = list() # Cache mensajes
+       cache   = list() # Cache mensajes
      # ,logsess = as.integer(Sys.time())
      # ,logs    = c(rep(0,10))
      # ,logn    = c(rep("", 10))

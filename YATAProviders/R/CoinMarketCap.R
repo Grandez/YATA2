@@ -31,7 +31,7 @@ PROVMarketCap = R6::R6Class("YATA.PROV.MARKETCAP"
                 ,rank=as.integer(x$cmcRank)
                 ,since = since
                 ,active = as.integer(x$isActive)
-                ,token = ifelse(is.null(x$platform), 0, 1)
+                ,type = ifelse(is.null(x$platform), 0, 1)
                 ,audited = ifelse(x$isAudited == "true", 1,0)
                )
         }

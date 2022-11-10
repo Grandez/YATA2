@@ -5,3 +5,5 @@ import(YATATools)
 
 export(start)
 export(stop)
+export(get)
+export(post)

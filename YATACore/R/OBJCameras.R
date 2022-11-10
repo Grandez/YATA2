@@ -9,16 +9,16 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
         print          = function() { message("Cameras")}
        ,initialize     = function(factory) {
            super$initialize(factory)
-           private$tblCameras   = factory$getTable(self$codes$tables$cameras)
-           private$tblExchanges = factory$getTable(self$codes$tables$exchanges)
+           private$tblCameras   = factory$getTable("Cameras")
+#           private$tblExchanges = factory$getTable(self$codes$tables$exchanges)
 #           private$icons        = factory$getClass("Icons")
        }
-       ,select         = function(id) {
-           # Selecciona un registro concreto de las tablas
-           private$selected = tblCameras$select(camera = id)
-           self$current = tblCameras$current
-           private$selected
-       }
+       # ,select         = function(id) {
+       #     # Selecciona un registro concreto de las tablas
+       #     private$selected = tblCameras$select(camera = id)
+       #     self$current = tblCameras$current
+       #     private$selected
+       # }
        ,getForCombo = function(cameras=NULL, exclude=NULL) {
            if (is.null(cameras)) {
                df = tblCameras$table()
@@ -30,13 +30,13 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
            colnames(df) = c("id", "name")
            df
        }
-       ,add     = function(data, isolated=TRUE) {
-           tblCameras$add(data, isolated)
-           invisible(self)
-       }
-       ,getCameras         = function(cameras) { .getCameras(TRUE,  cameras) }
-       ,getAllCameras      = function(cameras) { .getCameras(FALSE, cameras) }
-       ,getCameraName      = function(codes, full=FALSE) { tblCameras$getCameraNames(codes,full) }
+       # ,add     = function(data, isolated=TRUE) {
+       #     tblCameras$add(data, isolated)
+       #     invisible(self)
+       # }
+       # ,getCameras         = function(cameras) { .getCameras(TRUE,  cameras) }
+       # ,getAllCameras      = function(cameras) { .getCameras(FALSE, cameras) }
+       # ,getCameraName      = function(codes, full=FALSE) { tblCameras$getCameraNames(codes,full) }
 
        # ,getActiveCameras   = function() { tblCameras$getTable(all=FALSE) }
        # ,getInactiveCameras = function() { tblCameras$table(active=YATACodes$flag$inactive) }
@@ -91,23 +91,23 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
     )
     ,private = list(
         tblCameras = NULL
-       ,tblExchanges = NULL
-       ,tblControl   = NULL
-       ,tblPosition  = NULL
-       ,.getCameras         = function(active, cameras) {
-           if (active) {
-               dfc = tblCameras$table(active=1)
-           } else {
-               dfc = tblCameras$table()
-           }
-           if (!missing(cameras)) dfc = dfc[dfc$camera %in% cameras,]
-
-           if (nrow(dfc) > 0) {
-               dfe = tblExchanges$table(inValues=list(id=dfc$exchange))
-               dfc  = left_join(dfc, dfe, by=c("exchange"="id"))
-           }
-           dfc
-       }
+       # ,tblExchanges = NULL
+       # ,tblControl   = NULL
+       # ,tblPosition  = NULL
+       # ,.getCameras         = function(active, cameras) {
+       #     if (active) {
+       #         dfc = tblCameras$table(active=1)
+       #     } else {
+       #         dfc = tblCameras$table()
+       #     }
+       #     if (!missing(cameras)) dfc = dfc[dfc$camera %in% cameras,]
+       #
+       #     if (nrow(dfc) > 0) {
+       #         dfe = tblExchanges$table(inValues=list(id=dfc$exchange))
+       #         dfc  = left_join(dfc, dfe, by=c("exchange"="id"))
+       #     }
+       #     dfc
+       # }
 
     )
 )

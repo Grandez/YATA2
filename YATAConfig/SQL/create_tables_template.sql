@@ -2,8 +2,8 @@
 -- Lugares donde puede haber cuentas
 DROP TABLE  IF EXISTS CAMERAS CASCADE;
 CREATE TABLE CAMERAS  (
-    CAMERA  VARCHAR(10) NOT NULL -- Codigo de camara
-   ,NAME    VARCHAR(32) NOT NULL           -- Clearing Name
+    CAMERA  VARCHAR(64) NOT NULL -- Codigo de camara
+   ,NAME    VARCHAR(64) NOT NULL           -- Clearing Name
    ,MAKER   DOUBLE      NOT NULL DEFAULT 0 -- Fees
    ,TAKER   DOUBLE      NOT NULL DEFAULT 0
    ,ACTIVE  TINYINT     NOT NULL DEFAULT 1 -- 0 Inactivo / 1 Activo 
@@ -27,8 +27,8 @@ CREATE TABLE CAMERAS  (
 
 DROP TABLE  IF EXISTS POSITION CASCADE;
 CREATE TABLE POSITION  (
-    CAMERA      VARCHAR(10) NOT NULL     -- Codigo de camara
-   ,CURRENCY    VARCHAR(10) NOT NULL     -- Moneda
+    CAMERA      VARCHAR(64)  NOT NULL     -- Codigo de camara
+   ,CURRENCY    INT UNSIGNED NOT NULL     -- Moneda
    ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
    ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
    ,BUY_HIGH    DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
@@ -41,7 +41,7 @@ CREATE TABLE POSITION  (
    ,SELL_NET    DOUBLE      DEFAULT 0.0  -- Precio medio de compra   
    ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
    ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
-   ,VALUE       DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
+   ,NET         DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
    ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
    ,TMS         TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
    ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
@@ -57,8 +57,8 @@ CREATE TABLE POSITION  (
 DROP TABLE  IF EXISTS HIST_POSITION CASCADE;
 CREATE TABLE HIST_POSITION  (
     DATE_POS    DATE        NOT NULL
-   ,CAMERA      VARCHAR(10) NOT NULL     -- Codigo de camara
-   ,CURRENCY    VARCHAR(10) NOT NULL     -- Moneda
+   ,CAMERA      VARCHAR(64) NOT NULL     -- Codigo de camara
+   ,CURRENCY    INT UNSIGNED NOT NULL     -- Moneda
    ,BALANCE     DOUBLE      DEFAULT 0.0  -- Saldo real 
    ,AVAILABLE   DOUBLE      DEFAULT 0.0  -- Saldo disponible
    ,BUY_HIGH    DOUBLE      DEFAULT 0.0  -- Precio maximo de compra
@@ -85,8 +85,8 @@ CREATE TABLE HIST_POSITION  (
 DROP TABLE  IF EXISTS REGULARIZATION CASCADE;
 CREATE TABLE REGULARIZATION  (
     ID          INT UNSIGNED  NOT NULL     -- Identificador unico de la operacion
-   ,CAMERA      VARCHAR(10)   NOT NULL     -- Codigo de camara
-   ,CURRENCY    VARCHAR(10)   NOT NULL     -- Moneda
+   ,CAMERA      VARCHAR(64)   NOT NULL     -- Codigo de camara
+   ,CURRENCY    INT UNSIGNED  NOT NULL     -- Moneda
    ,DATE_REG    DATE          NOT NULL     -- Fecha de regularizacion
    ,BALANCE     DOUBLE        DEFAULT 0.0  -- Saldo real 
    ,AVAILABLE   DOUBLE        DEFAULT 0.0  -- Saldo disponible
@@ -123,15 +123,15 @@ CREATE TABLE REGULARIZATION  (
 DROP TABLE  IF EXISTS OPERATIONS;
 CREATE TABLE OPERATIONS  (
     ID_OPER      INT UNSIGNED      NOT NULL -- Identificador de la operacion
-   ,TYPE         TINYINT     NOT NULL  -- Compra o Venta    
-   ,CAMERA       VARCHAR(10) NOT NULL  -- Clearing House
-   ,BASE         VARCHAR(10) NOT NULL  -- From currency
-   ,COUNTER      VARCHAR(10) NOT NULL  -- To currency
-   ,AMOUNT       DOUBLE      NOT NULL  -- Cantidad que sale
-   ,VALUE        DOUBLE      DEFAULT 0 -- Valor de la operacion
-   ,PRICE        DOUBLE      NOT NULL  -- Precio unitario
-   ,ACTIVE       TINYINT     DEFAULT 1 -- Flag activa/inactiva
-   ,STATUS       TINYINT     DEFAULT 0 -- Estado de la operacion
+   ,TYPE         TINYINT       NOT NULL  -- Compra o Venta    
+   ,CAMERA       VARCHAR(64)   NOT NULL  -- Clearing House
+   ,BASE         INT UNSIGNED  NOT NULL  -- From currency
+   ,COUNTER      INT UNSIGNED  NOT NULL  -- To currency
+   ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad que sale
+   ,VALUE        DOUBLE        DEFAULT 0 -- Valor de la operacion
+   ,PRICE        DOUBLE        NOT NULL  -- Precio unitario
+   ,ACTIVE       TINYINT       DEFAULT 1 -- Flag activa/inactiva
+   ,STATUS       TINYINT       DEFAULT 0 -- Estado de la operacion
    ,PARENT       INT UNSIGNED      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado     
    ,TMS          TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,TMS_LAST     TIMESTAMP  DEFAULT   CURRENT_TIMESTAMP 
@@ -181,14 +181,14 @@ CREATE TABLE OPERATIONS_LOG  (
 -- Genera un flujo en una camara y otro en otro
 DROP TABLE  IF EXISTS TRANSFERS;
 CREATE TABLE TRANSFERS  (
-    ID_XFER      INT UNSIGNED  NOT NULL -- Identificador de la operacion
+    ID           INT UNSIGNED  NOT NULL -- Identificador de la operacion
    ,CAMERA_OUT   VARCHAR(10)   NOT NULL  -- Clearing from
    ,CAMERA_IN    VARCHAR(10)   NOT NULL  -- Clearing to
    ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
    ,VALUE        DOUBLE        NOT NULL  -- Valor
    ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
-   ,PRIMARY KEY ( ID_XFER )
+   ,PRIMARY KEY ( ID )
 );
 
 -- Flujos

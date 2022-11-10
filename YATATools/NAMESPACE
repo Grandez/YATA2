@@ -6,17 +6,6 @@ import(httr)
 import(jsonlite)
 import(ps)
 
+# All functions are exported
+# Hiden functions should prefixed with dot
 exportPattern("^[[:alpha:]]+")
-
-#exportPattern("YATA.*")
-#exportPattern("yata.*")
-#exportPattern("jgg.*")
-#exportPattern("propagate.*")
-#exportPattern(#"json_.*")
-#exportPattern("si.*")
-#export(kill)
-#export(args2list)
-#export(loadTable)
-#export(map)
-#export(ini)
-#export(HashMap)
