@@ -15,8 +15,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       ##############################
      ,xfer  = function(...) { operXfer(...) }
         # ,open  = function(...) { add(YATACODE$oper$oper, ...) }
-        # ,buy   = function(...) { add(YATACODE$oper$buy,  ...) }
-        # ,sell  = function(...) { add(YATACODE$oper$sell, ...) }
+     ,buy   = function(...) { add(YATACODE$oper$buy,  ...) }
+     ,sell  = function(...) { add(YATACODE$oper$sell, ...) }
         # ,bid   = function(...) { add(YATACODE$oper$bid,  ...) }
         # ,ask   = function(...) { add(YATACODE$oper$ask,  ...) }
         # ,split = function()   { error("Split no implementado todavia")}
@@ -28,9 +28,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            db$commit()
            idOper
         },error = function(cond) {
-            browser()
             db$rollback()
-            message(cond$message)
             YATATools::propagateError(cond)
             0
         })
@@ -449,7 +447,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         self$current$id     = factory$getID()
         self$current$idOper = self$current$id
 
-        if (self$current$major < 3 ) makeOper()
+        validateOper()
+
+        if (self$current$major < 3 ) makeOper() # buy/bid, sell/ask
         if (type == YATACODE$oper$net)  {}
         self$current$idOper
       }
@@ -462,14 +462,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # self$current$active = ifelse (current$type == YATACODE$oper$oper
            #                                             , YATACODE$flag$active
            #                                             , YATACODE$flag$inactive)
-          self$current$status = ifelse(current$major == 1, YATACODE$status$pending
-                                                          , YATACODE$status$executed)
+         self$current$status = ifelse(current$major == 1, YATACODE$status$pending
+                                                        , YATACODE$status$executed)
+         tblOper$add(current)
 
-          tblOper$add(current)
+         # Informacion de logging
 
-           # Informacion de logging
-
-           # Informacion de control
+         # Informacion de control
 
 #            if (!is.null(self$current$alert)) {
 #                self$current$dtAlert = Sys.Date() + lubridate::days(self$current$alert)
@@ -494,12 +493,19 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 #                self$current$profit = self$current$value - self$current$expense
 #            }
 #            tblOper$add(current)
-#
-#            if (current$status == YATACODE$status$executed) {
-#                addFlow(YATACODE$flow$output,  current$base,    current$ctcOut * -1, current$price)
-#                addFlow(YATACODE$flow$input,   current$counter, current$ctcIn,       current$price)
-#            }
-#
+
+         # flujos
+         if (current$status == YATACODE$status$executed) {
+             # El precio FIAT siempre es 1
+             price = ifelse(current$base == 0, 1, current$price)
+             addFlow(YATACODE$flow$output,  current$base,    current$ctcOut * -1, price)
+             price = ifelse(current$counter == 0, 1, current$price)
+             addFlow(YATACODE$flow$input,   current$counter, current$ctcIn,       price)
+             if (current$fee > 0) { # La comision es en FIAT
+                 addFlow(YATACODE$flow$fee, 0, current$fee * -1, 1)
+             }
+         }
+
 #            # if (!is.null(current$idParent) && !is.na(current$idParent)) {
 #            #     select(idParent)
 #            #     current$flag = YATACODE$flags$parent
@@ -631,6 +637,14 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            diff = as.integer(round(diff, digits=0))
            list(expense=value, alive=diff)
        }
-
+      ,validateOper = function () {
+          if (is.null(current$fee)) self$current$fee = 0
+          if (is.null(current$gas)) self$current$gas = 0
+          # minor 0 = compra / 1 = venta
+          ctc = ifelse(current$minor == 0, current$base, current$counter)
+          df = objPos$getPosition(camera = current$camera, currency = ctc)
+          impOut = current$ctcOut + current$fee
+          if (df[1,"available"] < impOut) YATATools::LOGICAL("Insufficient available for operation")
+      }
     )
 )

@@ -233,7 +233,8 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$apply()
       }
       ,.updateBaseFiat = function (data) {
-           tblPosition$setField("available", current$available - data$ctcOut)
+           amount = data$ctcOut + data$fee
+           tblPosition$setField("available", current$available - amount)
            if (data$major == 2) { # Ejecutado
                if (current$sell_low == 0)  self$current$sell_low = data$value + 1
 
@@ -244,12 +245,13 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
 
                tblPosition$setField("sell",  current$sell + data$ctcOut)
                tblPosition$setField("net", 1)
-               tblPosition$setField("balance",   current$balance   - data$ctcOut)
+               tblPosition$setField("balance",   current$balance   - amount)
            }
            tblPosition$apply()
       }
       ,.updateCounterFiat = function (data) {
-           tblPosition$setField("available", current$available + data$ctcIn)
+           amount = data$ctcIn - data$fee
+           tblPosition$setField("available", current$available + amount)
            if (data$major == 2) { # Ejecutado
                if (current$buy_low == 0)  self$current$buy_low = data$ctcIn + 1
 
@@ -260,7 +262,7 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
 
                tblPosition$setField("buy",  current$buy + data$ctcIn)
                tblPosition$setField("net", 1)
-               tblPosition$setField("balance",   current$balance   + data$ctcIn)
+               tblPosition$setField("balance",   current$balance   + amount)
                tblPosition$setField("profit", current$buy + data$ctcIn - current$sell)
            }
            tblPosition$apply()

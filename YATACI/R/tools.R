@@ -15,8 +15,12 @@ println = function(level = 0, txt) {
     cat("\n")
 }
 fail = function (message) {
+    result(-1)
     cat(crayon::red(message))
-    stop()
+    data = list(message = message, subclass = c("FAILED", "error", "condition"))
+    conds = c("FAILED", "error", "condition")
+    errdata = structure( data, class = conds)
+    stop(errdata)
 }
 checkRecord = function (object, current, target) {
     lapply(names(target), function (field) {
@@ -25,4 +29,7 @@ checkRecord = function (object, current, target) {
         real = as.character(current[[field]])
         if (tgt != real) fail(sprintf("%s: Error en %s - Objetivo: %s. Real: %s", object, field, tgt, real))
     })
+}
+.error = function(msg, subclass, ...) {
+   data = list(...)
 }
