@@ -84,7 +84,6 @@ YATAWebRoot = R6::R6Class("YATA.PNL.TRADE.MAIN"
    )
 )
 function(input, output, session) {
-   cat("main beg\n")
 
    # if (WEB$errorLevel > 0) {
    #     msg = WEB$getMsg(as.character(WEB$errorLevel))
@@ -179,5 +178,5 @@ function(input, output, session) {
    #     if (is.null(pname)) showModal(frmPortfolioChange(pnl$factory))
    # }
 ###   js$yata_req_cookies()
-   cat("main end\n")
+
 }

@@ -16,7 +16,6 @@ TBLTransfers = R6::R6Class("TBL.XFER"
             ,cameraOut = "CAMERA_OUT"
             ,currency  = "CURRENCY"
             ,amount    = "AMOUNT"
-            ,value     = "VALUE"
             ,tms       = "TMS"
          )
      )

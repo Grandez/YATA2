@@ -10,6 +10,7 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
        ,initialize     = function(factory) {
            super$initialize(factory)
            private$tblCameras   = factory$getTable("Cameras")
+           private$cameras      = private$tblCameras$table()
 #           private$tblExchanges = factory$getTable(self$codes$tables$exchanges)
 #           private$icons        = factory$getClass("Icons")
        }
@@ -19,22 +20,25 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
        #     self$current = tblCameras$current
        #     private$selected
        # }
-       ,getForCombo = function(cameras=NULL, exclude=NULL) {
-           if (is.null(cameras)) {
-               df = tblCameras$table()
-           } else {
-               df = tblCameras$table(inValues=list(camera=cameras))
-           }
-           if (!is.null(exclude)) df = df[!(df$camera %in% exclude),]
-           df = df[,c("camera", "desc")]
-           colnames(df) = c("id", "name")
-           df
-       }
+       # ,getForCombo = function(cameras=NULL, exclude=NULL) {
+       #     if (is.null(cameras)) {
+       #         df = tblCameras$table()
+       #     } else {
+       #         df = tblCameras$table(inValues=list(camera=cameras))
+       #     }
+       #     if (!is.null(exclude)) df = df[!(df$camera %in% exclude),]
+       #     df = df[,c("camera", "desc")]
+       #     colnames(df) = c("id", "name")
+       #     df
+       # }
        # ,add     = function(data, isolated=TRUE) {
        #     tblCameras$add(data, isolated)
        #     invisible(self)
        # }
-       # ,getCameras         = function(cameras) { .getCameras(TRUE,  cameras) }
+      ,getCameras         = function(all = FALSE) {
+          if (all) return (private$cameras)
+          cameras[cameras$active == 1,]
+       }
        # ,getAllCameras      = function(cameras) { .getCameras(FALSE, cameras) }
        # ,getCameraName      = function(codes, full=FALSE) { tblCameras$getCameraNames(codes,full) }
 
@@ -91,6 +95,7 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
     )
     ,private = list(
         tblCameras = NULL
+       ,cameras    = NULL
        # ,tblExchanges = NULL
        # ,tblControl   = NULL
        # ,tblPosition  = NULL

@@ -225,10 +225,10 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
           tblPosition$setField("net", current$net)
 
           # profit se actualiza si hay compras y ventas
-          if (current$buy > 0 && current$sell > 0) {
-              tblPosition$setField("profit", (current$buy_net  * current$buy) -
-                                             (current$sell_net * current$sell))
-          }
+          # if (current$buy > 0 && current$sell > 0) {
+          #     tblPosition$setField("profit", (current$buy_net  * current$buy) -
+          #                                    (current$sell_net * current$sell))
+          # }
 
           tblPosition$apply()
       }
@@ -291,7 +291,8 @@ list(total = 1, reimb=1 * -1, invest=sum(1 * 1))
            self$current$net = wrk
            tblPosition$setField("net", current$net)
 
-          # profit se actualiza si hay compras y ventas
+          # profit se actualiza en las ventas (base es la crypto)
+           browser()
           if (current$buy > 0 && current$sell > 0) {
               tblPosition$setField("profit", (current$sell_net * current$sell) -
                                              (current$buy_net  * current$buy))

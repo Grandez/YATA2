@@ -352,11 +352,12 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
      ,tblReg         = NULL
      ,objPos         = NULL
      ,dfReg          = NULL
-     ,addFlow        = function(type, currency, amount, price) {
+     ,addFlow        = function(type, parent, camera, currency, amount, price) {
          data = list(
-            idOper   = current$idOper
+            idOper   = parent
            ,idFlow   = factory$getID()
            ,type     = type
+           ,camera   = camera
            ,currency = currency
            ,amount   = amount
            ,price    = price
@@ -372,6 +373,13 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
         self$current        = args2list(...)
 
+        if (is.null(current$feeIn))  self$current$feeIn  = 0
+        if (is.null(current$feeOut)) self$current$feeOut = 0
+
+        if (is.null(current$from))  return (cashExternal(current))
+        if (is.null(current$to))    return (cashExternal(current))
+        if (current$from == "CASH") return (cashSend    (current))
+        if (current$to   == "CASH") return (cashReceive (current))
       # Obtener valor neto
         objPos$getPosition(camera=current$from, currency=current$currency)
         self$current$value = objPos$current$net
@@ -447,14 +455,12 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         self$current$id     = factory$getID()
         self$current$idOper = self$current$id
 
-        validateOper()
-
         if (self$current$major < 3 ) makeOper() # buy/bid, sell/ask
         if (type == YATACODE$oper$net)  {}
         self$current$idOper
       }
      ,makeOper     = function() {
-         if (is.null(current$value)) current$value = current$price * current$amount
+         validateOper()
 
          objPos$updatePositions   (current)
 
@@ -640,11 +646,149 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       ,validateOper = function () {
           if (is.null(current$fee)) self$current$fee = 0
           if (is.null(current$gas)) self$current$gas = 0
+
+          self$current$value = current$price * current$amount
+
           # minor 0 = compra / 1 = venta
+          if (current$minor == 1) { # venta, sale CTC
+              self$current$ctcOut = current$amount
+              self$current$ctcIn  = current$amount * current$price
+          } else { # Compra, sale fiat
+              self$current$ctcOut = current$amount * current$price
+              self$current$ctcIn  = current$amount
+          }
+
           ctc = ifelse(current$minor == 0, current$base, current$counter)
           df = objPos$getPosition(camera = current$camera, currency = ctc)
           impOut = current$ctcOut + current$fee
           if (df[1,"available"] < impOut) YATATools::LOGICAL("Insufficient available for operation")
       }
-    )
+
+      ,cashExternal = function (data) {
+          amount = data$amount
+          if (is.null(data$to)) amount = amount * -1
+          tryCatch({
+             db$begin()
+             id = factory$getID()
+             tblPos        = factory$getTable("Position")
+             tblPos$select(camera = "CASH")
+             tblPos$set(balance   = tblPos$current$balance   + amount)
+             tblPos$set(available = tblPos$current$available + amount)
+             tblPos$set(net = 1)
+             tblPos$apply()
+
+             tblXfer = factory$getTable("Transfers")
+             data = list(id=id, cameraOut="CASH", cameraIn="CASH", currency=0, amount=amount)
+             tblXfer$add(data)
+             db$commit()
+             id
+          },error = function(cond) {
+            db$rollback()
+            YATATools::propagateError(cond)
+            0
+          })
+      }
+     ,cashSend = function (data) {
+         # Envia CASH de CASH a otra camara
+         objPos = factory$getObject("Position")
+         objPos$getPosition(camera="CASH", currency=0)
+         total = data$amount + data$feeOut
+         if (total > objPos$current$available) YATATools::LOGICAL("Insufficient FIAT available")
+
+         tryCatch({
+
+             db$begin()
+             id = factory$getID()
+             tblPos        = factory$getTable("Position")
+             # Actualiza posicion de CASH
+             tblPos$select(camera = "CASH")
+             if (tblPos$current$sell_high < data$amount) tblPos$set(sell_high = data$amount)
+             if (tblPos$current$sell_low == 0 ||  tblPos$current$sell_low > data$amount)
+                 tblPos$set(sell_low = data$amount)
+             tblPos$set(sell_last = data$amount)
+             tblPos$set(sell_net  = 1)
+             tblPos$set(net       = 1)
+             tblPos$set(balance   = tblPos$current$balance   - total)
+             tblPos$set(available = tblPos$current$available - total)
+
+             tblPos$apply()
+
+             # Actualiza posicion camara destino
+             total = data$amount - data$feeIn
+             tblPos$select(camera = data$to, currency=0, create=TRUE)
+             if (tblPos$current$buy_high < data$amount) tblPos$set(buy_high = data$amount)
+             if (tblPos$current$buy_low == 0 ||  tblPos$current$buy_low > data$amount)
+                 tblPos$set(buy_low = data$amount)
+             tblPos$set(buy_last = data$amount)
+             tblPos$set(buy_net  = 1)
+             tblPos$set(net      = 1)
+             tblPos$set(balance   = tblPos$current$balance   + total)
+             tblPos$set(available = tblPos$current$available + total)
+             tblPos$apply()
+
+             # Graba transferencia
+             tblXfer = factory$getTable("Transfers")
+             tblXfer$add(list(id = id, cameraOut=data$to, cameraIn=data$from, currency=0,amount=data$amount))
+
+             # Graba comision
+             if (data$feeIn  > 0) addFlow(YATACODE$flow$fee, id, data$to,   0, data$feeIn  * -1, 1)
+             if (data$feeOut > 0) addFlow(YATACODE$flow$fee, id, data$from, 0, data$feeOut * -1, 1)
+
+             db$commit()
+             id
+          },error = function(cond) {
+            db$rollback()
+            YATATools::propagateError(cond)
+            0
+          })
+      }
+     ,cashReceive = function (data) {
+         objPos = factory$getObject("Position")
+         objPos$getPosition(camera=data$from, currency=0)
+         total = data$amount + data$feeOut
+         if (total > objPos$current$available) YATATools::LOGICAL("Insufficient FIAT available")
+
+         tryCatch({
+             db$begin()
+             id = factory$getID()
+             tblPos        = factory$getTable("Position")
+             # Actualiza posicion de camara
+             tblPos$select(camera = data$from, currency = 0)
+
+             profit = tblPos$current$available - tblPos$current$buy
+
+             tblPos$set(balance   = tblPos$current$balance   - total)
+             tblPos$set(available = tblPos$current$available - total)
+             tblPos$apply()
+
+             # Actualiza posicion de CASH
+             total = data$amount - data$feeIn
+             tblPos$select(camera = "CASH", currency = 0)
+             if (tblPos$current$buy_high < data$amount) tblPos$set(buy_high = data$amount)
+             if (tblPos$current$buy_low == 0 ||  tblPos$current$buy_low > data$amount)
+                 tblPos$set(buy_low = data$amount)
+             tblPos$set(buy_last  = data$amount)
+             tblPos$set(buy_net   = 1)
+             tblPos$set(profit    = tblPos$current$profit + profit)
+             tblPos$set(balance   = tblPos$current$balance + total)
+             tblPos$set(available = tblPos$current$available + total)
+             tblPos$apply()
+
+             # Graba transferencia
+             tblXfer = factory$getTable("Transfers")
+             tblXfer$add(list(id = id, cameraOut=data$from, cameraIn=data$to, currency=0,amount=data$amount))
+
+             # comisiones
+             if (data$feeOut > 0) addFlow(YATACODE$flow$fee, id, data$from, 0, data$feeOut * -1, 1)
+             if (data$feeIn  > 0) addFlow(YATACODE$flow$fee, id, data$to,   0, data$feeIn  * -1, 1)
+             db$commit()
+             id
+          },error = function(cond) {
+            db$rollback()
+            YATATools::propagateError(cond)
+            0
+          })
+      }
+
+  )
 )

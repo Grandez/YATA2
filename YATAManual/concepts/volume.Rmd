@@ -1,0 +1,22 @@
+## Volumen
+
+The 24-hour volume section at the top of CoinMarketCap website shows the total value of crypto traded in the past 24 hours.
+
+Volume is an extremely important indicator for traders to determine the future profitability of cryptocurrencies.
+It also helps exchanges make money by charging fees on cryptocurrency trades offered on their platforms.
+
+A greater volume of cryptocurrency transactions leads to fair cryptocurrency prices and removes the chance of distorted pricing.
+
+A low cryptocurrency exchange volume signals inefficient or low trades, as the asking prices of sellers fail to meet the bids of potential buyers.
+Cryptocurrency volume is similar to the concept of liquidity, but they are both not the same.
+
+Volume is the sum total of actual trades taking place, meanwhile liquidity is the amount available for trading at any single price.
+
+Usually, the higher the volume of cryptocurrency transactions, the more liquid the crypto market will be.
+
+Low cryptocurrency volume exchanges, however, do create great arbitrage opportunities for investors.
+
+Some cryptocurrencies can be bought at a very low price and sold for a premium elsewhere.
+
+This normally occurs if the coin or token is not in high demand or there is something wrong with the exchange’s operational features. 
+What is "Market Capitalization" and how is it calculated?

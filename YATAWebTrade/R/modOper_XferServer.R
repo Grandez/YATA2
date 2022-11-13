@@ -1,56 +1,56 @@
-modOperXferServer = function(id, full, parent, session) {
+modOperXferServer = function(id, parent, session) {
 ns = NS(id)
-ns2 = NS(full)
+#ns2 = NS(full)
 PNLOperXfer = R6::R6Class("PNL.OPER.XFER"
-  ,inherit    = WEBPanel
+  ,inherit    = JGGPanel
   ,cloneable  = FALSE
   ,portable   = TRUE
   ,lock_class = TRUE
   ,public = list(
            initialize    = function(id, parent, session) {
                super$initialize(id, parent, session)
-               private$position   = self$factory$getObject(self$codes$object$position)
-               private$cameras    = self$factory$getObject(self$codes$object$cameras)
-               private$operations = self$factory$getObject(self$codes$object$operation)
-           }
-           ,update = function(){
-               private$dfPos = private$position$getGlobalPosition()
-           }
-           ,cboAllCameras   = function(exclude) {
-              data = private$cameras$getAllCameras()
-              if (!missing(exclude)) data = data[!data$camera %in% exclude,]
-              data = data[,c("camera", "desc")]
-              colnames(data) = c("id", "name")
-              self$parent$makeCombo(data)
-           }
-           ,cboCurrencies = function() {
-               df = private$dfPos
-               df = df[df$available > 0, ]
-               ctc = df$currency
-               data = WEB$combo$currencies(id=FALSE, set = ctc)
-               JGGTools::jgg_list_merge(list("FIAT"="__FIAT__"), data)
-           }
-          ,cboFrom = function(ctc) {
-              df = private$position$getByCurrency(ctc)
-              data = df$camera
-              if (ctc == "__FIAT__") data = c("CASH", data)
-              names(data) = data
-              data
-          }
-          ,cboTo = function(camera, currency) {
-              df = private$cameras$getAllCameras()
-              df = df[df$camera != camera,]
-              data = df$camera
-              names(data) = paste(df$camera, df$desc, sep = " - ")
-              if (currency == "__FIAT__") data = c("CASH" = "CASH", data)
-              data
-          }
+          #      private$position   = self$factory$getObject(self$codes$object$position)
+          #      private$cameras    = self$factory$getObject(self$codes$object$cameras)
+          #      private$operations = self$factory$getObject(self$codes$object$operation)
+             }
+          #  ,update = function(){
+          #      private$dfPos = private$position$getGlobalPosition()
+          #  }
+          #  ,cboAllCameras   = function(exclude) {
+          #     data = private$cameras$getAllCameras()
+          #     if (!missing(exclude)) data = data[!data$camera %in% exclude,]
+          #     data = data[,c("camera", "desc")]
+          #     colnames(data) = c("id", "name")
+          #     self$parent$makeCombo(data)
+          #  }
+          #  ,cboCurrencies = function() {
+          #      df = private$dfPos
+          #      df = df[df$available > 0, ]
+          #      ctc = df$currency
+          #      data = WEB$combo$currencies(id=FALSE, set = ctc)
+          #      JGGTools::jgg_list_merge(list("FIAT"="__FIAT__"), data)
+          #  }
+          # ,cboFrom = function(ctc) {
+          #     df = private$position$getByCurrency(ctc)
+          #     data = df$camera
+          #     if (ctc == "__FIAT__") data = c("CASH", data)
+          #     names(data) = data
+          #     data
+          # }
+          # ,cboTo = function(camera, currency) {
+          #     df = private$cameras$getAllCameras()
+          #     df = df[df$camera != camera,]
+          #     data = df$camera
+          #     names(data) = paste(df$camera, df$desc, sep = " - ")
+          #     if (currency == "__FIAT__") data = c("CASH" = "CASH", data)
+          #     data
+          # }
   )
        ,private = list(
-            cameras    = NULL
-           ,operations = NULL
-           ,position   = NULL
-           ,dfPos      = NULL
+           #  cameras    = NULL
+           # ,operations = NULL
+           # ,position   = NULL
+           # ,dfPos      = NULL
         )
 
   # ,public = list(
@@ -98,6 +98,7 @@ PNLOperXfer = R6::R6Class("PNL.OPER.XFER"
 )
 
 moduleServer(id, function(input, output, session) {
+    browser()
    pnl = WEB$getPanel(id, PNLOperXfer, parent, session)
 
    # pnl$update()

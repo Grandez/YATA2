@@ -186,7 +186,7 @@ CREATE TABLE TRANSFERS  (
    ,CAMERA_IN    VARCHAR(10)   NOT NULL  -- Clearing to
    ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
-   ,VALUE        DOUBLE        NOT NULL  -- Valor
+--   ,VALUE        DOUBLE        NOT NULL  -- Valor
    ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,PRIMARY KEY ( ID )
 );
@@ -206,6 +206,7 @@ CREATE TABLE FLOWS  (
     ID_OPER    INT UNSIGNED      NOT NULL -- Identificador de la operacion
    ,ID_FLOW    INT UNSIGNED      NOT NULL -- Identificador del flujo
    ,TYPE       TINYINT     NOT NULL -- Tipo de flujo segun codigo
+   ,CAMERA     VARCHAR(64) NOT NULL -- Codigo de camara   
    ,CURRENCY   VARCHAR(18) NOT NULL -- Moneda
    ,AMOUNT     DOUBLE      NOT NULL -- Unidades  
    ,PRICE      DOUBLE      NOT NULL -- Precio Necesario para saber la diferencia
@@ -225,5 +226,7 @@ CREATE TABLE BLOG  (
    ,PRIMARY KEY ( ID_BLOG )
 );
 
-INSERT INTO POSITION  (CAMERA,CURRENCY,BALANCE,AVAILABLE) VALUES("CASH", "FIAT", 10000, 10000);
+INSERT INTO CAMERAS   (CAMERA, NAME, ACTIVE) VALUES("CASH", "Control Camera", 0);
+INSERT INTO POSITION  (CAMERA, CURRENCY)     VALUES("CASH", 0);
+
 COMMIT;

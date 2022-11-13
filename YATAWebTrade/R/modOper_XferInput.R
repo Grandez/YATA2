@@ -25,7 +25,7 @@ modOperXferInput = function(id, title = "") {
    ,fluidRow( guiColumn(2), guiColumn(1, h4("Comision entrada"))
                           , guiColumn(2, guiNumericInput(ns("impFeeIn"), NULL, value = 0)))
 
-   ,guiYesNo(id=ns("tpl"), "Transferir", "Cancelar", left=3, width=2)
+   ,yuiYesNo(id=ns("tpl"), "Transferir", "Cancelar", left=3, width=2)
   )
   list(left=NULL, main=main, right=NULL)
 }

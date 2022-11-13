@@ -1,0 +1,48 @@
+# Operation
+
+Mas que pensar el trading como la accion de comprar y luego vender preferimos verlo como operaciones en las que tomamos posicion en una determinada moneda por un determinado motivo y en algun momento deshacemos esa operacion.
+
+Por eso preferimos los  terminos "_tomar_" y "_deshacer_" posicion, esto nos permite ampliar la información de la operación registrando los motivos por los que se "entra" y se "sale"
+
+De acuerdo con esta nomenclatura, una operación tiene al menos dos patas: El momento en que se __hace__ la operacion (compramos) y el momento en el que __deshacemos__ la operacion (vendemos).
+
+A su vez, esta información se mantendrá en el "Diario de Operaciones" el cual es el que nos permite estudiar y analizar nuestro comportamiento como Trader y sobre todo, aprender de nuestros errores.
+
+Un caso especial es la transferencia de monedas entre camaras; en este caso no se genera una operacion si no un unico flujo
+
+## Ciclo de vida
+
+1.- BID
+    Grabo la operacion
+    Actualiza disponible
+2.1.- Acepta
+    Actualizar estado
+    Ajustar posicion
+    Grabar flujos (compra, comision, gas)
+    Alerta para revisar cuando se ha ejecutado
+2.2 Despues de aceptar se debe ejecutar (puede tardar dias)    
+    Entonces esta cerrada
+    
+    
+## Logica
+
+Una operacion se abre con una idea, por ejemplo, ganar el 5%
+1. Se solicita (se graba en el sistema)
+   1.1 Se graba en operaciones
+2. Se ejecuta si se cumple la oferta o se cancela
+
+3. Si se ejecuta se incurren en gastos
+4. y se generan los flujos
+
+### Compra
+
+1. Se genera la orden en operaciones
+2. Se ajusta el saldo (disponible)
+3. Se acepta la operacion o se rechaza
+3.1 Se acepta
+3.1.1 Se actualiza la operacion
+3.1.2 Se generan los flujos asociados
+3.1.3 Se actualizan los saldos (disponible y real)
+3.2 Se rechaza
+3.2.1 Se actualiza la operacion
+3.2.1 Se actualizan los saldos
