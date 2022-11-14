@@ -24,5 +24,5 @@ checkChangeDB = function(factory) {
     pos = factory$getObject("Position")
     df = pos$getFullPosition()
     if (nrow(df) != 1) fail("Fallo en cambio de base de datos (filas)")
-    if (df[1,"camera"]  != "CASH") fail("Fallo en cambio de base de datos (camara)")
+    if (df[1,"camera"]  != YATACODE$CAMFIAT) fail("Fallo en cambio de base de datos (camara)")
 }

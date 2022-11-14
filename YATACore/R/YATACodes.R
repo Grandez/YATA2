@@ -1,45 +1,10 @@
 # Numeric codes in databases and values
 YATACODE = list(
-    # objects = list(
-    #   alerts     = "Alerts"
-    #  ,blog       = "Blog"
-    #  ,cameras    = "Cameras"
-    #  ,currencies = "Currencies"
-    #  ,exchanges  = "Exchanges"
-    #  ,favorites  = "Favorites"
-    #  ,history    = "History"
-    #  ,operation  = "Operation"
-    #  ,parms      = "Parms"
-    #  ,portfolio  = "Portfolio"
-    #  ,position   = "Position"
-    #  ,session    = "Session"
-    #  ,SVG        = "SVG"
-    # )
-    # ,tables = list(
-    #    alerts         = "Alerts"
-    #   ,blog           = "Blog"
-    #   ,cameras        = "Cameras"
-    #   ,config         = "Config"
-    #   ,control        = "Control"
-    #   ,currencies     = "Currencies"
-    #   ,exchanges      = "Exchanges"
-    #   ,exchanges_pair = "ExchangesPair"
-    #   ,favorites      = "Favorites"
-    #   ,flows          = "Flows"
-    #   ,history        = "History"
-    #   ,messages       = "Messages"
-    #   ,modelVar       = "ModelVar"
-    #   ,operations     = "Operations"
-    #   ,operControl    = "OperControl"
-    #   ,operLog        = "OperLog"
-    #   ,parameters     = "Parameters"
-    #   ,position       = "Position"
-    #   ,positionHist   = "PositionHist"
-    #   ,regularization = "Regularization"
-    #   ,session        = "Session"
-    #   ,transfer       = "Transfers"
-    # )
-    flag = list(inactive=0, active=1, parent=2)
+    # Palabras reservadas
+    CAMFIAT = "FIAT"
+   ,CAMEXT  = "CASH"
+   ,CTCFIAT = 0
+    ,flag = list(inactive=0, active=1, parent=2)
      # Code: x0 - Buy (Entra), x1 - Sell (Sale)
      #       1x - Proposal     2x - Real  3x - posicion
     ,oper = list( bid   = 10, ask   = 11

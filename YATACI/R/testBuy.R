@@ -2,41 +2,30 @@ testBuySell = function () {
    println(0, crayon::bold("Verificando Buy/Sell"))
    camera  = "CI1"
    factory = prepareEnvironment()
-   xfer_init(factory, camera)
 
-   buy_simple         (factory, camera)
-   buy_comission      (factory, camera)
-   buy_no_available_1 (factory, camera)
-   buy_no_available_2 (factory, camera)
-   factory$destroy()
+   xfer_ext_in         (factory, camera)
+   xfer_cash_in        (factory, camera)
 
-   # Compra y venta
-   factory = prepareEnvironment()
-   xfer_init(factory, camera)
-   buy_simple         (factory, camera)
-   sell_simple        (factory, camera)
-   buy_2_up           (factory, camera)
+   buy_half            (factory, camera)
+#    buy_comission      (factory, camera)
+#    buy_no_available_1 (factory, camera)
+#    buy_no_available_2 (factory, camera)
+#    factory$destroy()
+#
+#    # Compra y venta
+#    factory = prepareEnvironment()
+#    xfer_init(factory, camera)
+#    buy_simple         (factory, camera)
+#    sell_simple        (factory, camera)
+#    buy_2_up           (factory, camera)
 
 }
-buy_simple         = function(factory, camera) {
+buy_half         = function(factory, camera) {
   print  (1, "Compra simple")
   tryCatch({
     oper = factory$getObject("Operation")
-    data = list(
-             type    = YATACODE$oper$buy
-            ,amount  = 1
-            ,price   = 100
-            ,value   = 1 * 100
-            ,fee     = 0
-            ,gas     = 0
-            ,camera  = camera
-            ,reason  = 0
-            ,base    = 0
-            ,counter = 1
-            ,ctcIn   = 1
-            ,ctcOut  = 1 * 100
-         )
-    id = oper$add(data$type, data)
+    op   = list(camera=camera, currency=1, amount=5, price=100)
+    id   = oper$buy(op)
 
     # checks
     tbl = factory$getTable("Operations")

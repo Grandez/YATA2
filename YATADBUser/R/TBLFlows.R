@@ -19,6 +19,7 @@ TBLFlows = R6::R6Class("TBL.FLOWS"
              ,currency = "CURRENCY"
              ,amount   = "AMOUNT"
              ,price    = "PRICE"
+             ,date     = "DATEOPER"
              ,tms      = "TMS"
           )
 

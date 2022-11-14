@@ -186,8 +186,10 @@ CREATE TABLE TRANSFERS  (
    ,CAMERA_IN    VARCHAR(10)   NOT NULL  -- Clearing to
    ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
---   ,VALUE        DOUBLE        NOT NULL  -- Valor
+   ,PRICE        DOUBLE        NOT NULL  -- Valor
+   ,DATEOPER     DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada      
    ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
+   
    ,PRIMARY KEY ( ID )
 );
 
@@ -205,6 +207,7 @@ DROP TABLE  IF EXISTS FLOWS;
 CREATE TABLE FLOWS  (
     ID_OPER    INT UNSIGNED      NOT NULL -- Identificador de la operacion
    ,ID_FLOW    INT UNSIGNED      NOT NULL -- Identificador del flujo
+   ,DATEOPER     DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada   
    ,TYPE       TINYINT     NOT NULL -- Tipo de flujo segun codigo
    ,CAMERA     VARCHAR(64) NOT NULL -- Codigo de camara   
    ,CURRENCY   VARCHAR(18) NOT NULL -- Moneda

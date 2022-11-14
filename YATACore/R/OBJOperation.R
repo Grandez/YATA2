@@ -352,100 +352,153 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
      ,tblReg         = NULL
      ,objPos         = NULL
      ,dfReg          = NULL
-     ,addFlow        = function(type, parent, camera, currency, amount, price) {
-         data = list(
-            idOper   = parent
-           ,idFlow   = factory$getID()
-           ,type     = type
-           ,camera   = camera
-           ,currency = currency
-           ,amount   = amount
-           ,price    = price
-         )
+     ,addFlow        = function(data) {
+         data$idFlow   = factory$getID()
          tblFlows$add(data)
       }
      ,operXfer     = function(...) {
-      # Transfiere entre dos camaras
-      # Genera:
-      # 1. Registro de transferencia
-      # 2. Operaciones de transferencia en las dos camaras
-      # 3. Flujos asociados a la transferencia
+        self$current = args2list(...)
+        self$current = fillFields(current)
 
-        self$current        = args2list(...)
+        if (is.null(current$feeIn))  current$feeIn  = 0
+        if (is.null(current$feeOut)) current$feeOut = 0
 
-        if (is.null(current$feeIn))  self$current$feeIn  = 0
-        if (is.null(current$feeOut)) self$current$feeOut = 0
+        if (current$from == YATACODE$CAMEXT  || current$to == YATACODE$CAMEXT)
+            return (cashExternal(current))
+        if (current$from == YATACODE$CAMFIAT || current$to == YATACODE$CAMFIAT)
+            return (cashFIAT(current))
 
-        if (is.null(current$from))  return (cashExternal(current))
-        if (is.null(current$to))    return (cashExternal(current))
-        if (current$from == "CASH") return (cashSend    (current))
-        if (current$to   == "CASH") return (cashReceive (current))
-      # Obtener valor neto
-        objPos$getPosition(camera=current$from, currency=current$currency)
-        self$current$value = objPos$current$net
+        # CAM to CAM NO FIAT
+        # Validate DATA
 
-      # Validaciones
-        if (current$amount <= 0)                       YATATools::LOGICAL("Invalid Amount")
-        if (objPos$current$available < current$amount) YATATools::LOGICAL("Invalid Amount")
-        if (!is.null(current$feeOut) && current$feeOut < 0) YATATools::LOGICAL("Invalid Comission")
-        if (!is.null(current$feeIn)  && current$feeIn  < 0) YATATools::LOGICAL("Invalid Comission")
-        if (!is.null(current$feeIn)  && current$feeIn  > current$amount) YATATools::LOGICAL("Invalid Comission")
-        if (is.null(current$feeIn))  self$current$feeIn  = 0
-        if (is.null(current$feeOut)) self$current$feeOut = 0
+        # Recibe/Envia FIAT desde las camaras. No se actualiza BUY/SELL de FIAT
+        tblPos = factory$getTable("Position")
 
-        self$current$type      = YATACODE$oper$xfer
-        self$current$id        = factory$getID()
-        self$current$cameraIn  = current$to
-        self$current$cameraOut = current$from
+        if (current$feeOut > 0) {
+            tblPos$select(camera = current$from, currency = YATACODE$CTCFIAT, create = TRUE)
+            if (tblPos$current$available < current$feeOut)
+                YATATools::LOGICAL("Insufficient FIAT available to pay comission (sending)")
+        }
+        if (current$feeIn > 0) {
+            tblPos$select(camera = current$to, currency = YATACODE$CTCFIAT, create=TRUE)
+            if (tblPos$current$available < current$feeIn)
+                YATATools::LOGICAL("Insufficient FIAT available to pay comission (receiving")
+        }
+
+        tblPos$select(camera = current$from, currency = current$currency)
+        current$price = tblPos$current$net
+
+        if (current$amount > tblPos$current$available)
+            YATATools::LOGICAL("Insufficient available to transfer")
+
+        id = factory$getID() # ID Transfer
 
         tryCatch({
            db$begin()
-           # Grabar Transferencia
+
+           # Camara de salida
+           tblPos$set(balance   = tblPos$current$balance   - current$amount)
+           tblPos$set(available = tblPos$current$available - current$amount)
+           tblPos$apply()
+
+           # Camara de entrada
+           tblPos$select(camera = current$to, currency = current$currency, create = TRUE)
+           tblPos$set(balance   = tblPos$current$balance   + current$amount)
+           tblPos$set(available = tblPos$current$available + current$amount)
+
+           # Ajustar net
+           tblPos$set(net = current$price)
+           if (tblPos$current$net != 0) {
+               nuevoNet = tblPos$current$balance * tblPos$current$net
+               nuevoNet = nuevoNet + (current$amount * current$price)
+               nuevoNet = nuevoNet / (tblPos$current$balance + current$amount)
+               tblPos$set(net = nuevoNet)
+           }
+           tblPos$apply()
+
+           # Transferencia
            tblXfer = factory$getTable("Transfers")
+           xfer    = list(id=id, cameraOut=current$from,    cameraIn=current$to
+                               , currency=current$currency, amount=current$amount
+                               , date=current$date,         price = current$price)
+           tblXfer$add(xfer)
 
-           tblXfer$add(self$current)
+           # Flujos
+           flow = list( type     = YATACODE$flow$xferIn
+                       ,camera   = current$to,     currency = current$currency
+                       ,amount   = current$amount, price    = current$price
+                       ,date     = current$date,   idOper   = id
+                      )
+           addFlow(flow)
 
-           # Actualizar posicion
-           objPos$transfer(self$current)
+           flow$type   = YATACODE$flow$xferOut
+           flow$camera = current$from
+           flow$amount = current$amount * -1
+           addFlow(flow)
 
-           # Grabar flujos para que el saldo pueda calcularse desde los flujos
-           flow = list(
-                idOper   = current$id
-               ,idFlow   = factory$getID()
-               ,type     = YATACODE$flow$xferOut
-               ,currency = current$currency
-               ,amount   = current$amount * -1
-               ,price    = current$value
-           )
-           tblFlows$add(flow)
+           # Comisiones
+           flow$type     = YATACODE$flow$fee
+           flow$currency = YATACODE$CTCFIAT
+           flow$price    = 1
 
-           flow$idFlow = factory$getID()
-           flow$type   = YATACODE$flow$xferIn
-           flow$amount = current$amount
-           tblFlows$add(flow)
+           if (current$feeIn > 0) {
+               flow$camera   = current$to
+               flow$amount   = current$feeIn * -1
+               addFlow(flow)
+               tblPos$select(camera = current$to, currency = YATACODE$CTCFIAT, create = TRUE)
+               tblPos$set(balance   = tblPos$current$balance   - current$feeIn)
+               tblPos$set(available = tblPos$current$available - current$feeIn)
+               tblPos$apply()
+           }
 
            if (current$feeOut > 0) {
-               flow$idFlow = factory$getID()
-               flow$type   = YATACODE$flow$fee
-               flow$amount = current$feeOut * -1
-               tblFlows$add(flow)
+               flow$camera   = current$from
+               flow$amount   = current$feeOut * -1
+               addFlow(flow)
+               tblPos$select(camera = current$from, currency = YATACODE$CTCFIAT, create = TRUE)
+               tblPos$set(balance   = tblPos$current$balance   - current$feeOut)
+               tblPos$set(available = tblPos$current$available - current$feeOut)
+               tblPos$apply()
            }
-           if (current$feeIn > 0) {
-               flow$idFlow = factory$getID()
-               flow$type   = YATACODE$flow$fee
-               flow$amount = current$feeIn * -1
-               tblFlows$add(flow)
-           }
-
            db$commit()
-           current$id
-        },error = function(cond) {
-           browser()
+           id
+        }, error = function(cond) {
            db$rollback()
            YATATools::propagateError(cond)
            0
         })
-      }
+     }
+     ,operBuy      = function(...) {
+         self$current = args2list(...)
+         self$current = fillFields(current)
+
+        if (is.null(current$fee))  self$current$fee  = 0
+
+        # Validate DATA
+        total = (current$amount * current$price) + current$fee
+        tblPos = factory$getTable("Position")
+        tblPos$select(camera = current$camera, currency = YATACODE$CTCFIAT, create = TRUE)
+        if (current$available < total) YATATools::LOGICAL("Insufficient available for operation")
+
+        tryCatch({
+           db$begin()
+
+           # Comision
+           tblPos$set(balance   = tblPos$current$balance   - current$fee)
+           tblPos$set(available = tblPos$current$available - current$fee)
+           tblPos$apply()
+
+           tblPos$select(camera = current$camera, currency = current$counter, create = TRUE)
+
+           # Calcula neto
+           newNet = tblPos$current$balance * tblPos$current$net
+           newNet = newNet + (current$amount * current$price)
+           newNet = newNet / (tblPos$current$balance + current$amount)
+           ###################### JGG AQUI
+        if (current$available < total) YATATools::LOGICAL("Insufficient available for operation")
+
+
+     }
      ,addOper   = function(type, ...) {
         self$current        = args2list(...)
         self$current$type   = type
@@ -665,74 +718,69 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       }
 
       ,cashExternal = function (data) {
-          amount = data$amount
-          if (is.null(data$to)) amount = amount * -1
+          # Recibe/Envia FIAT desde el exterior
+          tblPos = factory$getTable("Position")
+          tblPos$select(camera = YATACODE$CAMFIAT, currency = YATACODE$CTCFIAT)
+          if (data$from == YATACODE$CAMFIAT) {
+              total = data$amount + data$feeOut
+              if (total > tblPos$current$available) YATATools::LOGICAL("Insufficient FIAT available")
+          }
+
+          if (data$from == YATACODE$CAMEXT) { # Ingreso
+              fee   = data$feeIn
+              total = data$amount - fee
+          } else { # Reintegro
+              fee = data$feeOut
+              total = (data$amount + fee) * -1
+          }
+
           tryCatch({
              db$begin()
              id = factory$getID()
-             tblPos        = factory$getTable("Position")
-             tblPos$select(camera = "CASH")
-             tblPos$set(balance   = tblPos$current$balance   + amount)
-             tblPos$set(available = tblPos$current$available + amount)
-             tblPos$set(net = 1)
-             tblPos$apply()
-
-             tblXfer = factory$getTable("Transfers")
-             data = list(id=id, cameraOut="CASH", cameraIn="CASH", currency=0, amount=amount)
-             tblXfer$add(data)
-             db$commit()
-             id
-          },error = function(cond) {
-            db$rollback()
-            YATATools::propagateError(cond)
-            0
-          })
-      }
-     ,cashSend = function (data) {
-         # Envia CASH de CASH a otra camara
-         objPos = factory$getObject("Position")
-         objPos$getPosition(camera="CASH", currency=0)
-         total = data$amount + data$feeOut
-         if (total > objPos$current$available) YATATools::LOGICAL("Insufficient FIAT available")
-
-         tryCatch({
-
-             db$begin()
-             id = factory$getID()
-             tblPos        = factory$getTable("Position")
-             # Actualiza posicion de CASH
-             tblPos$select(camera = "CASH")
-             if (tblPos$current$sell_high < data$amount) tblPos$set(sell_high = data$amount)
-             if (tblPos$current$sell_low == 0 ||  tblPos$current$sell_low > data$amount)
-                 tblPos$set(sell_low = data$amount)
-             tblPos$set(sell_last = data$amount)
-             tblPos$set(sell_net  = 1)
-             tblPos$set(net       = 1)
-             tblPos$set(balance   = tblPos$current$balance   - total)
-             tblPos$set(available = tblPos$current$available - total)
-
-             tblPos$apply()
-
-             # Actualiza posicion camara destino
-             total = data$amount - data$feeIn
-             tblPos$select(camera = data$to, currency=0, create=TRUE)
-             if (tblPos$current$buy_high < data$amount) tblPos$set(buy_high = data$amount)
-             if (tblPos$current$buy_low == 0 ||  tblPos$current$buy_low > data$amount)
-                 tblPos$set(buy_low = data$amount)
-             tblPos$set(buy_last = data$amount)
-             tblPos$set(buy_net  = 1)
-             tblPos$set(net      = 1)
              tblPos$set(balance   = tblPos$current$balance   + total)
              tblPos$set(available = tblPos$current$available + total)
+             tblPos$set(net = 1)
+             if (data$from == YATACODE$CAMEXT) {
+                 tblPos$set(buy_last = data$amount)
+                 tblPos$set(buy_net = 1)
+                 tblPos$set(buy    = tblPos$current$buy + data$amount)
+                 if (tblPos$current$buy_high < data$amount) tblPos$set(buy_high = data$amount)
+                 if (tblPos$current$buy_low <= 0 || tblPos$current$buy_low > data$amount)
+                     tblPos$set(buy_low = data$amount)
+             } else {
+                 tblPos$set(sell_last = data$amount)
+                 tblPos$set(sell_net  = 1)
+                 tblPos$set(sell     = tblPos$current$sell + data$amount)
+                 if (tblPos$current$sell_high < data$amount) tblPos$set(sell_high = data$amount)
+                 if (tblPos$current$sell_low <= 0 || tblPos$current$sell_low > data$amount)
+                     tblPos$set(sell_low = data$amount)
+             }
              tblPos$apply()
 
-             # Graba transferencia
              tblXfer = factory$getTable("Transfers")
-             tblXfer$add(list(id = id, cameraOut=data$to, cameraIn=data$from, currency=0,amount=data$amount))
+             xfer    = list(id=id, cameraOut=data$from,       cameraIn=data$to
+                                 , currency=YATACODE$CTCFIAT, amount=data$amount
+                                 , date=data$date, price = data$price)
+             tblXfer$add(xfer)
 
-             # Graba comision
-             if (data$feeIn  > 0) addFlow(YATACODE$flow$fee, id, data$to,   0, data$feeIn  * -1, 1)
-             if (data$feeOut > 0) addFlow(YATACODE$flow$fee, id, data$from, 0, data$feeOut * -1, 1)
+             flow = list( type     = YATACODE$flow$xferIn
+                         ,camera   = YATACODE$CAMFIAT
+                         ,currency = YATACODE$CTCFIAT
+                         ,amount   = data$amount
+                         ,price    = 1
+                         ,date     = data$date
+                         ,idOper   = id
+                        )
+             if (data$to == YATACODE$CAMEXT) {
+                 flow$type   = YATACODE$flow$xferOut
+                 flow$amount = flow$amount * -1
+             }
+             addFlow(flow)
+             if (fee > 0) {
+                 flow$type = YATACODE$flow$fee
+                 flow$amount = fee * -1
+                 addFlow(flow)
+             }
 
              db$commit()
              id
@@ -742,45 +790,86 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             0
           })
       }
-     ,cashReceive = function (data) {
-         objPos = factory$getObject("Position")
-         objPos$getPosition(camera=data$from, currency=0)
-         total = data$amount + data$feeOut
-         if (total > objPos$current$available) YATATools::LOGICAL("Insufficient FIAT available")
+      ,cashFIAT     = function (data) {
+          # Recibe/Envia FIAT desde las camaras. No se actualiza BUY/SELL de FIAT
+          tblPos = factory$getTable("Position")
+          # Camara de salida
+          tblPos$select(camera = data$from, currency = data$currency)
+          total = data$amount + data$feeOut
+          if (total > tblPos$current$available) YATATools::LOGICAL("Insufficient available to transfer")
 
-         tryCatch({
+          id = factory$getID() # ID Transfer
+
+          tryCatch({
              db$begin()
-             id = factory$getID()
-             tblPos        = factory$getTable("Position")
-             # Actualiza posicion de camara
-             tblPos$select(camera = data$from, currency = 0)
 
-             profit = tblPos$current$available - tblPos$current$buy
-
+             # Camara de salida
              tblPos$set(balance   = tblPos$current$balance   - total)
              tblPos$set(available = tblPos$current$available - total)
+             if (data$from != YATACODE$CAMFIAT) {
+                 tblPos$set(net       = 1)
+                 tblPos$set(sell_last = data$amount)
+                 tblPos$set(sell_net  = 1)
+                 tblPos$set(sell      = tblPos$current$sell + data$amount)
+                 if (tblPos$current$sell_high < data$amount) tblPos$set(sell_high = data$amount)
+                 if (tblPos$current$sell_low <= 0 || tblPos$current$sell_low > data$amount)
+                     tblPos$set(sell_low = data$amount)
+             }
              tblPos$apply()
 
-             # Actualiza posicion de CASH
+             # Camara de entrada
+             tblPos$select(camera = data$to, currency = data$currency, create = TRUE)
              total = data$amount - data$feeIn
-             tblPos$select(camera = "CASH", currency = 0)
-             if (tblPos$current$buy_high < data$amount) tblPos$set(buy_high = data$amount)
-             if (tblPos$current$buy_low == 0 ||  tblPos$current$buy_low > data$amount)
-                 tblPos$set(buy_low = data$amount)
-             tblPos$set(buy_last  = data$amount)
-             tblPos$set(buy_net   = 1)
-             tblPos$set(profit    = tblPos$current$profit + profit)
-             tblPos$set(balance   = tblPos$current$balance + total)
+             tblPos$set(balance   = tblPos$current$balance   + total)
              tblPos$set(available = tblPos$current$available + total)
+             if(data$to != YATACODE$CAMFIAT) {
+                tblPos$set(net       = 1)
+                tblPos$set(buy_last  = data$amount)
+                tblPos$set(buy_net   = 1)
+                tblPos$set(buy       = tblPos$current$buy + data$amount)
+                if (tblPos$current$buy_high < data$amount) tblPos$set(buy_high = data$amount)
+                if (tblPos$current$buy_low <= 0 || tblPos$current$buy_low > data$amount)
+                    tblPos$set(buy_low = data$amount)
+             }
              tblPos$apply()
 
-             # Graba transferencia
+             # Transferencia
              tblXfer = factory$getTable("Transfers")
-             tblXfer$add(list(id = id, cameraOut=data$from, cameraIn=data$to, currency=0,amount=data$amount))
+             xfer    = list(id=id, cameraOut=data$from,    cameraIn=data$to
+                                 , currency=data$currency, amount=data$amount
+                                 , date=data$date,         price = data$price)
+             tblXfer$add(xfer)
 
-             # comisiones
-             if (data$feeOut > 0) addFlow(YATACODE$flow$fee, id, data$from, 0, data$feeOut * -1, 1)
-             if (data$feeIn  > 0) addFlow(YATACODE$flow$fee, id, data$to,   0, data$feeIn  * -1, 1)
+             # Flujos
+             flow = list( type     = YATACODE$flow$xferIn
+                         ,camera   = data$to
+                         ,currency = data$currency
+                         ,amount   = data$amount
+                         ,price    = data$price
+                         ,date     = data$date
+                         ,idOper   = id
+                        )
+             addFlow(flow)
+             flow$type   = YATACODE$flow$xferOut
+             flow$camera = data$from
+             flow$amount = data$amount * -1
+             addFlow(flow)
+
+             flow$type     = YATACODE$flow$fee
+             flow$currency = YATACODE$CTCFIAT
+             flow$price    = 1
+
+             if (data$feeIn > 0) {
+                 flow$camera   = data$to
+                 flow$amount   = data$feeIn * -1
+                 addFlow(flow)
+             }
+
+             if (data$feeOut > 0) {
+                 flow$camera   = data$from
+                 flow$amount   = data$feeOut * -1
+                 addFlow(flow)
+             }
              db$commit()
              id
           },error = function(cond) {
@@ -789,6 +878,17 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
             0
           })
       }
+     ,fillFields = function (current) {
+        if (is.null(current$price))  current$price  = 1
+        if (is.null(current$date))   current$date   = Sys.Date()
 
+        # Common validations
+
+        if (current$amount <= 0)          YATATools::LOGICAL("Invalid amount")
+        if (current$price  <= 0)          YATATools::LOGICAL("Invalid price")
+        if (current$date   >  Sys.Date()) YATATools::LOGICAL("Date oper must be today or earlier")
+
+        current
+     }
   )
 )

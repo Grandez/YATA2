@@ -192,6 +192,8 @@ CREATE TABLE TRANSFERS  (
    ,CAMERA_IN    VARCHAR(10)   NOT NULL  -- Clearing to
    ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
+   ,PRICE        DOUBLE        NOT NULL  -- Valor/Precio
+   ,DATEOPER     DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada
    ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,PRIMARY KEY ( ID )
 );
@@ -210,6 +212,7 @@ DROP TABLE  IF EXISTS FLOWS;
 CREATE TABLE FLOWS  (
     ID_OPER    INT UNSIGNED      NOT NULL -- Identificador de la operacion
    ,ID_FLOW    INT UNSIGNED      NOT NULL -- Identificador del flujo
+   ,DATEOPER   DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada
    ,TYPE       TINYINT       NOT NULL -- Tipo de flujo segun codigo
    ,CAMERA     VARCHAR(64)   NOT NULL -- Codigo de camara
    ,CURRENCY   VARCHAR(18)   NOT NULL -- Moneda
@@ -233,8 +236,8 @@ CREATE TABLE BLOG  (
 
 
 
-INSERT INTO CAMERAS   (CAMERA, NAME, ACTIVE) VALUES("CASH", "Control Camera", 0);
-INSERT INTO POSITION  (CAMERA, CURRENCY)     VALUES("CASH", 0);
+INSERT INTO CAMERAS   (CAMERA, NAME, ACTIVE) VALUES("FIAT", "Control Camera", 0);
+INSERT INTO POSITION  (CAMERA, CURRENCY)     VALUES("FIAT", 0);
 INSERT INTO CAMERAS   (CAMERA, NAME) VALUES("CI1", "Continuous Integration 1");
 INSERT INTO CAMERAS   (CAMERA, NAME) VALUES("CI2", "Continuous Integration 2");
 

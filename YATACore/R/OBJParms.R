@@ -1,6 +1,6 @@
 # Tabla de parametros
 # Maneja los parametros de sistema y de usuario
-#JGG PEND de crear la lista completa de friendly names
+# JGG PEND de crear la lista completa de friendly names
 OBJParms = R6::R6Class("OBJ.PARMS"
     ,cloneable  = FALSE
     ,lock_class = FALSE
