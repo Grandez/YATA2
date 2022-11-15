@@ -16,10 +16,11 @@
    .GlobalEnv$.YATACont = .GlobalEnv$.YATACont + 1
    # Restamos el epoch desde 2020-01-01
    epoch = as.integer(Sys.time()) - 1577836860
-   # Quitamos los digitos significativos (8 digitos)
-   epoch = (epoch %% 100000000)
+   # Quitamos los digitos significativos (7 digitos)
+   epoch = (epoch %% 10000000)
+   epoch = epoch * 100
    # total 9 digitos (unsigned int) con numero secuencial 0-9
-   epoch + (.GlobalEnv$.YATACont %% 10)
+   epoch + (.GlobalEnv$.YATACont %% 100)
 }
 
 getID    = function() { .getID() }

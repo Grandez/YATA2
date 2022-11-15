@@ -41,9 +41,9 @@ xfer_ext_in           = function (factory, camera)   {
        df = tbl$table(camera = YATACODE$CAMFIAT, currency = YATACODE$CTCFIAT)
        if (nrow(df) != 1)          stop("FIAT: Registros de posicion invalidos")
        tgt = list( balance   = 1000, available = 1000
-                  ,sell_high =     0, sell_low =    0, sell_last =    0, sell_net = 0
-                  ,buy_high  =  1000, buy_low  = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  1000, sell      =   0, net       =    1, profit   = 0)
+                  ,sell_high =    0, sell_low  =    0, sell_last =    0, sell_net = 0
+                  ,buy_high  = 1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
+                  ,buy       = 1000, sell      =    0, net       =    1, result   = 0)
        checkRecord("FIAT position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -83,7 +83,7 @@ xfer_ext_out          = function (factory, camera)   {
       tgt = list( balance   =     0, available =    0
                  ,sell_high =  1000, sell_low  = 1000, sell_last = 1000, sell_net = 1
                  ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                 ,buy       =  1000, sell      = 1000, net       =    1, profit   = 0)
+                 ,buy       =  1000, sell      = 1000, net       =    1, result   = 0)
        checkRecord("FIAT position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -124,7 +124,7 @@ xfer_ext_in_2         = function (factory, camera)   {
        tgt = list( balance   = 1000, available = 1000
                   ,sell_high =  1000, sell_low = 1000, sell_last = 1000, sell_net = 1
                   ,buy_high  =  1000, buy_low  = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  2000, sell     = 1000, net       =    1, profit   = 0)
+                  ,buy       =  2000, sell     = 1000, net       =    1, result   = 0)
        checkRecord("FIAT position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -181,7 +181,7 @@ xfer_out_comission    = function (factory, camera)   {
       tgt = list( balance   =     0, available =    0
                  ,sell_high =  1000, sell_low  =  900, sell_last =  900, sell_net = 1
                  ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                 ,buy       =  2000, sell      = 1900, net       =    1, profit   = 0)
+                 ,buy       =  2000, sell      = 1900, net       =    1, result   = 0)
        checkRecord("FIAT position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -228,7 +228,7 @@ xfer_cash_in          = function (factory, camera)   {
        tgt = list( balance   =     0, available =    0
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net = 0
                   ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  1000, sell      =    0, net       =    1, profit   = 0)
+                  ,buy       =  1000, sell      =    0, net       =    1, result   = 0)
        checkRecord("FIAT position", as.list(df[1,]), tgt)
 
        df = tbl$table(camera = data$to, currency = data$currency)
@@ -236,7 +236,7 @@ xfer_cash_in          = function (factory, camera)   {
        tgt = list( balance   =  1000, available = 1000
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net = 0
                   ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  1000, sell      =    0, net       =    1, profit   = 0)
+                  ,buy       =  1000, sell      =    0, net       =    1, result   = 0)
        checkRecord("CAMERA position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -283,7 +283,7 @@ xfer_cash_out         = function (factory, camera)   {
        tgt = list( balance   =     0, available =    0
                   ,sell_high =  1000, sell_low  = 1000, sell_last = 1000, sell_net = 1
                   ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  1000, sell      = 1000, net       =    1, profit   = 0)
+                  ,buy       =  1000, sell      = 1000, net       =    1, result   = 0)
        checkRecord("CAMERA position", as.list(df[1,]), tgt)
 
        df = tbl$table(camera = data$to, currency = data$currency)
@@ -291,7 +291,7 @@ xfer_cash_out         = function (factory, camera)   {
        tgt = list( balance   =  1000, available = 1000
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net = 0
                   ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  1000, sell      =    0, net       =    1, profit   = 0)
+                  ,buy       =  1000, sell      =    0, net       =    1, result   = 0)
        checkRecord("CAMERA position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -340,7 +340,7 @@ xfer_cash_comission   = function (factory, camera)   {
        tgt = list( balance   =   400, available =  400
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net = 0
                   ,buy_high  =  1000, buy_low   = 1000, buy_last  = 1000, buy_net  = 1
-                  ,buy       =  1000, sell      =    0, net       =    1, profit   = 0)
+                  ,buy       =  1000, sell      =    0, net       =    1, result   = 0)
        checkRecord("FIAT position", as.list(df[1,]), tgt)
        # Camera
        df = tbl$table(camera = data$to, currency = data$currency)
@@ -348,7 +348,7 @@ xfer_cash_comission   = function (factory, camera)   {
        tgt = list( balance   =  450, available = 450
                   ,sell_high =  1000, sell_low  = 1000, sell_last = 1000, sell_net = 1
                   ,buy_high  =  1000, buy_low   =  500, buy_last  =  500, buy_net  = 1
-                  ,buy       =  1500, sell      = 1000, net       =    1, profit   = 0)
+                  ,buy       =  1500, sell      = 1000, net       =    1, result   = 0)
        checkRecord("CAMERA position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -453,7 +453,7 @@ xfer_simple           = function (factory, from, to) {
        tgt = list( balance   =     5, available =    0
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net =   0
                   ,buy_high  =   100, buy_low   =  100, buy_last  =  100, buy_net  = 100
-                  ,buy       =    10, sell      =    0, net       =  100, profit   =   0)
+                  ,buy       =    10, sell      =    0, net       =  100, result   =   0)
        checkRecord("Camera from position", as.list(df[1,]), tgt)
 
        df = tbl$table(camera = data$to, currency = data$currency)
@@ -461,7 +461,7 @@ xfer_simple           = function (factory, from, to) {
        tgt = list( balance   =     5, available =    5
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net = 0
                   ,buy_high  =     0, buy_low   =    0, buy_last  =    0, buy_net  = 0
-                  ,buy       =     0, sell      =    0, net       =  100, profit   = 0)
+                  ,buy       =     0, sell      =    0, net       =  100, result   = 0)
        checkRecord("Camera to position", as.list(df[1,]), tgt)
 
        tbl = factory$getTable("Transfers")
@@ -508,7 +508,7 @@ xfer_restore          = function (factory, from, to) {
        tgt = list( balance   =     0, available =    0
                   ,sell_high =     0, sell_low  =    0, sell_last =    0, sell_net =   0
                   ,buy_high  =     0, buy_low   =    0, buy_last  =    0, buy_net  =   0
-                  ,buy       =     0, sell      =    0, net       =  100, profit   =   0)
+                  ,buy       =     0, sell      =    0, net       =  100, result   =   0)
        checkRecord("Camera from position", as.list(df[1,]), tgt)
 
        df = tbl$table(camera = data$to, currency = data$currency)

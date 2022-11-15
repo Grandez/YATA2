@@ -15,8 +15,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
       ##############################
      ,xfer  = function(...) { operXfer(...) }
         # ,open  = function(...) { add(YATACODE$oper$oper, ...) }
-     ,buy   = function(...) { add(YATACODE$oper$buy,  ...) }
-     ,sell  = function(...) { add(YATACODE$oper$sell, ...) }
+     ,buy   = function(...) { operBuy  (...) }
+     ,sell  = function(...) { operSell (...) }
         # ,bid   = function(...) { add(YATACODE$oper$bid,  ...) }
         # ,ask   = function(...) { add(YATACODE$oper$ask,  ...) }
         # ,split = function()   { error("Split no implementado todavia")}
@@ -355,13 +355,22 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
      ,addFlow        = function(data) {
          data$idFlow   = factory$getID()
          tblFlows$add(data)
-      }
+     }
+     ,addLog = function (current) {
+         tblLog = factory$getTable("OperLog")
+         if (current$reason != 0) {
+             data = list(idOper = current$id, idLog = factory$getID(), logType = 0, reason = current$reason)
+             tblLog$add(data)
+         }
+         if (!is.null(current$comment)) {
+             data = list(idOper = current$id, idLog = factory$getID(), logType = 0, reason = 0, comment = current$comment)
+             tblLog$add(data)
+         }
+     }
      ,operXfer     = function(...) {
         self$current = args2list(...)
         self$current = fillFields(current)
 
-        if (is.null(current$feeIn))  current$feeIn  = 0
-        if (is.null(current$feeOut)) current$feeOut = 0
 
         if (current$from == YATACODE$CAMEXT  || current$to == YATACODE$CAMEXT)
             return (cashExternal(current))
@@ -472,33 +481,161 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
          self$current = args2list(...)
          self$current = fillFields(current)
 
-        if (is.null(current$fee))  self$current$fee  = 0
-
         # Validate DATA
         total = (current$amount * current$price) + current$fee
         tblPos = factory$getTable("Position")
-        tblPos$select(camera = current$camera, currency = YATACODE$CTCFIAT, create = TRUE)
-        if (current$available < total) YATATools::LOGICAL("Insufficient available for operation")
+        tblPos$select(camera = current$camera, currency = current$base, create = TRUE)
+        if (tblPos$current$available < total) YATATools::LOGICAL("Insufficient available for operation")
 
         tryCatch({
            db$begin()
 
-           # Comision
-           tblPos$set(balance   = tblPos$current$balance   - current$fee)
-           tblPos$set(available = tblPos$current$available - current$fee)
+           tblPos$select(camera = current$camera, currency = current$counter, create = TRUE)
+
+           # Calculos
+           pbuy   = tblPos$current$buy * tblPos$current$buy_net
+           pope   = current$amount * current$price
+           buynet = (pbuy + pope) / (tblPos$current$buy + current$amount)
+
+           self$current$id = factory$getID()
+
+           tblPos$set(balance   = tblPos$current$balance   + current$amount)
+           tblPos$set(available = tblPos$current$available + current$amount)
+           tblPos$set(buy       = tblPos$current$buy       + current$amount)
+           tblPos$set(buy_last  = current$price)
+           tblPos$set(buy_net   = round(buynet,3))
+           if (tblPos$current$buy_high < current$price) tblPos$set(buy_high = current$price)
+           if (tblPos$current$buy_low == 0 || tblPos$current$buy_low > current$price)
+               tblPos$set(buy_low = current$price)
+           tblPos$apply()
+
+           tblPos$select(camera = current$camera, currency = current$base, create = TRUE)
+           value = current$amount * current$price
+           tblPos$set(balance   = tblPos$current$balance   - (value + current$fee))
+           tblPos$set(available = tblPos$current$available - (value + current$fee))
+           tblPos$apply()
+
+           # Operacion
+           tblOper = factory$getTable("Operations")
+           oper = list( id = current$id, type = YATACODE$oper$buy
+                       ,dateOper = current$dateOper, dateVal = current$dateVal
+                       ,camera   = current$camera,   base    = current$base, counter = current$counter
+                       ,amount   = current$amount,   price   = current$price
+                       ,value    = current$price * current$amount
+                       ,status   = YATACODE$status$executed
+               )
+           tblOper$add(oper)
+
+           addLog(current)
+
+           # Flujos
+           flow = list( type     = YATACODE$flow$output, camera = current$camera
+                       ,currency = current$base, amount   = current$amount * current$price * -1
+                       ,price    = 1,  date  = current$dateVal
+                       ,idOper   = current$id
+                      )
+           addFlow(flow)
+           if (current$fee > 0) {
+               flow$type   = YATACODE$flow$fee
+               flow$amount = current$fee * -1
+               addFlow(flow)
+           }
+
+           flow$type     = YATACODE$flow$input
+           flow$currency = current$counter
+           flow$amount   = current$amount
+           flow$price    = current$price
+           addFlow(flow)
+
+           db$commit()
+           current$id
+        }, error = function(cond) {
+           db$rollback()
+           YATATools::propagateError(cond)
+           0
+        })
+     }
+     ,operSell      = function(...) {
+         self$current = args2list(...)
+         self$current = fillFields(current)
+
+         tblPos = factory$getTable("Position")
+
+        tryCatch({
+           db$begin()
+
+           tblPos$select(camera = current$camera, currency = current$base)
+           if (tblPos$current$available < current$amount)
+               YATATools::LOGICAL("Insufficient available for operation")
+           result = calculateResult(self$current)
+           # Calculos
+           psell   = tblPos$current$sell * tblPos$current$sell_net
+           pope    = current$amount * current$price
+           sellnet = (psell + pope) / (tblPos$current$sell + current$amount)
+
+           self$current$id = factory$getID()
+
+           tblPos$set(balance   = tblPos$current$balance   - current$amount)
+           tblPos$set(available = tblPos$current$available - current$amount)
+           tblPos$set(sell      = tblPos$current$sell      + current$amount)
+           tblPos$set(sell_last = current$price)
+           tblPos$set(sell_net  = round(sellnet, 3))
+           tblPos$set(result    = tblPos$current$result + result)
+           if (tblPos$current$sell_high < current$price) tblPos$set(sell_high = current$price)
+           if (tblPos$current$sell_low == 0 || tblPos$current$sell_low > current$price)
+               tblPos$set(sell_low = current$price)
            tblPos$apply()
 
            tblPos$select(camera = current$camera, currency = current$counter, create = TRUE)
+           value = (current$amount * current$price) - current$fee
+           tblPos$set(balance   = tblPos$current$balance   + value)
+           tblPos$set(available = tblPos$current$available + value)
+           tblPos$set(result    = tblPos$current$result + result)
+           tblPos$apply()
 
-           # Calcula neto
-           newNet = tblPos$current$balance * tblPos$current$net
-           newNet = newNet + (current$amount * current$price)
-           newNet = newNet / (tblPos$current$balance + current$amount)
-           ###################### JGG AQUI
-        if (current$available < total) YATATools::LOGICAL("Insufficient available for operation")
+           # Operacion
+           tblOper = factory$getTable("Operations")
+           oper = list( id = current$id, type = YATACODE$oper$sell
+                       ,dateOper = current$dateOper, dateVal = current$dateVal
+                       ,camera   = current$camera,   base    = current$base, counter = current$counter
+                       ,amount   = current$amount,   price   = current$price
+                       ,value    = current$price * current$amount
+                       ,status   = YATACODE$status$executed
+                       ,result   = result
+                   )
+           tblOper$add(oper)
 
+           addLog(current)
 
+           # Flujos
+           flow = list( type     = YATACODE$flow$output, camera = current$camera
+                       ,currency = current$base, amount   = current$amount * -1
+                       ,price    = current$price,  date  = current$dateVal
+                       ,idOper   = current$id
+                      )
+           addFlow(flow)
+
+           flow$type     = YATACODE$flow$input
+           flow$currency = current$counter
+           flow$amount   = current$amount * current$price
+           flow$price    = 1
+           addFlow(flow)
+
+           if (current$fee > 0) {
+               flow$type   = YATACODE$flow$fee
+               flow$amount = current$fee * -1
+               addFlow(flow)
+           }
+
+           db$commit()
+           current$id
+        }, error = function(cond) {
+           db$rollback()
+           YATATools::propagateError(cond)
+           0
+        })
      }
+
      ,addOper   = function(type, ...) {
         self$current        = args2list(...)
         self$current$type   = type
@@ -879,8 +1016,19 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
           })
       }
      ,fillFields = function (current) {
-        if (is.null(current$price))  current$price  = 1
-        if (is.null(current$date))   current$date   = Sys.Date()
+        if (is.null(current$price))    current$price  = 1
+        if (is.null(current$date))     current$date   = Sys.Date()
+        if (is.null(current$feeIn))    current$feeIn  = 0
+        if (is.null(current$feeOut))   current$feeOut = 0
+        if (is.null(current$fee))      current$fee    = 0
+        if (is.null(current$reason))   current$reason = 0
+        if (is.null(current$dateOper)) current$dateOper = current$date
+        if (is.null(current$dateVal))  current$dateVal  = current$date
+
+        if (!is.null(current$comment)) {
+            current$comment = trimws(current$comment)
+            if (nchar(current$comment) == 0) current$comment = NULL
+        }
 
         # Common validations
 
@@ -890,5 +1038,52 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
 
         current
      }
+     ,calculateResult = function (current) {
+        tblOper = factory$getTable("Operations")
+        # Cogemos oepraciones donde este la crypto
+        df1 = tblOper$recordset( status = list(value=YATACODE$status$executed)
+                                ,active = list(value = 1)
+                                ,camera = list(value = current$camera)
+                                ,counter = list(value = current$base)
+                                ,dateVal = list(value = as.character(current$dateVal), op = "le")
+             )
+        df2 = tblOper$recordset( status = list(value=YATACODE$status$executed)
+                                ,active = list(value = 1)
+                                ,camera = list(value = current$camera)
+                                ,base   = list(value = current$base)
+                                ,dateVal = list(value = as.character(current$dateVal), op = "le")
+             )
+
+        # id esta basado en marcas de tiempo
+        df = rbind(df1, df2)
+        df = dplyr::arrange(df, desc(dateVal), desc(id))
+        cost = 0
+        others  = 0  # Otras ventas
+        pending = current$amount
+        for (idx in 1:nrow(df)) {
+            major = df[idx, "type"] %/% 10 # Obtener compra o venta
+            minor = df[idx, "type"] %%  10 # Obtener compra o venta
+            if (major > 3) next
+            if (minor == YATACODE$oper$opSell) {
+                others = others + df[idx, "amount"]
+                next
+            }
+            if (df[idx, "amount"] <= others) { # Quitar las otras ventas
+                others = others - df[idx, "amount"]
+                next
+            }
+            if (others > 0) {
+                vol = df[idx, "amount"] - others
+                others = 0
+            } else {
+                vol = df[idx, "amount"]
+            }
+            cant = ifelse (pending >= vol, vol, pending)
+            cost = cost + (cant * df[idx, "price"])
+            pending = pending - cant
+            if (pending <= 0) break
+        }
+        (current$amount * current$price) - cost
+    }
   )
 )

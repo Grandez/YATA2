@@ -29,6 +29,8 @@ TBLOperations   = R6::R6Class("TBL.OPERATIONS"
           ,key = c("id")
           ,fields = list(
               id       = "ID_OPER"
+             ,dateOper = "DATEOPER"
+             ,dateVal  = "DATEVAL"
              ,type     = "TYPE"
              ,camera   = "CAMERA"
              ,base     = "BASE"
@@ -41,6 +43,7 @@ TBLOperations   = R6::R6Class("TBL.OPERATIONS"
              ,parent   = "PARENT"
              ,tms      = "TMS"
              ,tmsLast  = "TMS_LAST"
+             ,result   = "RESULT"
             )
      )
 )

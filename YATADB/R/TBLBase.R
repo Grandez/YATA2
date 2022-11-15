@@ -311,7 +311,7 @@ YATATable = R6::R6Class("YATA.TABLE"
               insert(data, isolated)
           }, SQL = function (cond) {
               browser()
-              if (!db$SQLDuplicated(cond)) propagateError(cond)
+              if (!db$SQLDuplicated(cond)) YATATools::propagateError(cond)
               self$select(private$key)
               self$set(data)
               self$apply()

@@ -7,11 +7,12 @@ YATACODE = list(
     ,flag = list(inactive=0, active=1, parent=2)
      # Code: x0 - Buy (Entra), x1 - Sell (Sale)
      #       1x - Proposal     2x - Real  3x - posicion
-    ,oper = list( bid   = 10, ask   = 11
-                 ,buy   = 20, sell  = 21
-                 ,open  = 30, close = 31
-                 ,xfer  = 40, reg   = 41
-                 ,split = 50, net   = 51
+    ,oper = list( bid   = 10, ask    = 11
+                 ,buy   = 20, sell   = 21
+                 ,open  = 30, close  = 31
+                 ,xfer  = 40, reg    = 41
+                 ,split = 50, net    = 51
+                 ,opBuy =  0, opSell =  1
                  )
 
     ,flow = list( pending = 0

@@ -42,7 +42,9 @@ CREATE TABLE POSITION  (
    ,BUY         DOUBLE      DEFAULT 0.0  -- Cantdad Comprada
    ,SELL        DOUBLE      DEFAULT 0.0  -- Cantidad Vendida
    ,NET         DOUBLE      DEFAULT 0.0  -- Valor neutro (punto en el que el beneficio es cero)
-   ,PROFIT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
+   ,RESULT      DOUBLE      DEFAULT 0.0  -- Beneficio/Perdida desde la ultima regularizacion
+   ,SINCE          DATE                COMMENT 'FECHA DE CREACION'
+   ,REGULARIZATION DATE   DEFAULT "2000-01-01"   
    ,TMS         TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP  -- Momento desde el que se calcula
    ,LAST        TIMESTAMP   DEFAULT   CURRENT_TIMESTAMP 
                             ON UPDATE CURRENT_TIMESTAMP  -- Ultima actualizacion
@@ -123,6 +125,8 @@ CREATE TABLE REGULARIZATION  (
 DROP TABLE  IF EXISTS OPERATIONS;
 CREATE TABLE OPERATIONS  (
     ID_OPER      INT UNSIGNED      NOT NULL -- Identificador de la operacion
+   ,DATEOPER     DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada          
+   ,DATEVAL      DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada             
    ,TYPE         TINYINT       NOT NULL  -- Compra o Venta    
    ,CAMERA       VARCHAR(64)   NOT NULL  -- Clearing House
    ,BASE         INT UNSIGNED  NOT NULL  -- From currency
@@ -130,6 +134,7 @@ CREATE TABLE OPERATIONS  (
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad que sale
    ,VALUE        DOUBLE        DEFAULT 0 -- Valor de la operacion
    ,PRICE        DOUBLE        NOT NULL  -- Precio unitario
+   ,RESULT       DOUBLE        DEFAULT 0 -- Resultado de la operacion   
    ,ACTIVE       TINYINT       DEFAULT 1 -- Flag activa/inactiva
    ,STATUS       TINYINT       DEFAULT 0 -- Estado de la operacion
    ,PARENT       INT UNSIGNED      DEFAULT 0 -- Padre de la operacion si se ha spliteado/neteado     
