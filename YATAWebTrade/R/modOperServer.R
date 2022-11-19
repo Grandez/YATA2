@@ -32,8 +32,9 @@ PNLOper = R6::R6Class("YATA.TRADE.PNL.OPER"
          # Si currency es FIAT es una compra
          df = private$position$getByCurrency(currency, available = TRUE)
          if (nrow(df) == 0) return (NULL)
-         data = private$cameras$getForCombo(cameras=df$camera)
-         private$makeCombo(data)
+         cams = private$cameras$getCameras()
+         data = cams[cams$camera %in% df$camera,]
+         private$makeCombo(data[,1:2])
      }
 #
 #      ,cboReasons   = function(type) { private$makeCombo(self$operations$getReasons(type)) }
@@ -44,14 +45,11 @@ PNLOper = R6::R6Class("YATA.TRADE.PNL.OPER"
 #      ,getCurrenciesBuy  = function() {
 #          self$currencies$getCurrencyNames()
 #        }
-#      ,getCurrenciesSell = function() {
-#           data = self$position$getCurrencies(available = TRUE)
-#           if (length(data) == 0) return (NULL)
-#           idx = which(data == self$factory$fiat)
-#           if (length(idx) > 0) data = data[-idx]
-#           if (length(data) == 0) return (NULL)
-#           self$currencies$getCurrencyNames(data)
-#      }
+     ,getCurrenciesSell = function() {
+          data = private$position$getCurrencies(available = TRUE)
+          if (length(data) == 0) return (NULL)
+          WEB$combo$currencies(data)
+     }
 #      ,cboCurrency  = function(camera, available) {
 #          message("ESTO SE USA")
 #          browser()

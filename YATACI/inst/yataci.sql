@@ -125,8 +125,7 @@ CREATE TABLE REGULARIZATION  (
 --
 -- ------------------------------------------------------------------
 
--- En principio las operaciones deben empezar en una compra
--- luego acabar con una venta
+-- En principio las operaciones deben empezar en una compra y acabar en venta
 -- Pero se podria splitear, es decir, compro 1000 y primero vendo 300, luego otras 300, etc
 DROP TABLE  IF EXISTS OPERATIONS;
 CREATE TABLE OPERATIONS  (
@@ -189,7 +188,6 @@ CREATE TABLE OPERATIONS_LOG  (
 );
 
 -- Tabla de transferencias entre camaras
--- Genera un flujo en una camara y otro en otro
 DROP TABLE  IF EXISTS TRANSFERS;
 CREATE TABLE TRANSFERS  (
     ID           INT UNSIGNED  NOT NULL -- Identificador de la operacion
@@ -199,6 +197,7 @@ CREATE TABLE TRANSFERS  (
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
    ,PRICE        DOUBLE        NOT NULL  -- Valor/Precio
    ,DATEOPER     DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada
+   ,DATEVAL      DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada
    ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
    ,PRIMARY KEY ( ID )
 );
@@ -206,18 +205,12 @@ CREATE TABLE TRANSFERS  (
 -- Flujos
 -- Cada operacion lleva asociado una serie de flujos:
 -- La compra, la comision, las tasas
--- La venta, comisiones, etc.
--- Type:
---   0 - Compra
---   1 - Venta
---   2 - Comision
---   3 - Tasa
---   ...
 DROP TABLE  IF EXISTS FLOWS;
 CREATE TABLE FLOWS  (
     ID_OPER    INT UNSIGNED      NOT NULL -- Identificador de la operacion
    ,ID_FLOW    INT UNSIGNED      NOT NULL -- Identificador del flujo
    ,DATEOPER   DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada
+   ,DATEVAL    DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada
    ,TYPE       TINYINT       NOT NULL -- Tipo de flujo segun codigo
    ,CAMERA     VARCHAR(64)   NOT NULL -- Codigo de camara
    ,CURRENCY   VARCHAR(18)   NOT NULL -- Moneda

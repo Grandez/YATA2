@@ -9,12 +9,32 @@ YATACODE = list(
      #       1x - Proposal     2x - Real  3x - posicion
     ,oper = list( bid   = 10, ask    = 11
                  ,buy   = 20, sell   = 21
-                 ,open  = 30, close  = 31
+                 #,open  = 30, close  = 31
                  ,xfer  = 40, reg    = 41
                  ,split = 50, net    = 51
                  ,opBuy =  0, opSell =  1
                  )
-
+    # Codigos para la razon de la operacion
+    # El numero mayor indica a que aplica de acuerdo con el codigo de operacion
+    # 0 - Todo
+    # 1x/2x - Compras en general
+    # 3x/4x - Ventas en general
+    # 9x    - Fallos o rechazos
+    # Los literales van el la tabla de mensajes. Clave 33
+    ,reasons = list(
+       none        =     0
+      ,other       =     1
+      ,up          =    11
+      ,suggest     =    12
+      ,top         =    13
+      ,down        =    31
+      ,target      =    32
+      ,limit       =    33
+      ,change      =    41
+      ,cancel      =    90
+      ,reject      =    91
+      ,fail        =    99
+    )
     ,flow = list( pending = 0
                  ,input   = 20, regInput  = 21
                  ,output  = 30, regOutput = 32
@@ -43,7 +63,7 @@ YATACODE = list(
        ,mnuOper   =  22
        ,PnlError  =  29
        ,opecodes  =  31
-       ,operation =  32
+       ,oper      =  32
        ,reasons   =  33
     )
     #JGG A revisar

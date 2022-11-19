@@ -12,17 +12,19 @@ OBJPosition = R6::R6Class("OBJ.POSITION"
        ,getCameras = function() {
           df = tblPosition$getCameras()
           df[df$balance != 0,]
-          as.list(df[df$camera != "CASH",1])
+          as.list(df[df$camera != YATACODE$CAMFIAT,1])
        }
        ,getCurrencies = function(balance = FALSE, available= FALSE) {
            df = tblPosition$table()
+           df = df[df$currency != YATACODE$CTCFIAT,]
            if (balance)   df = df[df$balance   > 0,]
            if (available) df = df[df$available > 0,]
            unique(df$currency)
        }
        ,getByCurrency = function(currency, balance=FALSE, available=FALSE) {
            df = tblPosition$table(currency = currency)
-#           df = df[df$camera != factory$camera,]
+           # Quitar la camara FIAT
+           df = df[df$camera != YATACODE$CAMFIAT,]
            if (balance)   df = df[df$balance  > 0,]
            if (available) df = df[df$available > 0,]
            df

@@ -89,6 +89,9 @@ OBJParms = R6::R6Class("OBJ.PARMS"
         #     tblConfig$update(lst(value=value), group=1, subgroup=2, id=4, isolated=isolated)
         #     invisible (self)
         # }
+        ,getLabelsCoded = function (group) {
+            objMsg$getBlockAsDF(YATACODE$labels[[group]])
+        }
         ################################################
         ### User - Group 5 - Carteras/portfolios
         ################################################
@@ -132,8 +135,10 @@ OBJParms = R6::R6Class("OBJ.PARMS"
             data
          }
         ,getBlock    = function(group, subgroup) {
+            # Coge label y key: Codigo numerico y etiqueta
             df = tblParms$table(group=group, subgroup=subgroup)
             dfr = data.frame(block=unique(df$block))
+            # Combina en block, label, key
             keys = unique(df$name)
             for (idx in 1:length(keys)) dfr = cbind(dfr, df[df$name == keys[idx],"value"])
             colnames(dfr) = c("block", keys)

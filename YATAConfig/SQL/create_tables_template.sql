@@ -192,8 +192,9 @@ CREATE TABLE TRANSFERS  (
    ,CURRENCY     VARCHAR(10)   NOT NULL  -- Currency
    ,AMOUNT       DOUBLE        NOT NULL  -- Cantidad
    ,PRICE        DOUBLE        NOT NULL  -- Valor
-   ,DATEOPER     DATE          DEFAULT CURRENT_DATE           -- Fecha de entrada      
-   ,TMS          TIMESTAMP     DEFAULT   CURRENT_TIMESTAMP           -- Fecha de entrada
+   ,DATEOPER     DATE          DEFAULT CURRENT_DATE       COMMENT 'Fecha de operacion'
+   ,DATEVAL      DATE          DEFAULT CURRENT_DATE       COMMENT 'Fecha de valor'
+   ,TMS          TIMESTAMP     DEFAULT CURRENT_TIMESTAMP           -- Fecha de entrada
    
    ,PRIMARY KEY ( ID )
 );

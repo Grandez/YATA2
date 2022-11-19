@@ -12,7 +12,7 @@ start = function(port=4000, logLevel = 9, logOutput = 2) {
 
 
     rc = tryCatch({
-        message("Statig Backend")
+        message("Starting Backend")
         app = YATARest$new(port, logLevel, logOuput)
         app$append_middleware(logging_middleware)
         backend = BackendRserve$new()

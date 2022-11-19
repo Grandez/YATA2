@@ -11,6 +11,7 @@ OBJCameras = R6::R6Class("OBJ.CAMERAS"
            super$initialize(factory)
            private$tblCameras   = factory$getTable("Cameras")
            private$cameras      = private$tblCameras$table()
+           private$cameras = private$cameras[private$cameras$camera != YATACODE$CAMFIAT,]
 #           private$tblExchanges = factory$getTable(self$codes$tables$exchanges)
 #           private$icons        = factory$getClass("Icons")
        }

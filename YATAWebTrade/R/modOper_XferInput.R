@@ -18,11 +18,14 @@ modOperXferInput = function(id, title = "") {
                           , guiColumn(1)
                           , guiColumn(1, yuiLabelBold(ns("lblTo")))
     )
+   ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$DATE))
+                          , guiColumn(2, guiDateInput(ns("dtDate"))))
+
    ,fluidRow( guiColumn(2), guiColumn(1, h4(lbl$AMOUNT))
                           , guiColumn(2, guiNumericInput(ns("impAmount"), NULL, value = 0)))
-   ,fluidRow( guiColumn(2), guiColumn(1, h4("Comision salida"))
+   ,fluidRow( guiColumn(2), guiColumn(1, h4("Com. envio"))
                           , guiColumn(2, guiNumericInput(ns("impFeeOut"), NULL, value = 0)))
-   ,fluidRow( guiColumn(2), guiColumn(1, h4("Comision entrada"))
+   ,fluidRow( guiColumn(2), guiColumn(1, h4("Com. recepcion"))
                           , guiColumn(2, guiNumericInput(ns("impFeeIn"), NULL, value = 0)))
 
    ,yuiYesNo(id=ns("tpl"), "Transferir", "Cancelar", left=3, width=2)

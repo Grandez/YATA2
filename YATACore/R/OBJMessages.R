@@ -29,7 +29,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
           if (is.null(txt))  txt = code
           if (!is.null(txt)) txt = sprintf(txt, ...)
           txt
-       }
+      }
       ,getWords = function()          { getBlockData(1) } # Esto viene de codes
       ,getBlock = function(block, inverted=FALSE) {
           lst = getBlockData(block)
@@ -52,6 +52,10 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
       ,getBlockAsVector = function(block) {
           df = tblMsg$table(block = block)
           c(df$msg)
+      }
+      ,getBlockAsDF = function(block) {
+          df = tblMsg$table(block = block)
+          df[,c("code", "msg")]
       }
       ,tooltip  = function(code)  {
           data = tblMsg$getItem(block = 99, code = paste("POPUP", code, sep="."))
@@ -80,7 +84,7 @@ OBJMessages = R6::R6Class("OBJ.MESSAGES"
            if (!(label %in% names(cacheBlock))) {
                df = tblMsg$getBlock(block, lang, region)
                df$code = as.character(sub("([A-Z0-9]+\\.)+", "", df$code, ignore.case = TRUE))
-               lst = as.list(df$value)
+               lst = as.list(df$msg)
                names(lst) = df$code
                private$cacheBlock[[label]] = lst
            }

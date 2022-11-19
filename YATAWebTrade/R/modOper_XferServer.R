@@ -1,157 +1,136 @@
 modOperXferServer = function(id, parent, session) {
 ns = NS(id)
-#ns2 = NS(full)
 PNLOperXfer = R6::R6Class("PNL.OPER.XFER"
   ,inherit    = JGGPanel
   ,cloneable  = FALSE
   ,portable   = TRUE
   ,lock_class = TRUE
   ,public = list(
-           initialize    = function(id, parent, session) {
-               super$initialize(id, parent, session)
-          #      private$position   = self$factory$getObject(self$codes$object$position)
-          #      private$cameras    = self$factory$getObject(self$codes$object$cameras)
-          #      private$operations = self$factory$getObject(self$codes$object$operation)
-             }
-          #  ,update = function(){
-          #      private$dfPos = private$position$getGlobalPosition()
-          #  }
-          #  ,cboAllCameras   = function(exclude) {
-          #     data = private$cameras$getAllCameras()
-          #     if (!missing(exclude)) data = data[!data$camera %in% exclude,]
-          #     data = data[,c("camera", "desc")]
-          #     colnames(data) = c("id", "name")
-          #     self$parent$makeCombo(data)
-          #  }
-          #  ,cboCurrencies = function() {
-          #      df = private$dfPos
-          #      df = df[df$available > 0, ]
-          #      ctc = df$currency
-          #      data = WEB$combo$currencies(id=FALSE, set = ctc)
-          #      JGGTools::jgg_list_merge(list("FIAT"="__FIAT__"), data)
-          #  }
-          # ,cboFrom = function(ctc) {
-          #     df = private$position$getByCurrency(ctc)
-          #     data = df$camera
-          #     if (ctc == "__FIAT__") data = c("CASH", data)
-          #     names(data) = data
-          #     data
-          # }
-          # ,cboTo = function(camera, currency) {
-          #     df = private$cameras$getAllCameras()
-          #     df = df[df$camera != camera,]
-          #     data = df$camera
-          #     names(data) = paste(df$camera, df$desc, sep = " - ")
-          #     if (currency == "__FIAT__") data = c("CASH" = "CASH", data)
-          #     data
-          # }
-  )
-       ,private = list(
-           #  cameras    = NULL
-           # ,operations = NULL
-           # ,position   = NULL
-           # ,dfPos      = NULL
-        )
+      initialize    = function(id, parent, session) {
+         super$initialize(id, parent, session)
+         private$objPos = self$factory$getObject("Position")
+         private$objCam = self$factory$getObject("Cameras")
+         private$objOpe = self$factory$getObject("Operation")
+         private$dfPos  = private$objPos$getFullPosition()
+         private$dfCam  = private$objCam$getCameras()
+      }
+     ,cboCurrencies = function ()       {
+         df = private$dfPos
+         df = df[df$available > 0,]
+         if (nrow(df) == 0) return()
 
-  # ,public = list(
-  #     available  = 0
-  #    ,balance    = 0
-  #    ,initialize = function(id, pnlParent, session) {
-  #        super$initialize(id, pnlParent, session)
-  #        objs = self$codes$object
-  #        private$objPos   = self$factory$getObject(objs$position)
-  #        private$objCam   = self$factory$getObject(objs$cameras)
-  #        private$oper     = self$factory$getObject(objs$operation)
-  #        private$cameras  = private$objCam$getAllCameras()
-  #     }
-  #    ,loadPosition   = function ()       {
-  #        private$position = private$objPos$getFullPosition()
-  #     }
-  #    ,cboCamerasFrom = function ()       {
-  #        dfp = private$position[private$position$available > 0, ]
-  #        WEB$combo$cameras(set=unique(dfp$camera))
-  #     }
-  #    ,cboCurrencies = function (fromcam) {
-  #        df = private$position %>% filter(camera == fromcam & available > 0)
-  #        WEB$combo$currencies(id=FALSE, set = df$currency)
-  #     }
-  #    ,getAvailable = function (fromcam, ctc) {
-  #        df = private$position %>% filter(camera == fromcam & currency == ctc)
-  #        df[1,"available"]
-  #     }
-  #    ,transfer = function (from, to, amount, currency) {
-  #        tryCatch({
-  #           private$oper$xfer(from=from, to=to, amount=amount, currency=currency)
-  #           FALSE
-  #        }, error = function(e) {
-  #           TRUE
-  #        })
-  #    }
-  # )
-  # ,private = list(
-  #     objPos   = NULL
-  #    ,objCam   = NULL
-  #    ,oper     = NULL
-  #    ,position = NULL
-  #    ,cameras  = NULL
-  # )
+         ctc   = unique(df$currency)
+         dfCTC = WEB$getCurrencyNames(ctc)
+         if (nrow(dfCTC[dfCTC$id == YATACODE$CTCFIAT,]) == 0) {
+             dfCTC = rbind(data.frame(id=YATACODE$CTCFIAT, symbol="FIAT", name="Euro"), dfCTC)
+         }
+         lst = as.list(dfCTC$id)
+         names(lst) = dfCTC$name
+         lst
+      }
+     ,cboCameraFrom = function (ctc)       {
+         dfc = data.frame(camera=YATACODE$CAMEXT, name=YATACODE$CAMEXT)
+         df = private$dfPos
+         df = df[df$currency == ctc & df$available > 0,]
+         if (nrow(df) > 0) {
+             cams = unique(df$camera)
+             df = private$dfCam[private$dfCam$camera %in% cams,]
+             dfc = rbind(dfc, df[,c("camera", "name")])
+         }
+         if (ctc != YATACODE$CTCFIAT) {
+             dfc = dfc[-1,]                              # Quitar camara exterior
+             #dfc = dfc[dfc$camera != YATACODE$CAMFIAT, ] # Quitar camara control
+         }
+         lst = as.list(dfc$camera)
+         names(lst) = dfc$name
+         lst
+      }
+     ,cboCameraTo   = function (camera)       {
+         if (camera == YATACODE$CAMEXT) {
+             dfc = private$dfCam[private$dfCam$camera == YATACODE$CAMFIAT,]
+             dfc = dfc[,c("camera", "name")]
+         } else {
+             dfc = private$dfCam[private$dfCam$active == 1,]
+             dfc = dfc[dfc$camera != camera,]
+             if (self$vars$currency != YATACODE$CTCFIAT)
+                 dfc = dfc[dfc$camera != YATACODE$CAMFIAT,]
+         }
+         lst = as.list(dfc$camera)
+         names(lst) = dfc$name
+         lst
+      }
+     ,transfer      = function (data) {
+         tryCatch({
+            private$objOpe$xfer(data)
+            NULL
+         }, LOGICAL = function (cond) {
+            cond$message
+         }, error = function(cond) {
+            cond$message
+         })
+     }
+  )
+  ,private = list(
+      objCam  = NULL
+     ,objPos  = NULL
+     ,objOpe  = NULL
+     ,dfPos   = NULL
+     ,dfCam   = NULL
+#     ,rest    = NULL
+   )
 )
 
 moduleServer(id, function(input, output, session) {
-    browser()
    pnl = WEB$getPanel(id, PNLOperXfer, parent, session)
+   validate = function() {
+       if (is.null(input$cboTo)) {
+           output$msg  = updLabelText(WEB$msg$get("MSG.NO.CAM.TO"))
+           return (TRUE)
+       }
+      if (input$impAmount <= 0) {
+           output$msg  = updLabelText(WEB$msg$get("MSG.AMOUNT.NEGATIVE"))
+           return (TRUE)
+      }
+      if (input$impFeeOut < 0) {
+           output$msg  = updLabelText(WEB$msg$get("MSG.AMOUNT.NEGATIVE"))
+           return (TRUE)
+       }
+      if (input$impFeeIn < 0) {
+           output$msg  = updLabelText(WEB$msg$get("MSG.AMOUNT.NEGATIVE"))
+           return (TRUE)
+       }
 
-   # pnl$update()
-   # updCombo("cboCurrency",    choices=pnl$cboCurrencies())
-   #
-   # observeEvent(input$cboCurrency, {
-   #     updCombo("cboFrom", choices=pnl$cboFrom(input$cboCurrency))
-   # }, ignoreInit = TRUE, ignoreNULL = TRUE)
-   # observeEvent(input$cboFrom, {
-   #     updCombo("cboTo",      choices=pnl$cboTo(input$cboFrom, input$cboCurrency))
-   # }, ignoreInit = TRUE, ignoreNULL = TRUE)
-   # observeEvent(input$btnKO, {
-   #     output$msg = renderText({""})
-   #     reset()
-   # })
-   # #
-   # #
-   # # validate = function() {
-   # #    if (input$impAmount <= 0)
-   # #        return (yataMsgError(ns2("msg"),WEB$MSG$get("MSG.AMOUNT.NEGATIVE")))
-   # #    if (input$impAmount > pnl$available)
-   # #        return (yataMsgError(ns2("msg"),WEB$MSG$get("MSG.AMOUNT.EXCESS")))
-   # #    FALSE
-   # # }
-   # # updCombo("cboFrom",    choices=pnl$cboCamerasFrom())
-   # #
-   # # observeEvent(input$cboFrom, {
-   # #    yataMsgReset(ns2("msg"))
-   # #    updCombo("cboTo", choices=WEB$combo$cameras(inactive=TRUE, exclude=input$cboFrom))
-   # #    updCombo("cboCurrency", choices=pnl$cboCurrencies(input$cboFrom))
-   # # }, ignoreInit = TRUE, ignoreNULL = TRUE)
-   # #
-   # # observeEvent(input$cboCurrency, {
-   # #    yataMsgReset(ns2("msg"))
-   # #    output$lblFrom = updLabelText(pnl$getAvailable(input$cboFrom, input$cboCurrency))
-   # # }, ignoreInit = TRUE, ignoreNULL = TRUE)
-   # #
-   # # observeEvent(input$btnKO, {
-   # #    output$msg = renderText({""})
-   # #    updNumericInput("impAmount", value = 0)
-   # # })
-   observeEvent(input$btnOK, {
-      if (validate()) return()
-      tryCatch({
-          pnl$transfer(input$cboFrom, input$cboTo, input$impAmount, input$cboCurrency)
-          yataMsgSuccess(ns2("msg"), pnl$MSG$get("XFER.OK"))
-          updNumericInput("impAmount", value = 0)
-          output$lblFrom = updLabelText(pnl$available - input$impAmount)
-          output$lblTo   = updLabelText(pnl$balance   + input$impAmount)
-      }, LOGICAL = function (cond) {
-          yataMsgError(ns2("msg"), pnl$MSG$get("XFER.KO"))
-      })
+      FALSE
+   }
+   updCombo("cboCurrency",    choices=pnl$cboCurrencies())
+   observeEvent(input$cboCurrency, {
+      pnl$vars$currency  = input$cboCurrency
+      updCombo("cboFrom",    choices=pnl$cboCameraFrom(input$cboCurrency))
+   }, ignoreInit = TRUE, ignoreNULL = TRUE)
+   observeEvent(input$cboFrom,     {
+      updCombo("cboTo",    choices=pnl$cboCameraTo(input$cboFrom))
+   }, ignoreInit = TRUE, ignoreNULL = TRUE)
+   observeEvent(input$btnKO,       {
+      output$msg  = updLabelText("")
+      updNumericInput("impAmount", value = 0)
    })
-})
-}
+   observeEvent(input$btnOK,       {
+       browser()
+      if (validate()) return()
+      data = list( from     = input$cboFrom,      to       = input$cboTo
+                  ,currency =  input$cboCurrency, amount   = input$impAmount
+                  ,feeOut   = input$impFeeOut,    impFeeIn = input$impFeeIn
+                  ,date     = input$dtDate
+                 )
+
+      msg = pnl$transfer(data)
+      if (is.null(msg)) {
+          output$msg  = updLabelText(WEB$msg$get("OK.XFER"))
+          updNumericInput("impAmount", value = 0)
+      } else {
+          output$msg  = updLabelText(msg)
+      }
+   })
+}) # End Module Server
+}  # End module
 

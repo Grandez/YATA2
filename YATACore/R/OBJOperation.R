@@ -22,16 +22,9 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
         # ,split = function()   { error("Split no implementado todavia")}
         # ,net   = function()   { error("Net no implementado todavia")}
      ,add   = function(type, ...) {
-        tryCatch({
-           db$begin()
-           idOper = addOper(type, ...)
-           db$commit()
-           idOper
-        },error = function(cond) {
-            db$rollback()
-            YATATools::propagateError(cond)
-            0
-        })
+         if (type == YATACODE$oper$buy)  return (operBuy(...))
+         if (type == YATACODE$oper$sell) return (operSell(...))
+         stop("OPERACION NO IMPLEMENTADA")
       }
         # ,regularize = function(camera, currency) {
         #     tryCatch({
@@ -436,7 +429,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            flow = list( type     = YATACODE$flow$xferIn
                        ,camera   = current$to,     currency = current$currency
                        ,amount   = current$amount, price    = current$price
-                       ,date     = current$date,   idOper   = id
+                       ,dateOper = current$date,   dateVal  = current$date
+                       ,idOper   = id
                       )
            addFlow(flow)
 
@@ -531,7 +525,7 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # Flujos
            flow = list( type     = YATACODE$flow$output, camera = current$camera
                        ,currency = current$base, amount   = current$amount * current$price * -1
-                       ,price    = 1,  date  = current$dateVal
+                       ,price    = 1,  dateOper  = current$dateOper, dateVal  = current$dateVal
                        ,idOper   = current$id
                       )
            addFlow(flow)
@@ -610,7 +604,8 @@ OBJOperation = R6::R6Class("OBJ.OPERATION"
            # Flujos
            flow = list( type     = YATACODE$flow$output, camera = current$camera
                        ,currency = current$base, amount   = current$amount * -1
-                       ,price    = current$price,  date  = current$dateVal
+                       ,price    = current$price
+                       ,dateOper = current$dateOper, dateVal  = current$dateVal
                        ,idOper   = current$id
                       )
            addFlow(flow)

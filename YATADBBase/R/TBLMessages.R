@@ -12,21 +12,21 @@ TBLMessages = R6::R6Class("TBL.MESSAGES"
             if (nrow(df) == 0) df = table(code = code, lang = lang, region = "XX")
             if (nrow(df) == 0) df = table(code = code, lang = "XX", region = "XX")
             if (nrow(df) == 0) return (code)
-            df$value
+            df$msg
         }
         ,getBlock = function(block, lang="XX", region="XX") {
             # No puede fallar. seria corrupcion de datos en el sistema
             df = table(block=block, lang=lang, region=region)
             if (nrow(df) == 0) df = table(block=block, lang=lang, region="XX")
             if (nrow(df) == 0) df = table(block=block, lang="XX", region="XX")
-            df[,c("code", "value")]
+            df[,c("code", "msg")]
         }
        ,getItem = function(block, code, lang="XX", region="XX") {
             # No puede fallar. seria corrupcion de datos en el sistema
             df = table(block=block, code=code, lang=lang, region=region)
             if (nrow(df) == 0) df = table(block=block, code=code, lang=lang, region="XX")
             if (nrow(df) == 0) df = table(block=block, code=code, lang="XX", region="XX")
-            df[,c("code", "value")]
+            df[,c("code", "msg")]
        }
      )
      ,private = list (
@@ -37,7 +37,7 @@ TBLMessages = R6::R6Class("TBL.MESSAGES"
              ,code   = "CODE"
              ,lang   = "LANG"
              ,region = "REGION"
-             ,value  = "VALUE"
+             ,msg    = "MSG"
           )
      )
 )

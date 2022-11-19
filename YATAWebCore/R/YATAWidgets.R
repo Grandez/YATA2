@@ -73,7 +73,7 @@
 
 yuiYesNo = function(id, lblOK, lblKO, left = 0, width = 12) {
     # base es cualquier cosa, queremos mod1-mod2-....-xxx
-    base = paste(strsplit(id, "-"))[[1]]
+    base = strsplit(id, "-")[[1]]
     base = base[1:length(base)-1]
     base = paste(base, collapse="-")
     if (missing(lblOK)) {

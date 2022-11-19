@@ -1,5 +1,5 @@
-message("JGG Entra en UI")
 lbl = WEB$getLabelsMenuMain()
+
 YATAPage("YATA", id="mainMenu",titleActive = TRUE
 #     ,JGGTab("test", "Test", NULL, JGGModule("test"))
 #     ,JGGTab("dash",  lbl$DASHBOARD,  NULL,  JGGModule("dash"))

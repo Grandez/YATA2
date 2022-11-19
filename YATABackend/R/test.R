@@ -1,4 +1,4 @@
-get = function(endpoint, ...) {
+test_get = function(endpoint, ...) {
     browser()
     app = YATARest$new()
     request = Request$new(path = paste0("/", endpoint), parameters_query = list(...))
@@ -10,9 +10,10 @@ cat("Response body:", response$body)
 #> Response body: 55
 }
 
-post = function(endpoint, data) {
+test_post = function(endpoint, data) {
     browser()
     app = YATARest$new()
+    if (missing(data)) data = NULL
     request = Request$new(path = paste0("/", endpoint), method="POST", body=data, content_type="text/plain")
     response = app$process_request(request)
 browser()

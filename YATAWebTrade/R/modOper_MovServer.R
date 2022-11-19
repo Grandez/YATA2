@@ -17,17 +17,11 @@ modOperMovServer = function(id, parent, session) {
            }
           ,getPosition   = function(camera)    { private$pos$getCameraPosition(camera)         }
           ,addOperation  = function(data)      {
-               tryCatch({
-                   private$oper$add(data$type, data)
-               },error = function(cond) {
-                   browser()
-                   yataErrGeneral(10, WEB$txtError, cond, input, output, session, web=WEB)
-                   0
-               })
+              private$oper$add(data$type, data)
            }
    #      # Inherit
    #        ,getCurrenciesBuy  = function()          { self$parent$getCurrenciesBuy() }
-   #        ,getCurrenciesSell = function(currency)  { self$parent$getCurrenciesSell() }
+          ,getCurrenciesSell = function(currency)  { self$parent$getCurrenciesSell() }
           ,getCboCameras     = function (currency) {
 #              if (nchar(currency) > 0) self$parent$getCboCameras(currency)
               self$parent$getCboCameras(currency)
@@ -49,20 +43,16 @@ moduleServer(id, function(input, output, session) {
 
     showMessage = function (text) {
         output$msg = updTextArea(text)
-        NULL
+        TRUE
     }
-      validate = function(data) {
-          if (is.null(data$type))   return (showMessage(pnl$msg$get("ERR.NO.OPER")))
-          if (is.null(data$camera)) return (showMessage(pnl$msg$get("ERR.NO.CAMERA")))
-          if (data$price  <= 0)     return (showMessage(pnl$msg$get("ERR.NO.PRICE")))
-          if (data$amount <= 0)     return (showMessage(pnl$msg$get("ERR.NO.AMOUNT")))
-          if (data$value  <= 0)     return (showMessage(pnl$msg$get("ERR.NO.AMOUNT")))
-          if (data$fee    <  0)     return (showMessage(pnl$msg$get("ERR.NEG.FEE")))
-          if (data$gas    <  0)     return (showMessage(pnl$msg$get("ERR.NEG.GAS")))
-          if (pnl$vars$buy && data$value > pnl$vars$available) {
-              return (showMessage(pnl$msg$get("ERR.NO.AVAILABLE")))
-          }
-          data
+    validate = function(data) {
+        if (is.null(data$type))   return (showMessage(WEB$msg$get("ERR.NO.OPER")))
+        if (is.null(data$camera)) return (showMessage(WEB$msg$get("ERR.NO.CAMERA")))
+        if (data$price  <= 0)     return (showMessage(WEB$msg$get("ERR.NO.PRICE")))
+        if (data$amount <= 0)     return (showMessage(WEB$msg$get("ERR.NO.AMOUNT")))
+        if (data$fee    <  0)     return (showMessage(WEB$msg$get("ERR.NEG.FEE")))
+        if (data$gas    <  0)     return (showMessage(WEB$msg$get("ERR.NEG.GAS")))
+        FALSE
       }
 #       xlateCode = function (code) {
 #           code = as.integer(code)
@@ -78,18 +68,14 @@ moduleServer(id, function(input, output, session) {
              data = WEB$combo$currencies()
          }
          else {
-             df = pnl$getCurrenciesSell()
-             if (nrow(df) == 0) {
-                 data = c("No hay posiciones"="")
-             } else {
-                 data = WEB$combo$currencies(id=FALSE, set=df$id)
-             }
+             data = pnl$getCurrenciesSell()
          }
+
          # # Esto es por si se ha clickado en otro panel para comprar
          # # JGG Revisar, si es asi no cargar el combo Y HACERLO ANTES
          # carea = pnl$getCommarea()
          selc = NULL
-         selr = 0
+         # selr = 0
          # if (!is.null(carea$pending)) {
          #     selc = carea$data$symbol
          #     selr = 15
@@ -100,27 +86,34 @@ moduleServer(id, function(input, output, session) {
          # #     updCombo("cboCurrency", selected=selc)
          # # }
          updComboSelect("cboCurrencies", choices=data, selected=selc)
-         type = ifelse(pnl$vars$buy, 1, 2)
-         pp = WEB$combo$reasons(type=type)
-         updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
+         # type = ifelse(pnl$vars$buy, 1, 2)
+         # pp = WEB$combo$reasons(type=type)
+         # updCombo("cboReasons", choices = WEB$combo$reasons(type=type), selected=selr)
          # processCommarea(1)
       }
-#       resetValues = function(data) {
-#           updNumericInput("impAmount", value=0)
-#           updNumericInput("impPrice" , value=0)
-#           updNumericInput("impValue" , value=0)
-#           updNumericInput("impFee"   , value=0)
-#           updNumericInput("impGas"   , value=0)
-#           updTextArea("comment", "")
-#           # When Sell check currency is still available
-#           #      Buy  update available
-#           if (pnl$vars$buy) {
-#               output$lblAvailable = updLabelNumber(pnl$vars$available - data$value)
-#           } else {
-#               updateCboCurrency()
-#           }
-# #          yataMsgReset()#
-#       }
+      updateCboReasons    = function() {
+         type = ifelse(pnl$vars$buy, "buy", "sell")
+         pp = WEB$combo$reasons(type=type)
+         updCombo("cboReasons", choices = WEB$combo$reasons(type=type))
+      }
+      resetValues = function(data) {
+          updNumericInput("impAmount", value=0)
+          updNumericInput("impPrice" , value=0)
+          updNumericInput("impValue" , value=0)
+          updNumericInput("impFee"   , value=0)
+          updNumericInput("impGas"   , value=0)
+          browser()
+          #updTextArea("comment", "")
+
+          # # When Sell check currency is still available
+          # #      Buy  update available
+          # if (pnl$vars$buy) {
+          #     output$lblAvailable = updLabelNumber(pnl$vars$available - data$value)
+          # } else {
+          #     updateCboCurrency()
+          # }
+#          yataMsgReset()#
+      }
 #       updateSummary = function() {
 #           if (is.null(pnl$vars$price))  pnl$vars$price  = 0
 #           if (is.null(pnl$vars$amount)) pnl$vars$amount = 0
@@ -182,27 +175,31 @@ moduleServer(id, function(input, output, session) {
 #           #     pnl$setCommarea(list())
 #           # }
 #       }
-      observeEvent(input$cboOper, {
+      observeEvent(input$cboOper,       {
          if (pnl$vars$cboOper == input$cboOper) return() # No ha cambiado
-         pnl$vars$cboOper = input$cboOper
+         pnl$vars$cboOper = as.integer(input$cboOper)
          shinyjs::enable("cboCurrencies")
-
          pnl$vars$reload = FALSE # Recargar el combo de monedas? Para compras es costoso
          if (is.null(pnl$vars$buy) || !pnl$vars$buy) pnl$vars$reload = TRUE
-         pnl$vars$buy = ifelse((as.integer(input$cboOper) %% 2) == 0, TRUE, FALSE)
+         pnl$vars$buy = ifelse((pnl$vars$cboOper %% 2) == 0, TRUE, FALSE)
+         pnl$vars$major = pnl$vars$cboOper %/% 10
          if (!pnl$vars$buy) pnl$vars$reload = TRUE
+         if (pnl$vars$major == 1) {
+             shinyjs::enable("impGas")
+         } else {
+             shinyjs::disable("impGas")
+         }
          updateCboCurrencies()
+         updateCboReasons()
       }, ignoreNULL = TRUE)
-
       observeEvent(input$cboCurrencies, {
-          shinyjs::enable("cboCameras")
-
-          currency = ifelse(pnl$vars$buy, 0, input$cboCurrency) # 0 es fiat
+          # Se generan dos eventos y no se porque
+          isolate(shinyjs::enable("cboCameras"))
+          currency = ifelse(pnl$vars$buy, YATACODE$CTCFIAT, input$cboCurrencies)
           data = pnl$getCboCameras(currency)
           updCombo("cboCameras", choices=data)
-#          updNumericInput("impPrice", pnl$session$getPrice(input$cboCurrency))
-      }, ignoreInit = TRUE)
-      observeEvent(input$cboCameras, {
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
+      observeEvent(input$cboCameras,    {
           dfPos              = pnl$getPosition(input$cboCameras)
           pnl$vars$fiat      = dfPos[dfPos$currency == 0,"available"]
           pnl$vars$ctc       = dfPos[dfPos$currency == input$cboCurrencies,"available"]
@@ -213,6 +210,19 @@ moduleServer(id, function(input, output, session) {
           # pnl$vars$available = ifelse(pnl$vars$buy, pnl$vars$fiat, pnl$vars$ctc)
           output$lblAvailable = updLabelNumber(pnl$vars$available)
       },ignoreInit = TRUE)
+      observeEvent(input$impAmount,     {
+          if (is.na(input$impAmount) || input$impPrice <= 0) return()
+          updNumericInput("impValue", input$impPrice * input$impAmount)
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
+      observeEvent(input$impPrice,      {
+          if (is.na(input$impPrice) || input$impAmount <= 0) return()
+          updNumericInput("impValue", input$impPrice * input$impAmount)
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
+      observeEvent(input$impValue,      {
+          if (is.na(input$impValue) || input$impPrice <= 0) return()
+          updNumericInput("impAmount", input$impValue / input$impPrice)
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
+
 #       observeEvent(input$cboBase, {
 #          pnl$vars$inEvent = FALSE
 #          pnl$vars$available = 0
@@ -261,61 +271,42 @@ moduleServer(id, function(input, output, session) {
 #       })
 #
       observeEvent(input$btnOK, {
-        # Amount es lo que se mueve (compro o vendo)
-        # Value es el fiat
-          # Ejemplo compro 1 - BTC (amount) por un valor de x
-          #         vendo  1 - BTC (amount) por un valor de x
-        # Luego en funcion de compra o venta
-        # in - entra
-        # out sale
-        # A veces se generan dos triggers (debe ser por los renderUI)
-browser()
-         if (pnl$inEvent) {
-             browser()
-             return()
-         }
-         pnl$inEvent = TRUE
+         if (pnl$inEvent) return() # A veces se generan dos triggers (debe ser por los renderUI)
 
          data = list(
              type    = as.integer(input$cboOper) # xlateCode(input$cboOper)
             ,amount  = input$impAmount
             ,price   = input$impPrice
-            ,value   = input$impValue
             ,fee     = input$impFee
             ,gas     = input$impGas
             ,camera  = input$cboCameras
             ,reason  = as.integer(input$cboReasons)
-            ,alert   = input$alert
+#            ,alert   = input$alert
          )
-         if (data$amount == 0) data$amount = input$impValue  / input$impPrice
-         if (data$value  == 0) data$value  = input$impAmount * input$impPrice
 
-         if (pnl$vars$buy) {
-             data$base      = 0
-             data$counter   = input$cboCurrencies
-             data$ctcIn     = data$amount
-             data$ctcOut    = data$value
-         } else {
-             data$base      = input$cboCurrencies
-             data$counter   = 0
-             data$ctcIn     = data$value
-             data$ctcOut    = data$amount
-         }
+         cmt = trimws(input$comment)
+         if (nchar(cmt) > 0) data$comment = cmt
 
-         data = validate(data)
-         if (is.null(data)) return() # Ha devuelto un error
+         if (validate(data)) return()
 
-         browser()
-         data = updateInfo(data)
-         id = pnl$addOperation(data)
-         if (id > 0) {
-             resetValues(data)
-             #JGG Pendiente
-             # msgKey = paste0("OPER.MAKE.", txtType[as.integer(input$cboOper)])
-             # yataMsgSuccess(ns2("operMsg"), sprintf(pnl$msg$get(msgKey), id)
-#             pnl$setCommarea(position=TRUE)
-         }
-         pnl$vars$inEvent = FALSE
+         pnl$inEvent = TRUE
+
+         ctc = as.integer(input$cboCurrencies)
+         data$base    = ifelse(pnl$vars$buy, YATACODE$CTCFIAT, ctc)
+         data$counter = ifelse(pnl$vars$buy, ctc, YATACODE$CTCFIAT)
+
+#         data = updateInfo(data)
+         tryCatch({
+            pnl$addOperation(data)
+            resetValues(data)
+            showMessage(WEB$msg$get("OK.OPER"))
+         }, LOGICAL = function(cond) {
+             showMessage(cond$message)
+         }, error = function(cond) {
+             showMessage(cond$message)
+         }, finally = {
+            pnl$vars$inEvent = FALSE
+         })
       }, ignoreInit = TRUE)
 #    observeEvent(input$btnErrorSevere, {
 #        stop("observeEvent(input$btnErrorSevere en modOper_MovServer")

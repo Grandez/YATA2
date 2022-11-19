@@ -43,15 +43,16 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
 #          lst
 #      }
      ,currencies = function(set=NULL, merge=TRUE, all=FALSE) {
-         if (is.null(cache$currencies)) loadCurrencies()
-         df = cache$currencies
-         df = df[df$type > -1,]  # -1 son FIAT
-         if (!all) df = df[df$active > 0,]
-         if (!is.null(set)) df = filterCurrencies (df, set)
+         df = WEB$getCurrencyNames(set)
+         # if (!is.null(set)) {
+         #     df = filterCurrencies (df, set)
+         # } else {
+             df = df[df$type > -1,]  # -1 son FIAT
+             if (!all) df = df[df$active > 0,]
+#         }
          if (nrow(df) == 0) return (list())
          if (merge) df$name = paste(df$symbol, "-", df$name)
-         data = makeCombo(df, id="id")
-         checkAll(data, all)
+         makeCombo(df, id="id")
      }
 #      ,getCurrenciesKey = function(id=TRUE, currencies) {
 #          if (is.null(cache$currencies)) loadCurrencies()
@@ -71,16 +72,25 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
      ##############################################################
      ,operations = function(all=FALSE) {
          if (is.null(cache$operations)) loadOperations()
-         data = makeCombo(cache$operations)
-         checkAll(data, all)
+         # Solo operaciones de compra/venta
+         df = cache$operations[cache$operations$code < 40, ]
+         colnames(df) = c("id", "name")
+         makeCombo(df)
      }
-     ,reasons = function(type=9) {
+     ,reasons = function(type="all") {
          if (is.null(cache$reasons)) loadReasons()
-         df = cache$reasons[(cache$reasons$block %% 10) == 0,] # General
-         df = rbind(df, cache$reasons[(cache$reasons$block %% 10) == type,]) # Especifico
-         df = df[,c("id", "name")]
-         data = makeCombo(df)
-         checkAll(data, FALSE)
+         df = cache$reasons
+         df0 = df[df$code < 10,]
+         if (type == "buy")
+             df1 = subset(df, code >  9 & code < 30)
+         else if (type == "sell")
+             df1 = subset(df, code > 29 & code < 50)
+         else
+             df1 = subset(df, code > 9)
+
+         dfr = rbind(df0, df1)
+         colnames(dfr) = c("id", "name")
+         makeCombo(dfr)
      }
 #      ,periods = function() { msg_block(factory$codes$labels$periods) }
 #      ,scopes  = function() { msg_block(34) }
@@ -110,26 +120,22 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          private$cache$currencies = private$factory$backend$currencies()
       }
      ,loadOperations = function() {
-         data = objParms$getBlock(50, 1)
-         lst = objMsgs$getBlock(YATACODE$labels$operation)
-         dft = data.frame(msg=unlist(lst))
-         dft$label = names(lst)
-
-         df = dplyr::left_join(data,dft,by="label")
-         df = df[,c("key","msg")]
-         colnames(df) = c("id", "name")
+         df = objParms$getLabelsCoded("oper")
+         df$code = as.integer(df$code)
+#
+#          data = objParms$getBlock(50, 1)
+#          lst = objMsgs$getBlock(YATACODE$labels$operation)
+#          dft = data.frame(msg=unlist(lst))
+#          dft$label = names(lst)
+#
+#          df = dplyr::left_join(data,dft,by="label")
+#          df = df[,c("key","label")]
+#          colnames(df) = c("id", "name")
          private$cache$operations = df
      }
      ,loadReasons = function() {
-         data = objParms$getBlock(50, 2)
-         data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)
-         txts = objMsgs$getBlock(YATACODE$labels$reasons)
-         dft = as.data.frame(unlist(txts))
-         dft$id = row.names(dft)
-         colnames(dft) = c("msg", "label")
-         df = dplyr::left_join(data,dft,by="label")
-         df = df[,c("block", "key","msg")]
-         colnames(df) = c("block", "id", "name")
+         df = objParms$getLabelsCoded("reasons")
+         df$code = as.integer(df$code)
          private$cache$reasons = df
      }
     #  ,loadBlog = function() {

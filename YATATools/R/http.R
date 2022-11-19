@@ -14,7 +14,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
 
          page = tryCatch({
                    httr::GET(url, add_headers(.headers=headers), query=prms)
-                }, error = function(cond) { checkGetError(url, parms, cond) })
+                }, error = function(cond) { checkGetError(url, "GET", parms=parms, cond) })
 
          if (is.null(page)) {
             HTTP( "HTTP ERROR: No data retrieved", origin=url, action="get"
@@ -32,7 +32,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
 
          page = tryCatch({
                    httr::POST(url, add_headers(.headers=headers), body=body, content_type = type)
-                }, error = function(cond) { checkGetError(url, parms, cond) })
+                }, error = function(cond) { checkGetError(url, "POST", NULL, cond) })
 
          if (is.null(page)) {
             HTTP( "HTTP ERROR: No data retrieved", origin=url, action="get"
@@ -104,8 +104,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
                             ,parameters = parms
                            )
        }
-      ,checkGetError        = function(url, parms, cond) {
-         browser()
+      ,checkGetError        = function(url, action, parms, cond) {
           urlerr = url
           code = 900
           msg = cond$message
@@ -115,7 +114,7 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
               expr = regexpr("\\[.*\\]", cond$message)
               if (expr > 0) urlerr = substr(cond$message, expr + 1, attr(expr, "match.lenght") - 2)
           }
-          HTTP( paste("HTTP ERROR:", msg), action = "get", code = code
+          HTTP( paste("HTTP ERROR:", msg), action = action, code = code
                              ,origin = url,    message = cond$message, parameters = parms)
       }
    )

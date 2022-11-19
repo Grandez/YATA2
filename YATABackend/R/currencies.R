@@ -23,12 +23,19 @@ get_currencies = function (.req, .res) {
 }
 
 post_names = function (.req, .res) {
+# Si no se le pasan identificadores, devuelve todo
    tryCatch({
       factory   = YATADBCore::DBFactory$new()
       tbl = factory$getTable("Currencies")
-      ids = strsplit(.req$body, "[,;]")[[1]]
-      data = tbl$recordset(id=list(op="in", value=ids))
-      data = data[,c("id", "symbol", "name")]
+      ids = NULL
+      if (!is.null(.req$body)) ids = strsplit(.req$body, "[,;]")[[1]]
+      if (length(ids) == 0) {
+          data = tbl$table()
+      } else {
+          data = tbl$recordset(id=list(op="in", value=ids))
+      }
+
+      data = data[,c("id", "symbol", "name", "type", "active")]
       .setResponse2(.res, data)
   }, error = function(cond) {
      .setError(.res, cond)

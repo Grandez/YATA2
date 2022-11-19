@@ -6,7 +6,7 @@ modOperMovInput = function (id, title= "") {
 
    main = tagList(
        br()
-     ,fluidRow( guiColumn(2)
+     ,fluidRow( guiColumn(1)
               ,guiColumn(1, h4(lbl$OPER))
               ,guiColumn(1, guiCombo(ns("cboOper"), choices=WEB$combo$operations()))
               ,guiColumn(1, h4(lbl$CURRENCY))
@@ -14,7 +14,8 @@ modOperMovInput = function (id, title= "") {
 
               ,guiColumn(1, h4(lbl$CAMERA))
               ,guiColumn(1, shinyjs::disabled(guiCombo(ns("cboCameras"), choices=list(" "))))
-              #,guiColumn(1)
+              ,guiColumn(1, h4(lbl$DATE))
+              ,guiColumn(1, guiDateInput(ns("dtDate")))
      )
     ,fluidRow(
          guiColumn(1)
@@ -35,7 +36,7 @@ modOperMovInput = function (id, title= "") {
                          ,tags$td(guiNumericInput(ns("impFee"),  NULL, value = 0)))
                 ,tags$tr( tags$td(lbl$GAS)
                          ,tags$td(guiSwitch(ns("swGas"),on="%", off="Value"))
-                         ,tags$td(guiNumericInput(ns("impGas"),  NULL, value = 0)))
+                         ,tags$td(shinyjs::disabled(guiNumericInput(ns("impGas"),  NULL, value = 0))))
                 ,tags$tr( tags$td(class="jgg_table_label", lbl$REASON)
                          ,tags$td(colspan="2", guiCombo(ns("cboReasons"))))
             )
