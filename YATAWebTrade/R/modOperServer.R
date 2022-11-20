@@ -1,4 +1,4 @@
-modOperServer <- function(id, parent, session) {
+modOperServer = function(id, parent, session) {
 ns = NS(id)
 PNLOper = R6::R6Class("YATA.TRADE.PNL.OPER"
   ,inherit    = JGGPanel

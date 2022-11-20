@@ -1,7 +1,7 @@
 use YATABase;
 
 -- -------------------------------------------------------------------
--- La base de datos BASE contiene las tablas que son comunes 
+-- La base de datos BASE contiene las tablas que son comunes
 -- Y la configuracion inicial
 -- -------------------------------------------------------------------
 -- Tabla de Parametros
@@ -20,17 +20,17 @@ CREATE TABLE PARAMETERS  (
 -- Tabla de Proveedores
 DROP TABLE  IF EXISTS PROVIDERS CASCADE;
 CREATE TABLE PROVIDERS  (
-    PROVIDER     VARCHAR(10)  NOT NULL -- To Currency 
+    PROVIDER     VARCHAR(10)  NOT NULL -- To Currency
    ,NAME         VARCHAR(32)  NOT NULL -- From currency
    ,ACTIVE       TINYINT    DEFAULT 1
    ,PRTY         TINYINT    DEFAULT 99
--- Datos de acceso   
+-- Datos de acceso
    ,TOKEN      VARCHAR(255)
-   ,URL        VARCHAR(255)   
-   ,USER       VARCHAR(32) 
-   ,PWD        VARCHAR(32) 
-   ,ICON       VARCHAR(255)    
-   ,OBJECT     VARCHAR(255)   
+   ,URL        VARCHAR(255)
+   ,USER       VARCHAR(32)
+   ,PWD        VARCHAR(32)
+   ,ICON       VARCHAR(255)
+   ,OBJECT     VARCHAR(255)
    ,PRIMARY KEY ( PROVIDER )
 );
 
@@ -42,9 +42,9 @@ CREATE TABLE MESSAGES  (
    ,CODE     VARCHAR    (64) NOT NULL
    ,LANG     CHAR(2)         NOT NULL DEFAULT "XX"
    ,REGION   CHAR(2)         NOT NULL DEFAULT "XX"
-   ,VALUE    VARCHAR(255)
-   ,PRIMARY KEY ( BLOCK, CODE, LANG, REGION ) 
-   ,INDEX       (        CODE, LANG, REGION )  
+   ,MSG      VARCHAR(255)
+   ,PRIMARY KEY ( BLOCK, CODE, LANG, REGION )
+   ,INDEX       (        CODE, LANG, REGION )
 );
 
 
