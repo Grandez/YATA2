@@ -7,7 +7,7 @@ YATAPage("YATA", id="mainMenu",titleActive = TRUE
      ,YATATab("pos",  lbl$POSITION,  NULL,  YATAUI("pos"))
 #     ,JGGTab("hist", lbl$HISTORY,   NULL,  JGGModule("hist"))
 #     ,JGGTab("ana",   lbl$ANALYSIS,  NULL,    JGGModule("ana"))
-     ,JGGTab("blog",  lbl$BLOG,     NULL, JGGModule("blog"))
+     ,JGGTab("blog",  lbl$BLOG,     NULL, YATAUI("blog"))
 #     ,JGGTab("admin", lbl$ADMIN,    NULL, JGGModule("admin"))
       ,JGGTab("test", "Test",    NULL, YATAUI("test"))
 )

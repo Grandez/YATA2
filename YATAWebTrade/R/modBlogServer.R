@@ -11,7 +11,7 @@ PNLBlog = R6::R6Class("YATA.TRADE.PNL.BLOG"
            ,initialize = function(id, parent, session) {
                super$initialize(id, parent, session)
                self$blog  = self$factory$getObject("Blog")
-               self$currencies = self$factory$getObject("Currencies")
+#               self$currencies = self$factory$getObject("Currencies")
            }
           ,getCurrencies = function() {
               self$makeCombo(self$currencies$getCurrencyNames())
@@ -40,6 +40,20 @@ PNLBlog = R6::R6Class("YATA.TRADE.PNL.BLOG"
    )
 moduleServer(id, function(input, output, session) {
    pnl = WEB$getPanel(id, PNLBlog, parent, session)
+   observeEvent(input$mnuBlog, {
+       act = yataActiveNS(input$mnuBlog)
+       module = paste0("modBlog", jgg_to_title(act),"Server")
+   #     carea = pnl$getCommarea()
+   #
+   #     if (is.null(carea$pending) || !carea$pending) {
+            eval(parse(text=paste0(module, "(act, pnl, session)")))
+   #     } else {
+   #         carea$pending = FALSE
+   #         pnl$setCommarea(carea)
+   #         updateTabsetPanel(session, "mnuOper", selected=ns("dummy"))
+   #     }
+   })
+
 #
 #        reset = function() {
 #           output$msg = renderText({""})

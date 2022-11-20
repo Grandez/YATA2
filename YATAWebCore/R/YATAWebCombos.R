@@ -92,6 +92,11 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          colnames(dfr) = c("id", "name")
          makeCombo(dfr)
      }
+     ,blog = function() {
+         if (is.null(cache$blog)) loadBlog()
+         makeCombo(cache$blog)
+     }
+
 #      ,periods = function() { msg_block(factory$codes$labels$periods) }
 #      ,scopes  = function() { msg_block(34) }
 #      ,targets = function() { msg_block(35) }
@@ -138,6 +143,13 @@ YATAWebCombos = R6::R6Class("YATA.WEB.COMBOS"
          df$code = as.integer(df$code)
          private$cache$reasons = df
      }
+     ,loadBlog = function() {
+         df = objParms$getLabelsCoded("blog")
+         df$code = as.integer(df$code)
+         colnames(df) = c("id", "name")
+         private$cache$blog = df
+     }
+
     #  ,loadBlog = function() {
     #      data = objParms$getBlock(50, 3)
     #      data$label = gsub("[a-z0-9]+\\.", "", data$label, ignore.case=TRUE)

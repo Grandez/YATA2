@@ -1,6 +1,19 @@
 modBlogInput = function(id, title="") {
     ns = NS(id)
-    main = tagList(h2("Panel de BLOG"))
+    lbl = WEB$getLabelsMenuOper()
+    main = tagList(
+       shiny::tabsetPanel(id=ns("mnuBlog")
+         ,shiny::tabPanel(lbl$BLOG,       value=ns("blog"),   YATAUI(ns("blog")))
+         ,shiny::tabPanel(lbl$DETAIL,     value=ns("detail"), YATAUI(ns("detail")))
+         ,shiny::tabPanel(lbl$ENTRY,      value=ns("entry"),  YATAUI(ns("entry")))
+         # ,shiny::tabPanel(lbl$REGULARIZE, value=ns("reg"),  YATAUI(ns("reg")))
+         # ,shiny::tabPanel(lbl$HISTORY,    value=ns("hist"), YATUI(ns("hist")))
+         #
+         # ,tabPanel("cerrada",     value=ns("detail"),   tags$div(id=ns("detail"), YATAWebShiny::JGGModule(ns("detail"))))
+         # ,tabPanel("",   value="detail",    YATAWebShiny::JGGModule(ns("detail")))
+#         ,YATAPanel("",   value=ns("dummy"),     "")
+      ))
+
 #     targets = c("General"="gral", "Moneda"="currency", "Operacion"="oper", "Notas"="note")
 #     targets2 = c("Todo"="all",targets)
 #     lblFilter = WEB$msg$get("LABEL.BTN.APPLY")

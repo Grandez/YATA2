@@ -22,7 +22,8 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
       if (nrow(dfctc) == 0) return (batch$rc$NODATA)
 
       .updateHistory(factory, logger, dfctc, reverse)
-      ifelse(batch$counters$processed > 0, batch$rc$OK, batch$rc$NODATA)
+      #ifelse(batch$counters$processed > 0, batch$rc$OK, batch$rc$NODATA)
+      batch$rc$OK
    }, error = function (cond) {
       if (!is.null(factory)) factory$destroy()
       rc = batch$rc$FATAL
@@ -48,8 +49,8 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
 
    rows = 1:nrow(dfCTC)
    if (reverse) rows = nrow(dfCTC):1
-   batch$counters$input = rows
-   batch$counters$processed = 0
+   # batch$counters$input = nrow(rows)
+   # batch$counters$processed = 0
 
    for (row in rows) {
         last = dfCTC[row,"last"]
@@ -69,7 +70,7 @@ update_history = function(reverse = FALSE, logLevel = 0, logOutput = 2) {
         txt = ifelse(is.null(data), "No info", "OK")
         logger$done(1, "- %s", txt)
         if (!is.null(data)) {
-            batch$counters$processed = batch$counters$processed + 1
+#            batch$counters$processed = batch$counters$processed + 1
            .updateData(data, as.list(dfCTC[row,]), tables)
         }
         if ( is.null(data)) .updateLastDate(to, as.list(dfCTC[row,]), tables)

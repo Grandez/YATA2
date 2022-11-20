@@ -54,6 +54,12 @@ YATACODE = list(
     ,default = list(
       interval = 15
     )
+    ,blog = list (
+        general   = 0
+       ,session   = 1
+       ,currency  = 2
+       ,operation = 3
+    )
     ,labels = list( # Bloques de mensajes/textos
         words     =   1
        ,periods   =   3
@@ -65,6 +71,9 @@ YATACODE = list(
        ,opecodes  =  31
        ,oper      =  32
        ,reasons   =  33
+       ,target    =  34  # Intradia / Medio / largo
+       ,currency  =  35  # Moneda o token
+       ,blog      =  36
     )
     #JGG A revisar
     # ,log    = list(log=0,open=1,buy=2,sell=3,accept=10,executed=11, cancel=99,reject=98)

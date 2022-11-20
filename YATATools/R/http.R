@@ -41,11 +41,11 @@ YATAHTTP = R6::R6Class("YATA.R6.HTTP"
          private$rc = checkPageResponse("get", page, url, parms, accept)
          page
       }
-     # ,json = function (url, parms=NULL, headers=NULL, accept = 0) {
-     #     page = get(url, parms, headers, accept)
-     #     resp = httr::content(page, type="application/json")
-     #     resp$data
-     #  }
+     ,json = function (url, parms=NULL, headers=NULL, accept = 0) {
+         page = get(url, parms, headers, accept)
+         resp = httr::content(page, type="application/json")
+         resp$data
+      }
      # ,html = function(url, parms=NULL, headers=NULL, accept = 400) {
      #     page = get(url, parms, headers, accept)
      #     httr::content(page, as="parsed")

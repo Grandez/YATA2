@@ -1,6 +1,7 @@
 unloadNamespace("YATACore")
 unloadNamespace("YATAWebCore")
 
+suppressMessages(library(markdown      , warn.conflicts = FALSE))
 
 # Core
 # suppressMessages(library(utils      , warn.conflicts = FALSE))

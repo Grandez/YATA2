@@ -1,4 +1,4 @@
-TBLFlows = R6::R6Class("TBL.FLOWS"
+TBLFlows = R6::R6Class("YATA.TBL.FLOWS"
     ,inherit    = YATATable
     ,portable   = FALSE
     ,cloneable  = FALSE

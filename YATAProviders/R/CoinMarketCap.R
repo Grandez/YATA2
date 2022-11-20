@@ -394,7 +394,7 @@ PROVMarketCap = R6::R6Class("YATA.PROV.MARKETCAP"
            if (length(data) > 0) {
                items = lapply(data, function(item) {
                               l1 = list(timeHigh=item$timeHigh, timeLow=item$timeLow)
-                              jgg_list_merge(item$quote, l1)
+                              YATATools::list_merge(item$quote, l1)
                              })
                df     = do.call(rbind.data.frame,items)
                dfHist = rbind(dfHist, df)
